@@ -9,7 +9,7 @@ import scipy.linalg, scipy.sparse
 __all__ = [ "FourierBesselFitter", "FrankFitter"]
 
 
-class HankelRegressor(object):
+class _HankelRegressor(object):
     """Solves the Linear Regression problem to compute the posterior
        P(I|q,V,p) ~ G(I-mu, D),
     where I is the intensity to be predicted, q, and V are the baselines and 
@@ -323,13 +323,13 @@ class FourierBesselFitter(object):
             
         Returns
         -------
-        sol : HankelRegressor
+        sol : _HankelRegressor
             Least-squares Fourier-Bessel series fit.
         """
         self._build_matrices(q, V, w)
                         
-        self._sol = HankelRegressor(self._DHT, self._M, self._j,
-                                    noise_likelihood=self._H0)
+        self._sol = _HankelRegressor(self._DHT, self._M, self._j,
+                                     noise_likelihood=self._H0)
                         
         return self._sol
         
@@ -450,7 +450,7 @@ class FrankFitter(FourierBesselFitter):
             
         Returns
         -------
-        MAP_sol : HankelRegressor
+        MAP_sol : _HankelRegressor
             Reconstructed profile using Maximum a posteriori power spectrum.
         """
         # Project the data to the signal space
@@ -472,7 +472,7 @@ class FrankFitter(FourierBesselFitter):
         pi[:] = np.max(np.dot(Ykm,fit.mean))**2 / (self._ai + 0.5*rho - 1.0)
         pi[:] *= (self.q/self.q[0])**-2
 
-        fit = HankelRegressor(self._DHT, self._M, self._j, pi)
+        fit = self.fit_powerspectrum(pi)
 
         # Do one unsmoothed iteration:
         Tr1 = np.dot(Ykm,fit.mean)**2 
@@ -525,7 +525,7 @@ class FrankFitter(FourierBesselFitter):
         
         Parameters
         ----------
-        fit : HankelRegressor
+        fit : _HankelRegressor
             Solution at maximum likelihood
         T : matrix,
             Smoothing matrix
@@ -593,11 +593,11 @@ class FrankFitter(FourierBesselFitter):
             
         Returns
         -------
-        sol : HankelRegressor
+        sol : _HankelRegressor
             Posterior solution object for P(I|V,p)
         """
-        return HankelRegressor(self._DHT, self._M, self._j, p, 
-                               noise_likelihood=self._H0)
+        return _HankelRegressor(self._DHT, self._M, self._j, p, 
+                                noise_likelihood=self._H0)
                             
     def log_prior(self, p=None):
         """Compute the log Prior probability, log(P(p)).
