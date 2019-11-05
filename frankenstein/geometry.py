@@ -6,6 +6,8 @@ from __future__ import division, absolute_import, print_function
 import numpy as np
 from scipy.optimize import minimize
 
+from frankenstein.constants import rad_to_arcsec
+
 __all__  = [ "apply_phase_shift", "deproject", "fit_geometry_gaussian",
              "SourceGeometry"]
 
@@ -35,7 +37,7 @@ def apply_phase_shift(u, v, vis,  dRA, dDec, inverse=False):
     dRA *= 2. * np.pi 
     dDec *= 2. * np.pi
 
-    phi = (u * dRA + v * dDec) / rad_2_arcsec
+    phi = (u * dRA + v * dDec) / rad_to_arcsec
 
     return vis * (np.cos(phi) + 1j * np.sin(phi))
 
@@ -205,14 +207,14 @@ def fit_geometry_gaussian(u,v, visib, weights, phase_centre=None):
         up, vp = deproject(u,v, inc, pa)
 
         #Evaluate the gaussian:
-        gaus = np.exp(- 0.5 * (up**2 + vp**2) / (rad_2_arcsec*scal)**2)
+        gaus = np.exp(- 0.5 * (up**2 + vp**2) / (rad_to_arcsec*scal)**2)
 
         # Evaluate at the Chi2, using gaussian tapering:
         chi2 = weights * np.abs(norm * gaus - vis_corr)**2
         return chi2.sum() / (2 * len(weights))
     
     if phase_centre is not None:
-        vis = apply_phase_shift(u, v, vis, phase_centre[0], phase_centre[1])
+        vis = apply_phase_shift(u, v, visib, phase_centre[0], phase_centre[1])
     else:
         vis = visib
     

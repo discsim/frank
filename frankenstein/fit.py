@@ -25,23 +25,23 @@ def output_results(params):
 
 def main():
 
+    # Maybe some ASCII art?
     print("The world was to me a secret which I desired to devine.\n"
           "     - Mary Shelley, Frankenstein\n")
 
     params = parse_parameters()
 
-    load_uvdata(params)
+    uv = load_uvdata(params)
 
     # Print a quote for people to read while the fit is being done?
-    print("Peforming fit. Here's a quote while you wait:")
+    print("Peforming fit. Here's a quote to read while you wait...")
     print_quote()
     
     perform_fit(params)
-
     
     output_results(params)
     
-    print("IT'S ALIVE")
+    print("\n\n\nIT'S ALIVE\n\n")
 
 
 

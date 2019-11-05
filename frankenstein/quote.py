@@ -181,9 +181,9 @@ def _format_quote(i, line_len=79, header=True):
     qtstr += ' '*(start+2) +  ' - ' + author + '\n'
 
     # Add header/footer
-    footer = '*'*line_len +'\n'
+    footer = '*'*line_len
     if header:
-        header = footer
+        header = footer + '\n'
     else:
         header = ''
     

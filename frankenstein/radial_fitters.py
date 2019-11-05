@@ -1,3 +1,4 @@
+
 """This module contains methods for fitting radial brightness profiles to the de-projected visibities.
 """
 
@@ -5,6 +6,8 @@ from __future__ import division, absolute_import, print_function
 
 import numpy as np
 import scipy.linalg, scipy.sparse
+
+from frankenstein.hankel import DiscreteHankelTransform
 
 __all__ = [ "FourierBesselFitter", "FrankFitter"]
 
@@ -276,6 +279,10 @@ class FourierBesselFitter(object):
         Also computes 
             H0 = 0.5*log[det(w/(2*np.pi))] - 0.5*np.sum(V * w * V)
         """
+
+        # Use only the real part of V:
+        V = V.real
+
         # If blocking is used we will build up M and j chunk-by-chunk.
         if self._blocking:
             Nstep = int(self._block_size / self.size + 1)
@@ -377,7 +384,7 @@ class FrankFitter(FourierBesselFitter):
     alpha : float >= 1, default = 1.05
         Order parameter of the inverse gamma prior for the power spectrum.
         coefficients.
-    p_0 : float >= 0, default = 0.
+    p_0 : float >= 0, default = 1e-15
         Scale parameter of the inverse gamma prior for the power spectrum.
         coefficients.
     smooth : float >= 0, default = 0.1
@@ -399,7 +406,7 @@ class FrankFitter(FourierBesselFitter):
             DOI:  https://doi.org/10.1103/PhysRevE.87.032136
     '''
     def __init__(self, Rmax, N, nu=0,
-                 alpha=1.05, p_0=0., w_smooth=0.1,
+                 alpha=1.05, p_0=1e-15, w_smooth=0.1,
                  tol=1e-3, max_iter=250,
                  block_data=True, block_size = 10**7):
         
