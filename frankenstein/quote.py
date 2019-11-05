@@ -191,6 +191,20 @@ def _format_quote(i, line_len=79, header=True):
     
 
 def get_quote(i=None,get_all=False):
+    """Get a quote string.
+
+    Parameters
+    ----------
+    i : int, optional
+        Index of the quote. If not provided a random one will be selected.
+    get_all : bool, default=False
+        If True all quotes will be returned, otherwise just one.
+    
+    Returns
+    -------
+    quote_string : string
+        Quotes in string format, ready to be printed.
+    """
     if get_all:
         quote = ''
         for i in range(1,len(_quote)):
@@ -203,9 +217,13 @@ def get_quote(i=None,get_all=False):
     return _format_quote(i)
     
     
-
-            
-# 'Borrowed from the KROME package'
 def print_quote(i=None):
+    """Print a quote message
+
+    Parameters
+    ----------
+    i : int, optional
+        Index of the quote. If not provided a random one will be selected.
+    """
     quote = get_quote(i)
     print(quote)
