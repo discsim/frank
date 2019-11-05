@@ -173,7 +173,7 @@ class _HankelRegressor(object):
             like  = 0.5 * np.sum(self._j * self._mu)
   
             if self._Sinv is not None:
-                Q = self._Dsolve(self._Sinv)
+                Q = self.Dsolve(self._Sinv)
                 like += 0.5 * np.linalg.slogdet(Q)[1]
         else:
             Sinv = self._Sinv
@@ -626,15 +626,40 @@ class FrankFitter(FourierBesselFitter):
         Tij = self._build_smoothing_matrix()
             
         # Add the power-spectrum prior term
-        xi = self._p0/pi
+        xi = self._p0/p
         like = np.sum(xi - self._ai * np.log(xi))
         
         # Extra term due to spectral smoothness
-        tau = np.log(pi)
+        tau = np.log(p)
         like -= 0.5* np.dot(tau, Tij.dot(tau))
             
         return like
-                            
+
+    def log_likelihood(self, sol=None):
+        """Compute the log likelihood log[P(p, V)]
+        
+        log[P(p)] ~ log[P(V|p)] + log[P(p)]
+        
+        Parameters
+        ----------
+        sol : _HankelRegressor object, optional
+           Posterior solution given a set power-spectrum parameters, p. If not
+           provided, the MAP solution will be provided.
+        
+        Returns
+        -------        
+        log[P(p, V)] : float,
+            Log Prior probability.
+        
+        Notes
+        -----
+        Computed up to a normalizing constant that depends on alpha, p0.
+        """
+        if sol is None:
+            sol = self.MAP_solution
+
+        return self.log_prior(sol.power_spectrum) + sol.log_likelihood()
+    
                 
     @property
     def MAP_solution(self):
