@@ -83,7 +83,8 @@ class DiscreteHankelTransform(object):
         Parameters
         ----------
         f : array, size=N
-            Array to Hankel Transform
+            Function to Hankel Transform, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k).
         q : array or None.
             The frequency points at which to evaluate the Hankel 
             transform. If not specified the conjugate points of the
