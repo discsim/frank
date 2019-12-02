@@ -201,7 +201,10 @@ class _HankelRegressor(object):
             Frequencies to predict the visibilities at.
         I : array, optional
             Intensity points to predict the vibilities of. If not specified, 
-            the mean will be used
+            the mean will be used. The intensity should be specified at the
+            collocation points,
+                I[k] = I(r_k).
+        q : array or None.
         """
         if I is None:
             I = self.mean
