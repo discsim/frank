@@ -58,7 +58,7 @@ class DiscreteHankelTransform(object):
         j_nk = jn_zeros(nu, N+1)
         j_nk, j_nN = j_nk[:-1], j_nk[-1]
         
-        Qmax = j_nk[-1] / (2*np.pi*Rmax)
+        Qmax = j_nN / (2*np.pi*Rmax)
         self._Rnk = Rmax * (j_nk / j_nN)
         self._Qnk = Qmax * (j_nk / j_nN)
         
