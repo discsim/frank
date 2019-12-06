@@ -284,7 +284,7 @@ class FourierBesselFitter(object):
             f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points.
-    geometry: SourceGeometry object, optional
+    geometry: SourceGeometry object
         Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform.
@@ -296,7 +296,7 @@ class FourierBesselFitter(object):
         Size of the matrices if blocking is used.
     """
 
-    def __init__(self, Rmax, N, geometry=SourceGeometry(), nu=0,
+    def __init__(self, Rmax, N, geometry, nu=0,
                  block_data=True, block_size=10**7):
 
         self._geometry = geometry
@@ -424,7 +424,7 @@ class FrankFitter(FourierBesselFitter):
           f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points
-    geometry: SourceGeometry object, optional
+    geometry: SourceGeometry object
         Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform, given by J_nu(r).
@@ -453,7 +453,7 @@ class FrankFitter(FourierBesselFitter):
             DOI:  https://doi.org/10.1103/PhysRevE.87.032136
     '''
 
-    def __init__(self, Rmax, N, geometry=SourceGeometry(), nu=0,
+    def __init__(self, Rmax, N, geometry, nu=0,
                  alpha=1.05, p_0=1e-15, w_smooth=0.1,
                  tol=1e-3, max_iter=250,
                  block_data=True, block_size=10**7):
