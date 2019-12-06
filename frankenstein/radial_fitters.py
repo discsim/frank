@@ -209,7 +209,9 @@ class _HankelRegressor(object):
             uv-points to predict the visibilities at
         I : array, optional
             Intensity points to predict the vibilities of. If not specified, 
-            the mean will be used
+            the mean will be used. The intensity should be specified at the
+            collocation points,
+                I[k] = I(r_k).
         geometry:   SourceGeometry object, optional
             Geometry used to de-project the visibilities. If not provided
             a default one passed in during construction will be used.

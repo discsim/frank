@@ -59,8 +59,9 @@ class DiscreteHankelTransform(object):
         # Compute the collocation points
         j_nk = jn_zeros(nu, N+1)
         j_nk, j_nN = j_nk[:-1], j_nk[-1]
+        
+        Qmax = j_nN / (2*np.pi*Rmax)
 
-        Qmax = j_nk[-1] / (2*np.pi*Rmax)
         self._Rnk = Rmax * (j_nk / j_nN)
         self._Qnk = Qmax * (j_nk / j_nN)
 
@@ -85,7 +86,8 @@ class DiscreteHankelTransform(object):
         Parameters
         ----------
         f : array, size=N
-            Array to Hankel Transform
+            Function to Hankel Transform, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k).
         q : array or None.
             The frequency points at which to evaluate the Hankel 
             transform. If not specified the conjugate points of the
