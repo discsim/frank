@@ -201,7 +201,7 @@ class _HankelRegressor(object):
         return like + self._like_noise
 
     def predict(self, u, v, I=None, geometry=None):
-        """Predict the visibilities.
+        """Predict the visibilities in the sky-plane
 
         Parameters
         ----------
@@ -212,7 +212,7 @@ class _HankelRegressor(object):
             the mean will be used. The intensity should be specified at the
             collocation points,
                 I[k] = I(r_k).
-        geometry:   SourceGeometry object, optional
+        geometry: SourceGeometry object, optional
             Geometry used to de-project the visibilities. If not provided
             a default one passed in during construction will be used.
         """
@@ -226,6 +226,42 @@ class _HankelRegressor(object):
             u, v = self._geometry.deproject(u, v)
 
         q = np.hypot(u, v)
+        V = self._DHT.transform(I, q)
+
+        if geometry is not None:
+            V *= np.cos(geometry.inc)
+
+        _, _, V = geometry.undo_correction(u, v, V)
+
+        return V
+
+    def predict_deprojected(self, q, I=None, geometry=None):
+        """Predict the visibilities in the deprojected-plane
+
+        Parameters
+        ----------
+        q : array
+            1D uv-points to predict the visibilities at
+        I : array, optional
+            Intensity points to predict the vibilities of. If not specified, 
+            the mean will be used. The intensity should be specified at the
+            collocation points,
+                I[k] = I(r_k).
+        geometry: SourceGeometry object, optional
+            Geometry used to de-project the visibilities. If not provided
+            a default one passed in during construction will be used.
+
+        Notes
+        -----
+        The visibilities amplitudes are still reduced due to the projection
+        to be consistent with uvplot.
+        """
+        if I is None:
+            I = self.mean
+
+        if geometry is None:
+            geometry = self._geometry
+
         V = self._DHT.transform(I, q)
 
         if geometry is not None:
