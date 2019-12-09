@@ -35,10 +35,10 @@ def apply_phase_shift(u, v, vis,  dRA, dDec, inverse=False):
     shifted_vis : array of real, size=N
         Phase shifted visibilites.
     """
-    dRA *= 2. * np.pi
-    dDec *= 2. * np.pi
+    dRA *= 2. * np.pi / rad_to_arcsec
+    dDec *= 2. * np.pi / rad_to_arcsec
 
-    phi = (u * dRA + v * dDec) / rad_to_arcsec
+    phi = u * dRA + v * dDec
 
     return vis * (np.cos(phi) + 1j * np.sin(phi))
 
