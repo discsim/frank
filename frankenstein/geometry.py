@@ -13,7 +13,8 @@ __all__ = ["apply_phase_shift", "deproject", "fit_geometry_gaussian",
 
 
 def apply_phase_shift(u, v, vis,  dRA, dDec, inverse=False):
-    """Shift the phase centre of the visibilties.
+    """
+    Shift the phase centre of the visibilties.
 
     Corrects the image centering in visibility space
 
@@ -34,6 +35,7 @@ def apply_phase_shift(u, v, vis,  dRA, dDec, inverse=False):
     -------
     shifted_vis : array of real, size=N
         Phase shifted visibilites.
+    
     """
     dRA *= 2. * np.pi / rad_to_arcsec
     dDec *= 2. * np.pi / rad_to_arcsec
@@ -44,7 +46,8 @@ def apply_phase_shift(u, v, vis,  dRA, dDec, inverse=False):
 
 
 def deproject(u, v, inc, PA, inverse=False):
-    """De-project the image in visibily space
+    """
+    De-project the image in visibily space
 
     Parameters
     ----------
@@ -67,6 +70,7 @@ def deproject(u, v, inc, PA, inverse=False):
         Deprojected u-points
     vp : array, size=N
         Deprojected v-points
+    
     """
     cos_t = np.cos(PA)
     sin_t = np.sin(PA)
@@ -87,7 +91,8 @@ def deproject(u, v, inc, PA, inverse=False):
 
 
 class SourceGeometry(object):
-    """Centres and deprojects the source to ensure axisymmetry.
+    """
+    Centres and deprojects the source to ensure axisymmetry.
 
     Parameters
     ----------
@@ -99,6 +104,7 @@ class SourceGeometry(object):
         Phase centre offset in Right Ascension
     dDec : float, unit=arcseconds
         Phase centre offset in Declination
+    
     """
 
     def __init__(self, inc=0, PA=0, dRA=0, dDec=0):
@@ -108,7 +114,8 @@ class SourceGeometry(object):
         self._dDec = dDec
 
     def apply_correction(self, u, v, vis):
-        """Correct the phase-centre and de-project the visibilities.
+        """
+        Correct the phase-centre and de-project the visibilities.
 
         Parameters
         ----------
@@ -127,6 +134,7 @@ class SourceGeometry(object):
             Corrected v-points of the visibilities
         visp : array of real, size=N
             Corrected complex visibilites
+
         """
         vis = apply_phase_shift(u, v, vis,  self._dRA, self._dDec)
         u, v = deproject(u, v, self._inc, self._PA)
@@ -134,7 +142,8 @@ class SourceGeometry(object):
         return u, v, vis
 
     def undo_correction(self, u, v, vis):
-        """Undo the phase-centre correction and de-projection.
+        """
+        Undo the phase-centre correction and de-projection.
 
         Parameters
         ----------
@@ -153,6 +162,7 @@ class SourceGeometry(object):
             Corrected v-points of the visibilities
         visp : array of real, size=N
             Corrected complex visibilites
+
         """
         u, v = self.reproject(u, v)
         vis = apply_phase_shift(u, v, vis,  -self._dRA, -self._dDec)
@@ -189,7 +199,8 @@ class SourceGeometry(object):
 
 
 def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
-    """Esimate the source geometry by fitting a Gaussian in uv-space.
+    """
+    Esimate the source geometry by fitting a Gaussian in uv-space.
 
     Parameters
     ----------
@@ -207,6 +218,7 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     -------
     geometry : SourceGeometry object
         Fitted geometry.
+    
     """
 
     def _chi2_gauss(params):

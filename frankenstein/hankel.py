@@ -11,7 +11,8 @@ __all__ = ["DiscreteHankelTransform"]
 
 
 class DiscreteHankelTransform(object):
-    """Utilities for computing the discrete Hankel Transform.
+    """
+    Utilities for computing the discrete Hankel Transform.
 
     This class provides the necessary interface to compute the
     a discrete version of the Hankel transform (DHT):
@@ -38,6 +39,7 @@ class DiscreteHankelTransform(object):
         DOI: https://doi.org/10.1364/JOSAA.32.000611
         Note: the definition of the DHT used here differs by factors
         of 2*pi.
+
     """
 
     def __init__(self, Rmax, N, nu=0):
@@ -81,7 +83,8 @@ class DiscreteHankelTransform(object):
         self._j_nN = j_nN
 
     def transform(self, f, q=None, direction='forward'):
-        """Computes the Hankel transform of an array.
+        """
+        Computes the Hankel transform of an array.
 
         Parameters
         ----------
@@ -101,6 +104,7 @@ class DiscreteHankelTransform(object):
         -------
         H[f] : array, size=N or len(q) if supplied
             The Hankel transform of the array f.
+
         """
         if q is None:
             Y = self._Ykm
@@ -119,7 +123,8 @@ class DiscreteHankelTransform(object):
         return norm * np.dot(Y, f)
 
     def coefficients(self, q=None, direction='forward'):
-        """Coefficients of the transform matrix, defined by
+        """
+        Coefficients of the transform matrix, defined by
             H[f](q) = np.dot(Y, f).
 
         Parameters
@@ -136,6 +141,7 @@ class DiscreteHankelTransform(object):
         -------
         Y : array, size=(len(q),N)
             The transformation matrix
+            
         """
         if direction == 'forward':
             norm = 1/(np.pi*self._Qmax**2)

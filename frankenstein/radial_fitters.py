@@ -15,7 +15,8 @@ __all__ = ["FourierBesselFitter", "FrankFitter"]
 
 
 class _HankelRegressor(object):
-    """Solves the Linear Regression problem to compute the posterior
+    """
+    Solves the Linear Regression problem to compute the posterior
        P(I|q,V,p) ~ G(I-mu, D),
     where I is the intensity to be predicted, q, and V are the baselines and 
     visibility data. 
@@ -64,6 +65,7 @@ class _HankelRegressor(object):
         where V is the visibilities and N is the noise covariance. If not 
         provided, the likelihood can still be computed up to this missing 
         constant.
+
     """
 
     def __init__(self, DHT, M, j, p=None,  geometry=None, noise_likelihood=0):
@@ -87,7 +89,8 @@ class _HankelRegressor(object):
         self._fit()
 
     def _fit(self):
-        """Compute the mean and variance from M and j.
+        """
+        Compute the mean and variance from M and j.
 
         Parameters
         ----------
@@ -97,6 +100,7 @@ class _HankelRegressor(object):
         j : 1D array, size=N
             The projected data vector,
                 j = H(q)^T N^-1 V.
+
         """
         # Compute the inverse Prior covariance, S(p)^-1
         Sinv = self._Sinv
@@ -125,7 +129,8 @@ class _HankelRegressor(object):
         self._cov = None
 
     def Dsolve(self, b):
-        """Computes np.dot(D, b) by solving D^-1 x = b.
+        """
+        Computes np.dot(D, b) by solving D^-1 x = b.
 
         Parameters
         ----------
@@ -136,6 +141,7 @@ class _HankelRegressor(object):
         -------
         x : array, same shape as b
             Solution to the equation D x = b.
+
         """
         if self._Dchol is not None:
             return scipy.linalg.cho_solve(self._Dchol, b)
@@ -148,7 +154,8 @@ class _HankelRegressor(object):
         return np.random.multivariate_normal(self.mean, self.covariance, N)
 
     def log_likelihood(self, I=None):
-        """Computes one of two types of likelihood.
+        """
+        Computes one of two types of likelihood.
 
         If I is provided, this computes
             log[P(I,V|S)],
@@ -179,6 +186,7 @@ class _HankelRegressor(object):
         where 
             H_0 = (1/2) * V^T w V - (1/2) log[det(2*np.pi*N)]
         is the noise likelihood.
+
         """
         if I is None:
             like = 0.5 * np.sum(self._j * self._mu)
@@ -201,7 +209,8 @@ class _HankelRegressor(object):
         return like + self._like_noise
 
     def predict(self, u, v, I=None, geometry=None):
-        """Predict the visibilities in the sky-plane
+        """
+        Predict the visibilities in the sky-plane
 
         Parameters
         ----------
@@ -215,6 +224,7 @@ class _HankelRegressor(object):
         geometry: SourceGeometry object, optional
             Geometry used to de-project the visibilities. If not provided
             a default one passed in during construction will be used.
+
         """
         if I is None:
             I = self.mean
@@ -236,7 +246,8 @@ class _HankelRegressor(object):
         return V
 
     def predict_deprojected(self, q, I=None, geometry=None):
-        """Predict the visibilities in the deprojected-plane
+        """
+        Predict the visibilities in the deprojected-plane
 
         Parameters
         ----------
@@ -255,6 +266,7 @@ class _HankelRegressor(object):
         -----
         The visibilities amplitudes are still reduced due to the projection
         to be consistent with uvplot.
+
         """
         if I is None:
             I = self.mean
@@ -311,7 +323,8 @@ class _HankelRegressor(object):
 
 
 class FourierBesselFitter(object):
-    """Fourier-Bessel series model for fitting visibilities. 
+    """
+    Fourier-Bessel series model for fitting visibilities. 
 
     Parameters
     ----------
@@ -330,6 +343,7 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
+    
     """
 
     def __init__(self, Rmax, N, geometry, nu=0,
@@ -343,10 +357,12 @@ class FourierBesselFitter(object):
         self._block_size = block_size
 
     def _build_matrices(self, u, v, V, weights):
-        """Compute the matrices M, and j from the visibility data.
+        """
+        Compute the matrices M, and j from the visibility data.
 
         Also computes 
             H0 = 0.5*log[det(w/(2*np.pi))] - 0.5*np.sum(V * w * V)
+
         """
         # Deproject the visibilities:
         u, v, V = self._geometry.apply_correction(u, v, V)
@@ -394,7 +410,8 @@ class FourierBesselFitter(object):
         self._H0 = 0.5*np.sum(np.log(w/(2*np.pi)) - V*w*V)
 
     def fit(self, u, v, V, weights=1):
-        """Fit the visibilties.
+        """
+        Fit the visibilties.
 
         Parameters
         ----------
@@ -410,6 +427,7 @@ class FourierBesselFitter(object):
         -------
         sol : _HankelRegressor
             Least-squares Fourier-Bessel series fit.
+
         """
         self._build_matrices(u, v, V, weights)
 
@@ -446,7 +464,8 @@ class FourierBesselFitter(object):
 
 
 class FrankFitter(FourierBesselFitter):
-    '''Fit a Gaussian process model using the Discrete Hankel Transform of 
+    '''
+    Fit a Gaussian process model using the Discrete Hankel Transform of 
     Baddour & Chouinard (2015).
 
     The GP model is based upon Oppermann et al. (2013), which use a maximum 
@@ -487,6 +506,7 @@ class FrankFitter(FourierBesselFitter):
             DOI: https://doi.org/10.1364/JOSAA.32.000611
         Oppermann et al. (2013)
             DOI:  https://doi.org/10.1103/PhysRevE.87.032136
+
     '''
 
     def __init__(self, Rmax, N, geometry, nu=0,
@@ -527,7 +547,8 @@ class FrankFitter(FourierBesselFitter):
         return Tij*self._smooth
 
     def fit(self, u, v, V, w=1):
-        """Fit the visibilties.
+        """
+        Fit the visibilties.
 
         Parameters
         ----------
@@ -543,6 +564,7 @@ class FrankFitter(FourierBesselFitter):
         -------
         MAP_sol : _HankelRegressor
             Reconstructed profile using Maximum a posteriori power spectrum.
+
         """
         # Project the data to the signal space
         self._build_matrices(u, v, V, w)
@@ -611,7 +633,8 @@ class FrankFitter(FourierBesselFitter):
         return self._sol
 
     def _ps_covariance(self, fit, Tij, rho):
-        """Covariance of the power-spectrum. 
+        """
+        Covariance of the power-spectrum. 
 
         Parameters
         ----------
@@ -630,6 +653,7 @@ class FrankFitter(FourierBesselFitter):
         Notes
         -----
         Only valid at the location of maximum likelihood.
+
         """
         Ykm = self._DHT.coefficients()
 
@@ -653,7 +677,8 @@ class FrankFitter(FourierBesselFitter):
         return ps_cov
 
     def draw_powerspectrum(self, Ndraw=1):
-        """Draw N sets of power-spectrum parameters.
+        """
+        Draw N sets of power-spectrum parameters.
 
         The draw is takem from the Laplace-approximated (Gaussian) posterior 
         distribution for p,
@@ -668,13 +693,15 @@ class FrankFitter(FourierBesselFitter):
         -------
         p : array, size=(N,Ndraw)
             Power spectrum draws.
+
         """
         log_p = np.random.multivariate_normal(np.log(self._ps),
                                               self._ps_cov, Ndraw)
         return np.exp(log_p)
 
     def fit_powerspectrum(self, p):
-        """Find the posterior mean and covariance given p.
+        """
+        Find the posterior mean and covariance given p.
 
         Parameters
         ----------
@@ -685,13 +712,15 @@ class FrankFitter(FourierBesselFitter):
         -------
         sol : _HankelRegressor
             Posterior solution object for P(I|V,p)
+
         """
         return _HankelRegressor(self._DHT, self._M, self._j, p,
                                 geometry=self._geometry,
                                 noise_likelihood=self._H0)
 
     def log_prior(self, p=None):
-        """Compute the log Prior probability, log(P(p)).
+        """
+        Compute the log Prior probability, log(P(p)).
 
         log[P(p)] ~ np.sum(p0/pi - alpha*np.log(p0/pi))
             - 0.5*np.log(p) (w_smooth*T) np.log(p)
@@ -710,6 +739,7 @@ class FrankFitter(FourierBesselFitter):
         Notes
         -----
         Computed up to a normalizing constant that depends on alpha, p0.
+        
         """
         if p is None:
             p = self._ps
@@ -727,7 +757,8 @@ class FrankFitter(FourierBesselFitter):
         return like
 
     def log_likelihood(self, sol=None):
-        """Compute the log likelihood log[P(p, V)]
+        """
+        Compute the log likelihood log[P(p, V)]
 
         log[P(p)] ~ log[P(V|p)] + log[P(p)]
 
@@ -745,6 +776,8 @@ class FrankFitter(FourierBesselFitter):
         Notes
         -----
         Computed up to a normalizing constant that depends on alpha, p0.
+
+        
         """
         if sol is None:
             sol = self.MAP_solution
