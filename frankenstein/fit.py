@@ -6,7 +6,6 @@ import sys
 import argparse
 
 from frankenstein import FrankFitter, FourierBesselFitter
-from frankenstein.quote import print_quote
 
 def help():
     pass
@@ -33,9 +32,6 @@ def main():
 
     uv = load_uvdata(params)
 
-    # Print a quote for people to read while the fit is being done?
-    print("Peforming fit. Here's a quote to read while you wait...")
-    print_quote()
     
     perform_fit(params)
     
