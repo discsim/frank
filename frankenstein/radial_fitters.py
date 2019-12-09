@@ -1,4 +1,3 @@
-
 """This module contains methods for fitting radial brightness profiles to the de-projected visibities.
 """
 
@@ -68,7 +67,7 @@ class _HankelRegressor(object):
 
     """
 
-    def __init__(self, DHT, M, j, p=None,  geometry=None, noise_likelihood=0):
+    def __init__(self, DHT, M, j, p=None, geometry=None, noise_likelihood=0):
 
         self._geometry = geometry
 
@@ -79,7 +78,7 @@ class _HankelRegressor(object):
         self._p = p
         if p is not None:
             Ykm = self._DHT.coefficients()
-            p1 = np.where(p > 0, 1./p, 0)
+            p1 = np.where(p > 0, 1. / p, 0)
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, p1, Ykm)
         else:
             self._Sinv = None
@@ -118,7 +117,7 @@ class _HankelRegressor(object):
         except np.linalg.LinAlgError:
             U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
 
-            s1 = np.where(s > 0, 1./s, 0)
+            s1 = np.where(s > 0, 1. / s, 0)
 
             self._Dchol = None
             self._Dsvd = U, s1, V
@@ -201,10 +200,10 @@ class _HankelRegressor(object):
 
             Dinv = self._M + Sinv
 
-            like = 0.5*np.sum(self._j * I) - 0.5*np.dot(I, np.dot(Dinv, I))
+            like = 0.5 * np.sum(self._j * I) - 0.5 * np.dot(I, np.dot(Dinv, I))
 
             if self._Sinv is not None:
-                like += 0.5 * np.linalg.slogdet(2*np.pi*Sinv)[1]
+                like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
 
         return like + self._like_noise
 
@@ -347,7 +346,7 @@ class FourierBesselFitter(object):
     """
 
     def __init__(self, Rmax, N, geometry, nu=0,
-                 block_data=True, block_size=10**7):
+                 block_data=True, block_size=10 ** 7):
 
         self._geometry = geometry
 
@@ -372,7 +371,7 @@ class FourierBesselFitter(object):
         # inclination. This is not done in apply_correction for consistency
         # with uvplot
         V = V.real / np.cos(self._geometry.inc)
-        weights = weights * np.cos(self._geometry.inc)**2
+        weights = weights * np.cos(self._geometry.inc) ** 2
 
         # If blocking is used we will build up M and j chunk-by-chunk.
         if self._blocking:
@@ -395,7 +394,7 @@ class FourierBesselFitter(object):
 
             X = self._DHT.coefficients(qs)
 
-            wXT = np.array(X.T*ws, order='C')
+            wXT = np.array(X.T * ws, order='C')
 
             M += np.dot(wXT, X)
             j += np.dot(wXT, Vs)
@@ -407,7 +406,7 @@ class FourierBesselFitter(object):
         self._j = j
 
         # Compute likelihood normalization H_0:
-        self._H0 = 0.5*np.sum(np.log(w/(2*np.pi)) - V*w*V)
+        self._H0 = 0.5 * np.sum(np.log(w / (2 * np.pi)) - V * w * V)
 
     def fit(self, u, v, V, weights=1):
         """
@@ -512,7 +511,7 @@ class FrankFitter(FourierBesselFitter):
     def __init__(self, Rmax, N, geometry, nu=0,
                  alpha=1.05, p_0=1e-15, w_smooth=0.1,
                  tol=1e-3, max_iter=250,
-                 block_data=True, block_size=10**7):
+                 block_data=True, block_size=10 ** 7):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu,
                                           block_data, block_size)
@@ -530,9 +529,9 @@ class FrankFitter(FourierBesselFitter):
         de = np.diff(log_q)
 
         Delta = np.zeros([3, self.size])
-        Delta[0, :-2] = 1 / (dc*de[:-1])
-        Delta[1, 1:-1] = - (1/de[1:] + 1/de[:-1]) / dc
-        Delta[2, 2:] = 1 / (dc*de[1:])
+        Delta[0, :-2] = 1 / (dc * de[:-1])
+        Delta[1, 1:-1] = - (1 / de[1:] + 1 / de[:-1]) / dc
+        Delta[2, 2:] = 1 / (dc * de[1:])
 
         Delta = scipy.sparse.dia_matrix((Delta, [-1, 0, 1]),
                                         shape=(self.size, self.size))
@@ -544,7 +543,7 @@ class FrankFitter(FourierBesselFitter):
 
         Tij = Delta.T.dot(dce.dot(Delta))
 
-        return Tij*self._smooth
+        return Tij * self._smooth
 
     def fit(self, u, v, V, w=1):
         """
@@ -582,15 +581,15 @@ class FrankFitter(FourierBesselFitter):
 
         fit = self.fit_powerspectrum(pi)
 
-        pi[:] = np.max(np.dot(Ykm, fit.mean))**2 / (self._ai + 0.5*rho - 1.0)
-        pi[:] *= (self.q/self.q[0])**-2
+        pi[:] = np.max(np.dot(Ykm, fit.mean)) ** 2 / (self._ai + 0.5 * rho - 1.0)
+        pi[:] *= (self.q / self.q[0]) ** -2
 
         fit = self.fit_powerspectrum(pi)
 
         # Do one unsmoothed iteration:
-        Tr1 = np.dot(Ykm, fit.mean)**2
+        Tr1 = np.dot(Ykm, fit.mean) ** 2
         Tr2 = np.einsum('ij,ji->i', Ykm, fit.Dsolve(Ykm.T))
-        pi = (self._p0 + 0.5*(Tr1 + Tr2)) / (self._ai-1.0 + 0.5*rho)
+        pi = (self._p0 + 0.5 * (Tr1 + Tr2)) / (self._ai - 1.0 + 0.5 * rho)
 
         fit = self.fit_powerspectrum(pi)
 
@@ -599,13 +598,12 @@ class FrankFitter(FourierBesselFitter):
 
         count = 0
         pi_old = 0
-        while (np.any(np.abs(pi-pi_old) > self._tol * np.abs(pi)) and
+        while (np.any(np.abs(pi - pi_old) > self._tol * np.abs(pi)) and
                count <= self._max_iter):
-
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
             #       = (Ykm mu)**2
-            Tr1 = np.dot(Ykm, fit.mean)**2
+            Tr1 = np.dot(Ykm, fit.mean) ** 2
             # Project D to Fourier-space:
             #   Drr^-1 = Ykm^T Dqq^-1 Ykm
             #   Drr = Ykm^-1 Dqq Ykm^-T
@@ -613,7 +611,7 @@ class FrankFitter(FourierBesselFitter):
             # Tr2 = Trace(Dqq)
             Tr2 = np.einsum('ij,ji->i', Ykm, fit.Dsolve(Ykm.T))
 
-            beta = (self._p0 + 0.5*(Tr1 + Tr2)) / pi - (self._ai-1.0 + 0.5*rho)
+            beta = (self._p0 + 0.5 * (Tr1 + Tr2)) / pi - (self._ai - 1.0 + 0.5 * rho)
             pi_new = np.exp(sparse_solve(Tij_pI, beta + np.log(pi)))
 
             pi_old = pi.copy()
@@ -665,10 +663,10 @@ class FrankFitter(FourierBesselFitter):
         p = fit.power_spectrum
         tau = np.log(p)
 
-        hess =  \
-            + np.diag(self._ai-1.0 + 0.5*rho + Tij.dot(tau)) \
+        hess = \
+            + np.diag(self._ai - 1.0 + 0.5 * rho + Tij.dot(tau)) \
             + Tij.todense() \
-            - 0.5*np.outer(1/p, 1/p)*(2*mqq + Dqq)*Dqq
+            - 0.5 * np.outer(1 / p, 1 / p) * (2 * mqq + Dqq) * Dqq
 
         # Invert the Hessian
         hess_chol = scipy.linalg.cho_factor(hess)
@@ -747,7 +745,7 @@ class FrankFitter(FourierBesselFitter):
         Tij = self._build_smoothing_matrix()
 
         # Add the power-spectrum prior term
-        xi = self._p0/p
+        xi = self._p0 / p
         like = np.sum(xi - self._ai * np.log(xi))
 
         # Extra term due to spectral smoothness

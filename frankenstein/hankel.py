@@ -52,17 +52,17 @@ class DiscreteHankelTransform(object):
             self._jnu0 = j1
             self._jnup = lambda x: jv(2, x)
         else:
-            self._jnu0 = lambda x: jv(nu,   x)
-            self._jnup = lambda x: jv(nu+1, x)
+            self._jnu0 = lambda x: jv(nu, x)
+            self._jnup = lambda x: jv(nu + 1, x)
 
         self._N = N
         self._nu = nu
 
         # Compute the collocation points
-        j_nk = jn_zeros(nu, N+1)
+        j_nk = jn_zeros(nu, N + 1)
         j_nk, j_nN = j_nk[:-1], j_nk[-1]
-        
-        Qmax = j_nN / (2*np.pi*Rmax)
+
+        Qmax = j_nN / (2 * np.pi * Rmax)
 
         self._Rnk = Rmax * (j_nk / j_nN)
         self._Qnk = Qmax * (j_nk / j_nN)
@@ -76,7 +76,7 @@ class DiscreteHankelTransform(object):
         self._Ykm = (2 / (j_nN * Jnk * Jnk)) * \
             self._jnu0(np.prod(np.meshgrid(j_nk, j_nk/j_nN), axis=0))
 
-        self._scale_factor = 1 / self._jnup(j_nk)**2
+        self._scale_factor = 1 / self._jnup(j_nk) ** 2
 
         # Store the extra data needed
         self._j_nk = j_nk
@@ -110,9 +110,9 @@ class DiscreteHankelTransform(object):
             Y = self._Ykm
 
             if direction == 'forward':
-                norm = (2*np.pi*self._Rmax**2)/self._j_nN
+                norm = (2 * np.pi * self._Rmax ** 2) / self._j_nN
             elif direction == 'backward':
-                norm = (2*np.pi*self._Qmax**2)/self._j_nN
+                norm = (2 * np.pi * self._Qmax ** 2) / self._j_nN
             else:
                 raise AttributeError("direction must be one of {}"
                                      "".format(['forward', 'backward']))
@@ -144,21 +144,21 @@ class DiscreteHankelTransform(object):
             
         """
         if direction == 'forward':
-            norm = 1/(np.pi*self._Qmax**2)
-            k = 1./self._Qmax
+            norm = 1 / (np.pi * self._Qmax ** 2)
+            k = 1. / self._Qmax
         elif direction == 'backward':
-            norm = 1/(np.pi*self._Rmax**2)
-            k = 1./self._Rmax
+            norm = 1 / (np.pi * self._Rmax ** 2)
+            k = 1. / self._Rmax
         else:
             raise AttributeError("direction must be one of {}"
                                  "".format(['forward', 'backward']))
 
         # For the DHT points we can use the cached Ykm points
         if q is None:
-            return 0.5*self._j_nN * norm * self._Ykm
+            return 0.5 * self._j_nN * norm * self._Ykm
 
         H = (norm * self._scale_factor) * \
-            self._jnu0(np.outer(k*q, self._j_nk))
+            self._jnu0(np.outer(k * q, self._j_nk))
 
         return H
 

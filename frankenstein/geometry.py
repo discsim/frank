@@ -12,7 +12,7 @@ __all__ = ["apply_phase_shift", "deproject", "fit_geometry_gaussian",
            "SourceGeometry"]
 
 
-def apply_phase_shift(u, v, vis,  dRA, dDec, inverse=False):
+def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
     """
     Shift the phase centre of the visibilties.
 
@@ -136,7 +136,7 @@ class SourceGeometry(object):
             Corrected complex visibilites
 
         """
-        vis = apply_phase_shift(u, v, vis,  self._dRA, self._dDec)
+        vis = apply_phase_shift(u, v, vis, self._dRA, self._dDec)
         u, v = deproject(u, v, self._inc, self._PA)
 
         return u, v, vis
@@ -165,7 +165,7 @@ class SourceGeometry(object):
 
         """
         u, v = self.reproject(u, v)
-        vis = apply_phase_shift(u, v, vis,  -self._dRA, -self._dDec)
+        vis = apply_phase_shift(u, v, vis, -self._dRA, -self._dDec)
 
         return u, v, vis
 
@@ -233,10 +233,10 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         up, vp = deproject(u, v, inc, pa)
 
         # Evaluate the gaussian:
-        gaus = np.exp(- 0.5 * (up**2 + vp**2) / (rad_to_arcsec*scal)**2)
+        gaus = np.exp(- 0.5 * (up ** 2 + vp ** 2) / (rad_to_arcsec * scal) ** 2)
 
         # Evaluate at the Chi2, using gaussian tapering:
-        chi2 = weights * np.abs(norm * gaus - vis_corr)**2
+        chi2 = weights * np.abs(norm * gaus - vis_corr) ** 2
         return chi2.sum() / (2 * len(weights))
 
     if phase_centre is not None:
