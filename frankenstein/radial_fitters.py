@@ -9,6 +9,7 @@ import scipy.sparse
 
 from frankenstein.hankel import DiscreteHankelTransform
 from frankenstein.geometry import SourceGeometry
+from .geometry import fit_geometry_gaussian
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 
@@ -463,18 +464,18 @@ class FourierBesselFitter(object):
 
 
 class FrankFitter(FourierBesselFitter):
-    '''
-    Fit a Gaussian process model using the Discrete Hankel Transform of 
+    """
+    Fit a Gaussian process model using the Discrete Hankel Transform of
     Baddour & Chouinard (2015).
 
-    The GP model is based upon Oppermann et al. (2013), which use a maximum 
-    aposteriori estimate for the power spectrum as the GP prior for the 
+    The GP model is based upon Oppermann et al. (2013), which use a maximum
+    aposteriori estimate for the power spectrum as the GP prior for the
     real-space coefficients.
 
     Parameters
     ----------
     Rmax : float
-        Radius of support for the functions to transform, i.e. 
+        Radius of support for the functions to transform, i.e.
           f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points
@@ -493,8 +494,8 @@ class FrankFitter(FourierBesselFitter):
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration.
     block_data : bool, default = True
-        Large temporary matrices are needed to set up the data, if block_data 
-        is True we avoid this, limiting the memory requirement to block_size 
+        Large temporary matrices are needed to set up the data, if block_data
+        is True we avoid this, limiting the memory requirement to block_size
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
@@ -506,7 +507,7 @@ class FrankFitter(FourierBesselFitter):
         Oppermann et al. (2013)
             DOI:  https://doi.org/10.1103/PhysRevE.87.032136
 
-    '''
+    """
 
     def __init__(self, Rmax, N, geometry, nu=0,
                  alpha=1.05, p_0=1e-15, w_smooth=0.1,
@@ -545,7 +546,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, w=1):
+    def fit(self, u, v, V, w=1, fit_geometry=""):
         """
         Fit the visibilties.
 
@@ -558,6 +559,10 @@ class FrankFitter(FourierBesselFitter):
         weights : 1D array, optional.
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
+        fit_geometry : str, optional
+            Default is "": geometry is assumed from the geometry object provided when the Fitter
+            object was created.
+            If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
 
         Returns
         -------
@@ -565,6 +570,13 @@ class FrankFitter(FourierBesselFitter):
             Reconstructed profile using Maximum a posteriori power spectrum.
 
         """
+        if fit_geometry.lower() == "":
+            pass
+        elif fit_geometry.lower() == "gaussian":
+            self._geometry = fit_geometry_gaussian(u, v, V, w, phase_centre=(0, 0))
+        else:
+            raise ValueError("fit_geometry='{}' not recognised.".format(fit_geometry))
+
         # Project the data to the signal space
         self._build_matrices(u, v, V, w)
         # Compute the smoothing matrix:
