@@ -39,9 +39,7 @@ class DiscreteHankelTransform(object):
         DOI: https://doi.org/10.1364/JOSAA.32.000611
         Note: the definition of the DHT used here differs by factors
         of 2*pi.
-
     """
-
     def __init__(self, Rmax, N, nu=0):
 
         # Select the fast Bessel functions, if available.
