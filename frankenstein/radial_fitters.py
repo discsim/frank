@@ -356,6 +356,35 @@ class FourierBesselFitter(object):
         self._blocking = block_data
         self._block_size = block_size
 
+    def _fit_geometry(self, u, v, V, w, fit_geometry, phase_centre):
+        """
+        Perform the geometry fit if needed.
+
+        Parameters
+        ----------
+        u,v : 1D array
+            uv-points of the visibilies.
+        V : 1D array
+            Visibility amplitudes at q
+        weights : 1D array, optional.
+            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+            the standard deviation.
+        fit_geometry : str, optional
+            Default is "": geometry is assumed from the geometry object provided when the Fitter
+            object was created.
+            If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
+        phase_centre: [dRA, dDec], optional.
+            The Phase centre offsets dRA and dDec in arcseconds.
+            If not provided, these will be fit for.
+
+        """
+        if fit_geometry.lower() == "":
+            pass
+        elif fit_geometry.lower() == "gaussian":
+            self._geometry = fit_geometry_gaussian(u, v, V, w, phase_centre=phase_centre)
+        else:
+            raise ValueError("fit_geometry='{}' not recognised.".format(fit_geometry))
+
     def _build_matrices(self, u, v, V, weights):
         """
         Compute the matrices M, and j from the visibility data.
@@ -409,7 +438,7 @@ class FourierBesselFitter(object):
         # Compute likelihood normalization H_0:
         self._H0 = 0.5 * np.sum(np.log(w / (2 * np.pi)) - V * w * V)
 
-    def fit(self, u, v, V, weights=1):
+    def fit(self, u, v, V, weights=1, fit_geometry="", phase_centre=None):
         """
         Fit the visibilties.
 
@@ -422,6 +451,13 @@ class FourierBesselFitter(object):
         weights : 1D array, optional.
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
+        fit_geometry : str, optional
+            Default is "": geometry is assumed from the geometry object provided when the Fitter
+            object was created.
+            If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
+        phase_centre: [dRA, dDec], optional.
+            The Phase centre offsets dRA and dDec in arcseconds.
+            If not provided, these will be fit for.
 
         Returns
         -------
@@ -429,6 +465,8 @@ class FourierBesselFitter(object):
             Least-squares Fourier-Bessel series fit.
 
         """
+        self._fit_geometry(u, v, V, weights, fit_geometry, phase_centre)
+
         self._build_matrices(u, v, V, weights)
 
         self._sol = _HankelRegressor(self._DHT, self._M, self._j,
@@ -546,7 +584,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, w=1, fit_geometry=""):
+    def fit(self, u, v, V, w=1, fit_geometry="", phase_centre=None):
         """
         Fit the visibilties.
 
@@ -563,6 +601,9 @@ class FrankFitter(FourierBesselFitter):
             Default is "": geometry is assumed from the geometry object provided when the Fitter
             object was created.
             If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
+        phase_centre: [dRA, dDec], optional.
+            The Phase centre offsets dRA and dDec in arcseconds.
+            If not provided, these will be fit for.
 
         Returns
         -------
@@ -570,12 +611,8 @@ class FrankFitter(FourierBesselFitter):
             Reconstructed profile using Maximum a posteriori power spectrum.
 
         """
-        if fit_geometry.lower() == "":
-            pass
-        elif fit_geometry.lower() == "gaussian":
-            self._geometry = fit_geometry_gaussian(u, v, V, w, phase_centre=(0, 0))
-        else:
-            raise ValueError("fit_geometry='{}' not recognised.".format(fit_geometry))
+        # fit geometry if needed
+        self._fit_geometry(u, v, V, w, fit_geometry, phase_centre)
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, w)
