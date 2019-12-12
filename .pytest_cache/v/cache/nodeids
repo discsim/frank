@@ -1,0 +1,7 @@
+[
+  "frankenstein/tests.py::test_hankel_gauss", 
+  "frankenstein/tests.py::test_import_data", 
+  "frankenstein/tests.py::test_fit_geometry", 
+  "frankenstein/tests.py::test_fourier_bessel_fitter", 
+  "frankenstein/tests.py::test_frank_fitter"
+]

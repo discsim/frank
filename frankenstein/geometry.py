@@ -4,7 +4,7 @@
 from __future__ import division, absolute_import, print_function
 
 import numpy as np
-from scipy.optimize import minimize
+from scipy.optimize import least_squares
 
 from frankenstein.constants import rad_to_arcsec
 
@@ -220,33 +220,68 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         Fitted geometry.
     
     """
+    fac = 2*np.pi / rad_to_arcsec
+    w = np.sqrt(weights)
 
-    def _chi2_gauss(params):
-        """Evaluate the Chi^2 of Gaussian fit"""
+    def wrap(fun):
+        return np.concatenate([fun.real, fun.imag])
+        
+    def _gauss_fun(params):
         dRA, dDec, inc, pa, norm, scal = params
 
         if phase_centre is None:
-            vis_corr = apply_phase_shift(u, v, vis, dRA, dDec)
+            phi = dRA*fac * u + dDec*fac * v
+            Vp = vis * (np.cos(phi) + 1j*np.sin(phi))
         else:
-            vis_corr = vis
+            Vp = vis.copy()
 
-        up, vp = deproject(u, v, inc, pa)
+        c_t = np.cos(pa)
+        s_t = np.sin(pa)
+        c_i = np.cos(inc)
+        up = (u*c_t - v*s_t) * c_i / (scal*rad_to_arcsec)
+        vp = (u*s_t + v*c_t)  / (scal*rad_to_arcsec)
 
-        # Evaluate the gaussian:
-        gaus = np.exp(- 0.5 * (up ** 2 + vp ** 2) / (rad_to_arcsec * scal) ** 2)
+        fun = w*(norm * np.exp(-0.5*(up*up+ vp*vp)) - Vp)
 
-        # Evaluate at the Chi2, using gaussian tapering:
-        chi2 = weights * np.abs(norm * gaus - vis_corr) ** 2
-        return chi2.sum() / (2 * len(weights))
+        return wrap(fun)
 
-    if phase_centre is not None:
-        vis = apply_phase_shift(u, v, visib, phase_centre[0], phase_centre[1])
-    else:
-        vis = visib
+    def _gauss_jac(params):
+        dRA, dDec, inc, pa, norm, scal = params
 
-    res = minimize(_chi2_gauss, [0.0, 0.0,
-                                 0.1, 0.1,
-                                 1.0, 1.0])
+        jac = np.zeros([6, 2*len(w)])
+
+        if phase_centre is None:
+            phi = dRA*fac * u + dDec*fac * v
+            dVp = - w*vis * (-np.sin(phi) + 1j*np.cos(phi)) * fac
+
+            jac[0] = wrap(dVp*u)
+            jac[1] = wrap(dVp*v)
+
+        c_t = np.cos(pa)
+        s_t = np.sin(pa)
+        c_i = np.cos(inc)
+        s_i = np.sin(inc)
+        up = (u*c_t - v*s_t) 
+        vp = (u*s_t + v*c_t) 
+
+        uv = (up*up*c_i*c_i+ vp*vp)
+
+        G = w*np.exp(-0.5 * uv / (scal*rad_to_arcsec)**2)
+
+        norm = norm / (scal*rad_to_arcsec)**2
+
+        jac[2] = wrap(norm*G*up*up*c_i*s_i)
+        jac[3] = wrap(norm*G*up*vp*(c_i*c_i - 1)/2)
+        jac[4] = wrap(G)
+        jac[5] = wrap(norm*G*uv/scal)
+
+        return jac.T
+
+
+    res = least_squares(_gauss_fun,[0.0, 0.0,
+                                    0.1, 0.1,
+                                    1.0, 1.0],
+                        jac=_gauss_jac, method='lm')
 
     dRA, dDec, inc, PA, _, _ = res.x
 
@@ -254,3 +289,21 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         dRA, dDec = phase_centre
 
     return SourceGeometry(inc, PA, dRA, dDec)
+
+if __name__ == "__main__":
+    import time
+
+    uv_AS209_DHSARP = np.load('examples/AS209_continuum.npz')
+    u, v, vis, weights = [uv_AS209_DHSARP[k] for k in ['u', 'v', 'V', 'weights']]
+
+    def print_geometry(geom):
+        print("\tPA, inclination (deg):\t\t {:.10f} {:.10f}".format(geom.PA*180/np.pi, geom.inc*180/np.pi))
+        print("\tPhase centre, dRA, dDec (mas):\t {:.10f} {:.10f}".format( 1e3*geom.dRA, 1e3*geom.dDec))
+
+    tStart = time.time()
+    geom = fit_geometry_gaussian(u,v,vis, weights)
+    tEnd = time.time()
+
+    print("Fit:")
+    print_geometry(geom)
+    print("\tTime taken:", tEnd-tStart)
