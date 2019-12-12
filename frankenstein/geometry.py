@@ -231,9 +231,9 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
-            Vp = vis * (np.cos(phi) + 1j*np.sin(phi))
+            Vp = visib * (np.cos(phi) + 1j*np.sin(phi))
         else:
-            Vp = vis.copy()
+            Vp = visib
 
         c_t = np.cos(pa)
         s_t = np.sin(pa)
