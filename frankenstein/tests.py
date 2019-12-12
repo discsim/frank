@@ -82,8 +82,10 @@ def test_fit_geometry():
 
     geom = fit_geometry_gaussian(u,v,vis, weights)
 
+    print([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec])
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec],
-                                [1.4916122759, -0.5395899711, 0.6705996205, 1.2217059933],
+                                [1.4916013559412147, -0.5395904796783955, 
+                                0.6431627790617276, 1.161768824369382],
                                 err_msg="Gaussian geometry fit")
 
 
