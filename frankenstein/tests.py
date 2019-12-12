@@ -2,8 +2,11 @@
 
 import numpy as np
 
-# use relative imports since it is a package
-from .hankel import DiscreteHankelTransform
+from frankenstein.constants import rad_to_arcsec
+
+from frankenstein.hankel import DiscreteHankelTransform
+from frankenstein.radial_fitters import FourierBesselFitter, FrankFitter
+from frankenstein.geometry import SourceGeometry
 
 
 def test_hankel_gauss():
@@ -56,20 +59,66 @@ def test_hankel_gauss():
     # Compare Cached vs non-cached DHT points:
     np.testing.assert_allclose(DHT.coefficients(q=DHT.q),
                                DHT.coefficients(),
-                               atol=1e-15, err_msg="Cached forward DHT Coeffs")
+                               atol=1e-12, rtol=0, err_msg="Cached forward DHT Coeffs")
     np.testing.assert_allclose(DHT.coefficients(q=DHT.r, direction='backward'),
                                DHT.coefficients(direction='backward'),
-                               atol=1e-15, err_msg="Cached inverse DHT Coeffs")
+                               atol=1e-12, rtol=0, err_msg="Cached inverse DHT Coeffs")
 
 def test_import_data():
     # TODO
     pass
 
 
+def load_AS209():
+    uv_AS209_DHSARP = np.load('examples/AS209_continuum.npz')
+    geometry = SourceGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97*np.pi/180, PA=85.76*np.pi/180)
+
+    return uv_AS209_DHSARP, geometry
+
 def test_fit_geometry():
     pass
 
 
-def test_run_frank():
+def test_fourier_bessel_fitter():
     """ Run Frank on AS 209 dataset in examples directory """
-    pass
+
+    AS209, geometry = load_AS209()    
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6/rad_to_arcsec
+
+    FB = FourierBesselFitter(Rmax, 20, geometry)
+
+    sol = FB.fit(u, v, vis, weights)
+
+    expected = np.array([1.89446696e+10, 1.81772972e+10, 1.39622125e+10, 1.20709653e+10,
+                         9.83716859e+09, 3.26308106e+09, 2.02453146e+08, 4.73919867e+09,
+                         1.67911877e+09, 1.73161931e+08, 4.50233539e+08, 3.57108466e+08,
+                         4.04216831e+09, 1.89085113e+09, 6.73819228e+08, 5.50895976e+08,
+                         1.53683576e+08, 1.02413038e+08, 2.32589333e+07, 3.33260713e+07])
+
+    np.testing.assert_allclose(sol.mean, expected,
+                               err_msg="Testing FourierBessel Fit to AS 209")
+
+def test_frank_fitter():
+    """ Run Frank on AS 209 dataset in examples directory """
+
+    AS209, geometry = load_AS209()    
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6/rad_to_arcsec
+
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, w_smooth=1e-2)
+
+    sol = FF.fit(u, v, vis, weights)
+
+    expected = np.array([1.89447670e+10, 1.81771688e+10, 1.39622994e+10, 1.20709223e+10,
+                         9.83714570e+09, 3.26303606e+09, 2.02683225e+08, 4.73895907e+09,
+                         1.67919735e+09, 1.73191351e+08, 4.50154739e+08, 3.57282237e+08,
+                         4.04196935e+09, 1.89094928e+09, 6.73782223e+08, 5.50924438e+08,
+                         1.53674025e+08, 1.02419407e+08, 2.32503410e+07, 3.33286294e+07])
+
+    np.testing.assert_allclose(sol.mean, expected,
+                               err_msg="Testing Frank Fit to AS 209")
