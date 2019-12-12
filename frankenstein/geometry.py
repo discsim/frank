@@ -289,21 +289,3 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         dRA, dDec = phase_centre
 
     return SourceGeometry(inc, PA, dRA, dDec)
-
-if __name__ == "__main__":
-    import time
-
-    uv_AS209_DHSARP = np.load('examples/AS209_continuum.npz')
-    u, v, vis, weights = [uv_AS209_DHSARP[k] for k in ['u', 'v', 'V', 'weights']]
-
-    def print_geometry(geom):
-        print("\tPA, inclination (deg):\t\t {:.10f} {:.10f}".format(geom.PA*180/np.pi, geom.inc*180/np.pi))
-        print("\tPhase centre, dRA, dDec (mas):\t {:.10f} {:.10f}".format( 1e3*geom.dRA, 1e3*geom.dDec))
-
-    tStart = time.time()
-    geom = fit_geometry_gaussian(u,v,vis, weights)
-    tEnd = time.time()
-
-    print("Fit:")
-    print_geometry(geom)
-    print("\tTime taken:", tEnd-tStart)
