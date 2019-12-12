@@ -758,7 +758,7 @@ class FrankFitter(FourierBesselFitter):
         """
         Compute the log likelihood log[P(p, V)]
 
-        log[P(p)] ~ log[P(V|p)] + log[P(p)]
+        log[P(p, V)] ~ log[P(V|p)] + log[P(p)]
 
         Parameters
         ----------
