@@ -76,7 +76,16 @@ def load_AS209():
     return uv_AS209_DHSARP, geometry
 
 def test_fit_geometry():
-    pass
+    # Check the geometry fit on a subset of the AS209 data
+    AS209, _ = load_AS209()    
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    geom = fit_geometry_gaussian(u,v,vis, weights)
+
+    np.testing.assert_allclose([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec],
+                                [1.4916122759, -0.5395899711, 0.6705996205, 1.2217059933],
+                                err_msg="Gaussian geometry fit")
+
 
 
 def test_fourier_bessel_fitter():
