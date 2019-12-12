@@ -6,7 +6,7 @@ from frankenstein.constants import rad_to_arcsec
 
 from frankenstein.hankel import DiscreteHankelTransform
 from frankenstein.radial_fitters import FourierBesselFitter, FrankFitter
-from frankenstein.geometry import SourceGeometry
+from frankenstein.geometry import SourceGeometry, fit_geometry_gaussian
 
 
 def test_hankel_gauss():
