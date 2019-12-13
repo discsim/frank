@@ -548,7 +548,7 @@ class FrankFitter(FourierBesselFitter):
     """
 
     def __init__(self, Rmax, N, geometry, nu=0,
-                 alpha=1.05, p_0=1e-15, w_smooth=0.1,
+                 alpha=1.05, p_0=1e-15, weights_smooth=0.1,
                  tol=1e-3, max_iter=250,
                  block_data=True, block_size=10 ** 7):
 
@@ -557,7 +557,7 @@ class FrankFitter(FourierBesselFitter):
 
         self._p0 = p_0
         self._ai = alpha
-        self._smooth = w_smooth
+        self._smooth = weights_smooth
 
         self._tol = tol
         self._max_iter = max_iter
@@ -770,7 +770,7 @@ class FrankFitter(FourierBesselFitter):
         Compute the log Prior probability, log(P(p)).
 
         log[P(p)] ~ np.sum(p0/pi - alpha*np.log(p0/pi))
-            - 0.5*np.log(p) (w_smooth*T) np.log(p)
+            - 0.5*np.log(p) (weights_smooth*T) np.log(p)
 
         Parameters
         ----------
