@@ -3,7 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 frankenstein/__pychache__/
-*.pyc
 
 # C extensions
 *.so
