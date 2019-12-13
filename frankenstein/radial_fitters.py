@@ -8,8 +8,7 @@ import scipy.linalg
 import scipy.sparse
 
 from frankenstein.hankel import DiscreteHankelTransform
-from frankenstein.geometry import SourceGeometry
-from .geometry import fit_geometry_gaussian
+from frankenstein.geometry import fit_geometry_gaussian
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 
