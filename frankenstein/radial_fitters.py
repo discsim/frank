@@ -320,6 +320,11 @@ class _HankelRegressor(object):
         """Number of points in reconstruction"""
         return self._DHT.size
 
+    @property
+    def geometry(self):
+        """Geometry object"""
+        return self._geometry
+
 
 class FourierBesselFitter(object):
     """
@@ -503,6 +508,11 @@ class FourierBesselFitter(object):
     def size(self):
         """Number of points in reconstruction"""
         return self._DHT.size
+
+    @property
+    def geometry(self):
+        """Geometry object"""
+        return self._geometry
 
 
 class FrankFitter(FourierBesselFitter):

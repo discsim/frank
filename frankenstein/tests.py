@@ -51,10 +51,10 @@ def test_hankel_gauss():
 
     np.testing.assert_allclose(np.dot(Hf, Ir),
                                DHT.transform(Ir, direction='forward'),
-                               rtol=1e-8, err_msg="Forward DHT Coeffs")
+                               rtol=1e-7, err_msg="Forward DHT Coeffs")
     np.testing.assert_allclose(np.dot(Hb, Iq),
                                DHT.transform(Iq, direction='backward'),
-                               rtol=1e-8, err_msg="Inverse DHT Coeffs")
+                               rtol=1e-7, err_msg="Inverse DHT Coeffs")
 
     # Compare Cached vs non-cached DHT points:
     np.testing.assert_allclose(DHT.coefficients(q=DHT.q),
@@ -85,11 +85,30 @@ def test_fit_geometry():
 
     geom = fit_geometry_gaussian(u, v, vis, weights)
 
-    print([geom.PA, geom.inc, 1e3 * geom.dRA, 1e3 * geom.dDec])
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA, 1e3 * geom.dDec],
                                [1.4916013559412147, -0.5395904796783955,
                                 0.6431627790617276, 1.161768824369382],
                                err_msg="Gaussian geometry fit")
+
+
+def test_fit_geometry_inside():
+    # Check the geometry fit while the Frank fit is executed
+    AS209, _ = load_AS209()
+
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6 / rad_to_arcsec
+
+    FF = FrankFitter(Rmax, 20, alpha=1.05, weights_smooth=1e-2, geometry=None,
+                     geometry_fit_method="gaussian")
+
+    sol = FF.fit(u, v, vis, weights)
+
+    geom = sol.geometry
+    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA, 1e3 * geom.dDec],
+                               [1.4916013559412147, -0.5395904796783955,
+                                0.6431627790617276, 1.161768824369382],
+                               err_msg="Gaussian geometry fit inside Frank fit")
 
 
 def test_fourier_bessel_fitter():
