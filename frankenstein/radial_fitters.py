@@ -34,9 +34,9 @@ class _HankelRegressor(object):
 
     H(q) is the matrix that projects the intensity, I, to visibility space and 
     M is defined by
-        M = H(q)^T w H(q),
-    where w is the weights matrix and
-        j = H(q)^T w V.
+        M = H(q)^T weights H(q),
+    where weights is the weights matrix and
+        j = H(q)^T weights V.
 
     The mean and covariance of the posterior are then given by
         mu = D j
@@ -61,7 +61,7 @@ class _HankelRegressor(object):
         in self.predict.
     noise_likelihood : floaat, optional
          An optional parameter needed to compute the full likelihood,
-            like_noise = -(1/2) V^T w V - (1/2)*log[det(2*np.pi*N)]
+            like_noise = -(1/2) V^T weights V - (1/2)*log[det(2*np.pi*N)]
         where V is the visibilities and N is the noise covariance. If not 
         provided, the likelihood can still be computed up to this missing 
         constant.
@@ -184,7 +184,7 @@ class _HankelRegressor(object):
                  + (1/2)*log[det(D)/det(S)]
                  + H_0
         where 
-            H_0 = (1/2) * V^T w V - (1/2) log[det(2*np.pi*N)]
+            H_0 = (1/2) * V^T weights V - (1/2) log[det(2*np.pi*N)]
         is the noise likelihood.
 
         """
@@ -390,7 +390,7 @@ class FourierBesselFitter(object):
         Compute the matrices M, and j from the visibility data.
 
         Also computes 
-            H0 = 0.5*log[det(w/(2*np.pi))] - 0.5*np.sum(V * w * V)
+            H0 = 0.5*log[det(weights/(2*np.pi))] - 0.5*np.sum(V * weights * V)
 
         """
         # Deproject the visibilities:
@@ -584,7 +584,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, w=1, fit_geometry="", phase_centre=None):
+    def fit(self, u, v, V, weights=1, fit_geometry="", phase_centre=None):
         """
         Fit the visibilties.
 
@@ -612,10 +612,10 @@ class FrankFitter(FourierBesselFitter):
 
         """
         # fit geometry if needed
-        self._fit_geometry(u, v, V, w, fit_geometry, phase_centre)
+        self._fit_geometry(u, v, V, weights, fit_geometry, phase_centre)
 
         # Project the data to the signal space
-        self._build_matrices(u, v, V, w)
+        self._build_matrices(u, v, V, weights)
         # Compute the smoothing matrix:
         Tij = self._build_smoothing_matrix()
 
