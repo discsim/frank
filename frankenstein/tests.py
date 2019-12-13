@@ -121,7 +121,7 @@ def test_frank_fitter():
 
     Rmax = 1.6/rad_to_arcsec
 
-    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, w_smooth=1e-2)
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
 
