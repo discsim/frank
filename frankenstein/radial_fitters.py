@@ -332,30 +332,44 @@ class FourierBesselFitter(object):
             f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points.
-    geometry: SourceGeometry object
-        Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform.
     block_data : bool, default = True
-        Large temporary matrices are needed to set up the data, if block_data 
-        is True we avoid this, limiting the memory requirement to block_size 
+        Large temporary matrices are needed to set up the data, if block_data
+        is True we avoid this, limiting the memory requirement to block_size
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
-    
+    geometry: SourceGeometry object, optional
+        Geometry used to de-project the visibilities before fitting.
+    geometry_fit_method : str, optional
+        Method to use to fit the geometry parameters (inc, PA, dRA, dDec).
+
+            * "" (default): do not fit. The geometry is assumed from `geometry`.
+            * "gaussian" : fit the geometry with an axisymmetric Gaussian brightness profile.
+
+    phase_centre: [dRA, dDec], optional.
+        The Phase centre offsets dRA and dDec in arcseconds.
+        If not provided, these will be fit for.
+
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0,
-                 block_data=True, block_size=10 ** 7):
+    def __init__(self, Rmax, N, nu=0, block_data=True, block_size=10 ** 7, geometry=None,
+                 geometry_fit_method="", phase_centre=None):
+
+        assert geometry is not None or geometry_fit_method is not "", \
+            "Expect geometry or geometry_fit_method to be provided, got both None. "
 
         self._geometry = geometry
+        self._geometry_fit_method = geometry_fit_method
+        self._phase_centre = phase_centre
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
 
         self._blocking = block_data
         self._block_size = block_size
 
-    def _fit_geometry(self, u, v, V, w, fit_geometry, phase_centre):
+    def _fit_geometry(self, u, v, V, weights):
         """
         Perform the geometry fit if needed.
 
@@ -368,21 +382,19 @@ class FourierBesselFitter(object):
         weights : 1D array, optional.
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
-        fit_geometry : str, optional
-            Default is "": geometry is assumed from the geometry object provided when the Fitter
-            object was created.
-            If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
-        phase_centre: [dRA, dDec], optional.
-            The Phase centre offsets dRA and dDec in arcseconds.
-            If not provided, these will be fit for.
 
         """
-        if fit_geometry.lower() == "":
-            pass
-        elif fit_geometry.lower() == "gaussian":
-            self._geometry = fit_geometry_gaussian(u, v, V, w, phase_centre=phase_centre)
+        if self._geometry_fit_method.lower() == "":
+            assert self._geometry is not None, \
+                "Geometry is not fitted becayse geometry_fit_method is empty string." \
+                "Expect geometry object to be provided, got None."
+
+        elif self._geometry_fit_method.lower() == "gaussian":
+            self._geometry = fit_geometry_gaussian(u, v, V, weights,
+                                                   phase_centre=self._phase_centre)
         else:
-            raise ValueError("fit_geometry='{}' not recognised.".format(fit_geometry))
+            raise ValueError(
+                "geometry_fit_method='{}' not recognised.".format(self.geometry_fit_method))
 
     def _build_matrices(self, u, v, V, weights):
         """
@@ -437,7 +449,7 @@ class FourierBesselFitter(object):
         # Compute likelihood normalization H_0:
         self._H0 = 0.5 * np.sum(np.log(w / (2 * np.pi)) - V * w * V)
 
-    def fit(self, u, v, V, weights=1, fit_geometry="", phase_centre=None):
+    def fit(self, u, v, V, weights=1):
         """
         Fit the visibilties.
 
@@ -450,13 +462,6 @@ class FourierBesselFitter(object):
         weights : 1D array, optional.
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
-        fit_geometry : str, optional
-            Default is "": geometry is assumed from the geometry object provided when the Fitter
-            object was created.
-            If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
-        phase_centre: [dRA, dDec], optional.
-            The Phase centre offsets dRA and dDec in arcseconds.
-            If not provided, these will be fit for.
 
         Returns
         -------
@@ -464,7 +469,7 @@ class FourierBesselFitter(object):
             Least-squares Fourier-Bessel series fit.
 
         """
-        self._fit_geometry(u, v, V, weights, fit_geometry, phase_centre)
+        self._fit_geometry(u, v, V, weights)
 
         self._build_matrices(u, v, V, weights)
 
@@ -516,8 +521,6 @@ class FrankFitter(FourierBesselFitter):
           f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points
-    geometry: SourceGeometry object
-        Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform, given by J_nu(r).
     alpha : float >= 1, default = 1.05
@@ -536,6 +539,17 @@ class FrankFitter(FourierBesselFitter):
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
+            geometry: SourceGeometry object, optional
+        Geometry used to de-project the visibilities before fitting.
+    geometry_fit_method : str, optional
+        Method to use to fit the geometry parameters (inc, PA, dRA, dDec).
+
+            * "" (default): do not fit. The geometry is assumed from `geometry`.
+            * "gaussian" : fit the geometry with an axisymmetric Gaussian brightness profile.
+
+    phase_centre: [dRA, dDec], optional.
+        The Phase centre offsets dRA and dDec in arcseconds.
+        If not provided, these will be fit for.
 
     References
     ----------
@@ -546,13 +560,13 @@ class FrankFitter(FourierBesselFitter):
 
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0,
-                 alpha=1.05, p_0=1e-15, weights_smooth=0.1,
-                 tol=1e-3, max_iter=250,
-                 block_data=True, block_size=10 ** 7):
+    def __init__(self, Rmax, N, nu=0, block_data=True, block_size=10 ** 7, geometry=None,
+                 geometry_fit_method="", phase_centre=None, alpha=1.05, p_0=1e-15,
+                 weights_smooth=0.1,
+                 tol=1e-3, max_iter=250, ):
 
-        super(FrankFitter, self).__init__(Rmax, N, geometry, nu,
-                                          block_data, block_size)
+        super(FrankFitter, self).__init__(Rmax, N, nu, block_data, block_size, geometry,
+                                          geometry_fit_method, phase_centre)
 
         self._p0 = p_0
         self._ai = alpha
@@ -583,7 +597,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, weights=1, fit_geometry="", phase_centre=None):
+    def fit(self, u, v, V, weights=1):
         """
         Fit the visibilties.
 
@@ -596,13 +610,6 @@ class FrankFitter(FourierBesselFitter):
         weights : 1D array, optional.
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
-        fit_geometry : str, optional
-            Default is "": geometry is assumed from the geometry object provided when the Fitter
-            object was created.
-            If "gaussian", fit the geometry with an axisymmetric Gaussian brightness profile.
-        phase_centre: [dRA, dDec], optional.
-            The Phase centre offsets dRA and dDec in arcseconds.
-            If not provided, these will be fit for.
 
         Returns
         -------
@@ -611,7 +618,7 @@ class FrankFitter(FourierBesselFitter):
 
         """
         # fit geometry if needed
-        self._fit_geometry(u, v, V, weights, fit_geometry, phase_centre)
+        self._fit_geometry(u, v, V, weights)
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
