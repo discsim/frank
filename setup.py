@@ -10,7 +10,7 @@ setup(
     author="Jeff Jennings",
     author_email="jmj51@ast.cam.ac.uk",
     description="Frankenstein desc",
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     install_requires=[line.rstrip() for line in open("requirements.txt", "r").readlines()],
     license="tbd",
     url="tbd",
