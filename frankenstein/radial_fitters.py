@@ -8,7 +8,7 @@ import scipy.linalg
 import scipy.sparse
 
 from frankenstein.hankel import DiscreteHankelTransform
-from frankenstein.geometry import SourceGeometry
+from frankenstein.geometry import fit_geometry_gaussian
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 
@@ -33,9 +33,9 @@ class _HankelRegressor(object):
 
     H(q) is the matrix that projects the intensity, I, to visibility space and 
     M is defined by
-        M = H(q)^T w H(q),
-    where w is the weights matrix and
-        j = H(q)^T w V.
+        M = H(q)^T weights H(q),
+    where weights is the weights matrix and
+        j = H(q)^T weights V.
 
     The mean and covariance of the posterior are then given by
         mu = D j
@@ -60,7 +60,7 @@ class _HankelRegressor(object):
         in self.predict.
     noise_likelihood : floaat, optional
          An optional parameter needed to compute the full likelihood,
-            like_noise = -(1/2) V^T w V - (1/2)*log[det(2*np.pi*N)]
+            like_noise = -(1/2) V^T weights V - (1/2)*log[det(2*np.pi*N)]
         where V is the visibilities and N is the noise covariance. If not 
         provided, the likelihood can still be computed up to this missing 
         constant.
@@ -183,7 +183,7 @@ class _HankelRegressor(object):
                  + (1/2)*log[det(D)/det(S)]
                  + H_0
         where 
-            H_0 = (1/2) * V^T w V - (1/2) log[det(2*np.pi*N)]
+            H_0 = (1/2) * V^T weights V - (1/2) log[det(2*np.pi*N)]
         is the noise likelihood.
 
         """
@@ -320,6 +320,11 @@ class _HankelRegressor(object):
         """Number of points in reconstruction"""
         return self._DHT.size
 
+    @property
+    def geometry(self):
+        """Geometry object"""
+        return self._geometry
+
 
 class FourierBesselFitter(object):
     """
@@ -332,35 +337,76 @@ class FourierBesselFitter(object):
             f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points.
-    geometry: SourceGeometry object
-        Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform.
     block_data : bool, default = True
-        Large temporary matrices are needed to set up the data, if block_data 
-        is True we avoid this, limiting the memory requirement to block_size 
+        Large temporary matrices are needed to set up the data, if block_data
+        is True we avoid this, limiting the memory requirement to block_size
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
-    
+    geometry: SourceGeometry object, optional
+        Geometry used to de-project the visibilities before fitting.
+    geometry_fit_method : str, optional
+        Method to use to fit the geometry parameters (inc, PA, dRA, dDec).
+
+            * "" (default): do not fit. The geometry is assumed from `geometry`.
+            * "gaussian" : fit the geometry with an axisymmetric Gaussian brightness profile.
+
+    phase_centre: [dRA, dDec], optional.
+        The Phase centre offsets dRA and dDec in arcseconds.
+        If not provided, these will be fit for.
+
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0,
-                 block_data=True, block_size=10 ** 7):
+    def __init__(self, Rmax, N, nu=0, block_data=True, block_size=10 ** 7, geometry=None,
+                 geometry_fit_method="", phase_centre=None):
+
+        assert geometry is not None or geometry_fit_method is not "", \
+            "Expect geometry or geometry_fit_method to be provided, got both None. "
 
         self._geometry = geometry
+        self._geometry_fit_method = geometry_fit_method
+        self._phase_centre = phase_centre
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
 
         self._blocking = block_data
         self._block_size = block_size
 
+    def _fit_geometry(self, u, v, V, weights):
+        """
+        Perform the geometry fit if needed.
+
+        Parameters
+        ----------
+        u,v : 1D array
+            uv-points of the visibilies.
+        V : 1D array
+            Visibility amplitudes at q
+        weights : 1D array, optional.
+            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+            the standard deviation.
+
+        """
+        if self._geometry_fit_method.lower() == "":
+            assert self._geometry is not None, \
+                "Geometry is not fitted becayse geometry_fit_method is empty string." \
+                "Expect geometry object to be provided, got None."
+
+        elif self._geometry_fit_method.lower() == "gaussian":
+            self._geometry = fit_geometry_gaussian(u, v, V, weights,
+                                                   phase_centre=self._phase_centre)
+        else:
+            raise ValueError(
+                "geometry_fit_method='{}' not recognised.".format(self.geometry_fit_method))
+
     def _build_matrices(self, u, v, V, weights):
         """
         Compute the matrices M, and j from the visibility data.
 
         Also computes 
-            H0 = 0.5*log[det(w/(2*np.pi))] - 0.5*np.sum(V * w * V)
+            H0 = 0.5*log[det(weights/(2*np.pi))] - 0.5*np.sum(V * weights * V)
 
         """
         # Deproject the visibilities:
@@ -428,6 +474,8 @@ class FourierBesselFitter(object):
             Least-squares Fourier-Bessel series fit.
 
         """
+        self._fit_geometry(u, v, V, weights)
+
         self._build_matrices(u, v, V, weights)
 
         self._sol = _HankelRegressor(self._DHT, self._M, self._j,
@@ -461,25 +509,28 @@ class FourierBesselFitter(object):
         """Number of points in reconstruction"""
         return self._DHT.size
 
+    @property
+    def geometry(self):
+        """Geometry object"""
+        return self._geometry
+
 
 class FrankFitter(FourierBesselFitter):
-    '''
-    Fit a Gaussian process model using the Discrete Hankel Transform of 
+    """
+    Fit a Gaussian process model using the Discrete Hankel Transform of
     Baddour & Chouinard (2015).
 
-    The GP model is based upon Oppermann et al. (2013), which use a maximum 
-    aposteriori estimate for the power spectrum as the GP prior for the 
+    The GP model is based upon Oppermann et al. (2013), which use a maximum
+    aposteriori estimate for the power spectrum as the GP prior for the
     real-space coefficients.
 
     Parameters
     ----------
     Rmax : float
-        Radius of support for the functions to transform, i.e. 
+        Radius of support for the functions to transform, i.e.
           f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points
-    geometry: SourceGeometry object
-        Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform, given by J_nu(r).
     alpha : float >= 1, default = 1.05
@@ -493,11 +544,22 @@ class FrankFitter(FourierBesselFitter):
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration.
     block_data : bool, default = True
-        Large temporary matrices are needed to set up the data, if block_data 
-        is True we avoid this, limiting the memory requirement to block_size 
+        Large temporary matrices are needed to set up the data, if block_data
+        is True we avoid this, limiting the memory requirement to block_size
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
+            geometry: SourceGeometry object, optional
+        Geometry used to de-project the visibilities before fitting.
+    geometry_fit_method : str, optional
+        Method to use to fit the geometry parameters (inc, PA, dRA, dDec).
+
+            * "" (default): do not fit. The geometry is assumed from `geometry`.
+            * "gaussian" : fit the geometry with an axisymmetric Gaussian brightness profile.
+
+    phase_centre: [dRA, dDec], optional.
+        The Phase centre offsets dRA and dDec in arcseconds.
+        If not provided, these will be fit for.
 
     References
     ----------
@@ -506,19 +568,19 @@ class FrankFitter(FourierBesselFitter):
         Oppermann et al. (2013)
             DOI:  https://doi.org/10.1103/PhysRevE.87.032136
 
-    '''
+    """
 
-    def __init__(self, Rmax, N, geometry, nu=0,
-                 alpha=1.05, p_0=1e-15, w_smooth=0.1,
-                 tol=1e-3, max_iter=250,
-                 block_data=True, block_size=10 ** 7):
+    def __init__(self, Rmax, N, nu=0, block_data=True, block_size=10 ** 7, geometry=None,
+                 geometry_fit_method="", phase_centre=None, alpha=1.05, p_0=1e-15,
+                 weights_smooth=0.1,
+                 tol=1e-3, max_iter=250, ):
 
-        super(FrankFitter, self).__init__(Rmax, N, geometry, nu,
-                                          block_data, block_size)
+        super(FrankFitter, self).__init__(Rmax, N, nu, block_data, block_size, geometry,
+                                          geometry_fit_method, phase_centre)
 
         self._p0 = p_0
         self._ai = alpha
-        self._smooth = w_smooth
+        self._smooth = weights_smooth
 
         self._tol = tol
         self._max_iter = max_iter
@@ -545,7 +607,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, w=1):
+    def fit(self, u, v, V, weights=1):
         """
         Fit the visibilties.
 
@@ -565,8 +627,11 @@ class FrankFitter(FourierBesselFitter):
             Reconstructed profile using Maximum a posteriori power spectrum.
 
         """
+        # fit geometry if needed
+        self._fit_geometry(u, v, V, weights)
+
         # Project the data to the signal space
-        self._build_matrices(u, v, V, w)
+        self._build_matrices(u, v, V, weights)
         # Compute the smoothing matrix:
         Tij = self._build_smoothing_matrix()
 
@@ -721,7 +786,7 @@ class FrankFitter(FourierBesselFitter):
         Compute the log Prior probability, log(P(p)).
 
         log[P(p)] ~ np.sum(p0/pi - alpha*np.log(p0/pi))
-            - 0.5*np.log(p) (w_smooth*T) np.log(p)
+            - 0.5*np.log(p) (weights_smooth*T) np.log(p)
 
         Parameters
         ----------

@@ -17,8 +17,8 @@ def test_hankel_gauss():
         return np.exp(-0.5 * x * x)
 
     def gauss_vis_space(q):
-        qs = (2*np.pi) * q
-        return np.exp(-0.5 * qs * qs) * (2*np.pi)
+        qs = (2 * np.pi) * q
+        return np.exp(-0.5 * qs * qs) * (2 * np.pi)
 
     DHT = DiscreteHankelTransform(5.0, 100)
 
@@ -51,10 +51,10 @@ def test_hankel_gauss():
 
     np.testing.assert_allclose(np.dot(Hf, Ir),
                                DHT.transform(Ir, direction='forward'),
-                               rtol=1e-8, err_msg="Forward DHT Coeffs")
+                               rtol=1e-7, err_msg="Forward DHT Coeffs")
     np.testing.assert_allclose(np.dot(Hb, Iq),
                                DHT.transform(Iq, direction='backward'),
-                               rtol=1e-8, err_msg="Inverse DHT Coeffs")
+                               rtol=1e-7, err_msg="Inverse DHT Coeffs")
 
     # Compare Cached vs non-cached DHT points:
     np.testing.assert_allclose(DHT.coefficients(q=DHT.q),
@@ -64,6 +64,7 @@ def test_hankel_gauss():
                                DHT.coefficients(direction='backward'),
                                atol=1e-12, rtol=0, err_msg="Cached inverse DHT Coeffs")
 
+
 def test_import_data():
     # TODO
     pass
@@ -71,35 +72,55 @@ def test_import_data():
 
 def load_AS209():
     uv_AS209_DHSARP = np.load('examples/AS209_continuum.npz')
-    geometry = SourceGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97*np.pi/180, PA=85.76*np.pi/180)
+    geometry = SourceGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97 * np.pi / 180,
+                              PA=85.76 * np.pi / 180)
 
     return uv_AS209_DHSARP, geometry
 
+
 def test_fit_geometry():
     # Check the geometry fit on a subset of the AS209 data
-    AS209, _ = load_AS209()    
+    AS209, _ = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
-    geom = fit_geometry_gaussian(u,v,vis, weights)
+    geom = fit_geometry_gaussian(u, v, vis, weights)
 
-    print([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec])
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec],
-                                [1.4916013559412147, -0.5395904796783955, 
+    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA, 1e3 * geom.dDec],
+                               [1.4916013559412147, -0.5395904796783955,
                                 0.6431627790617276, 1.161768824369382],
-                                err_msg="Gaussian geometry fit")
+                               err_msg="Gaussian geometry fit")
 
+
+def test_fit_geometry_inside():
+    # Check the geometry fit while the Frank fit is executed
+    AS209, _ = load_AS209()
+
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6 / rad_to_arcsec
+
+    FF = FrankFitter(Rmax, 20, alpha=1.05, weights_smooth=1e-2, geometry=None,
+                     geometry_fit_method="gaussian")
+
+    sol = FF.fit(u, v, vis, weights)
+
+    geom = sol.geometry
+    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA, 1e3 * geom.dDec],
+                               [1.4916013559412147, -0.5395904796783955,
+                                0.6431627790617276, 1.161768824369382],
+                               err_msg="Gaussian geometry fit inside Frank fit")
 
 
 def test_fourier_bessel_fitter():
     """ Run Frank on AS 209 dataset in examples directory """
 
-    AS209, geometry = load_AS209()    
+    AS209, geometry = load_AS209()
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
-    Rmax = 1.6/rad_to_arcsec
+    Rmax = 1.6 / rad_to_arcsec
 
-    FB = FourierBesselFitter(Rmax, 20, geometry)
+    FB = FourierBesselFitter(Rmax, 20, geometry=geometry)
 
     sol = FB.fit(u, v, vis, weights)
 
@@ -112,16 +133,17 @@ def test_fourier_bessel_fitter():
     np.testing.assert_allclose(sol.mean, expected,
                                err_msg="Testing FourierBessel Fit to AS 209")
 
+
 def test_frank_fitter():
     """ Run Frank on AS 209 dataset in examples directory """
 
-    AS209, geometry = load_AS209()    
+    AS209, geometry = load_AS209()
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
-    Rmax = 1.6/rad_to_arcsec
+    Rmax = 1.6 / rad_to_arcsec
 
-    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, w_smooth=1e-2)
+    FF = FrankFitter(Rmax, 20, geometry=geometry, alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
 
