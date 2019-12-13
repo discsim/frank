@@ -77,14 +77,14 @@ def load_AS209():
 
 def test_fit_geometry():
     # Check the geometry fit on a subset of the AS209 data
-    AS209, _ = load_AS209()    
+    AS209, _ = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
     geom = fit_geometry_gaussian(u,v,vis, weights)
 
     print([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec])
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3*geom.dRA, 1e3*geom.dDec],
-                                [1.4916013559412147, -0.5395904796783955, 
+                                [1.4916013559412147, -0.5395904796783955,
                                 0.6431627790617276, 1.161768824369382],
                                 err_msg="Gaussian geometry fit")
 
@@ -93,13 +93,13 @@ def test_fit_geometry():
 def test_fourier_bessel_fitter():
     """ Run Frank on AS 209 dataset in examples directory """
 
-    AS209, geometry = load_AS209()    
+    AS209, geometry = load_AS209()
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
     Rmax = 1.6/rad_to_arcsec
 
-    FB = FourierBesselFitter(Rmax, 20, geometry)
+    FB = FourierBesselFitter(Rmax, 20, geometry=geometry)
 
     sol = FB.fit(u, v, vis, weights)
 
@@ -115,13 +115,13 @@ def test_fourier_bessel_fitter():
 def test_frank_fitter():
     """ Run Frank on AS 209 dataset in examples directory """
 
-    AS209, geometry = load_AS209()    
+    AS209, geometry = load_AS209()
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
     Rmax = 1.6/rad_to_arcsec
 
-    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
+    FF = FrankFitter(Rmax, 20, geometry=geometry, alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
 
