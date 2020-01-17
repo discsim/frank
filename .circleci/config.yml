@@ -56,14 +56,31 @@ jobs:
     steps:
       - checkout
       - run:
-        name: Install dependencies
-        command: pip install -r requirements.txt
+          name: Install dependencies
+          command: pip install -r requirements.txt
       - run:
-        name: Build docs
-        command: cd docs/ && make html
+          name: Build docs
+          command: cd docs/ && make html
       - persist_to_workspace:
-        root: docs/_build
-        paths: html
+          root: docs/_build
+          paths: html
+
+  docs-deploy:
+    docker:
+      - image: node:8.10.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: docs/_build
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install -g --silent gh-pages@2.0.1
+            git config user.email "ci-build@klukas.net"
+            git config user.name "ci-build"
+      - run:
+          name: Deploy docs to gh-pages branch
+          command: gh-pages --dist docs/_build/html
 
 
 workflows:
@@ -71,3 +88,11 @@ workflows:
   build:
     jobs:
       - test
+      - docs-build
+      - docs-deploy:
+          requires:
+            - test
+            - docs-build
+          filters:
+            branches:
+              only: master
