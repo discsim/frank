@@ -21,31 +21,27 @@ jobs:
       - checkout
 
       # Download and cache dependencies
-#      - restore_cache:
-#          keys:
-#            - v1-dependencies-{{ checksum "requirements.txt" }}
-#            # fallback to using the latest cache if no exact match is found
-#            - v1-dependencies-
-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
           name: install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-
-#      - save_cache:
-#          paths:
-#            - ./venv
-#          key: v1-dependencies-{{ checksum "requirements.txt" }}
-
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
       # run tests
       - run:
           name: run tests
           command: |
             . venv/bin/activate
             py.test frankenstein/tests.py -rXs
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
@@ -62,14 +58,10 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
       - run:
-          name: Build docs1
+          name: Build docs
           command: |
             . venv/bin/activate
-            which python
-
-      - run:
-          name: Build docs
-          command: cd docs/ && make html
+            cd docs/ && make html
       - persist_to_workspace:
           root: docs/_build
           paths: html
