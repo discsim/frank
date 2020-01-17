@@ -3,8 +3,9 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2
+
 jobs:
-  build:
+  test:
     docker:
       # specify the version you desire here
       - image: circleci/python:3.7
@@ -25,26 +26,77 @@ jobs:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-
       # run tests
       - run:
           name: run tests
           command: |
             . venv/bin/activate
             py.test frankenstein/tests.py -rXs
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+  docs-build:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: Build docs
+          command: |
+            . venv/bin/activate
+            cd docs/ && make html
+      - persist_to_workspace:
+          root: docs/_build
+          paths: html
+
+  docs-deploy:
+    docker:
+      - image: node:8.10.0
+    steps:
+      - checkout
+      - attach_workspace:
+          at: docs/_build
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install -g --silent gh-pages@2.0.1
+            git config user.email "ci-build@ast.cam.ac.uk"
+            git config user.name "ci-build"
+      - add_ssh_keys:
+          fingerprints:
+            - "6a:8d:f2:c3:f1:0a:97:9c:86:3b:02:e7:fd:ed:ea:a6"
+      - run:
+          name: Deploy docs to gh-pages branch
+          command: gh-pages --dist docs/_build/html
+
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test
+      - docs-build
+      - docs-deploy:
+          requires:
+            - test
+            - docs-build
+          filters:
+            branches:
+              only: master
