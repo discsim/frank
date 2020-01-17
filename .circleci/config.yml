@@ -61,8 +61,10 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            echo "TEST"
-            sphinx-build
+      - run:
+          name: Build docs1
+          command: which python
+
       - run:
           name: Build docs
           command: cd docs/ && make html
