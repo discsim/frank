@@ -80,6 +80,9 @@ jobs:
             npm install -g --silent gh-pages@2.0.1
             git config user.email "ci-build@ast.cam.ac.uk"
             git config user.name "ci-build"
+      - add_ssh_keys:
+          fingerprints: "6a:8d:f2:c3:f1:0a:97:9c:86:3b:02:e7:fd:ed:ea:a6"
+            -
       - run:
           name: Deploy docs to gh-pages branch
           command: gh-pages --dist docs/_build/html
