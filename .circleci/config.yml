@@ -63,7 +63,9 @@ jobs:
             pip install -r requirements.txt
       - run:
           name: Build docs1
-          command: which python
+          command: |
+            . venv/bin/activate
+            which python
 
       - run:
           name: Build docs
