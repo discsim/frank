@@ -3,8 +3,9 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2
+
 jobs:
-  build:
+  test:
     docker:
       # specify the version you desire here
       - image: circleci/python:3.7
@@ -48,3 +49,25 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+  docs-build:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
+      - run:
+        name: Install dependencies
+        command: pip install -r requirements.txt
+      - run:
+        name: Build docs
+        command: cd docs/ && make html
+      - persist_to_workspace:
+        root: docs/_build
+        paths: html
+
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - test
