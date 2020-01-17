@@ -57,7 +57,9 @@ jobs:
       - checkout
       - run:
           name: Install dependencies
-          command: pip install -r requirements.txt
+          command: |
+            . venv/bin/activate
+            pip install -r requirements.txt
       - run:
           name: Build docs
           command: cd docs/ && make html
@@ -76,7 +78,7 @@ jobs:
           name: Install and configure dependencies
           command: |
             npm install -g --silent gh-pages@2.0.1
-            git config user.email "ci-build@klukas.net"
+            git config user.email "ci-build@ast.cam.ac.uk"
             git config user.name "ci-build"
       - run:
           name: Deploy docs to gh-pages branch
