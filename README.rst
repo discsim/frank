@@ -55,7 +55,7 @@ Authors:
     
 Documentation
 -------------
-Check out the `documentation <URL`_ (update url).
+Check out the `documentation <https://discsim.github.io/frankenstein/>`_ (update url).
 
 Changelog
 ---------
