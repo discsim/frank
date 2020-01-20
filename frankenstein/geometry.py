@@ -9,7 +9,7 @@ from scipy.optimize import least_squares
 from frankenstein.constants import rad_to_arcsec
 
 __all__ = ["apply_phase_shift", "deproject", "fit_geometry_gaussian",
-           "SourceGeometry"]
+           "FixedGeometry", "FitGeometryGaussian"]
 
 
 def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
@@ -35,7 +35,7 @@ def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
     -------
     shifted_vis : array of real, size=N
         Phase shifted visibilites.
-    
+
     """
     dRA *= 2. * np.pi / rad_to_arcsec
     dDec *= 2. * np.pi / rad_to_arcsec
@@ -70,7 +70,7 @@ def deproject(u, v, inc, PA, inverse=False):
         Deprojected u-points
     vp : array, size=N
         Deprojected v-points
-    
+
     """
     cos_t = np.cos(PA)
     sin_t = np.sin(PA)
@@ -92,6 +92,8 @@ def deproject(u, v, inc, PA, inverse=False):
 
 class SourceGeometry(object):
     """
+    Base class for geometry corrections.
+    
     Centres and deprojects the source to ensure axisymmetry.
 
     Parameters
@@ -104,10 +106,10 @@ class SourceGeometry(object):
         Phase centre offset in Right Ascension
     dDec : float, unit=arcseconds
         Phase centre offset in Declination
-    
+
     """
 
-    def __init__(self, inc=0, PA=0, dRA=0, dDec=0):
+    def __init__(self, inc=None, PA=None, dRA=None, dDec=None):
         self._inc = inc
         self._PA = PA
         self._dRA = dRA
@@ -198,6 +200,29 @@ class SourceGeometry(object):
         return self._inc
 
 
+class FixedGeometry(SourceGeometry):
+    def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
+        super(FixedGeometry, self).__init__(inc, PA, dRA, dDec)
+
+    def fit(self, u, v, visib, weights):
+        pass
+
+
+class FitGeometryGaussian(SourceGeometry):
+    def __init__(self, phase_centre=None):
+        super(FitGeometryGaussian, self).__init__()
+
+        self._phase_centre = phase_centre
+
+    def fit(self, u, v, visib, weights):
+        geom = fit_geometry_gaussian(
+            u, v, visib, weights, phase_centre=self._phase_centre)
+        
+        self._inc = geom.inc
+        self._PA = geom.PA
+        self._dRA = geom.dRA
+        self._dDec = geom.dDec
+
 def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     """
     Esimate the source geometry by fitting a Gaussian in uv-space.
@@ -218,14 +243,14 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     -------
     geometry : SourceGeometry object
         Fitted geometry.
-    
+
     """
     fac = 2*np.pi / rad_to_arcsec
     w = np.sqrt(weights)
 
     def wrap(fun):
         return np.concatenate([fun.real, fun.imag])
-        
+
     def _gauss_fun(params):
         dRA, dDec, inc, pa, norm, scal = params
 
@@ -239,9 +264,9 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         s_t = np.sin(pa)
         c_i = np.cos(inc)
         up = (u*c_t - v*s_t) * c_i / (scal*rad_to_arcsec)
-        vp = (u*s_t + v*c_t)  / (scal*rad_to_arcsec)
+        vp = (u*s_t + v*c_t) / (scal*rad_to_arcsec)
 
-        fun = w*(norm * np.exp(-0.5*(up*up+ vp*vp)) - Vp)
+        fun = w*(norm * np.exp(-0.5*(up*up + vp*vp)) - Vp)
 
         return wrap(fun)
 
@@ -261,10 +286,10 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         s_t = np.sin(pa)
         c_i = np.cos(inc)
         s_i = np.sin(inc)
-        up = (u*c_t - v*s_t) 
-        vp = (u*s_t + v*c_t) 
+        up = (u*c_t - v*s_t)
+        vp = (u*s_t + v*c_t)
 
-        uv = (up*up*c_i*c_i+ vp*vp)
+        uv = (up*up*c_i*c_i + vp*vp)
 
         G = w*np.exp(-0.5 * uv / (scal*rad_to_arcsec)**2)
 
@@ -277,10 +302,9 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
 
         return jac.T
 
-
-    res = least_squares(_gauss_fun,[0.0, 0.0,
-                                    0.1, 0.1,
-                                    1.0, 1.0],
+    res = least_squares(_gauss_fun, [0.0, 0.0,
+                                     0.1, 0.1,
+                                     1.0, 1.0],
                         jac=_gauss_jac, method='lm')
 
     dRA, dDec, inc, PA, _, _ = res.x
@@ -288,4 +312,4 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    return SourceGeometry(inc, PA, dRA, dDec)
+    return FixedGeometry(inc, PA, dRA, dDec)
