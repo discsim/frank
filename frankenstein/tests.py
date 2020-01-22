@@ -6,7 +6,7 @@ from frankenstein.constants import rad_to_arcsec
 
 from frankenstein.hankel import DiscreteHankelTransform
 from frankenstein.radial_fitters import FourierBesselFitter, FrankFitter
-from frankenstein.geometry import SourceGeometry, fit_geometry_gaussian
+from frankenstein.geometry import FixedGeometry, FitGeometryGaussian
 
 
 def test_hankel_gauss():
@@ -72,7 +72,7 @@ def test_import_data():
 
 def load_AS209():
     uv_AS209_DHSARP = np.load('examples/AS209_continuum.npz')
-    geometry = SourceGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97 * np.pi / 180,
+    geometry = FixedGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97 * np.pi / 180,
                               PA=85.76 * np.pi / 180)
 
     return uv_AS209_DHSARP, geometry
@@ -83,7 +83,8 @@ def test_fit_geometry():
     AS209, _ = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
-    geom = fit_geometry_gaussian(u, v, vis, weights)
+    geom = FitGeometryGaussian()
+    geom.fit(u, v, vis, weights)
 
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA, 1e3 * geom.dDec],
                                [1.4916013559412147, -0.5395904796783955,
@@ -99,8 +100,8 @@ def test_fit_geometry_inside():
 
     Rmax = 1.6 / rad_to_arcsec
 
-    FF = FrankFitter(Rmax, 20, alpha=1.05, weights_smooth=1e-2, geometry=None,
-                     geometry_fit_method="gaussian")
+    FF = FrankFitter(Rmax, 20, FitGeometryGaussian(),
+                     alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
 
@@ -143,7 +144,7 @@ def test_frank_fitter():
 
     Rmax = 1.6 / rad_to_arcsec
 
-    FF = FrankFitter(Rmax, 20, geometry=geometry, alpha=1.05, weights_smooth=1e-2)
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
 
