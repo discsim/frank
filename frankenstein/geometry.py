@@ -8,7 +8,7 @@ from scipy.optimize import least_squares
 
 from frankenstein.constants import rad_to_arcsec
 
-__all__ = ["apply_phase_shift", "deproject", "fit_geometry_gaussian",
+__all__ = ["apply_phase_shift", "deproject", 
            "FixedGeometry", "FitGeometryGaussian"]
 
 
@@ -201,29 +201,76 @@ class SourceGeometry(object):
 
 
 class FixedGeometry(SourceGeometry):
+    """
+    Disc Geometry class using pre-determined parameters.
+    
+    Centres and deprojects the source to ensure axisymmetry.
+
+    Parameters
+    ----------
+    inc : float, units=radians
+        Disc inclination.
+    PA : float, units=radians
+        Disc positition angle.
+    dRA : float, default=0, units=arcsec
+        Phase centre offset in Right Ascension.
+    dDec : float, default=0, units=arcsec
+        Phase centre offset in Declination.
+    
+    """
+    
     def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
         super(FixedGeometry, self).__init__(inc, PA, dRA, dDec)
 
     def fit(self, u, v, visib, weights):
+        """Dummy method for geometry fitting no fit is required."""
         pass
 
 
 class FitGeometryGaussian(SourceGeometry):
+    """
+    Determine the disc geometry by fitting a Gaussian in Fourier space.
+    
+    Centres and deprojects the source to ensure axisymmetry.
+
+    Parameters
+    ----------
+    phase_centre : tuple=(dRA, dDec) or None (default). Units=arcsec
+         Determines whether to fit for the phase centre of the source. If
+         phase_centre=None the phase centre is fit for. Otherwise, the phase
+         centre should be provided as a tuple.
+
+    """
     def __init__(self, phase_centre=None):
         super(FitGeometryGaussian, self).__init__()
 
         self._phase_centre = phase_centre
 
     def fit(self, u, v, visib, weights):
-        geom = fit_geometry_gaussian(
+        """
+        Determine geometry using the uv-data provided.
+
+        Parameters
+        ----------
+        u : array of real, size=N
+            u-points of the visibilities
+        v : array of real, size=N
+            v-points of the visibilities
+        visib : array of complex, size=N
+            Complex visibilites
+        weights : array of real, size=N
+            Weights on the visibilities.
+        """
+
+        inc, PA, dRA, dDec = _fit_geometry_gaussian(
             u, v, visib, weights, phase_centre=self._phase_centre)
         
-        self._inc = geom.inc
-        self._PA = geom.PA
-        self._dRA = geom.dRA
-        self._dDec = geom.dDec
+        self._inc = inc
+        self._PA = PA
+        self._dRA = dRA
+        self._dDec = dDec
 
-def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
+def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     """
     Esimate the source geometry by fitting a Gaussian in uv-space.
 
@@ -233,8 +280,10 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         u-points of the visibilities
     v : array of real, size=N
         v-points of the visibilities
-    vis : array of real, size=N
+    vis : array of complex, size=N
         Complex visibilites
+    weights : array of real, size=N
+        Weights on the visibilities.
     phase_centre: [dRA, dDec], optional. 
         The Phase centre offsets dRA and dDec in arcseconds.
         If not provided, these will be fit for.
@@ -312,4 +361,4 @@ def fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    return FixedGeometry(inc, PA, dRA, dDec)
+    return inc, PA, dRA, dDec

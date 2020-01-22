@@ -8,7 +8,6 @@ import scipy.linalg
 import scipy.sparse
 
 from frankenstein.hankel import DiscreteHankelTransform
-from frankenstein.geometry import fit_geometry_gaussian
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 
@@ -337,6 +336,8 @@ class FourierBesselFitter(object):
             f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points.
+    geometry : SourceGeometry object
+        Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform.
     block_data : bool, default = True
@@ -345,8 +346,6 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
-    geometry: SourceGeometry object, optional
-        Geometry used to de-project the visibilities before fitting.
 
     """
 
@@ -358,23 +357,6 @@ class FourierBesselFitter(object):
 
         self._blocking = block_data
         self._block_size = block_size
-
-    def _fit_geometry(self, u, v, V, weights):
-        """
-        Perform the geometry fit if needed.
-
-        Parameters
-        ----------
-        u,v : 1D array
-            uv-points of the visibilies.
-        V : 1D array
-            Visibility amplitudes at q
-        weights : 1D array, optional.
-            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
-            the standard deviation.
-
-        """
-        self._geometry.fit(u, v, V, weights)
 
     def _build_matrices(self, u, v, V, weights):
         """
@@ -449,7 +431,7 @@ class FourierBesselFitter(object):
             Least-squares Fourier-Bessel series fit.
 
         """
-        self._fit_geometry(u, v, V, weights)
+        self._geometry.fit(u, v, V, weights)
 
         self._build_matrices(u, v, V, weights)
 
@@ -506,6 +488,8 @@ class FrankFitter(FourierBesselFitter):
           f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points
+    geometry : SourceGeometry object
+        Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform, given by J_nu(r).
     alpha : float >= 1, default = 1.05
@@ -524,8 +508,6 @@ class FrankFitter(FourierBesselFitter):
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
-    geometry: SourceGeometry object, optional
-        Geometry used to de-project the visibilities before fitting.
 
     References
     ----------
@@ -592,7 +574,7 @@ class FrankFitter(FourierBesselFitter):
 
         """
         # fit geometry if needed
-        self._fit_geometry(u, v, V, weights)
+        self._geometry.fit(u, v, V, weights)
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
