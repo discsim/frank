@@ -2,8 +2,6 @@
 discrete varient, the Discrete Hankel Transform (DHT).
 """
 
-from __future__ import division, absolute_import, print_function
-
 import numpy as np
 from scipy.special import j0, j1, jn_zeros, jv
 

@@ -1,8 +1,6 @@
 """This module contains methods for fitting radial brightness profiles to the de-projected visibities.
 """
 
-from __future__ import division, absolute_import, print_function
-
 import numpy as np
 import scipy.linalg
 import scipy.sparse

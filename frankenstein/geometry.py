@@ -1,8 +1,6 @@
 """This module contains methods for fitting the geometry and deprojecting the visibilties.
 """
 
-from __future__ import division, absolute_import, print_function
-
 import numpy as np
 from scipy.optimize import least_squares
 
