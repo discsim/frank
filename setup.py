@@ -2,10 +2,13 @@
 # coding=utf-8
 from setuptools import setup, find_packages
 
+version = {}
+exec(open("frankenstein/__init__.py", "r").read(), version)
+version = version['__version__']
 
 setup(
     name="frankenstein",
-    version="0.1.0",
+    version=version,
     packages=find_packages(),
     author="Jeff Jennings",
     author_email="jmj51@ast.cam.ac.uk",
