@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Python API reference &#8212; frankenstein 0.0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="frankenstein 0.0.1" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="python-api-reference">
+<h1>Python API reference<a class="headerlink" href="#python-api-reference" title="Permalink to this headline">¶</a></h1>
+<p>The documentation of each function that is reported in this page can also be directly accessed from Python with, e.g.:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">frankenstein.radial_fitters</span> <span class="kn">import</span> <span class="n">FrankFitter</span>
+
+<span class="n">help</span><span class="p">(</span><span class="n">FrankFitter</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="section" id="run-a-fit">
+<h2>Run a fit<a class="headerlink" href="#run-a-fit" title="Permalink to this headline">¶</a></h2>
+<p>To run a fit use the <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-func docutils literal notranslate"><span class="pre">FrankFitter</span></code></a> object.</p>
+<dl class="function">
+<dt id="frankenstein.radial_fitters.FrankFitter">
+<code class="sig-prename descclassname">frankenstein.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param">Rmax</em>, <em class="sig-param">N</em>, <em class="sig-param">geometry</em>, <em class="sig-param">nu=0</em>, <em class="sig-param">block_data=True</em>, <em class="sig-param">block_size=10000000</em>, <em class="sig-param">alpha=1.05</em>, <em class="sig-param">p_0=1e-15</em>, <em class="sig-param">weights_smooth=0.1</em>, <em class="sig-param">tol=0.001</em>, <em class="sig-param">max_iter=250</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
+Baddour &amp; Chouinard (2015).</p>
+<p>The GP model is based upon Oppermann et al. (2013), which use a maximum
+aposteriori estimate for the power spectrum as the GP prior for the
+real-space coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Rmax</strong> (<em>float</em>) – <dl class="simple">
+<dt>Radius of support for the functions to transform, i.e.</dt><dd><p>f(r) = 0 for R &gt;= Rmax</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Number of collaction points</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em>) – Geometry used to de-project the visibilities before fitting.</p></li>
+<li><p><strong>nu</strong> (<em>int default = 0.</em>) – Order of the discrete Hankel transform, given by J_nu(r).</p></li>
+<li><p><strong>alpha</strong> (<em>float &gt;= 1</em><em>, </em><em>default = 1.05</em>) – Order parameter of the inverse gamma prior for the power spectrum.
+coefficients.</p></li>
+<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-15</em>) – Scale parameter of the inverse gamma prior for the power spectrum.
+coefficients.</p></li>
+<li><p><strong>smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 0.1</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior.</p></li>
+<li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration.</p></li>
+<li><p><strong>block_data</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Large temporary matrices are needed to set up the data, if block_data
+is True we avoid this, limiting the memory requirement to block_size
+elements.</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**7</em>) – Size of the matrices if blocking is used.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="simple">
+<dt>Baddour &amp; Chouinard (2015)</dt><dd><p>DOI: <a class="reference external" href="https://doi.org/10.1364/JOSAA.32.000611">https://doi.org/10.1364/JOSAA.32.000611</a></p>
+</dd>
+<dt>Oppermann et al. (2013)</dt><dd><p>DOI:  <a class="reference external" href="https://doi.org/10.1103/PhysRevE.87.032136">https://doi.org/10.1103/PhysRevE.87.032136</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">frankenstein</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#run-a-fit">Run a fit</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter"><strong>frankenstein</strong> 0.0.1</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019-2020, R. Booth, J. Jenning, M. Tazzari.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/py_API.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
