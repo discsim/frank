@@ -16,7 +16,7 @@ setup(
     long_description=open('README.rst').read(),
     install_requires=[line.rstrip() for line in open("requirements.txt", "r").readlines()],
     extras_require={
-        'test' : [ 'pytest' ],
+        'test' : ['pytest'],
         'docs-build' : [ 'sphinx', 'sphinxcontrib-fulltoc' ],
         },
     license="tbd",
