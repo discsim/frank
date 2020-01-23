@@ -31,7 +31,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-	    pip install .[test]
+            pip install .[test]
       - save_cache:
           paths:
             - ./venv
