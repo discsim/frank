@@ -64,6 +64,7 @@ source_suffix = '.rst'
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+master_doc = 'index'
 
 # A string of reStructuredText that will be included at the beginning of every
 # source file that is read.
