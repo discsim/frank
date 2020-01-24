@@ -19,13 +19,13 @@
 """This module contains methods for fitting the geometry and deprojecting the visibilties.
 """
 
+import abc
 import numpy as np
 from scipy.optimize import least_squares
 
 from frankenstein.constants import rad_to_arcsec
 
-__all__ = ["apply_phase_shift", "deproject", 
-           "FixedGeometry", "FitGeometryGaussian"]
+__all__ = ["SourceGeometry", "FixedGeometry", "FitGeometryGaussian"]
 
 
 def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
@@ -36,20 +36,20 @@ def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
 
     Parameters
     ----------
-    u : array of real, size=N
+    u : array of real, size=N, units= :math:`\\lambda`
         u-points of the visibilities
-    v : array of real, size=N
+    v : array of real, size=N, units= :math:`\\lambda`
         v-points of the visibilities
-    vis : array of real, size=N
+    vis : array of real, size=N, units=Jy
         Complex visibilites
-    dRA : float, unit=arcseconds
+    dRA : float, units=arcseconds
         Phase-shift in Right Ascenion
-    dDec : float, unit=arcseconds
+    dDec : float, units=arcseconds
         Phase-shift in Declination
 
     Returns
     -------
-    shifted_vis : array of real, size=N
+    shifted_vis : array of real, size=N, units=Jy
         Phase shifted visibilites.
 
     """
@@ -67,24 +67,24 @@ def deproject(u, v, inc, PA, inverse=False):
 
     Parameters
     ----------
-    u : array of real, size=N
+    u : array of real, size=N, units= :math:`\\lambda`
         u-points of the visibilities
-    v : array of real, size=N
+    v : array of real, size=N, units= :math:`\\lambda`
         v-points of the visibilities
-    vis : array of real, size=N
+    vis : array of real, size=N, units=Jy
         Complex visibilites
-    inc : float, unit=radians
+    inc : float, units=radians
         Inclination
-    PA : float, unit=radians
+    PA : float, units=radians
         Position Angle
     inverse : bool, default=False
         If True the uv-points are re-projected rather than de-projected.
 
     Returns
     -------
-    up : array, size=N
+    up : array, size=N, units= :math:`\\lambda`
         Deprojected u-points
-    vp : array, size=N
+    vp : array, size=N, units= :math:`\\lambda`
         Deprojected v-points
 
     """
@@ -114,13 +114,13 @@ class SourceGeometry(object):
 
     Parameters
     ----------
-    inc : float, unit=radians
+    inc : float, units=radians
         Inclination of the disc
-    PA : float, unit=radians
+    PA : float, units=radians
         Position Angle of the disc
-    dRA : float, unit=arcseconds
+    dRA : float, units=arcseconds
         Phase centre offset in Right Ascension
-    dDec : float, unit=arcseconds
+    dDec : float, units=arcseconds
         Phase centre offset in Declination
 
     """
@@ -137,20 +137,20 @@ class SourceGeometry(object):
 
         Parameters
         ----------
-        u : array of real, size=N
+        u : array of real, size=N, units= :math:`\\lambda`
             u-points of the visibilities
-        v : array of real, size=N
+        v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        vis : array of real, size=N
+        vis : array of real, size=N, units=Jy
             Complex visibilites
 
         Returns
         -------
-        up : array of real, size=N
+        up : array of real, size=N, units= :math:`\\lambda`
             Corrected u-points of the visibilities
-        vp : array of real, size=N
+        vp : array of real, size=N, units= :math:`\\lambda`
             Corrected v-points of the visibilities
-        visp : array of real, size=N
+        visp : array of real, size=N, units=Jy
             Corrected complex visibilites
 
         """
@@ -165,20 +165,20 @@ class SourceGeometry(object):
 
         Parameters
         ----------
-        u : array of real, size=N
+        u : array of real, size=N, units= :math:`\\lambda`
             u-points of the visibilities
-        v : array of real, size=N
+        v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        vis : array of real, size=N
+        vis : array of real, size=N, units=Jy
             Complex visibilites
 
         Returns
         -------
-        up : array of real, size=N
+        up : array of real, size=N, units= :math:`\\lambda`
             Corrected u-points of the visibilities
-        vp : array of real, size=N
+        vp : array of real, size=N, units= :math:`\\lambda`
             Corrected v-points of the visibilities
-        visp : array of real, size=N
+        visp : array of real, size=N, units=Jy
             Corrected complex visibilites
 
         """
@@ -195,24 +195,42 @@ class SourceGeometry(object):
         """Convert uv-points from deprojected space to sky-plane"""
         return deproject(u, v, self._inc, self._PA, inverse=True)
 
+    @abc.abstractmethod
+    def fit(self, u, v, visib, weights):
+        """
+        Determine geometry using the uv-data provided.
+
+        Parameters
+        ----------
+        u : array of real, size=N, units= :math:`\\lambda`
+            u-points of the visibilities
+        v : array of real, size=N, units= :math:`\\lambda`
+            v-points of the visibilities
+        visib : array of complex, size=N, units=Jy
+            Complex visibilites
+        weights : array of real, size=NN, units=Jy
+            Weights on the visibilities.
+        """
+        return
+
     @property
     def dRA(self):
-        """Phase centre offset in Right Ascension"""
+        """Phase centre offset in Right Ascension, units=arcsec"""
         return self._dRA
 
     @property
     def dDec(self):
-        """Phase centre offset in Declination"""
+        """Phase centre offset in Declination, units=arcsec"""
         return self._dDec
 
     @property
     def PA(self):
-        """Position angle of the disc"""
+        """Position angle of the disc, units=radians"""
         return self._PA
 
     @property
     def inc(self):
-        """Inclination of the disc"""
+        """Inclination of the disc, units=radians"""
         return self._inc
 
 
@@ -268,13 +286,13 @@ class FitGeometryGaussian(SourceGeometry):
 
         Parameters
         ----------
-        u : array of real, size=N
+        u : array of real, size=N, units= :math:`\\lambda`
             u-points of the visibilities
-        v : array of real, size=N
+        v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        visib : array of complex, size=N
+        visib : array of complex, size=N, units=Jy
             Complex visibilites
-        weights : array of real, size=N
+        weights : array of real, size=N, units=Jy^-2
             Weights on the visibilities.
         """
 
@@ -292,15 +310,15 @@ def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
 
     Parameters
     ----------
-    u : array of real, size=N
+    u : array of real, size=N, units= :math:`\\lambda`
         u-points of the visibilities
-    v : array of real, size=N
+    v : array of real, size=N, units= :math:`\\lambda`
         v-points of the visibilities
-    vis : array of complex, size=N
+    vis : array of complex, size=N, units=Jy
         Complex visibilites
-    weights : array of real, size=N
+    weights : array of real, size=N, units=Jy^-2
         Weights on the visibilities.
-    phase_centre: [dRA, dDec], optional. 
+    phase_centre: [dRA, dDec], optional, units=arcsec
         The Phase centre offsets dRA and dDec in arcseconds.
         If not provided, these will be fit for.
 

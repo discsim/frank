@@ -31,54 +31,76 @@ __all__ = ["FourierBesselFitter", "FrankFitter"]
 class _HankelRegressor(object):
     """
     Solves the Linear Regression problem to compute the posterior
-       P(I|q,V,p) ~ G(I-mu, D),
-    where I is the intensity to be predicted, q, and V are the baselines and 
-    visibility data. 
+    
+    .. math:: 
+       P(I|q,V,p) ~ G(I-\mu, D),
 
-    mu and D are the mean and covariance of the posterior distribution.
+    where :math:`I` is the intensity to be predicted, :math:`q`, and :math:`V`
+    are the baselines and visibility data. :math:`\mu` and :math:`D` are the 
+    mean and covariance of the posterior distribution.
 
-    If S is provided, it is the covariance matrix of prior
+    If :math:`S` is provided, it is the covariance matrix of prior 
+    
+    .. math:: 
         P(I|p) ~ G(I, S(p)),
-    and the Bayesian Linear Regression problem is solved. S is computed from 
-    the power spectrum, p, if provided, otherwise the traditional (frequentist)
-    Linear Regression is used instead.
 
-    The problem is framed in terms of the design matrix, M and information 
-    source, j.
+    and the Bayesian Linear Regression problem is solved. :math:`S` is computed
+    from the power spectrum, :math:`p`, if provided, otherwise the traditional
+    (frequentist) Linear Regression is used instead.
 
-    H(q) is the matrix that projects the intensity, I, to visibility space and 
-    M is defined by
-        M = H(q)^T weights H(q),
-    where weights is the weights matrix and
-        j = H(q)^T weights V.
+    The problem is framed in terms of the design matrix, :math:`M` and 
+    information source, :math:`j`.
+
+    :math:`H(q)` is the matrix that projects the intensity, :math:`I`, to
+    visibility space and :math:`M` is defined by
+    
+    .. math:: 
+        M = H(q)^T w H(q),
+    
+    where :math:`w` is the weights matrix and
+    
+    .. math:: 
+        j = H(q)^T w V.
 
     The mean and covariance of the posterior are then given by
-        mu = D j
+    
+    .. math:: 
+        \mu = D j
+
     and 
-        D = [ M + S(p)^-1]^-1
+
+    .. math:: 
+        D = [ M + S(p)^{-1}]^{-1},
+
     if the prior is provided, otherwise
-        D = M^-1.
+
+    .. math:: 
+        D = M^{-1}.
+
 
     Parameters
-    -----------
+    ----------
     DHT : DiscreteHankelTransform
         A DHT object with N bins that defines H(p). The DHT is used to compute 
-        S(p).
+        :math:`S(p)`.
     M : 2D array, size=(N, N)
         The design matrix, see above.
     j : 1D array, size=N
         Information source, see above.
     p : 1D array, size=N, optional
-        Power spectrum used to generate the covarience matrix, S(p).
+        Power spectrum used to generate the covarience matrix, :math:`S(p)`.
     geometry: SourceGeometry object, optional
         If provided, this geometry will be used to de-project the visibilities
         in self.predict.
     noise_likelihood : floaat, optional
-         An optional parameter needed to compute the full likelihood,
-            like_noise = -(1/2) V^T weights V - (1/2)*log[det(2*np.pi*N)]
-        where V is the visibilities and N is the noise covariance. If not 
-        provided, the likelihood can still be computed up to this missing 
-        constant.
+        An optional parameter needed to compute the full likelihood, which 
+        should be equal to
+
+        .. math:: 
+            -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log[w/(2*np.pi)]
+
+        If not  provided, the likelihood can still be computed up to this 
+        missing constant.
 
     """
 
@@ -103,19 +125,7 @@ class _HankelRegressor(object):
         self._fit()
 
     def _fit(self):
-        """
-        Compute the mean and variance from M and j.
-
-        Parameters
-        ----------
-        M : 2D array, size=(N, N) 
-            The projected precision matrix, 
-                M = H(q)^T N^{-1} H(q).
-        j : 1D array, size=N
-            The projected data vector,
-                j = H(q)^T N^-1 V.
-
-        """
+        """Computes the mean and variance."""
         # Compute the inverse Prior covariance, S(p)^-1
         Sinv = self._Sinv
         if Sinv is None:
@@ -144,7 +154,7 @@ class _HankelRegressor(object):
 
     def Dsolve(self, b):
         """
-        Computes np.dot(D, b) by solving D^-1 x = b.
+        Computes :math:`D \cdot b` by solving :math:`D^{-1} x = b`.
 
         Parameters
         ----------
@@ -171,34 +181,47 @@ class _HankelRegressor(object):
         """
         Computes one of two types of likelihood.
 
-        If I is provided, this computes
-            log[P(I,V|S)],
+        If :math:`I` is provided, this computes
+        
+        .. math:
+            \\log[P(I,V|S)],
+            
         otherwise the marginalized likelihood is computed:
-            log[P(V|S)].
+
+        .. math:
+            \\log[P(V|S)].
+
 
         Parameters
         ----------
-        I : array, size=N, optional.
-            Intensity, I(r), to compute the likelihood of.
+        I : array, size=N, optional. Units=Jy/Sr
+            Intensity, :math:`I(r)`, to compute the likelihood of.
 
         Returns
         -------
         log_P : float,
-            log likelihood, log[P(I,V|p)] or log[P(V|p)]
+            log likelihood, :math:`\\log[P(I,V|p)]` or :math:`\\log[P(V|p)]`
 
         Notes
         -----
         1. The prior probability P(S) is not included. 
         2. The likelihoods take the form:
-              log[P(I,V|p)] = (1/2) j^T I - (1/2) I^T D^-1 I 
-                 - (1/2)*log[det(2*np.pi*S)]
-                 + H_0
-           and
-              log[P(V|p)] = (1/2) * j^T D j 
-                 + (1/2)*log[det(D)/det(S)]
-                 + H_0
+        
+        .. math::
+              \\log[P(I,V|p)] = \\frac{1}{2} j^T I - \\frac{1}{2} I^T D^{-1} I 
+                 - \\frac{1}{2} \\log[\\det(2 \pi S)] + H_0
+
+        and
+
+        .. math::
+              \\log[P(V|p)] = \\frac{1}{2} j^T D j 
+                 + \\frac{1}{2} \\log[\\det(D)/\\det(S)] + H_0
+
         where 
-            H_0 = (1/2) * V^T weights V - (1/2) log[det(2*np.pi*N)]
+
+        .. math::
+            H_0 = -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log(w /2 \pi)
+
         is the noise likelihood.
 
         """
@@ -228,13 +251,12 @@ class _HankelRegressor(object):
 
         Parameters
         ----------
-        u, v : array
+        u, v : array, units= :math:`\\lambda`
             uv-points to predict the visibilities at
-        I : array, optional
+        I : array, optional, units=Jy
             Intensity points to predict the vibilities of. If not specified, 
             the mean will be used. The intensity should be specified at the
-            collocation points,
-                I[k] = I(r_k).
+            collocation points, I[k] = :math:`I(r_k)`.
         geometry: SourceGeometry object, optional
             Geometry used to de-project the visibilities. If not provided
             a default one passed in during construction will be used.
@@ -265,9 +287,9 @@ class _HankelRegressor(object):
 
         Parameters
         ----------
-        q : array
+        q : array, units= :math:`\\lambda`
             1D uv-points to predict the visibilities at
-        I : array, optional
+        I : array, optional, unit=Jy/Sr
             Intensity points to predict the vibilities of. If not specified, 
             the mean will be used. The intensity should be specified at the
             collocation points,
@@ -297,10 +319,12 @@ class _HankelRegressor(object):
 
     @property
     def mean(self):
+        """Posterior mean, unit=Jr/Sr"""
         return self._mu
 
     @property
     def covariance(self):
+        """Posterior covariance, unit=(Jr/Sr)^2"""
         if self._cov is None:
             self._cov = self.Dsolve(np.eye(self.size))
         return self._cov
@@ -312,22 +336,22 @@ class _HankelRegressor(object):
 
     @property
     def r(self):
-        """Radius points"""
+        """Radius points, unit=radians"""
         return self._DHT.r
 
     @property
     def Rmax(self):
-        """Maximum Radius"""
+        """Maximum Radius, unit=radians"""
         return self._DHT.Rmax
 
     @property
     def q(self):
-        """Frequency points"""
+        """Frequency points, units= :math:`\\lambda`"""
         return self._DHT.q
 
     @property
     def Qmax(self):
-        """Maximum frequency"""
+        """Maximum frequency, units= :math:`\\lambda`"""
         return self._DHT.Qmax
 
     @property
@@ -347,7 +371,7 @@ class FourierBesselFitter(object):
 
     Parameters
     ----------
-    Rmax : float
+    Rmax : float, unit=radians
         Radius of support for the functions to transform, i.e. 
             f(r) = 0 for R >= Rmax
     N : int
@@ -360,7 +384,7 @@ class FourierBesselFitter(object):
         Large temporary matrices are needed to set up the data, if block_data
         is True we avoid this, limiting the memory requirement to block_size
         elements.
-    block_size : int, default = 10**7
+    block_size : int, default = 107
         Size of the matrices if blocking is used.
 
     """
@@ -379,7 +403,7 @@ class FourierBesselFitter(object):
         Compute the matrices M, and j from the visibility data.
 
         Also computes 
-            H0 = 0.5*log[det(weights/(2*np.pi))] - 0.5*np.sum(V * weights * V)
+            H0 = 0.5*\\log[det(weights/(2*np.pi))] - 0.5*np.sum(V * weights * V)
 
         """
         # Deproject the visibilities:
@@ -433,11 +457,11 @@ class FourierBesselFitter(object):
 
         Parameters
         ----------
-        u,v : 1D array
+        u,v : 1D array, units= :math:`\\lambda`
             uv-points of the visibilies.
-        V : 1D array
+        V : 1D array, units=Jy
             Visibility amplitudes at q
-        weights : 1D array, optional.
+        weights : 1D array, optional, units=Jy^-2
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
 
@@ -459,22 +483,22 @@ class FourierBesselFitter(object):
 
     @property
     def r(self):
-        """Radius points"""
+        """Radius points, units=radians"""
         return self._DHT.r
 
     @property
     def Rmax(self):
-        """Maximum Radius"""
+        """Maximum Radius, units=radians"""
         return self._DHT.Rmax
 
     @property
     def q(self):
-        """Frequency points"""
+        """Frequency points, units= :math:`\\lambda`"""
         return self._DHT.q
 
     @property
     def Qmax(self):
-        """Maximum Frequency"""
+        """Maximum Frequency, units= :math:`\\lambda`"""
         return self._DHT.Qmax
 
     @property
@@ -499,9 +523,9 @@ class FrankFitter(FourierBesselFitter):
 
     Parameters
     ----------
-    Rmax : float
-        Radius of support for the functions to transform, i.e.
-          f(r) = 0 for R >= Rmax
+    Rmax : float, unit=radians
+        Radius of support for the functions to transform, i.e. f(r) = 0 for 
+        R >= Rmax.
     N : int
         Number of collaction points
     geometry : SourceGeometry object
@@ -511,7 +535,7 @@ class FrankFitter(FourierBesselFitter):
     alpha : float >= 1, default = 1.05
         Order parameter of the inverse gamma prior for the power spectrum.
         coefficients.
-    p_0 : float >= 0, default = 1e-15
+    p_0 : float >= 0, default = 1e-15, unit=Jy^2
         Scale parameter of the inverse gamma prior for the power spectrum.
         coefficients.
     smooth : float >= 0, default = 0.1
@@ -575,11 +599,11 @@ class FrankFitter(FourierBesselFitter):
 
         Parameters
         ----------
-        u,v : 1D array
+        u,v : 1D array, units= :math:`\\lambda`
             uv-points of the visibilies.
-        V : 1D array
+        V : 1D array, units=Jy
             Visibility amplitudes at q
-        weights : 1D array, optional.
+        weights : 1D array, optional, units=Jy^-2
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
 
@@ -783,15 +807,17 @@ class FrankFitter(FourierBesselFitter):
 
     def log_likelihood(self, sol=None):
         """
-        Compute the log likelihood log[P(p, V)]
+        Compute the log likelihood :math:`log[P(p, V)]`
 
-        log[P(p, V)] ~ log[P(V|p)] + log[P(p)]
+        .. math:
+           \\log[P(p, V)] ~ \\log[P(V|p)] + \\log[P(p)]
+
 
         Parameters
         ----------
         sol : _HankelRegressor object, optional
-           Posterior solution given a set power-spectrum parameters, p. If not
-           provided, the MAP solution will be provided.
+           Posterior solution given a set power-spectrum parameters, :math:`p`.
+           If not provided, the MAP solution will be provided.
 
         Returns
         -------        
@@ -800,8 +826,7 @@ class FrankFitter(FourierBesselFitter):
 
         Notes
         -----
-        Computed up to a normalizing constant that depends on alpha, p0.
-
+        Computed up to a normalizing constant that depends on alpha, :math:`p0`.
         
         """
         if sol is None:
