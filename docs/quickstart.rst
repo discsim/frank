@@ -22,7 +22,7 @@ A custom parameter file can alternatively be provided with
 
 .. code-block:: bash
 
-    python fit.py --p <parameter_filename>.json
+    python fit.py --p <parameter_filename.json>
 
 By default :py:mod:`frank` saves the fitted brightness profile as a ``.txt``,
 the visibility domain fit as a ``.npz``, ``UVTables`` for the **reprojected**
@@ -35,7 +35,7 @@ Perform a fit using the code as a library
 
 To interface with the code more directly, let's use it as a library.
 
-First we'll load a ``UVTable`` with some example data to be fitted,
+First we'll load a ``UVTable`` with some example data to be fit,
 the DSHARP observations of AS 209, available as a ``UVTable``
 `here <https://github.com/discsim/frankenstein/blob/master/tutorials/AS209_continuum.dat>`_.
 
