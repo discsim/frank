@@ -36,14 +36,11 @@ Indices and tables
 
 Fine print
 ==========
+==================
+=======
 
 If you use Frankenstein for your publication, please cite the
 `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_,  ::
-=======
-==================
-
-If you use Frankenstein for your publication, please cite the
-`Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_  ::
 
     @misc{}... update ADS bibtex entry
 
