@@ -47,7 +47,11 @@ def help():
       }
     }
 
-    print("\nThe default parameter file is of the form:\n\n", json.dumps(param_descrip, indent=4))
+    print("""
+     Fit a 1D radial brightness profile with Frankenstein from the \
+     terminal with `python fit.py`. A .json parameter file is required. The
+     default is default_parameters.json and is of the form:\n\n""",
+     json.dumps(param_descrip, indent=4))
 
 
 def parse_parameters(parameter_file):

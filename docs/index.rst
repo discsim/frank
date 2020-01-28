@@ -21,8 +21,9 @@ interpreting its results, and hosts the code's API.
    :caption: Contents:
 
    Installation <install>
+   Quickstart <quickstart>
    Tutorials <tutorials>
-   API <py_api>
+   API <py_API>
    Github <https://github.com/discsim/frankenstein>
    Submit an issue <https://github.com/discsim/frankenstein/issues>
    Papers <https://ui.adsabs.harvard.edu/public-libraries/xx>
@@ -36,13 +37,14 @@ Indices and tables
 
 Fine print
 ==========
-==================
-=======
 
-If you use Frankenstein for your publication, please cite the
+Frankenstein is free software licensed under the GPLv3 License.
+For more details see the `LICENSE <https://github.com/discsim/frankenstein/blob/master/LICENSE.txt>`_.
+
+If you use :py:mod:`frank` for your publication, please cite the
 `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_,  ::
 
-    @misc{}... update ADS bibtex entry
+    @misc{}xx update ADS bibtex entry xx
 
 Authors:
 --------

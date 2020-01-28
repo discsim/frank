@@ -13,6 +13,5 @@ Performing and interpreting a fit
    :titlesonly:
    :maxdepth: 1
 
-   tutorials/fit_from_terminal.rst
-   tutorials/fit_from_python.ipynb
+   tutorials/using_frank_as_library.ipynb
    tutorials/prior_sensitivity_and_uncertainty.ipynb
