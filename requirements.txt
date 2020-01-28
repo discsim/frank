@@ -1,4 +1,3 @@
-numpy>=xx
-matplotlib>=xx
-scipy>=xx
-xx (others?)
+numpy
+matplotlib
+scipy
