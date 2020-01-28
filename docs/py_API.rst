@@ -1,6 +1,7 @@
 The Frankenstein Python API
 ===============================
 
+<<<<<<< HEAD
 To interface with the code's fitting routine, use the
 :func:`FrankFitter <frankenstein.radial_fitters.FrankFitter>` object.
 
@@ -20,6 +21,8 @@ The first task before fitting the radial profile with Frankenstein is to determi
 Currently, we provide two classes that can determine the geometry, :class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` and :class:`FitGeometryGaussian <frankenstein.geometry.FitGeometryGaussian>`.
 :class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` uses a known inclination, position angle, and phase centre.
 
+=======
+>>>>>>> merge conflicts
 .. autoclass:: frankenstein.geometry.FixedGeometry
 
 :class:`FitGeometryGaussian <frankenstein.geometry.FitGeometryGaussian>` determines the geometry by fitting a Gaussian directly to the visibilities. In this case it is only necessary to specify whether the phase centre is already known or should be fitted for.
@@ -28,6 +31,7 @@ Currently, we provide two classes that can determine the geometry, :class:`Fixed
 
 Adding your own geometry fit routine
 ####################################
+
 It is possible to extend Frankenstein's geometry fitting capabilities with your own routines. To do this you should write your own class that inherits from the :class:`SourceGeometry <frankenstein.geometry.SourceGeometry>` base class. The :class:`SourceGeometry <frankenstein.geometry.SourceGeometry>` base class provides the interface used by Frankenstein to de-project the data, but you must implement your own :func:`fit() <frankenstein.geometry.SourceGeometry.fit>` method. This method will be called internally by :class:`FrankFitter <frankenstein.radial_fitters.FrankFitter>` to determine the geometry.
 
 The :func:`fit() <frankenstein.geometry.SourceGeometry.fit>` method should set the attributes :data:`_inc`,  :data:`_PA`, :data:`_dRA`, and :data:`_dDec`, which are used by the

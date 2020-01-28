@@ -19,8 +19,8 @@ setup(
         'test' : ['pytest'],
         'docs-build' : ['sphinx', 'sphinxcontrib-fulltoc'],
         },
-    license="tbd",
-    url="tbd",
+    license="tbd xx",
+    url="tbd xx",
     classifiers=[
         # 'Development Status :: 1 - Production/Stable',
         # "Intended Audience :: Developers",
