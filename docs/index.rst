@@ -35,15 +35,15 @@ Indices and tables
 * :ref:`search`
 
 Fine print
-==================
+==========
 
 If you use Frankenstein for your publication, please cite the
-`Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_  ::
+`Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_,  ::
 
     @misc{}... update ADS bibtex entry
 
 Authors:
--------
+--------
     - `Richard Booth (University of Cambridge) <https://github.com/rbooth200>`_
     - `Jeff Jennings (University of Cambridge) <https://github.com/jeffjennings>`_
     - `Marco Tazzari (University of Cambridge) <https://github.com/mtazzari>`_

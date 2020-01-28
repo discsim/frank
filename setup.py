@@ -13,7 +13,7 @@ setup(
     author="Richard Booth, Jeff Jennings, Marco Tazzari",
     author_email="jmj51@ast.cam.ac.uk",
     description="Frankenstein, the flux reconstructor",
-    long_description=open('README.rst').read(),
+    long_description=open('README.md').read(),
     install_requires=[line.rstrip() for line in open("requirements.txt", "r").readlines()],
     extras_require={
         'test' : ['pytest'],
