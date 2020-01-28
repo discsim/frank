@@ -1,22 +1,24 @@
-Python API reference
-====================
+The Frankenstein Python API
+===============================
 
-The documentation of each function that is reported in this page can also be directly accessed from Python with, e.g.:
+To interface with the code's fitting routine, use the
+:func:`FrankFitter <frankenstein.radial_fitters.FrankFitter>` object.
 
-.. code:: python
+.. autofunction:: frankenstein.radial_fitters.FrankFitter
 
-    from frankenstein.radial_fitters import FrankFitter
+.. note ::
 
-    help(FrankFitter)
+    Documentation such as this can also be accessed in Python with, e.g.,
 
+    .. code:: python
 
 Determining the disc geometry
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The first task before fitting the radial profile with Frankenstein is to determine the geometry of the disc. This is needed to de-project the visibilities so that Frankenstein can be applied to an axisymmetric source. To achieve this, an object specifying how the geometry is determined must be passed to the :class:`FrankFitter <frankenstein.radial_fitters.FrankFitter>`.
 
-Currently, we provide two classes that can determine the geometry, :class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` and :class:`FitGeometryGaussian <frankenstein.geometry.FitGeometryGaussian>`. 
-:class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` uses a known inclination, position angle, and phase centre. 
+Currently, we provide two classes that can determine the geometry, :class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` and :class:`FitGeometryGaussian <frankenstein.geometry.FitGeometryGaussian>`.
+:class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` uses a known inclination, position angle, and phase centre.
 
 .. autoclass:: frankenstein.geometry.FixedGeometry
 
@@ -26,13 +28,13 @@ Currently, we provide two classes that can determine the geometry, :class:`Fixed
 
 Adding your own geometry fit routine
 ####################################
-It is possible to extend Frankenstein's geometry fitting capabilities with your own routines. To do this you should write your own class that inherits from the :class:`SourceGeometry <frankenstein.geometry.SourceGeometry>` base class. The :class:`SourceGeometry <frankenstein.geometry.SourceGeometry>` base class provides the interface used by Frankenstein to de-project the data, but you must implement your own :func:`fit() <frankenstein.geometry.SourceGeometry.fit>` method. This method will be called internally by :class:`FrankFitter <frankenstein.radial_fitters.FrankFitter>` to determine the geometry. 
+It is possible to extend Frankenstein's geometry fitting capabilities with your own routines. To do this you should write your own class that inherits from the :class:`SourceGeometry <frankenstein.geometry.SourceGeometry>` base class. The :class:`SourceGeometry <frankenstein.geometry.SourceGeometry>` base class provides the interface used by Frankenstein to de-project the data, but you must implement your own :func:`fit() <frankenstein.geometry.SourceGeometry.fit>` method. This method will be called internally by :class:`FrankFitter <frankenstein.radial_fitters.FrankFitter>` to determine the geometry.
 
-The :func:`fit() <frankenstein.geometry.SourceGeometry.fit>` method should set the attributes :data:`_inc`,  :data:`_PA`, :data:`_dRA`, and :data:`_dDec`, which are used by the 
-:func:`apply_correction() <frankenstein.geometry.SourceGeometry.apply_correction>`, 
-:func:`undo_correction() <frankenstein.geometry.SourceGeometry.apply_correction>`, 
+The :func:`fit() <frankenstein.geometry.SourceGeometry.fit>` method should set the attributes :data:`_inc`,  :data:`_PA`, :data:`_dRA`, and :data:`_dDec`, which are used by the
+:func:`apply_correction() <frankenstein.geometry.SourceGeometry.apply_correction>`,
+:func:`undo_correction() <frankenstein.geometry.SourceGeometry.apply_correction>`,
 :func:`deproject <frankenstein.geometry.SourceGeometry.apply_correction>`,
-and  
+and
 :func:`reproject <frankenstein.geometry.SourceGeometry.apply_correction>` methods. For the call signature of :func:`fit() <frankenstein.geometry.SourceGeometry.fit>`, see below.
 
 .. autoclass:: frankenstein.geometry.SourceGeometry
@@ -52,4 +54,3 @@ Once the fit is complete the best-fit parameters will be returned and stored in 
 
 .. autoclass:: frankenstein.radial_fitters._HankelRegressor
   :members: mean, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, log_likelihood
-

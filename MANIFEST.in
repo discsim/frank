@@ -1,0 +1,9 @@
+include README.rst AUTHORS.rst LICENSE.txt
+graft lib
+prune docs
+prune tutorials
+prune .ci
+exclude .clang-format
+exclude .gitattributes
+exclude .gitignore
+exclude .pre-commit-config.yaml
