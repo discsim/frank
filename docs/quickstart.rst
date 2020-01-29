@@ -12,17 +12,21 @@ be fit and a ``.json`` parameter file are needed. A ``UVTable`` can be extracted
 from :py:obj:`CASA` via xx. The default parameter file is
 ``default_parameters.json``.
 
-Given these files, perform a fit simply with
+Then perform a fit from `/frankenstein` [xx update xx] with
 
 .. code-block:: bash
 
-    python fit.py
+    python fit -m full_path_to_uvtable.dat
 
-A custom parameter file can alternatively be provided with
+where `-m` imports and runs :py:mod:`frank` as a package, and the ``UVTable`` can be
+given without the full path if it's in `/frankenstein` [xx update xx]. You can also
+specify the load and save directories and the ``UVTable`` filename in the parameter file.
+
+Want to change other parameters? Provide a custom parameter file with
 
 .. code-block:: bash
 
-    python fit.py --p <parameter_filename.json>
+    python fit -m --p <parameter_filename>
 
 By default :py:mod:`frank` saves the fitted brightness profile as a ``.txt``,
 the visibility domain fit as a ``.npz``, ``UVTables`` for the **reprojected**
@@ -33,25 +37,34 @@ xx add figure with caption xx
 Perform a fit using the code as a library
 -----------------------------------------
 
-To interface with the code more directly, let's use it as a library.
+To interface with the code more directly, you can use it as a library.
 
-First we'll load a ``UVTable`` with some example data to be fit,
-the DSHARP observations of AS 209, available as a ``UVTable``
-`here <https://github.com/discsim/frankenstein/blob/master/tutorials/AS209_continuum.dat>`_.
+First import some basic stuff from ``frank`` and load a ``UVTable`` with the data to be fit
+(here we'll use the DSHARP observations of AS 209, available as a ``UVTable``
+`here <https://github.com/discsim/frankenstein/blob/master/tutorials/AS209_continuum.dat>`_). For ease we'll use the
+:py:func:`load_uvdata` function.
 
 .. code-block:: python
 
-    u, v, vis, weights = np.genfromtxt('AS209_continuum.dat').T
+    import numpy as np
 
-Now choose an outer radius out to which we'll fit.
+    import frankenstein as frank
+    from frank.constants import rad_to_arcsec
+    from frank.radial_fitters import FrankFitter
+    from frank.geometry import FitGeometryGaussian
+    from fit import load_uvdata xx update xx
+
+    u, v, vis, weights = load_uvdata('AS209_continuum.dat')
+
+Now choose an outer radius out to which :py:mod:`frank` will fit.
 
 .. code-block:: python
 
     Rmax = 1.6 / rad_to_arcsec
 
-And run the fit using the ``FrankFitter`` class. We'll choose determine the disc's
+Then run the fit using the ``FrankFitter`` class. Here we'll determine the disc's
 geometry and deproject the visibilities using ``FitGeometryGaussian()``.
-Then for the brightness profile fit we'll use 250 collocation points and the code's
+For the brightness profile fit we'll use 250 collocation points and the code's
 default ``alpha`` and ``weights_smooth`` hyperprior values.
 
 .. code-block:: python
@@ -61,6 +74,4 @@ default ``alpha`` and ``weights_smooth`` hyperprior values.
 
     sol = FF.fit(u, v, vis, weights)
 
-    geom = sol.geometry
-
-We'll save the fit using xx and plot the result as xx.
+Finally we'll plot the real space and visibility domain fits using xx and save them using xx.
