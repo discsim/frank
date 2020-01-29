@@ -1,7 +1,6 @@
 The Frankenstein Python API
 ===============================
 
-<<<<<<< HEAD
 To interface with the code's fitting routine, use the
 :func:`FrankFitter <frankenstein.radial_fitters.FrankFitter>` object.
 
@@ -21,14 +20,25 @@ The first task before fitting the radial profile with Frankenstein is to determi
 Currently, we provide two classes that can determine the geometry, :class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` and :class:`FitGeometryGaussian <frankenstein.geometry.FitGeometryGaussian>`.
 :class:`FixedGeometry <frankenstein.geometry.FixedGeometry>` uses a known inclination, position angle, and phase centre.
 
-=======
->>>>>>> merge conflicts
+Geometry classes
+----------------
+
+Given a set of visibilities, these classes: **(1)** optionally fit for the source geometry and
+**(2)** deproject the visibilities by the given or fitted geometry.
+
+>>>>>>> format API docs page
 .. autoclass:: frankenstein.geometry.FixedGeometry
 
 .. autoclass:: frankenstein.geometry.FitGeometryGaussian
 
 .. autoclass:: frankenstein.geometry.SourceGeometry
  :members: apply_correction, undo_correction, deproject, reproject, fit
+
+Fitting classes
+---------------
+
+These classes reconstruct the 1D radial brightness profile of a source by fitting
+the deprojected visibilities.
 
 .. autoclass:: frankenstein.radial_fitters.FrankFitter
   :members: fit, MAP_solution, MAP_spectrum, MAP_spectrum_covariance, r, Rmax, q, Qmax, size, geometry
