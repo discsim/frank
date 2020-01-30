@@ -1,17 +1,13 @@
 Tutorials
 ====================
 
-These tutorials demonstrate how to apply :py:obj:`frank` to data and interpret
-the results, including how to assess the fitted brightness
-profile's sensitivity to hyperpriors and its uncertainty estimate.
-
-
-Performing and interpreting a fit
----------------------------------
+These tutorials demonstrate in more depth than the :doc:`Quickstart <quickstart>` how to
+use ``frank`` and interpret the results.
 
 .. toctree::
    :titlesonly:
    :maxdepth: 1
 
    tutorials/using_frank_as_library.ipynb
+   tutorials/running_fits_in_loop.ipynb
    tutorials/prior_sensitivity_and_uncertainty.ipynb

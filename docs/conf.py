@@ -101,6 +101,8 @@ html_static_path = ['_static']
 
 html_logo = 'images/prom_photo.jpg'
 
+html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
+
 # -- Extension settings ------------------------------------------------------
 
 # autodocs

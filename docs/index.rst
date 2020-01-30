@@ -10,44 +10,43 @@
 Documentation
 =============
 
-Welcome to the Frankenstein (:py:mod:`frank`) documentation. The :py:mod:`frank`
-code package is used to fit the 1D radial brightness profile of an
+Welcome to the Frankenstein (``frank``) documentation, you monster. frank fits the 1D radial brightness profile of an
 interferometric source given a set of visibilities. This site details how to
 install and run the code, provides examples for applying the model and
 interpreting its results, and hosts the code's API.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+   :caption: Using the code
 
-   Installation <install>
-   Quickstart <quickstart>
-   Tutorials <tutorials>
-   API <py_API>
-   Github <https://github.com/discsim/frankenstein>
-   Submit an issue <https://github.com/discsim/frankenstein/issues>
-   Papers <https://ui.adsabs.harvard.edu/public-libraries/xx>
+    Installation <install>
+    Quickstart <quickstart>
+    Tutorials <tutorials>
+    Papers using frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 1
+   :caption: Under the hood
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+    API <py_API>
+    Index <genindex>
+    Github <https://github.com/discsim/frankenstein>
+    Submit an issue <https://github.com/discsim/frankenstein/issues>
 
-Fine print
-==========
+License & attribution
+=====================
 
 Frankenstein is free software licensed under the GPLv3 License.
 For more details see the `LICENSE <https://github.com/discsim/frankenstein/blob/master/LICENSE.txt>`_.
 
-If you use :py:mod:`frank` for your publication, please cite the
+If you use frank for your publication, please cite the
 `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_,  ::
 
     @misc{}xx update ADS bibtex entry xx
 
-Authors:
---------
-    - `Richard Booth (University of Cambridge) <https://github.com/rbooth200>`_
-    - `Jeff Jennings (University of Cambridge) <https://github.com/jeffjennings>`_
-    - `Marco Tazzari (University of Cambridge) <https://github.com/mtazzari>`_
+Authors
+-------
+
+    - `Richard 'Dr. Frankenstein' Booth (University of Cambridge) <https://github.com/rbooth200>`_
+    - `Jeff 'The Monster' Jennings (University of Cambridge) <https://github.com/jeffjennings>`_
+    - `Marco 'It's Alive!!!' Tazzari (University of Cambridge) <https://github.com/mtazzari>`_
