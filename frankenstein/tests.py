@@ -20,8 +20,6 @@
 
 import numpy as np
 
-from frankenstein.constants import rad_to_arcsec
-
 from frankenstein.hankel import DiscreteHankelTransform
 from frankenstein.radial_fitters import FourierBesselFitter, FrankFitter
 from frankenstein.geometry import FixedGeometry, FitGeometryGaussian
@@ -116,7 +114,7 @@ def test_fit_geometry_inside():
 
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
-    Rmax = 1.6 / rad_to_arcsec
+    Rmax = 1.6
 
     FF = FrankFitter(Rmax, 20, FitGeometryGaussian(),
                      alpha=1.05, weights_smooth=1e-2)
@@ -137,7 +135,7 @@ def test_fourier_bessel_fitter():
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
-    Rmax = 1.6 / rad_to_arcsec
+    Rmax = 1.6
 
     FB = FourierBesselFitter(Rmax, 20, geometry=geometry)
 
@@ -160,7 +158,7 @@ def test_frank_fitter():
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
-    Rmax = 1.6 / rad_to_arcsec
+    Rmax = 1.6
 
     FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
 

@@ -23,6 +23,8 @@ discrete varient, the Discrete Hankel Transform (DHT).
 import numpy as np
 from scipy.special import j0, j1, jn_zeros, jv
 
+from frankenstein.constants import rad_to_arcsec
+
 __all__ = ["DiscreteHankelTransform"]
 
 
@@ -57,6 +59,8 @@ class DiscreteHankelTransform(object):
         of 2*pi.
     """
     def __init__(self, Rmax, N, nu=0):
+
+        Rmax /= rad_to_arcsec 
 
         # Select the fast Bessel functions, if available.
         if nu == 0:
