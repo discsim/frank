@@ -1,3 +1,21 @@
+# Frankenstein: 1D disc brightness profile reconstruction from Fourier data
+# using non-parametric Gaussian Processes
+#
+# Copyright (C) 2019-2020  R. Booth, J. Jennings, M. Tazzari
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>
+#
 """Run Frankenstein to fit a source's 1D radial brightness profile.
    A default parameter file is used that specifies all options to run the fit
    and output results. Alternatively a custom parameter file can be provided.
@@ -30,8 +48,9 @@ def help():
       },
 
       "geometry" : {
-        "deproject_data" : "Whether to correct the visibilities for on-sky projection",
+        "fit_geometry" : "Whether to fit for the source's geometry (on-sky projection)",
         "known_geometry" : "Whether to manually specify a geometry (if False, geometry will be fitted)",
+        "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle"
         "inc" : "Inclination. [deg]",
         "pa" : "Position angle. [deg]",
         "dra" : "Delta (offset from 0) right ascension. [arcsec]",
@@ -76,14 +95,35 @@ def load_uvdata(data_file):
     return u, v, vis, weights
 
 
-def deproject_disc(model, u, v, vis):
+def determine_geometry(model, u, v, vis, weights):
+    if not model['geometry']['fit_geometry']:
+        from frank.geometry import FixedGeometry
+        geom = FixedGeometry(0., 0., 0., 0.)
+
+    else:
+        if model['geometry']['known_geometry']:
+            from frank.geometry import FixedGeometry
+
+            geom = FixedGeometry(model['geometry']['inc'], model['geometry']['pa'], \
+                model['geometry']['dra'], model['geometry']['ddec'])
+
+        else:
+            from frank.geometry import FitGeometryGaussian
+
+            if fit_phase_offset:
+                geom = FitGeometryGaussian()
+
+            else:
+                geom = FitGeometryGaussian(phase_centre=(model['geometry']['dra'], \
+                    model['geometry']['ddec']))
+
+    return geom
 
 
-
-def perform_fit(model, rout):
+def perform_fit(model, rout, geom):
     from frank.radial_fitters import FrankFitter
 
-    FF = FrankFitter(rout, model['hyperpriors']['n'], geometry=geometry, \
+    FF = FrankFitter(rout, model['hyperpriors']['n'], geometry=geom, \
          alpha=model['hyperpriors']['alpha'], weights_smooth=model['hyperpriors']['wsmooth'])
 
     sol = FF.fit(u, v, vis, weights)
@@ -117,9 +157,9 @@ def main():
 
     u, v, vis, weights = load_uvdata(data_file)
 
-    u, v, vis = deproject_disc(model, u, v, vis, weights)
+    geom = deproject_disc(model, u, v, vis, weights)
 
-    perform_fit(model, u, v, vis, weights)
+    perform_fit(model, u, v, vis, weights, geom)
 
     output_results(model, u, v, vis, weights, sol)
 

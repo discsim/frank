@@ -23,7 +23,7 @@ Currently, we provide two classes that can determine the geometry, :class:`Fixed
 Geometry classes
 ----------------
 
-Given a set of visibilities, these classes: **(1)** optionally fit for the source geometry and
+Given a set of visibilities, together these classes: **(1)** optionally fit for the source geometry and
 **(2)** deproject the visibilities by the given or fitted geometry.
 
 >>>>>>> format API docs page
@@ -37,7 +37,7 @@ Given a set of visibilities, these classes: **(1)** optionally fit for the sourc
 Fitting classes
 ---------------
 
-These classes reconstruct the 1D radial brightness profile of a source by fitting
+Together these classes reconstruct the 1D radial brightness profile of a source by fitting
 the deprojected visibilities.
 
 .. autoclass:: frankenstein.radial_fitters.FrankFitter
