@@ -22,7 +22,7 @@ interpreting its results, and hosts the code's API.
     Installation <install>
     Quickstart <quickstart>
     Tutorials <tutorials>
-    Papers using frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
+    Papers that use frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
 
 .. toctree::
    :maxdepth: 1
@@ -39,8 +39,8 @@ License & attribution
 Frankenstein is free software licensed under the GPLv3 License.
 For more details see the `LICENSE <https://github.com/discsim/frankenstein/blob/master/LICENSE.txt>`_.
 
-If you use frank for your publication, please cite the
-`Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_,  ::
+If you use frank for your publication, please cite the `paper's <https://ui.adsabs.harvard.edu/abs/xx/abstract>`_
+Zenodo `reference <https://zenodo.org/badge/latestdoi/xxx>`_.  ::
 
     @misc{}xx update ADS bibtex entry xx
 

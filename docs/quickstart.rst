@@ -32,7 +32,10 @@ That's it! By default frank saves the fitted brightness profile as a *.txt*,
 the visibility domain fit as a *.npz*, UVTables for the **reprojected**
 fit and its residuals, and a figure showing the fit and its diagnostics.
 
-xx add figure with caption xx
+Here's an example for a frank fit to the DSHARP continuum observations of the protoplanetary disc
+AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
+
+ xx add figure with caption xx
 
 Perform a fit using the code as a library
 -----------------------------------------
@@ -40,12 +43,10 @@ Perform a fit using the code as a library
 To interface with the code more directly, you can use it as a library.
 
 First import some basic stuff from frank and load the data
-(we'll use the DSHARP observations of AS 209, available as a UVTable
+(again using the DSHARP observations of AS 209, available as a UVTable
 `here <https://github.com/discsim/frankenstein/blob/master/tutorials/AS209_continuum.dat>`_).
 
 .. code-block:: python
-
-    import numpy as np
 
     from frank.constants import rad_to_arcsec
     from frank.radial_fitters import FrankFitter
