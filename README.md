@@ -2,11 +2,6 @@
   <img width = "800" src="https://github.com/discsim/frankenstein/blob/docs_and_runner_jj/docs/images/day_off.png?raw=true"/>
 </p>
 
-Frankenstein
-============
-
-**The flux reconstructor**
-
 [![Build Status]()]()
 [![Conda (channel only)]()]()
 [![Conda Downloads]()]()
