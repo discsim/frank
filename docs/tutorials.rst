@@ -8,6 +8,4 @@ use ``frank`` and interpret the results.
    :titlesonly:
    :maxdepth: 1
 
-   tutorials/using_frank_as_library.ipynb
-   tutorials/running_fits_in_loop.ipynb
-   tutorials/prior_sensitivity_and_uncertainty.ipynb
+   tutorial_link
