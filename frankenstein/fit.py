@@ -66,7 +66,7 @@ def help():
     }
 
     print("""
-     Fit a 1D radial brightness profile with Frankenstein from the \
+     Fit a 1D radial brightness profile with Frankenstein from the 
      terminal with `python fit -m xx`. A .json parameter file is required. The
      default is default_parameters.json and is of the form:\n\n""",
      json.dumps(param_descrip, indent=4))
@@ -105,8 +105,8 @@ def determine_geometry(model, u, v, vis, weights):
         if model['geometry']['known_geometry']:
             from frank.geometry import FixedGeometry
 
-            geom = FixedGeometry(model['geometry']['inc'], model['geometry']['pa'], \
-                model['geometry']['dra'], model['geometry']['ddec'])
+            geom = FixedGeometry(model['geometry']['inc'], model['geometry']['pa'], 
+                                 model['geometry']['dra'], model['geometry']['ddec'])
 
         else:
             from frank.geometry import FitGeometryGaussian
@@ -115,8 +115,8 @@ def determine_geometry(model, u, v, vis, weights):
                 geom = FitGeometryGaussian()
 
             else:
-                geom = FitGeometryGaussian(phase_centre=(model['geometry']['dra'], \
-                    model['geometry']['ddec']))
+                geom = FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
+                                           model['geometry']['ddec']))
 
     return geom
 
@@ -124,8 +124,9 @@ def determine_geometry(model, u, v, vis, weights):
 def perform_fit(model, rout, geom):
     from frank.radial_fitters import FrankFitter
 
-    FF = FrankFitter(rout, model['hyperpriors']['n'], geometry=geom, \
-         alpha=model['hyperpriors']['alpha'], weights_smooth=model['hyperpriors']['wsmooth'])
+    FF = FrankFitter(rout, model['hyperpriors']['n'], geometry=geom,
+                     alpha=model['hyperpriors']['alpha'], 
+                     weights_smooth=model['hyperpriors']['wsmooth'])
 
     sol = FF.fit(u, v, vis, weights)
 
@@ -134,16 +135,20 @@ def perform_fit(model, rout, geom):
 
 def output_results(model, u, v, vis, weights, sol):
     if model['input_output']['save_profile_fit']:
-        np.savetxt(savedir + 'fit.txt', np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T, \
-            header='r [arcsec]\tI [Jy/sr]\tI_err [Jy/sr]')
+        np.savetxt(savedir + 'fit.txt', 
+                   np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
+                   header='r [arcsec]\tI [Jy/sr]\tI_err [Jy/sr]')
 
     if model['input_output']['save_vis_fit']:
-        np.savetxt(savedir + 'fit_vis.txt', np.array([ki / (2 * np.pi), GPHF.HankelTransform(ki)]).T, \
-            header='Baseline [lambda]\tRe(V) [Jy]')
+        np.savetxt(savedir + 'fit_vis.txt', 
+                   np.array([ki / (2 * np.pi), GPHF.HankelTransform(ki)]).T,
+                   header='Baseline [lambda]\tRe(V) [Jy]')
 
     if model['input_output']['save_uvtables']:
-        np.save(savedir + disc + '_frank_fit.dat', np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
-        np.save(savedir + disc + '_frank_residuals.dat', np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
+        np.save(savedir + disc + '_frank_fit.dat', 
+                np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
+        np.save(savedir + disc + '_frank_residuals.dat', 
+                np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
 
     if model['input_output']['make_plots']:
         frank.plot(model, u, v, vis, weights, sol)
