@@ -58,6 +58,10 @@ jobs:
             . venv/bin/activate
             pip install .[docs-build]
       - run:
+         name: Copy notebooks
+	    mkdir docs/tutorials
+	    cp tutorials/*ipynb docs/tutorials
+      - run:
           name: Build docs
           command: |
             . venv/bin/activate
