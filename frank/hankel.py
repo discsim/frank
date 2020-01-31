@@ -1,4 +1,4 @@
-# Frank: 1D disc brightness profile reconstruction from Fourier data
+# Frankenstein: 1D disc brightness profile reconstruction from Fourier data
 # using non-parametric Gaussian Processes
 #
 # Copyright (C) 2019-2020  R. Booth, J. Jennings, M. Tazzari
