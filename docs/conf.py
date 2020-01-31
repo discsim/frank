@@ -29,7 +29,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'frankenstein'
+project = 'frankentein'
 authors = u'R. Booth, J. Jennings, M. Tazzari.'
 copyright = '2019-%d, %s' % (datetime.now().year, authors)
 
@@ -38,9 +38,9 @@ copyright = '2019-%d, %s' % (datetime.now().year, authors)
 # built documents.
 #
 # The short X.Y version.
-version = str(frankenstein.__version__)
+version = str(frank.__version__)
 # The full version, including alpha/beta/rc tags.
-release = str(frankenstein.__version__)
+release = str(frank.__version__)
 
 # Get current git branch
 branch = os.getenv("GHBRANCH", "master")
