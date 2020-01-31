@@ -99,7 +99,7 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 Modify the `fit.py` script
 ##########################
 We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frankenstein/master/frankenstein/fit.py>`_.
-For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_library>`_.
+For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_library.ipynb>`_.
 
 Perform a fit using the code as a Python module
 -----------------------------------------------
