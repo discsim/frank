@@ -1,4 +1,4 @@
-# Frankenstein: 1D disc brightness profile reconstruction from Fourier data
+# Frank: 1D disc brightness profile reconstruction from Fourier data
 # using non-parametric Gaussian Processes
 #
 # Copyright (C) 2019-2020  R. Booth, J. Jennings, M. Tazzari
@@ -23,8 +23,8 @@ import numpy as np
 import scipy.linalg
 import scipy.sparse
 
-from frankenstein.hankel import DiscreteHankelTransform
-from frankenstein.constants import rad_to_arcsec, deg_to_rad
+from frank.hankel import DiscreteHankelTransform
+from frank.constants import rad_to_arcsec, deg_to_rad
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 

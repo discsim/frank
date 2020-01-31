@@ -20,10 +20,10 @@
 
 import numpy as np
 
-from frankenstein.hankel import DiscreteHankelTransform
-from frankenstein.radial_fitters import FourierBesselFitter, FrankFitter
-from frankenstein.geometry import FixedGeometry, FitGeometryGaussian
-from frankenstein.constants import deg_to_rad
+from frank.hankel import DiscreteHankelTransform
+from frank.radial_fitters import FourierBesselFitter, FrankFitter
+from frank.geometry import FixedGeometry, FitGeometryGaussian
+from frank.constants import deg_to_rad
 
 
 def test_hankel_gauss():

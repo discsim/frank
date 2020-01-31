@@ -1,4 +1,4 @@
-# Frankenstein: 1D disc brightness profile reconstruction from Fourier data
+# Frank: 1D disc brightness profile reconstruction from Fourier data
 # using non-parametric Gaussian Processes
 #
 # Copyright (C) 2019-2020  R. Booth, J. Jennings, M. Tazzari
@@ -23,7 +23,7 @@ discrete varient, the Discrete Hankel Transform (DHT).
 import numpy as np
 from scipy.special import j0, j1, jn_zeros, jv
 
-from frankenstein.constants import rad_to_arcsec
+from frank.constants import rad_to_arcsec
 
 __all__ = ["DiscreteHankelTransform"]
 
