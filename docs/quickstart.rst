@@ -9,7 +9,7 @@ Perform a fit from the terminal
 
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file are needed. A UVTable can be extracted
-from CASA via xx as demonstrated in :doc:`this tutorial <tutorials/xx>` xx update link xx.
+from CASA via xx as demonstrated in :doc:`this tutorial <tutorials/xx>`_ xx update link xx.
 The default parameter file is
 ``default_parameters.json``, and it looks like this:
 
@@ -98,8 +98,8 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 
 Modify the `fit.py` script
 ##########################
-We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frankenstein/master/frankenstein/fit.py>`_. xx fix link
-For an 'under the hood' look at what this script does, see `this tutorial tutorials/using_frank_as_library`. xx fix link
+We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frankenstein/master/frankenstein/fit.py>`_.
+For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_library>`_.
 
 Perform a fit using the code as a Python module
 -----------------------------------------------
