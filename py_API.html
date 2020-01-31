@@ -53,8 +53,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>units=radians</em>) – Disc inclination.</p></li>
-<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>units=radians</em>) – Disc positition angle.</p></li>
+<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Disc inclination.</p></li>
+<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Disc positition angle.</p></li>
 <li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>default=0</em><em>, </em><em>units=arcsec</em>) – Phase centre offset in Right Ascension.</p></li>
 <li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>default=0</em><em>, </em><em>units=arcsec</em>) – Phase centre offset in Declination.</p></li>
 </ul>
@@ -94,8 +94,8 @@ and
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>units=radians</em>) – Inclination of the disc</p></li>
-<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>units=radians</em>) – Position Angle of the disc</p></li>
+<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Inclination of the disc</p></li>
+<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Position Angle of the disc</p></li>
 <li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>units=arcseconds</em>) – Phase centre offset in Right Ascension</p></li>
 <li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>units=arcseconds</em>) – Phase centre offset in Declination</p></li>
 </ul>
@@ -344,7 +344,7 @@ in self.predict.</p></li>
 <li><p><strong>noise_likelihood</strong> (<em>floaat</em><em>, </em><em>optional</em>) – <p>An optional parameter needed to compute the full likelihood, which
 should be equal to</p>
 <div class="math notranslate nohighlight">
-\[-\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2*np.pi)]\]</div>
+\[\begin{split}-\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log[w/(2*np.pi)]\end{split}\]</div>
 <p>If not  provided, the likelihood can still be computed up to this
 missing constant.</p>
 </p></li>
@@ -386,7 +386,7 @@ missing constant.</p>
 <dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size=N</em><em>, </em><em>optional. Units=Jy/Sr</em>) – Intensity, <span class="math notranslate nohighlight">\(I(r)\)</span>, to compute the likelihood of.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>log_P</strong> – log likelihood, <span class="math notranslate nohighlight">\(\log[P(I,V|p)]\)</span> or <span class="math notranslate nohighlight">\(\log[P(V|p)]\)</span></p>
+<dd class="field-even"><p><strong>log_P</strong> – log likelihood, <span class="math notranslate nohighlight">\(\\log[P(I,V|p)]\)</span> or <span class="math notranslate nohighlight">\(\\log[P(V|p)]\)</span></p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>float,</p>
@@ -398,15 +398,15 @@ missing constant.</p>
 <li><p>The likelihoods take the form:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
-\[\log[P(I,V|p)] = \frac{1}{2} j^T I - \frac{1}{2} I^T D^{-1} I
-   - \frac{1}{2} \log[\det(2 \pi S)] + H_0\]</div>
+\[\begin{split}\\log[P(I,V|p)] = \\frac{1}{2} j^T I - \\frac{1}{2} I^T D^{-1} I
+   - \\frac{1}{2} \\log[\\det(2 \pi S)] + H_0\end{split}\]</div>
 <p>and</p>
 <div class="math notranslate nohighlight">
-\[\log[P(V|p)] = \frac{1}{2} j^T D j
-   + \frac{1}{2} \log[\det(D)/\det(S)] + H_0\]</div>
+\[\begin{split}\\log[P(V|p)] = \\frac{1}{2} j^T D j
+   + \\frac{1}{2} \\log[\\det(D)/\\det(S)] + H_0\end{split}\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight">
-\[H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)\]</div>
+\[\begin{split}H_0 = -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log(w /2 \pi)\end{split}\]</div>
 <p>is the noise likelihood.</p>
 </dd></dl>
 
