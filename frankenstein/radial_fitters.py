@@ -479,7 +479,7 @@ class FourierBesselFitter(object):
         self._build_matrices(u, v, V, weights)
 
         self._sol = _HankelRegressor(self._DHT, self._M, self._j,
-                                     geometry=self._geometry,
+                                     geometry=self._geometry.clone(),
                                      noise_likelihood=self._H0)
 
         return self._sol
@@ -767,7 +767,7 @@ class FrankFitter(FourierBesselFitter):
 
         """
         return _HankelRegressor(self._DHT, self._M, self._j, p,
-                                geometry=self._geometry,
+                                geometry=self._geometry.clone(),
                                 noise_likelihood=self._H0)
 
     def log_prior(self, p=None):
