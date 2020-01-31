@@ -13,7 +13,7 @@ Install the latest stable version of Frankenstein (``frank``) with `pip <https:/
 From source
 -----------
 
-Clone the source repository from `GitHub <https://github.com/discsim/frank>`_ if you're feeling like an absolute rebel,
+Clone the source repository from `GitHub <https://github.com/discsim/frank>`_ if you're feeling a bit monstrous,
 
 .. code-block:: bash
 
@@ -22,4 +22,8 @@ Clone the source repository from `GitHub <https://github.com/discsim/frank>`_ if
 Test the install
 ----------------
 
-Just run xx.
+Why, you need only run
+
+.. code-block:: bash
+
+    py.test frank/tests.py
