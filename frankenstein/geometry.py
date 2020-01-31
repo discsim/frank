@@ -23,7 +23,7 @@ import abc
 import numpy as np
 from scipy.optimize import least_squares
 
-from frankenstein.constants import rad_to_arcsec
+from frankenstein.constants import rad_to_arcsec, deg_to_rad
 
 __all__ = ["SourceGeometry", "FixedGeometry", "FitGeometryGaussian"]
 
@@ -73,9 +73,9 @@ def deproject(u, v, inc, PA, inverse=False):
         v-points of the visibilities
     vis : array of real, size=N, units=Jy
         Complex visibilites
-    inc : float, units=radians
+    inc : float, units=deg
         Inclination
-    PA : float, units=radians
+    PA : float, units=deg
         Position Angle
     inverse : bool, default=False
         If True the uv-points are re-projected rather than de-projected.
@@ -88,6 +88,10 @@ def deproject(u, v, inc, PA, inverse=False):
         Deprojected v-points
 
     """
+
+    inc *= deg_to_rad
+    PA *= deg_to_rad
+
     cos_t = np.cos(PA)
     sin_t = np.sin(PA)
 
@@ -109,14 +113,14 @@ def deproject(u, v, inc, PA, inverse=False):
 class SourceGeometry(object):
     """
     Base class for geometry corrections.
-    
+
     Centres and deprojects the source to ensure axisymmetry.
 
     Parameters
     ----------
-    inc : float, units=radians
+    inc : float, units=deg
         Inclination of the disc
-    PA : float, units=radians
+    PA : float, units=deg
         Position Angle of the disc
     dRA : float, units=arcseconds
         Phase centre offset in Right Ascension
@@ -237,22 +241,22 @@ class SourceGeometry(object):
 class FixedGeometry(SourceGeometry):
     """
     Disc Geometry class using pre-determined parameters.
-    
+
     Centres and deprojects the source to ensure axisymmetry.
 
     Parameters
     ----------
-    inc : float, units=radians
+    inc : float, units=deg
         Disc inclination.
-    PA : float, units=radians
+    PA : float, units=deg
         Disc positition angle.
     dRA : float, default=0, units=arcsec
         Phase centre offset in Right Ascension.
     dDec : float, default=0, units=arcsec
         Phase centre offset in Declination.
-    
+
     """
-    
+
     def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
         super(FixedGeometry, self).__init__(inc, PA, dRA, dDec)
 
@@ -264,7 +268,7 @@ class FixedGeometry(SourceGeometry):
 class FitGeometryGaussian(SourceGeometry):
     """
     Determine the disc geometry by fitting a Gaussian in Fourier space.
-    
+
     Centres and deprojects the source to ensure axisymmetry.
 
     Parameters
@@ -298,7 +302,7 @@ class FitGeometryGaussian(SourceGeometry):
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
             u, v, visib, weights, phase_centre=self._phase_centre)
-        
+
         self._inc = inc
         self._PA = PA
         self._dRA = dRA
@@ -395,4 +399,4 @@ def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    return inc, PA, dRA, dDec
+    return inc / deg_to_rad, PA / deg_to_rad, dRA, dDec

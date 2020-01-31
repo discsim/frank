@@ -24,13 +24,13 @@ import scipy.linalg
 import scipy.sparse
 
 from frankenstein.hankel import DiscreteHankelTransform
-from frankenstein.constants import rad_to_arcsec
+from frankenstein.constants import rad_to_arcsec, deg_to_rad
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 
 
 class _HankelRegressor(object):
-    """
+    r"""
     Solves the Linear Regression problem to compute the posterior
 
     .. math::
@@ -154,7 +154,7 @@ class _HankelRegressor(object):
         self._cov = None
 
     def Dsolve(self, b):
-        """
+        r"""
         Computes :math:`D \cdot b` by solving :math:`D^{-1} x = b`.
 
         Parameters
@@ -179,7 +179,7 @@ class _HankelRegressor(object):
         return np.random.multivariate_normal(self.mean, self.covariance, N)
 
     def log_likelihood(self, I=None):
-        """
+        r"""
         Computes one of two types of likelihood.
 
         If :math:`I` is provided, this computes
@@ -276,7 +276,7 @@ class _HankelRegressor(object):
         V = self._DHT.transform(I, q)
 
         if geometry is not None:
-            V *= np.cos(geometry.inc)
+            V *= np.cos(geometry.inc * deg_to_rad)
 
         _, _, V = geometry.undo_correction(u, v, V)
 
@@ -314,7 +314,7 @@ class _HankelRegressor(object):
         V = self._DHT.transform(I, q)
 
         if geometry is not None:
-            V *= np.cos(geometry.inc)
+            V *= np.cos(geometry.inc * deg_to_rad)
 
         return V
 
@@ -416,8 +416,8 @@ class FourierBesselFitter(object):
         # Use only the real part of V. Also correct the total flux for the
         # inclination. This is not done in apply_correction for consistency
         # with uvplot
-        V = V.real / np.cos(self._geometry.inc)
-        weights = weights * np.cos(self._geometry.inc) ** 2
+        V = V.real / np.cos(self._geometry.inc * deg_to_rad)
+        weights = weights * np.cos(self._geometry.inc * deg_to_rad) ** 2
 
         # If blocking is used we will build up M and j chunk-by-chunk.
         if self._blocking:
