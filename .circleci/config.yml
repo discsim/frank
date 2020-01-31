@@ -58,6 +58,8 @@ jobs:
             . venv/bin/activate
             sudo apt-get install pandoc
             pip install jupyter_client
+            pip install ipykernel
+            python3 -m ipykernel install --user
             pip install .[docs-build]
       - run:
           name: Copy notebooks
