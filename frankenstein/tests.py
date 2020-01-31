@@ -88,7 +88,7 @@ def test_import_data():
 
 
 def load_AS209():
-    uv_AS209_DHSARP = np.load('docs/tutorials/AS209_continuum.npz')
+    uv_AS209_DHSARP = np.load('tutorials/AS209_continuum.npz')
     geometry = FixedGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97,
                               PA=85.76)
 
@@ -132,7 +132,7 @@ def test_fit_geometry_inside():
 
 
 def test_fourier_bessel_fitter():
-    """ Run Frank on AS 209 dataset in docs/tutorials directory """
+    """ Run Frank on AS 209 dataset in tutorials directory """
 
     AS209, geometry = load_AS209()
 
@@ -155,7 +155,7 @@ def test_fourier_bessel_fitter():
 
 
 def test_frank_fitter():
-    """ Run Frank on AS 209 dataset in docs/tutorials directory """
+    """ Run Frank on AS 209 dataset in tutorials directory """
 
     AS209, geometry = load_AS209()
 
