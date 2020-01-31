@@ -8,10 +8,33 @@ Perform a fit from the terminal
 -------------------------------
 
 To perform a quick fit from the terminal, only a UVTable with the data to
-be fit and a *.json* parameter file are needed. A UVTable can be extracted
-from CASA via xx as demonstrated in `this tutorial <tutorials/using_frank_as_library.ipynb>`_. xx update link xx
-The default parameter file is
-``default_parameters.json``, and it looks like this:
+be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
+from CASA via xx as demonstrated in `this tutorial <tutorials/xx>`_.
+
+If you specify `load_dir`, `save_dir` and `uvtable_filename` in the default parameter file,
+you can perform a fit using the default parameters with
+
+.. code-block:: bash
+
+    python -m frank.fit
+
+where `-m` imports and runs frank as a package.
+
+Or you can leave the load and save directories and the UVTable filename empty in the parameter file,
+in which case the load and save directories are assumed to be your current working directory,
+and you perform a fit by explicitly passing the UVTable filename with
+
+.. code-block:: bash
+
+    python -m frank.fit <uvtable_filename.txt>
+
+If you want to change the default parameters, provide a custom parameter file with
+
+.. code-block:: bash
+
+    python -m frank.fit [uvtable_filename.txt] --p <parameter_filename.json>
+
+The default parameter file is ``default_parameters.json``, and it looks like this:
 
 .. literalinclude:: ../frank/default_parameters.json
     :linenos:
@@ -61,30 +84,6 @@ which returns
         }
     }
 
-
-If you now specify `load_dir`, `save_dir` and `uvtable_filename` in the parameter file,
-you can perform a fit using the default parameters with
-
-.. code-block:: bash
-
-    python -m frank.fit
-
-where `-m` imports and runs frank as a package.
-
-Or you can leave the load and save directories and the UVTable filename empty in the parameter file,
-in which case the load and save directories are assumed to be your current working directory,
-and you perform a fit by explicitly passing the UVTable filename with
-
-.. code-block:: bash
-
-    python -m frank.fit <uvtable_filename.txt>
-
-If you want to change the default parameters, provide a custom parameter file with
-
-.. code-block:: bash
-
-    python -m frank.fit [uvtable_filename.txt] --p <parameter_filename.json>
-
 That's it! By default frank saves the fitted brightness profile as a *.txt*,
 the visibility domain fit as a *.npz*, UVTables for the **reprojected**
 fit and its residuals as *.txt*, and 2 figures showing the fit and its diagnostics.
@@ -98,15 +97,18 @@ Modify the `fit.py` script
 ##########################
 We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frankenstein/master/frank/fit.py>`_.
 For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_library.ipynb>`_.
+If you'd like a more qualitative overview of the code (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
 Perform a fit using the code as a Python module
 -----------------------------------------------
 
-To interface with the code more directly, you can use it as a module. 
+To interface with the code more directly, you can use it as a module.
 
 First import some basic stuff from frank and load the data
 (again using the DSHARP observations of AS 209, available as a UVTable
 `here <https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.txt>`_).
+Note that the wrapper functions in ``fit.py`` can do all this for us; we're not using them here just to show how to directly interface
+with the code's internal classes.
 
 .. code-block:: python
 
@@ -117,9 +119,9 @@ First import some basic stuff from frank and load the data
 
     u, v, vis, weights = load_uvdata('AS209_continuum.txt')
 
-Now run the fit using the :py:class:`FrankFitter <frank.radial_fitters.FrankFitter>` class.
-Here we'll ask frank to determine the disc's geometry and deproject the visibilities
-using the :py:class:`FitGeometryGaussian <frank.geometry.FitGeometryGaussian>` class.
+Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>` class.
+Here we'll determine the disc's geometry and deproject the visibilities
+using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>` class.
 For the brightness profile reconstruction we'll fit out to 1.6" using 250 collocation points and the code's
 default ``alpha`` and ``weights_smooth`` hyperprior values.
 

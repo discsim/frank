@@ -98,7 +98,7 @@ class _HankelRegressor(object):
         should be equal to
 
         .. math::
-            -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log[w/(2*np.pi)]
+            -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2*np.pi)]
 
         If not  provided, the likelihood can still be computed up to this
         missing constant.
@@ -209,19 +209,19 @@ class _HankelRegressor(object):
         2. The likelihoods take the form:
 
         .. math::
-              \\log[P(I,V|p)] = \\frac{1}{2} j^T I - \\frac{1}{2} I^T D^{-1} I
-                 - \\frac{1}{2} \\log[\\det(2 \pi S)] + H_0
+              \log[P(I,V|p)] = \frac{1}{2} j^T I - \frac{1}{2} I^T D^{-1} I
+                 - \frac{1}{2} \log[\det(2 \pi S)] + H_0
 
         and
 
         .. math::
-              \\log[P(V|p)] = \\frac{1}{2} j^T D j
-                 + \\frac{1}{2} \\log[\\det(D)/\\det(S)] + H_0
+              \log[P(V|p)] = \frac{1}{2} j^T D j
+                 + \frac{1}{2} \log[\det(D)/\det(S)] + H_0
 
         where
 
         .. math::
-            H_0 = -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log(w /2 \pi)
+            H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)
 
         is the noise likelihood.
 
