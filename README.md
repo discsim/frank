@@ -1,5 +1,5 @@
 <p align="center">
-  <img width = "800" src="https://github.com/discsim/frankenstein/blob/docs_and_runner_jj/docs/images/day_off.png?raw=true"/>
+  <img width = "800" src="https://github.com/discsim/frank/blob/docs_and_runner_jj/docs/images/day_off.png?raw=true"/>
 </p>
 
 ![Python versions](https://img.shields.io/badge/python-3.7-%20%230078BC)
@@ -8,9 +8,17 @@
 
 Frankenstein (**frank**) is a library that fits the 1D radial brightness profile of an interferometric source given a set of visibilities. It uses a Gaussian process that performs the fit in <1 minute for a typical protoplanetary disc continuum dataset.
 
+Get the code
+------------
+frank's on [PyPI](https://pypi.org/project/frank), so just use [pip](https://pip.pypa.io/en/stable/),
+```
+pip install frank
+```
+
+
 Documentation
 -------------
-The [docs](https://discsim.github.io/frankenstein/) have it all.
+The [docs](https://discsim.github.io/frank/) have it all.
 
 Attribution
 -----------
