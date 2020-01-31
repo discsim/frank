@@ -23,6 +23,8 @@ discrete varient, the Discrete Hankel Transform (DHT).
 import numpy as np
 from scipy.special import j0, j1, jn_zeros, jv
 
+from frankenstein.constants import rad_to_arcsec
+
 __all__ = ["DiscreteHankelTransform"]
 
 
