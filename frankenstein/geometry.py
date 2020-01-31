@@ -217,7 +217,7 @@ class SourceGeometry(object):
         """
         return
 
-    def clone_geometry(self):
+    def clone(self):
         """Save the geometry parameters in a seperate geometry object."""
         return FixedGeometry(self.inc, self.PA, self.dRA, self.dDec)
 
