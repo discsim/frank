@@ -41,7 +41,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            py.test frankenstein/tests.py -rXs
+            py.test frank/tests.py -rXs
       - store_artifacts:
           path: test-reports
           destination: test-reports
