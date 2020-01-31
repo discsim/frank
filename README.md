@@ -10,7 +10,7 @@ Frankenstein (**frank**) is a library that fits the 1D radial brightness profile
 
 Get the code
 ------------
-**frank**'s on [PyPI](https://pypi.org/project/frank), so just use [pip](https://pip.pypa.io/en/stable/),
+**frank**'s on [PyPI](https://pypi.org/project/frank), so you can just use [pip](https://pip.pypa.io/en/stable/),
 ```
 pip install frank
 ```
