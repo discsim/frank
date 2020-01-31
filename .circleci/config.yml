@@ -61,7 +61,7 @@ jobs:
           name: Copy notebooks
           command: |
             mkdir docs/tutorials
-            cp tutorials/*ipynb docs/tutorials
+            cp tutorials/[ur]*ipynb docs/tutorials
       - run:
           name: Build docs
           command: |
