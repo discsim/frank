@@ -13,6 +13,8 @@ from CASA via xx as demonstrated in :doc:`this tutorial <tutorials/xx>` xx updat
 The default parameter file is
 ``default_parameters.json``, and it looks like this:
 
+xx update 'frankenstein --> frank' xx
+
 .. literalinclude:: ../frankenstein/default_parameters.json
     :linenos:
     :language: json
@@ -94,10 +96,15 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 
  xx add figure with caption xx
 
+Modify the `fit.py` script
+##########################
+We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frankenstein/master/frankenstein/fit.py>_`. xx fix link
+For an 'under the hood' look at what this script does, see `this tutorial tutorials/using_frank_as_library`. xx fix link
+
 Perform a fit using the code as a Python module
 -----------------------------------------------
 
-To interface with the code more directly, you can use it as a module.
+To interface with the code more directly, you can use it as a module. xx link to tutorial xx
 
 First import some basic stuff from frank and load the data
 (again using the DSHARP observations of AS 209, available as a UVTable

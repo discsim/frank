@@ -17,7 +17,7 @@ setup(
     install_requires=[line.rstrip() for line in open("requirements.txt", "r").readlines()],
     extras_require={
         'test' : ['pytest'],
-        'docs-build' : ['sphinx', 'sphinxcontrib-fulltoc'],
+        'docs-build' : ['sphinx', 'sphinxcontrib-fulltoc', 'sphinx_rtd_theme', 'nbsphinx'],
         },
     license="tbd xx",
     url="tbd xx",
