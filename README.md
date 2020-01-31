@@ -3,7 +3,6 @@
 </p>
 
 ![Python versions](https://img.shields.io/badge/python-3.7-%20%230078BC)
-
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![DOI]()]()
 
