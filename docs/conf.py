@@ -119,3 +119,4 @@ nbsphinx_prolog = """
 nbsphinx_prompt_width = 0
 nbsphinx_timeout = 600
 napoleon_use_ivar = True
+nbsphinx_allow_errors = True # TODO: remove once notebooks final
