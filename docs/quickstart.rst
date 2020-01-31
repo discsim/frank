@@ -9,11 +9,9 @@ Perform a fit from the terminal
 
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file are needed. A UVTable can be extracted
-from CASA via xx as demonstrated in :doc:`this tutorial <tutorials/xx>`_ xx update link xx.
+from CASA via xx as demonstrated in `this tutorial <tutorials/using_frank_as_library.ipynb>`_. xx update link xx
 The default parameter file is
 ``default_parameters.json``, and it looks like this:
-
-xx update 'frankenstein --> frank' xx
 
 .. literalinclude:: ../frank/default_parameters.json
     :linenos:
@@ -104,7 +102,7 @@ For an 'under the hood' look at what this script does, see `this tutorial <tutor
 Perform a fit using the code as a Python module
 -----------------------------------------------
 
-To interface with the code more directly, you can use it as a module. xx link to tutorial xx
+To interface with the code more directly, you can use it as a module. 
 
 First import some basic stuff from frank and load the data
 (again using the DSHARP observations of AS 209, available as a UVTable
