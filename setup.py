@@ -3,11 +3,11 @@
 from setuptools import setup, find_packages
 
 version = {}
-exec(open("frankenstein/__init__.py", "r").read(), version)
+exec(open("frank/__init__.py", "r").read(), version)
 version = version['__version__']
 
 setup(
-    name="frankenstein",
+    name="frank",
     version=version,
     packages=find_packages(),
     author="Richard Booth, Jeff Jennings, Marco Tazzari",
