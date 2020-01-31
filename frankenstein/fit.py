@@ -84,12 +84,6 @@ def parse_parameters(parameter_file):
     return model
 
 
-def convert_units(model): # TODO: delete after rebase
-    rout = model['hyperpriors']['rout'] / rad_to_arcsec
-
-    return rout
-
-
 def load_uvdata(data_file):
     u, v, vis, weights = np.genfromtxt(data_file).T
 
@@ -161,8 +155,6 @@ def main():
 
     with open('used_params.json', 'w') as f:
         json.dump(model, f, indent=4)
-
-    rout = convert_units(model) # TODO: remove after rebase
 
     u, v, vis, weights = load_uvdata(data_file)
 
