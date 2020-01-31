@@ -81,7 +81,7 @@ def parse_parameters(parameter_file):
     args = parser.parse_args()
     model = json.load(open(args.parameters, 'r'))
 
-    return args, model
+    return model
 
 
 def convert_units(model): # TODO: delete after rebase
@@ -152,9 +152,9 @@ def output_results(model, u, v, vis, weights, sol):
 
 
 def main():
-    args, model = parse_parameters(parameter_file)
+    model = parse_parameters(parameter_file)
 
-    rout = convert_units(model)
+    rout = convert_units(model) # TODO: remove after rebase
 
     u, v, vis, weights = load_uvdata(data_file)
 
