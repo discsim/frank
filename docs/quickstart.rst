@@ -85,7 +85,7 @@ If you want to change the default parameters, provide a custom parameter file wi
 
 .. code-block:: bash
 
-    python -m frank.fit --p <parameter_filename.json>
+    python -m frank.fit [uvtable_filename.txt] --p <parameter_filename.json>
 
 That's it! By default frank saves the fitted brightness profile as a *.txt*,
 the visibility domain fit as a *.npz*, UVTables for the **reprojected**
