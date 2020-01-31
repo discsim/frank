@@ -15,8 +15,6 @@ interferometric source given a set of visibilities. This site details how to
 install and run the code, provides examples for applying the model and
 interpreting its results, and hosts the code's API.
 
-Test test test test test
-
 .. toctree::
    :maxdepth: 1
    :caption: Using the code
