@@ -22,7 +22,7 @@ interpreting its results, and hosts the code's API.
     Installation <install>
     Quickstart <quickstart>
     Tutorials <tutorials>
-    Papers using frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
+    Papers that use frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
 
 .. toctree::
    :maxdepth: 1
