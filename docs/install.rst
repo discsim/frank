@@ -13,11 +13,11 @@ Install the latest stable version of Frankenstein (``frank``) with `pip <https:/
 From source
 -----------
 
-Clone the source repository from `GitHub <https://github.com/discsim/frankenstein>`_ if you're feeling like an absolute rebel,
+Clone the source repository from `GitHub <https://github.com/discsim/frank>`_ if you're feeling like an absolute rebel,
 
 .. code-block:: bash
 
-    pip install git+https://github.com/discsim/frankenstein.git
+    pip install git+https://github.com/discsim/frank.git
 
 Test the install
 ----------------
