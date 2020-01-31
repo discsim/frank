@@ -22,10 +22,9 @@
 """
 
 import sys
-import argparse
 import json
 
-default_parameters = "default_parameters.json"
+parameter_file = "default_parameters.json"
 
 
 def help():
@@ -68,14 +67,16 @@ def help():
 
     print("""
      Fit a 1D radial brightness profile with Frankenstein from the \
-     terminal with `python fit.py`. A .json parameter file is required. The
+     terminal with `python fit -m xx`. A .json parameter file is required. The
      default is default_parameters.json and is of the form:\n\n""",
      json.dumps(param_descrip, indent=4))
 
 
 def parse_parameters(parameter_file):
+    import argparse
+
     parser = argparse.ArgumentParser("Run a Frank fit, by default using parameters in default_parameters.json")
-    parser.add_argument("-p", "--parameters", default=default_parameters, type=str, help="Parameter file (.json)")
+    parser.add_argument("-p", "--parameters", default=parameter_file, type=str, help="Parameter file (.json)")
 
     args = parser.parse_args()
     model = json.load(open(args.parameters, 'r'))
@@ -83,7 +84,7 @@ def parse_parameters(parameter_file):
     return args, model
 
 
-def convert_units(model):
+def convert_units(model): # TODO: delete after rebase
     rout = model['hyperpriors']['rout'] / rad_to_arcsec
 
     return rout
@@ -134,7 +135,7 @@ def perform_fit(model, rout, geom):
 def output_results(model, u, v, vis, weights, sol):
     if model['input_output']['save_profile_fit']:
         np.savetxt(savedir + 'fit.txt', np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T, \
-            header='r [arcsec]\tI [Jy/sr]\tI_err [Jy/sr]'))
+            header='r [arcsec]\tI [Jy/sr]\tI_err [Jy/sr]')
 
     if model['input_output']['save_vis_fit']:
         np.savetxt(savedir + 'fit_vis.txt', np.array([ki / (2 * np.pi), GPHF.HankelTransform(ki)]).T, \
