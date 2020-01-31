@@ -22,7 +22,7 @@ interpreting its results, and host the code's API.
     Installation <install>
     Quickstart <quickstart>
     Tutorials <tutorials>
-    Papers that use frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
+    Papers that use frank <https://ui.adsabs.harvard.edu/public-libraries/xx>_
 
 .. toctree::
    :maxdepth: 1
@@ -30,8 +30,8 @@ interpreting its results, and host the code's API.
 
     API <py_API>
     Index <genindex>
-    Github <https://github.com/discsim/frankenstein>
-    Submit an issue <https://github.com/discsim/frankenstein/issues>
+    Github <https://github.com/discsim/frankenstein>_
+    Submit an issue <https://github.com/discsim/frankenstein/issues>_
 
 License & attribution
 =====================
