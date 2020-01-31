@@ -24,6 +24,7 @@ import scipy.linalg
 import scipy.sparse
 
 from frankenstein.hankel import DiscreteHankelTransform
+from frankenstein.constants import rad_to_arcsec
 
 __all__ = ["FourierBesselFitter", "FrankFitter"]
 
@@ -31,57 +32,57 @@ __all__ = ["FourierBesselFitter", "FrankFitter"]
 class _HankelRegressor(object):
     """
     Solves the Linear Regression problem to compute the posterior
-    
-    .. math:: 
+
+    .. math::
        P(I|q,V,p) ~ G(I-\mu, D),
 
     where :math:`I` is the intensity to be predicted, :math:`q`, and :math:`V`
-    are the baselines and visibility data. :math:`\mu` and :math:`D` are the 
+    are the baselines and visibility data. :math:`\mu` and :math:`D` are the
     mean and covariance of the posterior distribution.
 
-    If :math:`S` is provided, it is the covariance matrix of prior 
-    
-    .. math:: 
+    If :math:`S` is provided, it is the covariance matrix of prior
+
+    .. math::
         P(I|p) ~ G(I, S(p)),
 
     and the Bayesian Linear Regression problem is solved. :math:`S` is computed
     from the power spectrum, :math:`p`, if provided, otherwise the traditional
     (frequentist) Linear Regression is used instead.
 
-    The problem is framed in terms of the design matrix, :math:`M` and 
+    The problem is framed in terms of the design matrix, :math:`M` and
     information source, :math:`j`.
 
     :math:`H(q)` is the matrix that projects the intensity, :math:`I`, to
     visibility space and :math:`M` is defined by
-    
-    .. math:: 
+
+    .. math::
         M = H(q)^T w H(q),
-    
+
     where :math:`w` is the weights matrix and
-    
-    .. math:: 
+
+    .. math::
         j = H(q)^T w V.
 
     The mean and covariance of the posterior are then given by
-    
-    .. math:: 
+
+    .. math::
         \mu = D j
 
-    and 
+    and
 
-    .. math:: 
+    .. math::
         D = [ M + S(p)^{-1}]^{-1},
 
     if the prior is provided, otherwise
 
-    .. math:: 
+    .. math::
         D = M^{-1}.
 
 
     Parameters
     ----------
     DHT : DiscreteHankelTransform
-        A DHT object with N bins that defines H(p). The DHT is used to compute 
+        A DHT object with N bins that defines H(p). The DHT is used to compute
         :math:`S(p)`.
     M : 2D array, size=(N, N)
         The design matrix, see above.
@@ -93,13 +94,13 @@ class _HankelRegressor(object):
         If provided, this geometry will be used to de-project the visibilities
         in self.predict.
     noise_likelihood : floaat, optional
-        An optional parameter needed to compute the full likelihood, which 
+        An optional parameter needed to compute the full likelihood, which
         should be equal to
 
-        .. math:: 
+        .. math::
             -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log[w/(2*np.pi)]
 
-        If not  provided, the likelihood can still be computed up to this 
+        If not  provided, the likelihood can still be computed up to this
         missing constant.
 
     """
@@ -161,7 +162,7 @@ class _HankelRegressor(object):
         b : array, size=(N,...)
             Right hand side to solve for.
 
-        Returns 
+        Returns
         -------
         x : array, same shape as b
             Solution to the equation D x = b.
@@ -182,10 +183,10 @@ class _HankelRegressor(object):
         Computes one of two types of likelihood.
 
         If :math:`I` is provided, this computes
-        
+
         .. math:
             \\log[P(I,V|S)],
-            
+
         otherwise the marginalized likelihood is computed:
 
         .. math:
@@ -204,20 +205,20 @@ class _HankelRegressor(object):
 
         Notes
         -----
-        1. The prior probability P(S) is not included. 
+        1. The prior probability P(S) is not included.
         2. The likelihoods take the form:
-        
+
         .. math::
-              \\log[P(I,V|p)] = \\frac{1}{2} j^T I - \\frac{1}{2} I^T D^{-1} I 
+              \\log[P(I,V|p)] = \\frac{1}{2} j^T I - \\frac{1}{2} I^T D^{-1} I
                  - \\frac{1}{2} \\log[\\det(2 \pi S)] + H_0
 
         and
 
         .. math::
-              \\log[P(V|p)] = \\frac{1}{2} j^T D j 
+              \\log[P(V|p)] = \\frac{1}{2} j^T D j
                  + \\frac{1}{2} \\log[\\det(D)/\\det(S)] + H_0
 
-        where 
+        where
 
         .. math::
             H_0 = -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log(w /2 \pi)
@@ -254,7 +255,7 @@ class _HankelRegressor(object):
         u, v : array, units= :math:`\\lambda`
             uv-points to predict the visibilities at
         I : array, optional, units=Jy
-            Intensity points to predict the vibilities of. If not specified, 
+            Intensity points to predict the vibilities of. If not specified,
             the mean will be used. The intensity should be specified at the
             collocation points, I[k] = :math:`I(r_k)`.
         geometry: SourceGeometry object, optional
@@ -290,7 +291,7 @@ class _HankelRegressor(object):
         q : array, units= :math:`\\lambda`
             1D uv-points to predict the visibilities at
         I : array, optional, unit=Jy/Sr
-            Intensity points to predict the vibilities of. If not specified, 
+            Intensity points to predict the vibilities of. If not specified,
             the mean will be used. The intensity should be specified at the
             collocation points,
                 I[k] = I(r_k).
@@ -336,13 +337,13 @@ class _HankelRegressor(object):
 
     @property
     def r(self):
-        """Radius points, unit=radians"""
-        return self._DHT.r
+        """Radius points, unit=arcsec"""
+        return self._DHT.r * rad_to_arcsec
 
     @property
     def Rmax(self):
-        """Maximum Radius, unit=radians"""
-        return self._DHT.Rmax
+        """Maximum Radius, unit=arcsec"""
+        return self._DHT.Rmax * rad_to_arcsec
 
     @property
     def q(self):
@@ -367,12 +368,12 @@ class _HankelRegressor(object):
 
 class FourierBesselFitter(object):
     """
-    Fourier-Bessel series model for fitting visibilities. 
+    Fourier-Bessel series model for fitting visibilities.
 
     Parameters
     ----------
-    Rmax : float, unit=radians
-        Radius of support for the functions to transform, i.e. 
+    Rmax : float, unit=arcsec
+        Radius of support for the functions to transform, i.e.
             f(r) = 0 for R >= Rmax
     N : int
         Number of collaction points.
@@ -391,6 +392,8 @@ class FourierBesselFitter(object):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 7):
 
+        Rmax /= rad_to_arcsec
+
         self._geometry = geometry
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
@@ -402,7 +405,7 @@ class FourierBesselFitter(object):
         """
         Compute the matrices M, and j from the visibility data.
 
-        Also computes 
+        Also computes
             H0 = 0.5*\\log[det(weights/(2*np.pi))] - 0.5*np.sum(V * weights * V)
 
         """
@@ -483,13 +486,13 @@ class FourierBesselFitter(object):
 
     @property
     def r(self):
-        """Radius points, units=radians"""
-        return self._DHT.r
+        """Radius points, units=arcsec"""
+        return self._DHT.r * rad_to_arcsec
 
     @property
     def Rmax(self):
-        """Maximum Radius, units=radians"""
-        return self._DHT.Rmax
+        """Maximum Radius, units=arcsec"""
+        return self._DHT.Rmax * rad_to_arcsec
 
     @property
     def q(self):
@@ -523,8 +526,8 @@ class FrankFitter(FourierBesselFitter):
 
     Parameters
     ----------
-    Rmax : float, unit=radians
-        Radius of support for the functions to transform, i.e. f(r) = 0 for 
+    Rmax : float, unit=arcsec
+        Radius of support for the functions to transform, i.e. f(r) = 0 for
         R >= Rmax.
     N : int
         Number of collaction points
@@ -558,7 +561,7 @@ class FrankFitter(FourierBesselFitter):
 
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 7, 
+    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 7,
                  alpha=1.05, p_0=1e-15, weights_smooth=0.1,
                  tol=1e-3, max_iter=250):
 
@@ -683,7 +686,7 @@ class FrankFitter(FourierBesselFitter):
 
     def _ps_covariance(self, fit, Tij, rho):
         """
-        Covariance of the power-spectrum. 
+        Covariance of the power-spectrum.
 
         Parameters
         ----------
@@ -729,7 +732,7 @@ class FrankFitter(FourierBesselFitter):
         """
         Draw N sets of power-spectrum parameters.
 
-        The draw is takem from the Laplace-approximated (Gaussian) posterior 
+        The draw is takem from the Laplace-approximated (Gaussian) posterior
         distribution for p,
             P(p) ~ G(p - p_MAP, p_cov)
 
@@ -777,18 +780,18 @@ class FrankFitter(FourierBesselFitter):
         Parameters
         ----------
         p : array, size=N, optional
-            Power spectrum coefficients. If not provided the MAP values are 
+            Power spectrum coefficients. If not provided the MAP values are
             used.
 
         Returns
-        -------        
+        -------
         log[P(p)] : float,
             Log Prior probability.
 
         Notes
         -----
         Computed up to a normalizing constant that depends on alpha, p0.
-        
+
         """
         if p is None:
             p = self._ps
@@ -820,14 +823,14 @@ class FrankFitter(FourierBesselFitter):
            If not provided, the MAP solution will be provided.
 
         Returns
-        -------        
+        -------
         log[P(p, V)] : float,
             Log Prior probability.
 
         Notes
         -----
         Computed up to a normalizing constant that depends on alpha, :math:`p0`.
-        
+
         """
         if sol is None:
             sol = self.MAP_solution

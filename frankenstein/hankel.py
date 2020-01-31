@@ -60,8 +60,6 @@ class DiscreteHankelTransform(object):
     """
     def __init__(self, Rmax, N, nu=0):
 
-        Rmax /= rad_to_arcsec 
-
         # Select the fast Bessel functions, if available.
         if nu == 0:
             self._jnu0 = j0
