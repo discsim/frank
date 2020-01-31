@@ -217,6 +217,10 @@ class SourceGeometry(object):
         """
         return
 
+    def clone_geometry(self):
+        """Save the geometry parameters in a seperate geometry object."""
+        return FixedGeometry(self.inc, self.PA, self.dRA, self.dDec)
+
     @property
     def dRA(self):
         """Phase centre offset in Right Ascension, units=arcsec"""
