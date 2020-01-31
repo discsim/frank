@@ -10,10 +10,10 @@
 Documentation
 =============
 
-Welcome to the Frankenstein (``frank``) documentation, you monster. frank fits the 1D radial brightness profile of an
-interferometric source given a set of visibilities. This site details how to
-install and run the code, provides examples for applying the model and
-interpreting its results, and hosts the code's API.
+Frankenstein (``frank``) fits the 1D radial brightness profile of an
+interferometric source given a set of visibilities. These docs detail how to
+install and run the code, provide examples for applying the model and
+interpreting its results, and host the code's API.
 
 .. toctree::
    :maxdepth: 1
@@ -39,8 +39,7 @@ License & attribution
 Frankenstein is free software licensed under the GPLv3 License.
 For more details see the `LICENSE <https://github.com/discsim/frankenstein/blob/master/LICENSE.txt>`_.
 
-If you use frank for your publication, please cite the `paper's <https://ui.adsabs.harvard.edu/abs/xx/abstract>`_
-Zenodo `reference <https://zenodo.org/badge/latestdoi/xxx>`_.  ::
+If you use frank for your research, please cite the `paper <https://ui.adsabs.harvard.edu/abs/xx/abstract>`_: ::
 
     @misc{}xx update ADS bibtex entry xx
 

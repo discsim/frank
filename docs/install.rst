@@ -27,4 +27,7 @@ Clone the source repository from `GitHub <https://github.com/discsim/frankenstei
     cd frankenstein
     python -m pip install -e .
 
-xx (test the install?)
+Test the install
+----------------
+
+Just run xx.

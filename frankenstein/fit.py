@@ -50,7 +50,7 @@ def help():
       "geometry" : {
         "fit_geometry" : "Whether to fit for the source's geometry (on-sky projection)",
         "known_geometry" : "Whether to manually specify a geometry (if False, geometry will be fitted)",
-        "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle"
+        "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
         "inc" : "Inclination. [deg]",
         "pa" : "Position angle. [deg]",
         "dra" : "Delta (offset from 0) right ascension. [arcsec]",
