@@ -119,9 +119,9 @@ with the code's internal classes.
 
     u, v, vis, weights = load_uvdata('AS209_continuum.txt')
 
-Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>` class.
+Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
 Here we'll determine the disc's geometry and deproject the visibilities
-using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>` class.
+using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
 For the brightness profile reconstruction we'll fit out to 1.6" using 250 collocation points and the code's
 default ``alpha`` and ``weights_smooth`` hyperprior values.
 

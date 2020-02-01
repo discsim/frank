@@ -5,7 +5,7 @@
 
 .. figure:: images/day_off.png
    :align: left
-   :figwidth: 600
+   :figwidth: 700
 
 Documentation
 =============
