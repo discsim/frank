@@ -40,3 +40,5 @@ License
 **frank** is free software licensed under the LGPLv3 License. For more details see the LICENSE.
 
 © Copyright 2019-2020 Richard Booth, Jeff Jennings, Marco Tazzari.
+
+Image: Universal Studios, NBCUniversal [Public domain]

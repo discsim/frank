@@ -91,7 +91,7 @@ rst_prolog="""
 #
 html_theme = 'sphinx_rtd_theme'
 html_theme_options = {'display_version': True}
-html_last_updated_fmt = '%Y %b %d at %H:%M:%S UTC'
+html_last_updated_fmt = '%Y %b %d at %H:%M:%S UTC // Images: Universal Studios, NBCUniversal [Public domain]'
 html_show_sourcelink = False
 html_logo = 'images/prom_photo.jpg'
 html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
