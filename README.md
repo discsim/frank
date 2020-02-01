@@ -27,6 +27,12 @@ If you use **frank** for your research please cite Jennings, Booth, Tazzari et a
 xx
 ```
 
+Authors
+-------
+    - [Richard 'Dr. Frankenstein' Booth (University of Cambridge](https://github.com/rbooth200)_
+    - [Jeff 'The Monster' Jennings (University of Cambridge)](https://github.com/jeffjennings)_
+    - [Marco 'It's Alive!!!' Tazzari (University of Cambridge)](https://github.com/mtazzari)_
+
 License
 -------
 **frank** is free software licensed under the LGPLv3 License. For more details see the LICENSE.

@@ -20,9 +20,10 @@ Clone the source repository from `GitHub <https://github.com/discsim/frank>`_ if
     pip install git+https://github.com/discsim/frank.git
 
 Test the install
-----------------
+################
 
-Why, you need only run
+If you cloned the source repo and you have `py.test <https://docs.pytest.org/en/latest/>`_,
+just run this from the code's root directory (it takes ~5 sec),
 
 .. code-block:: bash
 
