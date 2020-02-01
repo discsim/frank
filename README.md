@@ -29,11 +29,11 @@ xx
 
 Authors
 -------
-[Richard 'Dr. Frankenstein' Booth (University of Cambridge](https://github.com/rbooth200)
+- [Richard 'Dr. Frankenstein' Booth (University of Cambridge)](https://github.com/rbooth200)
 
-[Jeff 'The Monster' Jennings (University of Cambridge)](https://github.com/jeffjennings)
+- [Jeff 'The Monster' Jennings (University of Cambridge)](https://github.com/jeffjennings)
 
-[Marco 'It's Alive!!!' Tazzari (University of Cambridge)](https://github.com/mtazzari)
+- [Marco 'It's Alive!!!' Tazzari (University of Cambridge)](https://github.com/mtazzari)
 
 License
 -------
