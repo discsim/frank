@@ -20,7 +20,7 @@ setup(
         'docs-build' : ['sphinx', 'sphinxcontrib-fulltoc', 'sphinx_rtd_theme', 'nbsphinx'],
         },
     license="GPLv3",
-    url="https://github.com/discsim/fran",
+    url="https://github.com/discsim/frank",
     classifiers=[
         # 'Development Status :: 1 - Production/Stable',
         # "Intended Audience :: Developers",
