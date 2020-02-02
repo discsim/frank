@@ -85,7 +85,9 @@ Let's first import some basic stuff from frank and load the data
 (again using the DSHARP observations of AS 209, available as a UVTable
 `here <https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.txt>`_).
 Note that the wrapper functions in ``fit.py`` can do all this for us; of those,
-we're not using `determine_geometry` or `perform_fit` here just to show how to directly interface with the code's internal classes.
+here we're not using `parse_parameters` because we'll explicitly pass the parameters we need,
+and we're also not using `determine_geometry` or `perform_fit`
+just to show how to directly interface with the code's internal classes.
 
 .. code-block:: python
 

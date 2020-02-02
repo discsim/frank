@@ -32,7 +32,7 @@ parameter_file = "default_parameters.json"
 
 def helper():
     with open('parameter_descriptions.json') as f:
-        param_descrip = json.load(f)
+        param_descrip = json.load(f) # TODO: point to parameter_descriptions.json in code dir
 
     print("""
      Fit a 1D radial brightness profile with Frankenstein (frank) from the
@@ -42,6 +42,20 @@ def helper():
 
 
 def parse_parameters(parameter_file):
+    """
+    Read in a .json parameter file to set the fit parameters.
+
+    Parameters
+    ----------
+    parameter_file : string
+                     .json parameter file (see frank.fit.helper)
+
+    Returns
+    -------
+    model : dict
+            Dictionary containing model parameters the fit uses
+    """
+
     import argparse
 
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
@@ -73,19 +87,59 @@ def parse_parameters(parameter_file):
     print('  Saving parameters to be used in fit to `frank_used_pars.json`')
     with open('frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
-
+    print('cat',type(model))
     return model
 
 
 def load_uvdata(data_file):
+    """
+    Read in a UVTable with data to be fit.
+
+    Parameters
+    ----------
+    data_file : string
+                UVTable with columns: u [m]  v [m]  Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]
+
+    Returns
+    -------
+    u, v : array, units = :math:`\\lambda`
+           u and v coordinates of observations
+    vis : array, units = Jy
+          Real component of observed visibilities
+    weights : array, units = Jy^-2
+          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+    """
+
     print('  Loading UVTable')
 
     u, v, vis, weights = np.genfromtxt(data_file).T
+
+    # TODO: (optionally) convert u, v from [m] to [lambda]
 
     return u, v, vis, weights
 
 
 def determine_geometry(model, u, v, vis, weights):
+    """
+    Determine the source geometry (inclination, position angle, phase offset).
+
+    Parameters
+    ----------
+    model : dict
+            Dictionary containing model parameters the fit uses
+    u, v : array, units = :math:`\\lambda`
+           u and v coordinates of observations
+    vis : array, units = Jy
+          Real component of observed visibilities
+    weights : array, units = Jy^-2
+          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+
+    Returns
+    -------
+    geom : SourceGeometry object
+           Fitted geometry (see frank.geometry.SourceGeometry)
+    """
+
     print('  Determining disc geometry')
 
     if not model['geometry']['fit_geometry']:
@@ -124,6 +178,28 @@ def determine_geometry(model, u, v, vis, weights):
 
 
 def perform_fit(model, u, v, vis, weights, geom):
+    """
+    Deproject the observed visibilities and fit them for the brightness profile.
+
+    Parameters
+    ----------
+    model : dict
+            Dictionary containing model parameters the fit uses
+    u, v : array, units = :math:`\\lambda`
+           u and v coordinates of observations
+    vis : array, units = Jy
+          Real component of observed visibilities
+    weights : array, units = Jy^-2
+          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+    geom : SourceGeometry object
+           Fitted geometry (see frank.geometry.SourceGeometry)
+
+    Returns
+    -------
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum (see frank.radial_fitters.FrankFitter) # TODO: check
+    """
+
     print('  Fitting for brightness profile')
 
     from frank.radial_fitters import FrankFitter
@@ -145,7 +221,32 @@ def perform_fit(model, u, v, vis, weights, geom):
 
 
 def output_results(model, u, v, vis, weights, sol, diag_fig=True):
-    print(dir(sol))
+    """
+    Deproject the observed visibilities and fit them for the brightness profile.
+
+    Parameters
+    ----------
+    model : dict
+            Dictionary containing model parameters the fit uses
+    u, v : array, units = :math:`\\lambda`
+           u and v coordinates of observations
+    vis : array, units = Jy
+          Real component of observed visibilities
+    weights : array, units = Jy^-2
+          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+    geom : SourceGeometry object
+           Fitted geometry (see frank.geometry.SourceGeometry)
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum (see frank.radial_fitters.FrankFitter) # TODO: check
+    diag_fig : bool, optional, default=True
+               Whether to produce a figure showing diagnostics of the fit
+
+    Returns
+    -------
+    xx
+    """
+
+    print(dir(sol)) # TODO: remove after tests
     if model['input_output']['save_profile_fit']:
         np.savetxt(savedir + 'fit.txt',
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
