@@ -3,6 +3,8 @@ docs/tutorials
 
 .DS_Store
 
+used_params.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -18,21 +18,21 @@ you can perform a fit using the default parameters with
 
     python -m frank.fit
 
-where `-m` imports and runs frank as a package.
+where `-m` runs the `frank/fit` module as a script.
 
-Or you can leave the load and save directories and the UVTable filename empty in the parameter file,
-in which case the load and save directories are assumed to be your current working directory,
+You can leave the load directory, save directory and/or the UVTable filename empty in the parameter file.
+If so, the load directory will be set to your current working directory, the save directory to your load directory,
 and you perform a fit by explicitly passing the UVTable filename with
 
 .. code-block:: bash
 
-    python -m frank.fit <uvtable_filename.txt>
+    python -m frank.fit -uv <uvtable_filename.txt>
 
 If you want to change the default parameters, provide a custom parameter file with
 
 .. code-block:: bash
 
-    python -m frank.fit [uvtable_filename.txt] --p <parameter_filename.json>
+    python -m frank.fit [-uv uvtable_filename.txt] -p <parameter_filename.json>
 
 The default parameter file is ``default_parameters.json``, and it looks like this:
 
@@ -84,9 +84,11 @@ which returns
         }
     }
 
-That's it! By default frank saves the fitted brightness profile as a *.txt*,
-the visibility domain fit as a *.npz*, UVTables for the **reprojected**
-fit and its residuals as *.txt*, and 2 figures showing the fit and its diagnostics.
+That's it! By default frank saves the parameter file you use as `used_pars.json`,
+the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`,
+the visibility domain fit as a `<uvtable_filename>_frank_vis_fit.npz`, UVTables for the **reprojected**
+fit and its residuals as `<uvtable_filename>_frank_uv_fit.txt` and `<uvtable_filename>_frank_uv_resid.txt`,
+and 2 figures showing the fit and its diagnostics as `<uvtable_filename>_fit.png` and `<uvtable_filename>_diag.png`.
 
 Here are the figures produced by a frank fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
@@ -136,6 +138,6 @@ Finally we'll plot the real space and visibility domain fits and save them.
 
 .. code-block:: python
 
-    output_results(u, v, vis, weights, sol)
+    output_results(u, v, vis, weights, sol, diag_fig=False)
 
-    xx simple figure xx
+xx add simple fig with caption xx
