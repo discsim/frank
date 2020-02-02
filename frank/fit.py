@@ -58,8 +58,8 @@ def parse_parameters(parameter_file):
         model['input_output']['uvtable_filename'] = args.uvtable_filename
 
     if not model['input_output']['uvtable_filename']:
-        sys.exit("    Error: uvtable_filename isn't specified in the parameter"
-                 " file. Update it there or run frank with"
+        sys.exit("    Error: uvtable_filename isn't specified."
+                 " Set it in the parameter file or run frank with"
                  " python -m frank.fit -uv <uvtable_filename>")
 
     if not model['input_output']['load_dir']:
@@ -70,8 +70,8 @@ def parse_parameters(parameter_file):
 
     print('\nRunning frank on', model['input_output']['uvtable_filename'])
 
-    print('  Saving parameters to be used in fit to `used_params.json`')
-    with open('used_params.json', 'w') as f:
+    print('  Saving parameters to be used in fit to `frank_used_pars.json`')
+    with open('frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
 
     return model

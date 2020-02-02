@@ -13,7 +13,7 @@
 
   "modify_data" : {
     "cut_data"         : false,
-    "cut_baseline"	   : null
+    "cut_baseline"     : null
   },
 
   "geometry" : {

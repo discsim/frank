@@ -10,6 +10,7 @@ Perform a fit from the terminal
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
 from CASA via xx as demonstrated in `this tutorial <tutorials/xx>`_.
+The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight`.
 
 If you specify `load_dir`, `save_dir` and `uvtable_filename` in the default parameter file,
 you can perform a fit using the default parameters with
@@ -22,13 +23,13 @@ where `-m` runs the `frank/fit` module as a script.
 
 Alternatively you can leave any/all of the load directory, save directory and UVTable filename empty in the parameter file.
 If so, the load directory will be set to your current working directory, the save directory to your load directory,
-and you pass the UVTable filename in with the `-uv` option.
+and you pass in the UVTable filename with the `-uv` option.
 
 .. code-block:: bash
 
     python -m frank.fit -uv <uvtable_filename.txt>
 
-As a further alternative, if you want to change the default parameters, provide a custom parameter file with
+If you want to change the default parameters, provide a custom parameter file with
 
 .. code-block:: bash
 
@@ -52,33 +53,39 @@ which returns
     :linenos:
     :language: json
 
-That's it! By default frank saves the parameter file you use as `used_pars.json`,
+That's it! By default frank saves (in `save_dir`) the parameter file you use as `frank_used_pars.json`,
 the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`,
-the visibility domain fit as a `<uvtable_filename>_frank_vis_fit.npz`, UVTables for the **reprojected**
+the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, UVTables for the **reprojected**
 fit and its residuals as `<uvtable_filename>_frank_uv_fit.txt` and `<uvtable_filename>_frank_uv_resid.txt`,
-and 2 figures showing the fit and its diagnostics as `<uvtable_filename>_fit.png` and `<uvtable_filename>_diag.png`.
+and two figures showing the fit and its diagnostics as `<uvtable_filename>_fit.png` and `<uvtable_filename>_diag.png`.
 
 Here are those figures for a frank fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
 
  xx add figure with caption xx
 
+Perform multiple fits in a loop
+###############################
+You can run multiple fits in a single call to frank (e.g., to check a fit's sensitivity to hyperpriors or run a self-consistent analysis on multiple sources)
+by setting one or more of the parameters in the parameter file as a list.
+See `this tutorial <tutorials/running_fits_in_a_loop.ipynb>`_ for an example.
+
 Modify the `fit.py` script
 ##########################
 We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py>`_.
 For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_library.ipynb>`_.
-And if you'd like a more qualitative overview of the code (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
+And if you'd like a more qualitative overview of the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
 Perform a fit using the code as a Python module
 -----------------------------------------------
 
 To interface with the code more directly, you can use it as a module.
 
-First import some basic stuff from frank and load the data
+Let's first import some basic stuff from frank and load the data
 (again using the DSHARP observations of AS 209, available as a UVTable
 `here <https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.txt>`_).
-Note that the wrapper functions in ``fit.py`` can do all this for us; we're not using them here just to show how to directly interface
-with the code's internal classes.
+Note that the wrapper functions in ``fit.py`` can do all this for us; of those,
+we're not using `determine_geometry` or `perform_fit` here just to show how to directly interface with the code's internal classes.
 
 .. code-block:: python
 
@@ -90,10 +97,9 @@ with the code's internal classes.
     u, v, vis, weights = load_uvdata('AS209_continuum.txt')
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
-Here we'll choose to determine the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
-`FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ will then deproject the visibilities,
-and for the brightness profile reconstruction we'll fit out to 1.6" using 250 collocation points and the code's
-default ``alpha`` and ``weights_smooth`` hyperprior values.
+In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
+`FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ will then deproject the visibilities
+and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation points and the code's default ``alpha`` and ``weights_smooth`` hyperprior values.
 
 .. code-block:: python
 
@@ -102,7 +108,7 @@ default ``alpha`` and ``weights_smooth`` hyperprior values.
 
     sol = FF.fit(u, v, vis, weights)
 
-Finally we'll plot the real space and visibility domain fits and save them.
+Finally we'll make a simple figure of the fit and save the fit results.
 
 .. code-block:: python
 
