@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module contains methods for fitting the geometry and deprojecting the
-visibilties.
+"""This module contains methods for fitting a source's geometry and deprojecting
+   the visibilties by the geometry.
 """
 
 import abc

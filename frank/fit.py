@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""Run Frankenstein to fit a source's 1D radial brightness profile.
+"""This module runs Frankenstein to fit a source's 1D radial brightness profile.
    A default parameter file is used that specifies all options to run the fit
    and output results. Alternatively a custom parameter file can be provided.
 """

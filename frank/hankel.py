@@ -16,8 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module contains functions for computing the Hankel transform and its 
-discrete varient, the Discrete Hankel Transform (DHT).
+"""This module contains functions for computing the Hankel transform and its
+   discrete variant, the Discrete Hankel Transform (DHT).
 """
 
 import numpy as np
@@ -35,7 +35,7 @@ class DiscreteHankelTransform(object):
     This class provides the necessary interface to compute the
     a discrete version of the Hankel transform (DHT):
 
-        H[f](q) = \int_0^R_{max} f(r) J_nu(2*pi*q*r) * 2*pi*r dr,    
+        H[f](q) = \int_0^R_{max} f(r) J_nu(2*pi*q*r) * 2*pi*r dr,
 
     The DHT is based on [1].
 
@@ -108,7 +108,7 @@ class DiscreteHankelTransform(object):
             Function to Hankel Transform, evaluated at the collocation points:
                 f[k] = f(r_k) or f[k] = f(q_k).
         q : array or None.
-            The frequency points at which to evaluate the Hankel 
+            The frequency points at which to evaluate the Hankel
             transform. If not specified the conjugate points of the
             DHT will be used. For the backwards transform q should be
             the radius points
@@ -147,7 +147,7 @@ class DiscreteHankelTransform(object):
         ----------
         q : array, or None
             Frequency points to evaluate the transform at. If q=None, the
-            points of the DHT are used. If direction='backward' then these 
+            points of the DHT are used. If direction='backward' then these
             points should be the radius points instead.
         direction : { 'forward', 'backward' }, optional
             Direction of the transform. If not supplied, the forward
@@ -157,7 +157,7 @@ class DiscreteHankelTransform(object):
         -------
         Y : array, size=(len(q),N)
             The transformation matrix
-            
+
         """
         if direction == 'forward':
             norm = 1 / (np.pi * self._Qmax ** 2)

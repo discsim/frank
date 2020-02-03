@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-""" Tests """
+"""This module runs tests to confirm Frankenstein is working correctly."""
 
 import numpy as np
 

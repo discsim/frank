@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
+"""This module has functions that are useful for plotting and analyzing fit
+results.
+"""
+
 import numpy as np
 
 def arcsec_baseline(x):

@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module contains methods for fitting radial brightness profiles to the de-projected visibities.
+"""This module contains methods for fitting a radial brightness profile to a set
+   of deprojected visibities.
 """
 
 import numpy as np

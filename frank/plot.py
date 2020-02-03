@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
+"""This module plots the results and diagnostics of a Frankenstein fit and saves
+   the figures.
+"""
+
 def plot_fit(model, u, v, vis, weights, geom, sol, diag_fig=True,
              save_plots=True):
     import matplotlib.pyplot as plt

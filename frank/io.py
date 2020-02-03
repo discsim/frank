@@ -16,6 +16,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
+"""This module has functions that read in datafiles and save fit results to
+   file.
+"""
+
 import numpy as np
 
 def load_uvtable(data_file):
@@ -48,6 +52,25 @@ def load_uvtable(data_file):
 
 
 def save_fit(model, u, v, vis, weights, sol):
+    """
+    Save datafiles of fit results
+
+    Parameters
+    ----------
+    model : dict
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Real component of observed visibilities
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter) # TODO: check
+    """
+
     prefix = model['input_output']['save_dir'] + '/' + \
              os.path.splitext(model['input_output']['uvtable_filename'])[0]
 
