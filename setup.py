@@ -19,8 +19,8 @@ setup(
         'test' : ['pytest'],
         'docs-build' : ['sphinx', 'sphinxcontrib-fulltoc', 'sphinx_rtd_theme', 'nbsphinx'],
         },
-    license="tbd xx",
-    url="tbd xx",
+    license="GPLv3",
+    url="https://github.com/discsim/frank",
     classifiers=[
         # 'Development Status :: 1 - Production/Stable',
         # "Intended Audience :: Developers",

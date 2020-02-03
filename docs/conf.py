@@ -29,7 +29,7 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 
-project = 'frankentein'
+project = 'frank'
 authors = u'R. Booth, J. Jennings, M. Tazzari.'
 copyright = '2019-%d, %s' % (datetime.now().year, authors)
 
@@ -91,7 +91,7 @@ rst_prolog="""
 #
 html_theme = 'sphinx_rtd_theme'
 html_theme_options = {'display_version': True}
-html_last_updated_fmt = '%Y %b %d at %H:%M:%S UTC'
+html_last_updated_fmt = '%Y %b %d at %H:%M:%S UTC // Images: Universal Studios, NBCUniversal [Public domain]'
 html_show_sourcelink = False
 html_logo = 'images/prom_photo.jpg'
 html_sidebars = { '**': ['globaltoc.html', 'relations.html', 'sourcelink.html', 'searchbox.html'] }
@@ -112,7 +112,7 @@ autodoc_docstring_signature = True
 nbsphinx_prolog = """
 {%s set docname = env.doc2path(env.docname, base=None) %s}
 .. note:: This tutorial is produced by the Jupyter notebook
-`here <https://github.com/discsim/frankenstein/blob/%s/{{ docname }}>`_.
+`here <https://github.com/discsim/frank/blob/%s/{{ docname }}>`_.
 """ % ("%", "%", branch,)
 
 # nbsphinx

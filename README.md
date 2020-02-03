@@ -10,7 +10,7 @@ Frankenstein (**frank**) is a library that fits the 1D radial brightness profile
 
 Get the code
 ------------
-frank's on [PyPI](https://pypi.org/project/frank), so just use [pip](https://pip.pypa.io/en/stable/),
+**frank**'s on [PyPI](https://pypi.org/project/frank), so you can just use pip,
 ```
 pip install frank
 ```
@@ -27,8 +27,18 @@ If you use **frank** for your research please cite Jennings, Booth, Tazzari et a
 xx
 ```
 
+Authors
+-------
+- [Richard 'Dr. Frankenstein' Booth (University of Cambridge)](https://github.com/rbooth200)
+
+- [Jeff 'The Monster' Jennings (University of Cambridge)](https://github.com/jeffjennings)
+
+- [Marco 'It's Alive!!!' Tazzari (University of Cambridge)](https://github.com/mtazzari)
+
 License
 -------
 **frank** is free software licensed under the LGPLv3 License. For more details see the LICENSE.
 
 © Copyright 2019-2020 Richard Booth, Jeff Jennings, Marco Tazzari.
+
+Image: Universal Studios, NBCUniversal [Public domain]

@@ -1,0 +1,36 @@
+{
+  "input_output" : {
+    "uvtable_filename" : "UV table with data to be fit. (columns: u, v, Re(V), Im(V), weights)",
+    "load_dir"         : "Directory containing UV table",
+    "save_dir"         : "Directory in which output datafiles and figures are saved",
+    "save_profile_fit" : "Whether to save fitted brightness profile",
+    "save_vis_fit"     : "Whether to save fitted visibility distribution",
+    "save_uvtables"    : "Whether to save fitted and residual UV tables (these are reprojected)",
+    "make_plots"       : "Whether to make figures showing the fit and diagnostics",
+    "save_plots"       : "Whether to save figures",
+    "dist"             : "Distance to source, optionally used for plotting. [AU]"
+  },
+
+  "modify_data" : {
+    "cut_data"         : "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
+    "cut_baseline"     : "Maximum baseline at which visibilities are truncated"
+  },
+
+  "geometry" : {
+    "fit_geometry"     : "Whether to fit for the source's geometry (on-sky projection)",
+    "known_geometry"   : "Whether to manually specify a geometry (if False, geometry will be fit)",
+    "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
+    "inc"              : "Inclination. [deg]",
+    "pa"               : "Position angle. [deg]",
+    "dra"              : "Delta (offset from 0) right ascension. [arcsec]",
+    "ddec"             : "Delta declination. [arcsec]"
+  },
+
+  "hyperpriors" : {
+    "n"                : "Number of collocation points used in the fit (suggested range 100 - 300)",
+    "rout"             : "Maximum disc radius in the fit (best to overestimate size of source). [arcsec]",
+    "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
+    "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
+    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)"
+  }
+}

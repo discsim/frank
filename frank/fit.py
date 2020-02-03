@@ -21,76 +21,129 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
+import os
 import sys
+import time
 import json
+import numpy as np
 
 parameter_file = "default_parameters.json"
 
 
 def helper():
-    param_descrip = {
-      "input_output" : {
-        "uvtable_filename" : "UV table with data to be fit. (columns: u, v, Re(V), Im(V), weights)",
-        "load_dir" : "Directory containing UV table",
-        "save_dir" : "Directory in which output datafiles and figures are saved",
-        "save_profile_fit" : "Whether to save fitted brightness profile",
-        "save_vis_fit" : "Whether to save fitted visibility distribution",
-        "save_uvtables" : "Whether to save fitted and residual UV tables (these are reprojected)",
-        "make_plots" : "Whether to make figures showing the fit and diagnostics",
-        "save_plots" : "Whether to save figures",
-        "dist" : "Distance to source, optionally used for plotting. [AU]",
-      },
-
-      "modify_data" : {
-        "cut_data"  : "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
-        "cut_baseline"  : "Maximum baseline at which visibilities are truncated",
-      },
-
-      "geometry" : {
-        "fit_geometry" : "Whether to fit for the source's geometry (on-sky projection)",
-        "known_geometry" : "Whether to manually specify a geometry (if False, geometry will be fitted)",
-        "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
-        "inc" : "Inclination. [deg]",
-        "pa" : "Position angle. [deg]",
-        "dra" : "Delta (offset from 0) right ascension. [arcsec]",
-        "ddec" : "Delta declination. [arcsec]",
-      },
-
-      "hyperpriors" : {
-        "n" : "Number of collocation points used in the fit (suggested range 100 - 300)",
-        "rout" : "Maximum disc radius in the fit (best to overestimate size of source). [arcsec]",
-        "alpha" : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
-        "p0" : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
-        "wsmooth" : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
-      }
-    }
+    with open('parameter_descriptions.json') as f:
+        param_descrip = json.load(f) # TODO: point to parameter_descriptions.json in code dir
 
     print("""
-     Fit a 1D radial brightness profile with Frankenstein (frank) from the terminal with `python -m frank.fit`.
-     A .json parameter file is required.
-     The default is default_parameters.json and is of the form:\n\n""",
+     Fit a 1D radial brightness profile with Frankenstein (frank) from the
+     terminal with `python -m frank.fit`. A .json parameter file is required;
+     the default is default_parameters.json and is of the form:\n\n""",
      json.dumps(param_descrip, indent=4))
 
 
 def parse_parameters(parameter_file):
+    """
+    Read in a .json parameter file to set the fit parameters.
+
+    Parameters
+    ----------
+    parameter_file : string
+            .json parameter file (see frank.fit.helper)
+
+    Returns
+    -------
+    model : dict
+            Dictionary containing model parameters the fit uses
+    """
+
     import argparse
 
-    parser = argparse.ArgumentParser("Run a Frank fit, by default using parameters in default_parameters.json")
-    parser.add_argument("-p", "--parameters", default=parameter_file, type=str, help="Parameter file (.json)")
+    parser = argparse.ArgumentParser("Run a Frank fit, by default using"
+                                     " parameters in default_parameters.json")
+    parser.add_argument("-p", "--parameters", default=parameter_file, type=str,
+                        help="Parameter file (.json)")
+    parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
+                        help="Data file to be fit (.txt)")
 
     args = parser.parse_args()
     model = json.load(open(args.parameters, 'r'))
+
+    if args.uvtable_filename:
+        model['input_output']['uvtable_filename'] = args.uvtable_filename
+
+    if not model['input_output']['uvtable_filename']:
+        sys.exit("    Error: uvtable_filename isn't specified."
+                 " Set it in the parameter file or run frank with"
+                 " python -m frank.fit -uv <uvtable_filename>")
+
+    if not model['input_output']['load_dir']:
+        model['input_output']['load_dir'] = os.getcwd()
+
+    if not model['input_output']['save_dir']:
+        model['input_output']['save_dir'] = model['input_output']['load_dir']
+
+    print('\nRunning frank on', model['input_output']['uvtable_filename'])
+
+    print('  Saving parameters to be used in fit to `frank_used_pars.json`')
+    with open('frank_used_pars.json', 'w') as f:
+        json.dump(model, f, indent=4)
 
     return model
 
 
 def load_uvdata(data_file):
+    """
+    Read in a UVTable with data to be fit.
+
+    Parameters
+    ----------
+    data_file : string
+          UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
+                                Weight [Jy^-2]
+
+    Returns
+    -------
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Real component of observed visibilities
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
+    """
+
+    print('  Loading UVTable')
+
     u, v, vis, weights = np.genfromtxt(data_file).T
+    # TODO: (optionally) convert u, v from [m] to [lambda]
 
     return u, v, vis, weights
 
 
 def determine_geometry(model, u, v, vis, weights):
+    """
+    Determine the source geometry (inclination, position angle, phase offset).
+
+    Parameters
+    ----------
+    model : dict
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Real component of observed visibilities
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
+
+    Returns
+    -------
+    geom : SourceGeometry object
+          Fitted geometry (see frank.geometry.SourceGeometry)
+    """
+
+    print('  Determining disc geometry')
+
     if not model['geometry']['fit_geometry']:
         from frank.geometry import FixedGeometry
         geom = FixedGeometry(0., 0., 0., 0.)
@@ -99,73 +152,152 @@ def determine_geometry(model, u, v, vis, weights):
         if model['geometry']['known_geometry']:
             from frank.geometry import FixedGeometry
 
-            geom = FixedGeometry(model['geometry']['inc'], model['geometry']['pa'],
-                                 model['geometry']['dra'], model['geometry']['ddec'])
+            geom = FixedGeometry(model['geometry']['inc'],
+                                 model['geometry']['pa'],
+                                 model['geometry']['dra'],
+                                 model['geometry']['ddec']
+                                 )
 
         else:
             from frank.geometry import FitGeometryGaussian
 
-            if fit_phase_offset:
+            if model['geometry']['fit_phase_offset']:
                 geom = FitGeometryGaussian()
 
             else:
                 geom = FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
                                            model['geometry']['ddec']))
 
+            t1 = time.time()
+            geom.fit(u, v, vis, weights)
+            print('    Time taken to fit geometry %.1f sec'%(time.time() - t1))
+
+    print('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
+          '           dRA  = %.2e arcsec,\n           dDec = %.2e arcsec'
+          %(geom.inc, geom.PA, geom.dRA, geom.dDec))
+
     return geom
 
 
-def perform_fit(model, rout, geom):
+def perform_fit(model, u, v, vis, weights, geom):
+    """
+    Deproject the observed visibilities and fit them for the brightness profile.
+
+    Parameters
+    ----------
+    model : dict
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Real component of observed visibilities
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
+    geom : SourceGeometry object
+          Fitted geometry (see frank.geometry.SourceGeometry)
+
+    Returns
+    -------
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter) # TODO: check
+    """
+
+    print('  Fitting for brightness profile')
+
     from frank.radial_fitters import FrankFitter
 
-    FF = FrankFitter(rout, model['hyperpriors']['n'], geometry=geom,
+    FF = FrankFitter(Rmax=model['hyperpriors']['rout'],
+                     N=model['hyperpriors']['n'],
+                     geometry=geom,
                      alpha=model['hyperpriors']['alpha'],
-                     weights_smooth=model['hyperpriors']['wsmooth'])
+                     weights_smooth=model['hyperpriors']['wsmooth']
+                     )
 
+    t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
+    print('    Time taken to fit profile (with %.0e visibilities and %s'
+          ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
+          time.time() - t1))
 
     return sol
 
 
-def output_results(model, u, v, vis, weights, sol):
+def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
+    """
+    Save datafiles of fit results; generate and save figures of fit results.
+
+    Parameters
+    ----------
+    model : dict
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Real component of observed visibilities
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
+    geom : SourceGeometry object
+          Fitted geometry (see frank.geometry.SourceGeometry)
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter) # TODO: check
+    diag_fig : bool, optional, default=True
+        Whether to produce a figure showing diagnostics of the fit
+    """
+
+    prefix = model['input_output']['save_dir'] + '/' + \
+             os.path.splitext(model['input_output']['uvtable_filename'])[0]
+
     if model['input_output']['save_profile_fit']:
-        np.savetxt(savedir + 'fit.txt',
+        np.savetxt(prefix + '_frank_profile_fit.txt',
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
-                   header='r [arcsec]\tI [Jy/sr]\tI_err [Jy/sr]')
+                   header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if model['input_output']['save_vis_fit']:
-        np.savetxt(savedir + 'fit_vis.txt',
-                   np.array([ki / (2 * np.pi), GPHF.HankelTransform(ki)]).T,
-                   header='Baseline [lambda]\tRe(V) [Jy]')
+        np.savetxt(prefix + '_fit_vis.txt',
+                   np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
+                   header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: change to match data (deprojected?) baselines
+
+    import matplotlib.pyplot as plt
+    from frank.constants import deg_to_rad
+    plt.figure()
+    plt.loglog(np.hypot(u,v), vis.real, 'k.')
+    plt.loglog(np.hypot(u,v), sol.predict(u,v).real,'g.')
+    plt.loglog(sol.q, sol.predict_deprojected(sol.q).real, 'r.')
+    plt.savefig(prefix + '_test.png')
 
     if model['input_output']['save_uvtables']:
-        np.save(savedir + disc + '_frank_fit.dat',
-                np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
-        np.save(savedir + disc + '_frank_residuals.dat',
-                np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
+        np.savetxt(prefix + '_frank_uv_fit.txt',
+                np.stack([u, v, sol.predict(u,v).real, sol.predict(u,v).imag,
+                weights], axis=-1), header='u [lambda]\tv [lambda]\tRe(V)'
+                ' [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]')
+        np.savetxt(prefix + '_frank_uv_resid.txt',
+                np.stack([u, v, vis.real - sol.predict(u,v).real,
+                vis.imag - sol.predict(u,v).imag, weights], axis=-1),
+                header='u [lambda]\tv [lambda]\tRe(V) [Jy]\tIm(V) [Jy]\tWeight'
+                ' [Jy^-2]')
 
     if model['input_output']['make_plots']:
-        frank.plot(model, u, v, vis, weights, sol)
-        if model['input_output']['save_plots']:
-            frank.save_plot(fn)
+        from frank.plot import plot_fit
+        plot_fit(model, u, v, vis, weights, geom, sol, diag_fig,
+                 model['input_output']['save_plots'])
 
 
 def main():
     model = parse_parameters(parameter_file)
 
-    with open('used_params.json', 'w') as f:
-        json.dump(model, f, indent=4)
+    u, v, vis, weights = load_uvdata(model['input_output']['uvtable_filename'])
 
-    u, v, vis, weights = load_uvdata(data_file)
+    geom = determine_geometry(model, u, v, vis, weights)
 
-    geom = deproject_disc(model, u, v, vis, weights)
+    sol = perform_fit(model, u, v, vis, weights, geom)
 
-    perform_fit(model, u, v, vis, weights, geom)
+    output_results(model, u, v, vis, weights, geom, sol)
 
-    output_results(model, u, v, vis, weights, sol)
-
-    print("\n\nIT'S ALIVE!!\n\n")
-
+    print("IT'S ALIVE!!\n")
 
 if __name__ == "__main__":
     main()

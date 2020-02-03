@@ -5,7 +5,7 @@
 
 .. figure:: images/day_off.png
    :align: left
-   :figwidth: 600
+   :figwidth: 700
 
 Documentation
 =============
@@ -30,17 +30,21 @@ interpreting its results, and hosts the code's API.
 
     API <py_API>
     Index <genindex>
-    Github <https://github.com/discsim/frankenstein>
-    Submit an issue <https://github.com/discsim/frankenstein/issues>
+    Github <https://github.com/discsim/frank>
+    Submit an issue <https://github.com/discsim/frank/issues>
+
+Collaboration
+=============
+Interested in collaborating to improve, extend or apply frank? `Reach out! <jmj51@ast.cam.ac.uk>`_
 
 License & attribution
 =====================
 
 Frankenstein is free software licensed under the GPLv3 License.
-For more details see the `LICENSE <https://github.com/discsim/frankenstein/blob/master/LICENSE.txt>`_.
+For more details see the `LICENSE <https://github.com/discsim/frank/blob/master/LICENSE.txt>`_.
 
-If you use frank for your publication, please cite the
-`Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_,  ::
+If you use frank for your research, please cite Jennings, Booth, Tazzari et al. (2020) MNRAS **xx** xx [`MNRAS <xx>`_] [`arXiv <xx>`_] [`ADS <xx>`_].
+The `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_ is  ::
 
     @misc{}xx update ADS bibtex entry xx
 
