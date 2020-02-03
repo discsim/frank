@@ -79,7 +79,7 @@ def parse_parameters():
                         " Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]")
 
     args = parser.parse_args()
-    model = json.load(open(args.parameters, 'r'))
+    model = json.load(open(args.parameter_filename, 'r'))
 
     if args.uvtable_filename:
         model['input_output']['uvtable_filename'] = args.uvtable_filename
@@ -234,6 +234,8 @@ def perform_fit(model, u, v, vis, weights, geom):
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
           ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
           time.time() - t1))
+
+    print(FF.iteration_diagnostics)
 
     return sol
 

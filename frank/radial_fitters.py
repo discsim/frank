@@ -691,7 +691,7 @@ class FrankFitter(FourierBesselFitter):
             count += 1
 
         if self._store_iteration_diagnostics:
-            save._iteration_diagnostics['num_iterations'] = count
+            self._iteration_diagnostics['num_iterations'] = count
 
         # Save the best fit
         self._sol = fit
