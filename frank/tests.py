@@ -24,6 +24,7 @@ from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
 from frank.geometry import FixedGeometry, FitGeometryGaussian
 from frank.constants import deg_to_rad
+from frank.useful_functions import BinnedUVData
 
 
 def test_hankel_gauss():
@@ -175,3 +176,28 @@ def test_frank_fitter():
 
     np.testing.assert_allclose(sol.mean, expected,
                                err_msg="Testing Frank Fit to AS 209")
+
+def test_uvbin():
+    AS209, geometry = load_AS209()
+
+    uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
+    
+    uvbin = BinnedUVData(uv, AS209['V'], AS209['weights'], 50e3)
+
+    uvmin = 1e6
+    uvmax = 1e6 + 50e3
+
+    idx = (uv >= uvmin) & (uv < uvmax)
+    
+    widx = AS209['weights'][idx]
+
+    w = np.sum(widx)
+    V = np.sum(widx*AS209['V'][idx]) / w
+    q = np.sum(widx*uv[idx]) / w
+
+    i = (uvbin.uv >= uvmin) & (uvbin.uv < uvmax)
+
+    np.testing.assert_allclose(q, uvbin.uv[i])
+    np.testing.assert_allclose(V, uvbin.V[i])
+    np.testing.assert_allclose(w, uvbin.weights[i])
+    np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
