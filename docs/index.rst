@@ -55,4 +55,4 @@ Contact
 -------
 Interested in collaborating to improve, extend or apply frank?
 Or just have questions about the code that don't require submitting an issue on GitHub?
-`Reach out to Jeff! <jmj51@ast.cam.ac.uk>`_
+`Email Jeff! <jmj51@ast.cam.ac.uk>`_
