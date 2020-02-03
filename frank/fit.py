@@ -71,8 +71,9 @@ def parse_parameters(parameter_file):
     if args.uvtable_filename:
         model['input_output']['uvtable_filename'] = args.uvtable_filename
 
-    if not model['input_output']['uvtable_filename']:
-        sys.exit("    Error: uvtable_filename isn't specified."
+    if ('uvtable_filename' not in model['input_output'] or
+        not model['input_output']['uvtable_filename']):
+        raise ValueError("    uvtable_filename isn't specified."
                  " Set it in the parameter file or run frank with"
                  " python -m frank.fit -uv <uvtable_filename>")
 

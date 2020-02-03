@@ -33,10 +33,6 @@ interpreting its results, and hosts the code's API.
     Github <https://github.com/discsim/frank>
     Submit an issue <https://github.com/discsim/frank/issues>
 
-Collaboration
-=============
-Interested in collaborating to improve, extend or apply frank? `Reach out! <jmj51@ast.cam.ac.uk>`_
-
 License & attribution
 =====================
 
@@ -54,3 +50,9 @@ Authors
     - `Richard 'Dr. Frankenstein' Booth (University of Cambridge) <https://github.com/rbooth200>`_
     - `Jeff 'The Monster' Jennings (University of Cambridge) <https://github.com/jeffjennings>`_
     - `Marco 'It's Alive!!!' Tazzari (University of Cambridge) <https://github.com/mtazzari>`_
+
+Contact
+-------
+Interested in collaborating to improve, extend or apply frank?
+Or just have questions about the code that don't require submitting an issue on GitHub?
+`Reach out to Jeff! <jmj51@ast.cam.ac.uk>`_
