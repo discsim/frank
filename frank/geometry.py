@@ -16,7 +16,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module contains methods for fitting the geometry and deprojecting the visibilties.
+"""This module contains methods for fitting the geometry and deprojecting the 
+visibilties.
 """
 
 import abc
@@ -28,7 +29,7 @@ from frank.constants import rad_to_arcsec, deg_to_rad
 __all__ = ["SourceGeometry", "FixedGeometry", "FitGeometryGaussian"]
 
 
-def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
+def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     """
     Shift the phase centre of the visibilties.
 
@@ -40,7 +41,7 @@ def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
         u-points of the visibilities
     v : array of real, size=N, units= :math:`\\lambda`
         v-points of the visibilities
-    vis : array of real, size=N, units=Jy
+    V : array of real, size=N, units=Jy
         Complex visibilites
     dRA : float, units=arcseconds
         Phase-shift in Right Ascenion
@@ -58,7 +59,7 @@ def apply_phase_shift(u, v, vis, dRA, dDec, inverse=False):
 
     phi = u * dRA + v * dDec
 
-    return vis * (np.cos(phi) + 1j * np.sin(phi))
+    return V * (np.cos(phi) + 1j * np.sin(phi))
 
 
 def deproject(u, v, inc, PA, inverse=False):
@@ -71,8 +72,6 @@ def deproject(u, v, inc, PA, inverse=False):
         u-points of the visibilities
     v : array of real, size=N, units= :math:`\\lambda`
         v-points of the visibilities
-    vis : array of real, size=N, units=Jy
-        Complex visibilites
     inc : float, units=deg
         Inclination
     PA : float, units=deg
@@ -135,7 +134,7 @@ class SourceGeometry(object):
         self._dRA = dRA
         self._dDec = dDec
 
-    def apply_correction(self, u, v, vis):
+    def apply_correction(self, u, v, V):
         """
         Correct the phase-centre and de-project the visibilities.
 
@@ -145,7 +144,7 @@ class SourceGeometry(object):
             u-points of the visibilities
         v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        vis : array of real, size=N, units=Jy
+        V : array of real, size=N, units=Jy
             Complex visibilites
 
         Returns
@@ -154,16 +153,16 @@ class SourceGeometry(object):
             Corrected u-points of the visibilities
         vp : array of real, size=N, units= :math:`\\lambda`
             Corrected v-points of the visibilities
-        visp : array of real, size=N, units=Jy
+        Vp : array of real, size=N, units=Jy
             Corrected complex visibilites
 
         """
-        vis = apply_phase_shift(u, v, vis, self._dRA, self._dDec)
+        V = apply_phase_shift(u, v, V, self._dRA, self._dDec)
         u, v = deproject(u, v, self._inc, self._PA)
 
-        return u, v, vis
+        return u, v, V
 
-    def undo_correction(self, u, v, vis):
+    def undo_correction(self, u, v, V):
         """
         Undo the phase-centre correction and de-projection.
 
@@ -173,7 +172,7 @@ class SourceGeometry(object):
             u-points of the visibilities
         v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        vis : array of real, size=N, units=Jy
+        V : array of real, size=N, units=Jy
             Complex visibilites
 
         Returns
@@ -182,14 +181,14 @@ class SourceGeometry(object):
             Corrected u-points of the visibilities
         vp : array of real, size=N, units= :math:`\\lambda`
             Corrected v-points of the visibilities
-        visp : array of real, size=N, units=Jy
+        Vp : array of real, size=N, units=Jy
             Corrected complex visibilites
 
         """
         u, v = self.reproject(u, v)
-        vis = apply_phase_shift(u, v, vis, -self._dRA, -self._dDec)
+        vis = apply_phase_shift(u, v, V, -self._dRA, -self._dDec)
 
-        return u, v, vis
+        return u, v, V
 
     def deproject(self, u, v):
         """Convert uv-points to sky-plane deprojected space"""
@@ -200,7 +199,7 @@ class SourceGeometry(object):
         return deproject(u, v, self._inc, self._PA, inverse=True)
 
     @abc.abstractmethod
-    def fit(self, u, v, visib, weights):
+    def fit(self, u, v, V, weights):
         """
         Determine geometry using the uv-data provided.
 
@@ -210,7 +209,7 @@ class SourceGeometry(object):
             u-points of the visibilities
         v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        visib : array of complex, size=N, units=Jy
+        V : array of complex, size=N, units=Jy
             Complex visibilites
         weights : array of real, size=NN, units=Jy
             Weights on the visibilities.
@@ -264,7 +263,7 @@ class FixedGeometry(SourceGeometry):
     def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
         super(FixedGeometry, self).__init__(inc, PA, dRA, dDec)
 
-    def fit(self, u, v, visib, weights):
+    def fit(self, u, v, V, weights):
         """Dummy method for geometry fitting no fit is required."""
         pass
 
@@ -288,7 +287,7 @@ class FitGeometryGaussian(SourceGeometry):
 
         self._phase_centre = phase_centre
 
-    def fit(self, u, v, visib, weights):
+    def fit(self, u, v, V, weights):
         """
         Determine geometry using the uv-data provided.
 
@@ -298,21 +297,21 @@ class FitGeometryGaussian(SourceGeometry):
             u-points of the visibilities
         v : array of real, size=N, units= :math:`\\lambda`
             v-points of the visibilities
-        visib : array of complex, size=N, units=Jy
+        V : array of complex, size=N, units=Jy
             Complex visibilites
         weights : array of real, size=N, units=Jy^-2
             Weights on the visibilities.
         """
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
-            u, v, visib, weights, phase_centre=self._phase_centre)
+            u, v, V, weights, phase_centre=self._phase_centre)
 
         self._inc = inc
         self._PA = PA
         self._dRA = dRA
         self._dDec = dDec
 
-def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
+def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     """
     Esimate the source geometry by fitting a Gaussian in uv-space.
 
@@ -322,7 +321,7 @@ def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
         u-points of the visibilities
     v : array of real, size=N, units= :math:`\\lambda`
         v-points of the visibilities
-    vis : array of complex, size=N, units=Jy
+    V : array of complex, size=N, units=Jy
         Complex visibilites
     weights : array of real, size=N, units=Jy^-2
         Weights on the visibilities.
@@ -347,9 +346,9 @@ def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
-            Vp = visib * (np.cos(phi) + 1j*np.sin(phi))
+            Vp = V * (np.cos(phi) + 1j*np.sin(phi))
         else:
-            Vp = visib
+            Vp = V
 
         c_t = np.cos(pa)
         s_t = np.sin(pa)
@@ -368,7 +367,7 @@ def _fit_geometry_gaussian(u, v, visib, weights, phase_centre=None):
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
-            dVp = - w*visib * (-np.sin(phi) + 1j*np.cos(phi)) * fac
+            dVp = - w*V * (-np.sin(phi) + 1j*np.cos(phi)) * fac
 
             jac[0] = wrap(dVp*u)
             jac[1] = wrap(dVp*v)
