@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module contains methods for fitting the geometry and deprojecting the 
+"""This module contains methods for fitting the geometry and deprojecting the
 visibilties.
 """
 

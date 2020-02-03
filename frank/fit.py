@@ -79,7 +79,7 @@ def parse_parameters():
                         " Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]")
 
     args = parser.parse_args()
-    model = json.load(open(args.parameters, 'r'))
+    model = json.load(open(args.parameter_filename, 'r'))
 
     if args.uvtable_filename:
         model['input_output']['uvtable_filename'] = args.uvtable_filename
@@ -105,31 +105,14 @@ def parse_parameters():
     return model
 
 
-def load_uvdata(data_file):
+def load_data(data_file):
     """
-    Read in a UVTable with data to be fit.
-
-    Parameters
-    ----------
-    data_file : string
-          UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
-                                Weight [Jy^-2]
-
-    Returns
-    -------
-    u, v : array, unit = :math:`\\lambda`
-          u and v coordinates of observations
-    vis : array, unit = Jy
-          Real component of observed visibilities
-    weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
+    Read in a UVTable with data to be fit. See frank.io.load_uvtable
     """
 
     logging.info('  Loading UVTable')
 
-    u, v, vis, weights = np.genfromtxt(data_file).T
-    # TODO: (optionally) convert u, v from [m] to [lambda]
+    u, v, vis, weights = frank.io.load_uvtable(data_file)
 
     return u, v, vis, weights
 
@@ -159,28 +142,25 @@ def determine_geometry(model, u, v, vis, weights):
     logging.info('  Determining disc geometry')
 
     if not model['geometry']['fit_geometry']:
-        from frank.geometry import FixedGeometry
-        geom = FixedGeometry(0., 0., 0., 0.)
+        geom = frank.geometry.FixedGeometry(0., 0., 0., 0.)
 
     else:
         if model['geometry']['known_geometry']:
-            from frank.geometry import FixedGeometry
-
-            geom = FixedGeometry(model['geometry']['inc'],
-                                 model['geometry']['pa'],
-                                 model['geometry']['dra'],
-                                 model['geometry']['ddec']
-                                 )
+            geom = frank.geometry.FixedGeometry(model['geometry']['inc'],
+                                                model['geometry']['pa'],
+                                                model['geometry']['dra'],
+                                                model['geometry']['ddec']
+                                               )
 
         else:
-            from frank.geometry import FitGeometryGaussian
-
             if model['geometry']['fit_phase_offset']:
-                geom = FitGeometryGaussian()
+                geom = frank.geometry.FitGeometryGaussian()
 
             else:
-                geom = FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
-                                           model['geometry']['ddec']))
+                geom = frank.geometry.FitGeometryGaussian(
+                                        phase_centre=(model['geometry']['dra'],
+                                        model['geometry']['ddec'])
+                                        )
 
             t1 = time.time()
             geom.fit(u, v, vis, weights)
@@ -220,9 +200,7 @@ def perform_fit(model, u, v, vis, weights, geom):
 
     logging.info('  Fitting for brightness profile')
 
-    from frank.radial_fitters import FrankFitter
-
-    FF = FrankFitter(Rmax=model['hyperpriors']['rout'],
+    FF = frank.radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
                      N=model['hyperpriors']['n'],
                      geometry=geom,
                      alpha=model['hyperpriors']['alpha'],
@@ -235,12 +213,14 @@ def perform_fit(model, u, v, vis, weights, geom):
           ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
           time.time() - t1))
 
-    return sol
+    return sol, FF.iteration_diagnostics # TODO: maybe don't store iteration_diagnostics by default (it can be as big as 2e6 elements)
 
 
-def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
+def output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics,
+                   diag_fig=True):
     """
     Save datafiles of fit results; generate and save figures of fit results.
+    See frank.io.save_fit
 
     Parameters
     ----------
@@ -258,58 +238,33 @@ def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter) # TODO: check
+    iteration_diagnostics : dict, size = N_iterations x N_{collocation points}
+          Power spectrum parameters and posterior mean brightness profile at
+          each fit iteration, and number of iterations
     diag_fig : bool, optional, default=True
         Whether to produce a figure showing diagnostics of the fit
     """
 
-    prefix = model['input_output']['save_dir'] + '/' + \
-             os.path.splitext(model['input_output']['uvtable_filename'])[0]
+    logging.info('  Saving fit result datafiles')
+    frank.io.save_fit(model, u, v, vis, weights, sol)
 
-    if model['input_output']['save_profile_fit']:
-        np.savetxt(prefix + '_frank_profile_fit.txt',
-                   np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
-                   header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
-
-    if model['input_output']['save_vis_fit']:
-        np.savetxt(prefix + '_fit_vis.txt',
-                   np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                   header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: change to match data (deprojected?) baselines
-
-    import matplotlib.pyplot as plt
-    from frank.constants import deg_to_rad
-    plt.figure()
-    plt.loglog(np.hypot(u,v), vis.real, 'k.')
-    plt.loglog(np.hypot(u,v), sol.predict(u,v).real,'g.')
-    plt.loglog(sol.q, sol.predict_deprojected(sol.q).real, 'r.')
-    plt.savefig(prefix + '_test.png')
-
-    if model['input_output']['save_uvtables']:
-        np.savetxt(prefix + '_frank_uv_fit.txt',
-                np.stack([u, v, sol.predict(u,v).real, sol.predict(u,v).imag,
-                weights], axis=-1), header='u [lambda]\tv [lambda]\tRe(V)'
-                ' [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]')
-        np.savetxt(prefix + '_frank_uv_resid.txt',
-                np.stack([u, v, vis.real - sol.predict(u,v).real,
-                vis.imag - sol.predict(u,v).imag, weights], axis=-1),
-                header='u [lambda]\tv [lambda]\tRe(V) [Jy]\tIm(V) [Jy]\tWeight'
-                ' [Jy^-2]')
-
+    logging.info('  Plotting results')
     if model['input_output']['make_plots']:
-        from frank.plot import plot_fit
-        plot_fit(model, u, v, vis, weights, geom, sol, diag_fig,
-                 model['input_output']['save_plots'])
+        frank.plot.plot_fit(model, u, v, vis, weights, geom, sol,
+                            iteration_diagnostics, diag_fig,
+                            model['input_output']['save_plots'])
 
 
 def main():
     model = parse_parameters()
 
-    u, v, vis, weights = load_uvdata(model['input_output']['uvtable_filename'])
+    u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
 
     geom = determine_geometry(model, u, v, vis, weights)
 
-    sol = perform_fit(model, u, v, vis, weights, geom)
+    sol, iteration_diagnostics = perform_fit(model, u, v, vis, weights, geom)
 
-    output_results(model, u, v, vis, weights, geom, sol)
+    output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics)
 
     logging.info("IT'S ALIVE!!\n")
 
