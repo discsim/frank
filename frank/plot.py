@@ -18,4 +18,10 @@
 #
 def plot_fit(model, u, v, vis, weights, geom, sol, diag_fig=True,
              save_plots=True):
-    pass
+    import matplotlib.pyplot as plt
+    from frank.constants import deg_to_rad
+    plt.figure()
+    plt.loglog(np.hypot(u,v), vis.real, 'k.')
+    plt.loglog(np.hypot(u,v), sol.predict(u,v).real,'g.')
+    plt.loglog(sol.q, sol.predict_deprojected(sol.q).real, 'r.')
+    plt.savefig(prefix + '_test.png')
