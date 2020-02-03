@@ -98,7 +98,8 @@ def load_uvdata(data_file):
     Parameters
     ----------
     data_file : string
-          UVTable with columns: u [m]  v [m]  Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]
+          UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
+                                Weight [Jy^-2]
 
     Returns
     -------
@@ -107,7 +108,8 @@ def load_uvdata(data_file):
     vis : array, unit = Jy
           Real component of observed visibilities
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
     """
 
     print('  Loading UVTable')
@@ -131,7 +133,8 @@ def determine_geometry(model, u, v, vis, weights):
     vis : array, unit = Jy
           Real component of observed visibilities
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
 
     Returns
     -------
@@ -189,14 +192,16 @@ def perform_fit(model, u, v, vis, weights, geom):
     vis : array, unit = Jy
           Real component of observed visibilities
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
     geom : SourceGeometry object
           Fitted geometry (see frank.geometry.SourceGeometry)
 
     Returns
     -------
     sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum (see frank.radial_fitters.FrankFitter) # TODO: check
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter) # TODO: check
     """
 
     print('  Fitting for brightness profile')
@@ -251,13 +256,10 @@ def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
-    print('sol._M',sol._M)
-    print('sol.predict(u,v).real',len(sol.predict_deprojected(sol.q).real))
-    print(np.array([sol.q, sol.predict(u,v).real]).T)
     if model['input_output']['save_vis_fit']:
         np.savetxt(prefix + '_fit_vis.txt',
                    np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                   header='Baseline [lambda]\tProjected Re(V) [Jy]')
+                   header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: change to match data (deprojected?) baselines
 
     import matplotlib.pyplot as plt
     from frank.constants import deg_to_rad
@@ -268,15 +270,20 @@ def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
     plt.savefig(prefix + '_test.png')
 
     if model['input_output']['save_uvtables']:
-        np.save(prefix + '_frank_uv_fit.txt',
-                np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
-        np.save(prefix + '_frank_uv_resid.txt',
-                np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
+        np.savetxt(prefix + '_frank_uv_fit.txt',
+                np.stack([u, v, sol.predict(u,v).real, sol.predict(u,v).imag,
+                weights], axis=-1), header='u [lambda]\tv [lambda]\tRe(V)'
+                ' [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]')
+        np.savetxt(prefix + '_frank_uv_resid.txt',
+                np.stack([u, v, vis.real - sol.predict(u,v).real,
+                vis.imag - sol.predict(u,v).imag, weights], axis=-1),
+                header='u [lambda]\tv [lambda]\tRe(V) [Jy]\tIm(V) [Jy]\tWeight'
+                ' [Jy^-2]')
 
     if model['input_output']['make_plots']:
-        frank.plot(model, u, v, vis, weights, sol)
-        if model['input_output']['save_plots']:
-            frank.save_plot(fn)
+        from frank.plot import plot_fit
+        plot_fit(model, u, v, vis, weights, geom, sol, diag_fig,
+                 model['input_output']['save_plots'])
 
 
 def main():

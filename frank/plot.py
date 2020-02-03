@@ -16,3 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
+def plot_fit(model, u, v, vis, weights, geom, sol, diag_fig=True,
+             save_plots=True):
+    pass
