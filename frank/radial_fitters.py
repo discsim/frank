@@ -261,9 +261,16 @@ class _HankelRegressor(object):
             the mean will be used. The intensity should be specified at the
             collocation points, I[k] = :math:`I(r_k)`.
         geometry: SourceGeometry object, optional
-            Geometry used to de-project the visibilities. If not provided
-            a default one passed in during construction will be used.
+            Geometry used to correct the visibilities for the source
+            inclination. If not provided the geometry determined during the
+            fit will be used.
 
+        Returns
+        -------
+        V(u,v) : array, units=Jy
+            Predicted visibilties of a source with a radial flux distribution
+            given by :math:`I` and the position angle, inclination and phase
+            centre determined by the geometry object.
         """
         if I is None:
             I = self.mean
@@ -280,17 +287,18 @@ class _HankelRegressor(object):
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
 
+        # Undo phase-centering
         _, _, V = geometry.undo_correction(u, v, V)
 
         return V
 
-    def predict_deprojected(self, q, I=None, geometry=None):
+    def predict_deprojected(self, q=None, I=None, geometry=None):
         """
         Predict the visibilities in the deprojected-plane
 
         Parameters
         ----------
-        q : array, units= :math:`\\lambda`
+        q : array, default=self.q, units= :math:`\\lambda`
             1D uv-points to predict the visibilities at
         I : array, optional, unit=Jy/Sr
             Intensity points to predict the vibilities of. If not specified,
@@ -298,8 +306,17 @@ class _HankelRegressor(object):
             collocation points,
                 I[k] = I(r_k).
         geometry: SourceGeometry object, optional
-            Geometry used to de-project the visibilities. If not provided
-            a default one passed in during construction will be used.
+            Geometry used to correct the visibilities for the source
+            inclination. If not provided the geometry determined during the
+            fit will be used.
+
+        Returns
+        -------
+        V(q) : array, units=Jy
+            Predicted visibilties of a source with a radial flux distribution
+            given by :math:`I`. The amplitude of the visibilities are reduced
+            according to the inclination of the source for consistency with
+            uvplot.
 
         Notes
         -----
@@ -307,6 +324,9 @@ class _HankelRegressor(object):
         to be consistent with uvplot.
 
         """
+        if q is None:
+            q = self.q
+
         if I is None:
             I = self.mean
 

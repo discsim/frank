@@ -34,9 +34,7 @@ def arcsec_baseline(x):
 
 class BinnedUVData(object):
     r"""Average the uv-data into bins of equal size.
-
     Computes the weighted mean of the visibilities in each bin.
-
     Parameters
     ----------
     uv : array, unit= :math:`\lambda`
@@ -51,16 +49,16 @@ class BinnedUVData(object):
     def __init__(self, uv, V, weights, bin_width):
         nbins = np.ceil(uv.max() / bin_width).astype('int')
         bins = np.arange(nbins+1, dtype='float64') * bin_width
-        
+
         # Initialize binned data
         bin_n   = np.zeros(nbins, dtype='int64')
         bin_uv  = np.zeros(nbins, dtype='float64')
         bin_wgt = np.zeros(nbins, dtype='float64')
 
-        bin_vis = np.zeros(nbins, dtype='complex64')        
+        bin_vis = np.zeros(nbins, dtype='complex64')
         bin_vis_err = np.zeros(nbins, dtype='complex64')
 
-        
+
         norm = 1 / bin_width
 
         # Use blocking since its faster and requires less memory
@@ -85,10 +83,10 @@ class BinnedUVData(object):
             bin_vis.imag  += np.bincount(idx, weights=tmp_wgt*tmp_vis.imag,
                                          minlength=nbins)
 
-            bin_vis_err.real += np.bincount(idx, 
+            bin_vis_err.real += np.bincount(idx,
                                             weights=tmp_wgt*tmp_vis.real**2,
                                             minlength=nbins)
-            bin_vis_err.imag += np.bincount(idx, 
+            bin_vis_err.imag += np.bincount(idx,
                                             weights=tmp_wgt*tmp_vis.imag**2,
                                             minlength=nbins)
 
@@ -97,17 +95,17 @@ class BinnedUVData(object):
         w = bin_wgt[idx]
         bin_vis [idx] /= w
         bin_uv[idx] /= w
-        
+
         bin_vis_err[idx] /= w
-        
+
         bin_vis_err.real = np.sqrt(bin_vis_err.real - bin_vis.real**2)
         bin_vis_err.imag = np.sqrt(bin_vis_err.imag - bin_vis.imag**2)
-        
+
         # Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
         bin_vis_err.real[idx1] = bin_vis_err.imag[idx1] = 1 / np.sqrt(bin_wgt[idx1])
 
-        
+
         # Mask the empty bins
         self._uv = bin_uv[idx]
         self._V  = bin_vis[idx]
