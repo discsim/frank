@@ -22,6 +22,7 @@
 import numpy as np
 import scipy.linalg
 import scipy.sparse
+from collections import defaultdict
 
 from frank.hankel import DiscreteHankelTransform
 from frank.constants import rad_to_arcsec, deg_to_rad
@@ -535,22 +536,27 @@ class FrankFitter(FourierBesselFitter):
         Geometry used to de-project the visibilities before fitting.
     nu : int default = 0.
         Order of the discrete Hankel transform, given by J_nu(r).
-    alpha : float >= 1, default = 1.05
-        Order parameter of the inverse gamma prior for the power spectrum.
-        coefficients.
-    p_0 : float >= 0, default = 1e-15, unit=Jy^2
-        Scale parameter of the inverse gamma prior for the power spectrum.
-        coefficients.
-    smooth : float >= 0, default = 0.1
-        Spectral smoothness prior parameter. Zero is no smoothness prior.
-    tol : float > 0, default = 1e-3
-        Tolerence for convergence of the power spectrum iteration.
     block_data : bool, default = True
         Large temporary matrices are needed to set up the data, if block_data
         is True we avoid this, limiting the memory requirement to block_size
         elements.
     block_size : int, default = 10**7
         Size of the matrices if blocking is used.
+    alpha : float >= 1, default = 1.05
+        Order parameter of the inverse gamma prior for the power spectrum.
+        coefficients.
+    p_0 : float >= 0, default = 1e-15, unit=Jy^2
+        Scale parameter of the inverse gamma prior for the power spectrum.
+        coefficients.
+    weights_smooth : float >= 0, default = 0.1
+        Spectral smoothness prior parameter. Zero is no smoothness prior.
+    tol : float > 0, default = 1e-3
+        Tolerence for convergence of the power spectrum iteration.
+    max_iter: int, default = 250
+        Maximum number of fit iterations.
+    store_iteration_diagnostics: bool, default=True
+        Whether to store the power spectrum parameters and brightness profile
+        for each fit iteration.
 
     References
     ----------
@@ -563,7 +569,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 7,
                  alpha=1.05, p_0=1e-15, weights_smooth=0.1,
-                 tol=1e-3, max_iter=250):
+                 tol=1e-3, max_iter=250, store_iteration_diagnostics=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data, block_size)
 
@@ -573,6 +579,8 @@ class FrankFitter(FourierBesselFitter):
 
         self._tol = tol
         self._max_iter = max_iter
+
+        self._store_iteration_diagnostics = store_iteration_diagnostics
 
     def _build_smoothing_matrix(self):
         log_q = np.log(self.q)
@@ -616,6 +624,9 @@ class FrankFitter(FourierBesselFitter):
             Reconstructed profile using Maximum a posteriori power spectrum.
 
         """
+        if self._store_iteration_diagnostics:
+            self._iteration_diagnostics = defaultdict(list)
+
         # fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
@@ -673,7 +684,14 @@ class FrankFitter(FourierBesselFitter):
 
             fit = self.fit_powerspectrum(pi)
 
+            if self._store_iteration_diagnostics:
+                self._iteration_diagnostics['power_spectrum'].append(pi)
+                self._iteration_diagnostics['mean'].append(fit.mean)
+
             count += 1
+
+        if self._store_iteration_diagnostics:
+            save._iteration_diagnostics['num_iterations'] = count
 
         # Save the best fit
         self._sol = fit
@@ -851,3 +869,9 @@ class FrankFitter(FourierBesselFitter):
     def MAP_spectrum_covariance(self):
         """Covariance matrix of the maximum a posteriori power spectrum"""
         return self._ps_cov
+
+    @property
+    def iteration_diagnostics(self):
+        """Power spectrum parameters and brightness profile at each fit
+        iteration, and number of iterations"""
+        return self._iteration_diagnostics
