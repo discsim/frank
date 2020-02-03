@@ -48,7 +48,7 @@ def parse_parameters(parameter_file):
     Parameters
     ----------
     parameter_file : string
-                     .json parameter file (see frank.fit.helper)
+            .json parameter file (see frank.fit.helper)
 
     Returns
     -------
@@ -87,7 +87,7 @@ def parse_parameters(parameter_file):
     print('  Saving parameters to be used in fit to `frank_used_pars.json`')
     with open('frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
-    print('cat',type(model))
+
     return model
 
 
@@ -98,22 +98,21 @@ def load_uvdata(data_file):
     Parameters
     ----------
     data_file : string
-                UVTable with columns: u [m]  v [m]  Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]
+          UVTable with columns: u [m]  v [m]  Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]
 
     Returns
     -------
-    u, v : array, units = :math:`\\lambda`
-           u and v coordinates of observations
-    vis : array, units = Jy
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
           Real component of observed visibilities
-    weights : array, units = Jy^-2
+    weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
     """
 
     print('  Loading UVTable')
 
     u, v, vis, weights = np.genfromtxt(data_file).T
-
     # TODO: (optionally) convert u, v from [m] to [lambda]
 
     return u, v, vis, weights
@@ -126,18 +125,18 @@ def determine_geometry(model, u, v, vis, weights):
     Parameters
     ----------
     model : dict
-            Dictionary containing model parameters the fit uses
-    u, v : array, units = :math:`\\lambda`
-           u and v coordinates of observations
-    vis : array, units = Jy
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
           Real component of observed visibilities
-    weights : array, units = Jy^-2
+    weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
 
     Returns
     -------
     geom : SourceGeometry object
-           Fitted geometry (see frank.geometry.SourceGeometry)
+          Fitted geometry (see frank.geometry.SourceGeometry)
     """
 
     print('  Determining disc geometry')
@@ -168,10 +167,10 @@ def determine_geometry(model, u, v, vis, weights):
 
             t1 = time.time()
             geom.fit(u, v, vis, weights)
-            print('    Time taken to fit geometry %.2f sec'%(time.time() - t1))
+            print('    Time taken to fit geometry %.1f sec'%(time.time() - t1))
 
-    print('    Using: inc %.2f deg,\n           PA %.2f deg,\n'
-          '           dRA %.2e arcsec,\n           dDec %.2e arcsec'
+    print('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
+          '           dRA  = %.2e arcsec,\n           dDec = %.2e arcsec'
           %(geom.inc, geom.PA, geom.dRA, geom.dDec))
 
     return geom
@@ -184,15 +183,15 @@ def perform_fit(model, u, v, vis, weights, geom):
     Parameters
     ----------
     model : dict
-            Dictionary containing model parameters the fit uses
-    u, v : array, units = :math:`\\lambda`
-           u and v coordinates of observations
-    vis : array, units = Jy
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
           Real component of observed visibilities
-    weights : array, units = Jy^-2
+    weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
     geom : SourceGeometry object
-           Fitted geometry (see frank.geometry.SourceGeometry)
+          Fitted geometry (see frank.geometry.SourceGeometry)
 
     Returns
     -------
@@ -214,53 +213,64 @@ def perform_fit(model, u, v, vis, weights, geom):
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
     print('    Time taken to fit profile (with %.0e visibilities and %s'
-          ' collocation points) %.2f sec'%(len(vis), model['hyperpriors']['n'],
+          ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
           time.time() - t1))
 
     return sol
 
 
-def output_results(model, u, v, vis, weights, sol, diag_fig=True):
+def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
     """
-    Deproject the observed visibilities and fit them for the brightness profile.
+    Save datafiles of fit results; generate and save figures of fit results.
 
     Parameters
     ----------
     model : dict
-            Dictionary containing model parameters the fit uses
-    u, v : array, units = :math:`\\lambda`
-           u and v coordinates of observations
-    vis : array, units = Jy
+          Dictionary containing model parameters the fit uses
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
           Real component of observed visibilities
-    weights : array, units = Jy^-2
-          Weights assigned to observed visibilities, of the form :math:`1 / \\sigma^2`
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
     geom : SourceGeometry object
-           Fitted geometry (see frank.geometry.SourceGeometry)
+          Fitted geometry (see frank.geometry.SourceGeometry)
     sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum (see frank.radial_fitters.FrankFitter) # TODO: check
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter) # TODO: check
     diag_fig : bool, optional, default=True
-               Whether to produce a figure showing diagnostics of the fit
-
-    Returns
-    -------
-    xx
+        Whether to produce a figure showing diagnostics of the fit
     """
 
-    print(dir(sol)) # TODO: remove after tests
-    if model['input_output']['save_profile_fit']:
-        np.savetxt(savedir + 'fit.txt',
-                   np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
-                   header='r [arcsec]\tI [Jy/sr]\tI_err [Jy/sr]')
+    prefix = model['input_output']['save_dir'] + '/' + \
+             os.path.splitext(model['input_output']['uvtable_filename'])[0]
 
+    if model['input_output']['save_profile_fit']:
+        np.savetxt(prefix + '_frank_profile_fit.txt',
+                   np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
+                   header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
+
+    print('sol._M',sol._M)
+    print('sol.predict(u,v).real',len(sol.predict_deprojected(sol.q).real))
+    print(np.array([sol.q, sol.predict(u,v).real]).T)
     if model['input_output']['save_vis_fit']:
-        np.savetxt(savedir + 'fit_vis.txt',
-                   np.array([ki / (2 * np.pi), GPHF.HankelTransform(ki)]).T,
-                   header='Baseline [lambda]\tRe(V) [Jy]')
+        np.savetxt(prefix + '_fit_vis.txt',
+                   np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
+                   header='Baseline [lambda]\tProjected Re(V) [Jy]')
+
+    import matplotlib.pyplot as plt
+    from frank.constants import deg_to_rad
+    plt.figure()
+    plt.loglog(np.hypot(u,v), vis.real, 'k.')
+    plt.loglog(np.hypot(u,v), sol.predict(u,v).real,'g.')
+    plt.loglog(sol.q, sol.predict_deprojected(sol.q).real, 'r.')
+    plt.savefig(prefix + '_test.png')
 
     if model['input_output']['save_uvtables']:
-        np.save(savedir + disc + '_frank_fit.dat',
+        np.save(prefix + '_frank_uv_fit.txt',
                 np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
-        np.save(savedir + disc + '_frank_residuals.dat',
+        np.save(prefix + '_frank_uv_resid.txt',
                 np.stack([u_proj, v_proj, re_proj, im_proj, weights_orig], axis=-1))
 
     if model['input_output']['make_plots']:
@@ -276,9 +286,9 @@ def main():
 
     geom = determine_geometry(model, u, v, vis, weights)
 
-    perform_fit(model, u, v, vis, weights, geom)
+    sol = perform_fit(model, u, v, vis, weights, geom)
 
-    #output_results(model, u, v, vis, weights, sol)
+    output_results(model, u, v, vis, weights, geom, sol)
 
     print("IT'S ALIVE!!\n")
 
