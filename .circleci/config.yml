@@ -62,11 +62,6 @@ jobs:
             python3 -m ipykernel install --user
             pip install .[docs-build]
       - run:
-          name: Copy notebooks
-          command: |
-            mkdir docs/tutorials
-            cp tutorials/[ur]*ipynb docs/tutorials
-      - run:
           name: Build docs
           command: |
             . venv/bin/activate
