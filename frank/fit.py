@@ -27,7 +27,12 @@ import time
 import json
 import numpy as np
 
-parameter_file = "default_parameters.json"
+import logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(message)s',
+                    handlers=[
+                    logging.FileHandler('frank_fit.log', mode='w'), # TODO: want to save this in `save_dir`...how to?
+                    logging.StreamHandler()])
 
 
 def helper():
@@ -41,14 +46,19 @@ def helper():
      json.dumps(param_descrip, indent=4))
 
 
-def parse_parameters(parameter_file):
+def parse_parameters():
     """
     Read in a .json parameter file to set the fit parameters.
 
     Parameters
     ----------
-    parameter_file : string
-            .json parameter file (see frank.fit.helper)
+    parameter_filename : string
+            Parameter file (.json; see frank.fit.helper).
+            Defaults to `default_parameters.json`
+    uvtable_filename : string
+            UVTable file with data to be fit (.txt). The UVTable column format
+            should be u [lambda]  v [lambda] Re(V) [Jy]  Im(V) [Jy]
+            Weight [Jy^-2]
 
     Returns
     -------
@@ -60,10 +70,13 @@ def parse_parameters(parameter_file):
 
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
                                      " parameters in default_parameters.json")
-    parser.add_argument("-p", "--parameters", default=parameter_file, type=str,
-                        help="Parameter file (.json)")
+    parser.add_argument("-p", "--parameter_filename",
+                        default='default_parameters.json', type=str,
+                        help="Parameter file (.json; see frank.fit.helper)") # TODO: redundant to list this above in docstring?
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
-                        help="Data file to be fit (.txt)")
+                        help="UVTable file with data to be fit (.txt). The" # TODO: redundant to list this above in docstring?
+                        " UVTable column format should be u [lambda]  v [lambda]"
+                        " Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]")
 
     args = parser.parse_args()
     model = json.load(open(args.parameters, 'r'))
@@ -83,9 +96,9 @@ def parse_parameters(parameter_file):
     if not model['input_output']['save_dir']:
         model['input_output']['save_dir'] = model['input_output']['load_dir']
 
-    print('\nRunning frank on', model['input_output']['uvtable_filename'])
+    logging.info('\nRunning frank on %s'%model['input_output']['uvtable_filename'])
 
-    print('  Saving parameters to be used in fit to `frank_used_pars.json`')
+    logging.info('  Saving parameters to be used in fit to `frank_used_pars.json`')
     with open('frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
 
@@ -113,7 +126,7 @@ def load_uvdata(data_file):
           :math:`1 / \\sigma^2`
     """
 
-    print('  Loading UVTable')
+    logging.info('  Loading UVTable')
 
     u, v, vis, weights = np.genfromtxt(data_file).T
     # TODO: (optionally) convert u, v from [m] to [lambda]
@@ -143,7 +156,7 @@ def determine_geometry(model, u, v, vis, weights):
           Fitted geometry (see frank.geometry.SourceGeometry)
     """
 
-    print('  Determining disc geometry')
+    logging.info('  Determining disc geometry')
 
     if not model['geometry']['fit_geometry']:
         from frank.geometry import FixedGeometry
@@ -171,9 +184,9 @@ def determine_geometry(model, u, v, vis, weights):
 
             t1 = time.time()
             geom.fit(u, v, vis, weights)
-            print('    Time taken to fit geometry %.1f sec'%(time.time() - t1))
+            logging.info('    Time taken to fit geometry %.1f sec'%(time.time() - t1))
 
-    print('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
+    logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
           '           dRA  = %.2e arcsec,\n           dDec = %.2e arcsec'
           %(geom.inc, geom.PA, geom.dRA, geom.dDec))
 
@@ -205,7 +218,7 @@ def perform_fit(model, u, v, vis, weights, geom):
           (see frank.radial_fitters.FrankFitter) # TODO: check
     """
 
-    print('  Fitting for brightness profile')
+    logging.info('  Fitting for brightness profile')
 
     from frank.radial_fitters import FrankFitter
 
@@ -218,7 +231,7 @@ def perform_fit(model, u, v, vis, weights, geom):
 
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
-    print('    Time taken to fit profile (with %.0e visibilities and %s'
+    logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
           ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
           time.time() - t1))
 
@@ -288,7 +301,7 @@ def output_results(model, u, v, vis, weights, geom, sol, diag_fig=True):
 
 
 def main():
-    model = parse_parameters(parameter_file)
+    model = parse_parameters()
 
     u, v, vis, weights = load_uvdata(model['input_output']['uvtable_filename'])
 
@@ -298,7 +311,7 @@ def main():
 
     output_results(model, u, v, vis, weights, geom, sol)
 
-    print("IT'S ALIVE!!\n")
+    logging.info("IT'S ALIVE!!\n")
 
 if __name__ == "__main__":
     main()
