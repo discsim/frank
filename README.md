@@ -38,7 +38,7 @@ Authors
 ### Contact ###
 Interested in collaborating to improve, extend or apply frank?
 Or just have questions about the code that don't require submitting an issue?
-[Email Jeff!](jmj51@ast.cam.ac.uk)
+[Email Jeff!](mailto:jmj51@ast.cam.ac.uk)
 
 License
 -------
