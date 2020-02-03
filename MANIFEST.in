@@ -2,7 +2,7 @@ include README.rst AUTHORS.rst LICENSE.txt
 graft lib
 prune docs
 prune tutorials
-prune .ci
+prune .circleci
 exclude .clang-format
 exclude .gitattributes
 exclude .gitignore
