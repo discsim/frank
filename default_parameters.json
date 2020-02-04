@@ -2,12 +2,13 @@
   "input_output" : {
     "uvtable_filename" : "",
     "load_dir"         : "",
-    "save_dir"        : "",
+    "save_dir"	       : "",
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
     "save_uvtables"    : true,
-    "make_plots"       : true,
-    "save_plots"       : true,
+    "plot_fit"         : true,
+    "plot_diag"        : true,
+    "save_figs"        : true,
     "dist"             : null
   },
 

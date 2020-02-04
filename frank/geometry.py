@@ -20,6 +20,8 @@
    the visibilties by the geometry.
 """
 
+# TODO: check if sign convention for dRA, dDec consistent w/ galario; specify convention in docstrings
+
 import abc
 import numpy as np
 from scipy.optimize import least_squares

@@ -51,14 +51,13 @@ def load_uvtable(data_file):
     return u, v, vis, weights
 
 
-def save_fit(model, u, v, vis, weights, sol):
+def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
+             save_profile_fit, save_vis_fit, save_uvtables):
     """
     Save datafiles of fit results
 
     Parameters
     ----------
-    model : dict
-          Dictionary containing model parameters the fit uses
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
@@ -69,22 +68,32 @@ def save_fit(model, u, v, vis, weights, sol):
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
+    save_dir : string
+          Directory in which output datafiles and figures are saved
+    uvtable_filename : string
+          UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights) # TODO
+    save_profile_fit : bool
+          Whether to save fitted brightness profile
+    save_vis_fit : bool
+          Whether to save fitted visibility distribution
+    save_uvtables : bool
+          Whether to save fitted and residual UV tables (these are reprojected)
     """
 
-    prefix = model['input_output']['save_dir'] + '/' + \
-             os.path.splitext(model['input_output']['uvtable_filename'])[0]
+    prefix = save_dir + '/' + \
+             os.path.splitext(uvtable_filename)[0]
 
-    if model['input_output']['save_profile_fit']:
+    if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
-    if model['input_output']['save_vis_fit']:
+    if save_vis_fit:
         np.savetxt(prefix + '_fit_vis.txt',
                    np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
                    header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: update
 
-    if model['input_output']['save_uvtables']:
+    if save_uvtables:
         np.savetxt(prefix + '_frank_uv_fit.txt',
                 np.stack([u, v, sol.predict(u,v).real, sol.predict(u,v).imag,
                 weights], axis=-1), header='u [lambda]\tv [lambda]\tRe(V)'

@@ -136,14 +136,13 @@ def load_data(data_file):
     return u, v, vis, weights
 
 
-def determine_geometry(model, u, v, vis, weights):
+def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
+                       known_geometry, fit_phase_offset):
     """
     Determine the source geometry (inclination, position angle, phase offset).
 
     Parameters
     ----------
-    model : dict
-          Dictionary containing model parameters the fit uses
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
@@ -151,6 +150,21 @@ def determine_geometry(model, u, v, vis, weights):
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
+    inc: float
+          Source inclination. unit = deg
+    pa : float
+          Source position angle. unit = deg
+    dra : float
+          Source right ascension offset from 0. unit = arcsec
+    ddec : float
+          Source declination offset from 0. unit = arcsec
+    fit_geometry: bool
+          Whether to fit for the source geometry
+    known_geometry: bool
+          Whether to supply a known source geometry
+    fit_phase_offset: bool
+          Whether to fit for the source's right ascension offset and declination
+          offset from 0
 
     Returns
     -------
@@ -160,46 +174,39 @@ def determine_geometry(model, u, v, vis, weights):
 
     logging.info('  Determining disc geometry')
 
-    if not model['geometry']['fit_geometry']:
+    if not fit_geometry:
         geom = frank.geometry.FixedGeometry(0., 0., 0., 0.)
 
     else:
-        if model['geometry']['known_geometry']:
-            geom = frank.geometry.FixedGeometry(model['geometry']['inc'],
-                                                model['geometry']['pa'],
-                                                model['geometry']['dra'],
-                                                model['geometry']['ddec']
-                                               )
+        if known_geometry:
+            geom = frank.geometry.FixedGeometry(inc, pa, dra, ddec)
 
         else:
-            if model['geometry']['fit_phase_offset']:
+            if fit_phase_offset:
                 geom = frank.geometry.FitGeometryGaussian()
 
             else:
                 geom = frank.geometry.FitGeometryGaussian(
-                                        phase_centre=(model['geometry']['dra'],
-                                        model['geometry']['ddec'])
-                                        )
+                                        phase_centre=(dra, ddec))
 
             t1 = time.time()
             geom.fit(u, v, vis, weights)
-            logging.info('    Time taken to fit geometry %.1f sec'%(time.time() - t1))
+            logging.info('    Time taken to fit geometry %.1f sec'%(time.time()
+                         - t1))
 
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
-          '           dRA  = %.2e arcsec,\n           dDec = %.2e arcsec'
-          %(geom.inc, geom.PA, geom.dRA, geom.dDec))
+                 '           dRA  = %.2e arcsec,\n           dDec = %.2e arcsec'
+                 %(geom.inc, geom.PA, geom.dRA, geom.dDec))
 
     return geom
 
 
-def perform_fit(model, u, v, vis, weights, geom):
+def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
     """
     Deproject the observed visibilities and fit them for the brightness profile.
 
     Parameters
     ----------
-    model : dict
-          Dictionary containing model parameters the fit uses
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
@@ -209,6 +216,18 @@ def perform_fit(model, u, v, vis, weights, geom):
           :math:`1 / \\sigma^2`
     geom : SourceGeometry object
           Fitted geometry (see frank.geometry.SourceGeometry)
+    rout : float
+          Maximum disc radius in the fit (best to overestimate size of source).
+          unit = arcsec
+    n : int
+          Number of collocation points used in the fit
+          (suggested range 100 - 300)
+    alpha : float
+          Order parameter for the power spectrum's inverse Gamma prior
+          (suggested range 1.00 - 1.50)
+    wsmooth : float
+          Strength of smoothing applied to the power spectrum
+          (suggested range 10^-4 - 10^-1)
 
     Returns
     -------
@@ -219,11 +238,8 @@ def perform_fit(model, u, v, vis, weights, geom):
 
     logging.info('  Fitting for brightness profile')
 
-    FF = frank.radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
-                     N=model['hyperpriors']['n'],
-                     geometry=geom,
-                     alpha=model['hyperpriors']['alpha'],
-                     weights_smooth=model['hyperpriors']['wsmooth']
+    FF = frank.radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
+                     alpha=alpha, weights_smooth=wsmooth
                      )
 
     t1 = time.time()
@@ -235,16 +251,16 @@ def perform_fit(model, u, v, vis, weights, geom):
     return sol, FF.iteration_diagnostics
 
 
-def output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics,
-                   diag_fig=True):
+def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
+                   save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
+                   save_uvtables, plot_fit, plot_diag, save_figs, dist=None):
     """
     Save datafiles of fit results; generate and save figures of fit results.
-    See frank.io.save_fit
+    See frank.io.save_fit, frank.make_plots.make_fit_plot and
+    frank.make_plots.make_diag_plot
 
     Parameters
     ----------
-    model : dict
-          Dictionary containing model parameters the fit uses
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
@@ -260,30 +276,72 @@ def output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics,
     iteration_diagnostics : dict, size = N_iter x 2 x N_{collocation points}
           Power spectrum parameters and posterior mean brightness profile at
           each fit iteration, and number of iterations
-    diag_fig : bool, optional, default=True
-        Whether to produce a figure showing diagnostics of the fit
+    save_dir : string
+          Directory in which output datafiles and figures are saved
+    uvtable_filename : string
+          UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights) # TODO
+    save_profile_fit : bool
+          Whether to save fitted brightness profile
+    save_vis_fit : bool
+          Whether to save fitted visibility distribution
+    save_uvtables : bool
+          Whether to save fitted and residual UV tables (these are reprojected)
+    plot_fit : bool
+          Whether to make a figure showing the fit
+    plot_diag : bool
+          Whether to make a figure showing the fit diagnostics
+    save_figs : bool
+          Whether to save generated figures
+    dist : float, optional
+          Distance to source. unit = AU
     """
 
     logging.info('  Saving fit result datafiles')
-    frank.io.save_fit(model, u, v, vis, weights, sol)
+    frank.io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
+                      save_profile_fit, save_vis_fit, save_uvtables)
 
     logging.info('  Plotting results')
-    if model['input_output']['make_plots']:
-        frank.plot.plot_fit(model, u, v, vis, weights, geom, sol,
-                            iteration_diagnostics, diag_fig,
-                            model['input_output']['save_plots'])
-
+    if plot_fit:
+        frank.make_plots.make_fit_fig(model, u, v, vis, weights, geom, sol,
+                            iteration_diagnostics, save_figs, dist
+                            )
+    if plot_diag:
+        frank.make_plots.make_diag_fig(model, u, v, vis, weights, geom, sol,
+                            iteration_diagnostics, save_figs, dist
+                            )
 
 def main():
     model = parse_parameters()
 
     u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
 
-    geom = determine_geometry(model, u, v, vis, weights)
+    geom = determine_geometry(u, v, vis, weights,
+                              model['geometry']['inc'],
+                              model['geometry']['pa'],
+                              model['geometry']['dra'],
+                              model['geometry']['ddec'],
+                              model['geometry']['fit_geometry'],
+                              model['geometry']['known_geometry'],
+                              model['geometry']['fit_phase_offset']
+                              )
 
-    sol, iteration_diagnostics = perform_fit(model, u, v, vis, weights, geom)
+    sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
+                              model['hyperpriors']['rout'],
+                              model['hyperpriors']['n'],
+                              model['hyperpriors']['alpha'],
+                              model['hyperpriors']['wsmooth']
+                              )
 
-    output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics)
+    output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
+                   model['input_output']['save_dir'],
+                   model['input_output']['uvtable_filename'],
+                   model['input_output']['save_profile_fit'],
+                   model['input_output']['save_vis_fit'],
+                   model['input_output']['save_uvtables'],
+                   model['input_output']['plot_fit'],
+                   model['input_output']['plot_diag'],                   
+                   dist
+                   )
 
     logging.info("IT'S ALIVE!!\n")
 

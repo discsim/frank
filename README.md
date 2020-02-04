@@ -2,7 +2,15 @@
   <img width = "800" src="https://github.com/discsim/frank/blob/docs_and_runner_jj/docs/images/day_off.png?raw=true"/>
 </p>
 
-![Python versions](https://img.shields.io/badge/python-3.7-%20%230078BC)
+.. image:: https://circleci.com/xx/frank.svg?branch=master
+    :target: https://circleci.com/xx/frank
+
+.. image:: https://img.shields.io/pypi/v/frank.svg
+    :target: https://pypi.python.org/pypi/frank
+
+.. image:: https://img.shields.io/github/release/discsim/frank/all.svg
+    :target: https://github.com/discsim/frank/releases
+
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![DOI]()]()
 
