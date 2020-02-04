@@ -894,5 +894,5 @@ class FrankFitter(FourierBesselFitter):
     @property
     def iteration_diagnostics(self):
         """Dict containing power spectrum parameters and posterior mean brightness 
-        each fit iteration, and number of iterations"""
+        profile at each fit iteration, and number of iterations"""
         return self._iteration_diagnostics
