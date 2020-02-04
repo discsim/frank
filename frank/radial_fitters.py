@@ -36,16 +36,16 @@ class _HankelRegressor(object):
     Solves the Linear Regression problem to compute the posterior
 
     .. math::
-       P(I|q,V,p) ~ G(I-\mu, D),
+       P(I|q,V,p) \propto G(I-\mu, D),
 
     where :math:`I` is the intensity to be predicted, :math:`q`, and :math:`V`
     are the baselines and visibility data. :math:`\mu` and :math:`D` are the
     mean and covariance of the posterior distribution.
 
-    If :math:`S` is provided, it is the covariance matrix of prior
+    If :math:`p` is provided, the covariance matrix of prior is included and,
 
     .. math::
-        P(I|p) ~ G(I, S(p)),
+        P(I|p) \propto G(I, S(p)),
 
     and the Bayesian Linear Regression problem is solved. :math:`S` is computed
     from the power spectrum, :math:`p`, if provided, otherwise the traditional
@@ -100,7 +100,7 @@ class _HankelRegressor(object):
         should be equal to
 
         .. math::
-            -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2*np.pi)]
+            -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2 \pi)]
 
         If not  provided, the likelihood can still be computed up to this
         missing constant.
@@ -203,7 +203,7 @@ class _HankelRegressor(object):
         Returns
         -------
         log_P : float,
-            log likelihood, :math:`\\log[P(I,V|p)]` or :math:`\\log[P(V|p)]`
+            log likelihood, :math:`\log[P(I,V|p)]` or :math:`\log[P(V|p)]`
 
         Notes
         -----
