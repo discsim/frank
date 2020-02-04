@@ -111,6 +111,22 @@ def parse_parameters():
 def load_data(data_file):
     """
     Read in a UVTable with data to be fit. See frank.io.load_uvtable
+
+    Parameters
+    ----------
+    data_file : string
+          UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
+                                Weight [Jy^-2] TODO: update if accept dfft struc
+
+    Returns
+    -------
+    u, v : array, unit = :math:`\\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Real component of observed visibilities
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \\sigma^2`
     """
 
     logging.info('  Loading UVTable')

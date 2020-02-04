@@ -35,6 +35,7 @@ def arcsec_baseline(x):
 class BinnedUVData(object):
     r"""Average the uv-data into bins of equal size.
     Computes the weighted mean of the visibilities in each bin.
+    
     Parameters
     ----------
     uv : array, unit= :math:`\lambda`
