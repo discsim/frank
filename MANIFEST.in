@@ -1,5 +1,5 @@
 include README.rst AUTHORS.rst LICENSE.txt
-graft lib
+graft frank
 prune docs
 prune tutorials
 prune .circleci
