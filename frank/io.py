@@ -68,7 +68,7 @@ def save_fit(model, u, v, vis, weights, sol):
           :math:`1 / \\sigma^2`
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter) # TODO: check
+          (see frank.radial_fitters.FrankFitter)
     """
 
     prefix = model['input_output']['save_dir'] + '/' + \
@@ -82,7 +82,7 @@ def save_fit(model, u, v, vis, weights, sol):
     if model['input_output']['save_vis_fit']:
         np.savetxt(prefix + '_fit_vis.txt',
                    np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                   header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: check this is right baselines, amplitude
+                   header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: update 
 
     if model['input_output']['save_uvtables']:
         np.savetxt(prefix + '_frank_uv_fit.txt',

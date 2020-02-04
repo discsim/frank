@@ -22,6 +22,8 @@
 
 def plot_fit(model, u, v, vis, weights, geom, sol, diag_fig=True,
              save_plots=True):
+    """ # TODO: add docstring
+    """
     import matplotlib.pyplot as plt
     from frank.constants import deg_to_rad
     plt.figure()

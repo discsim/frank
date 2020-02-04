@@ -28,16 +28,11 @@ import json
 import numpy as np
 
 import logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(message)s',
-                    handlers=[
-                    logging.FileHandler('frank_fit.log', mode='w'), # TODO: want to save this in `save_dir`...how to?
-                    logging.StreamHandler()])
 
 
 def helper():
     with open('parameter_descriptions.json') as f:
-        param_descrip = json.load(f) # TODO: point to parameter_descriptions.json in code dir
+        param_descrip = json.load(f) # TODO: how to point to parameter_descriptions.json in package dir? change __init__?
 
     print("""
      Fit a 1D radial brightness profile with Frankenstein (frank) from the
@@ -56,9 +51,9 @@ def parse_parameters():
             Parameter file (.json; see frank.fit.helper).
             Defaults to `default_parameters.json`
     uvtable_filename : string
-            UVTable file with data to be fit (.txt). The UVTable column format
-            should be u [lambda]  v [lambda] Re(V) [Jy]  Im(V) [Jy]
-            Weight [Jy^-2]
+            UVTable file with data to be fit (ASCII, .npy or .npz). The UVTable
+            column format should be u [lambda]  v [lambda] Re(V) [Jy]
+            Im(V) [Jy] Weight [Jy^-2] # TODO: update if accept dfft formats
 
     Returns
     -------
@@ -72,11 +67,10 @@ def parse_parameters():
                                      " parameters in default_parameters.json")
     parser.add_argument("-p", "--parameter_filename",
                         default='default_parameters.json', type=str,
-                        help="Parameter file (.json; see frank.fit.helper)") # TODO: redundant to list this above in docstring?
+                        help="Parameter file (.json; see frank.fit.helper)")
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
-                        help="UVTable file with data to be fit (.txt). The" # TODO: redundant to list this above in docstring?
-                        " UVTable column format should be u [lambda]  v [lambda]"
-                        " Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]")
+                        help="UVTable file with data to be fit. See"
+                             " frank.io.load_uvtable")
 
     args = parser.parse_args()
     model = json.load(open(args.parameter_filename, 'r'))
@@ -96,9 +90,18 @@ def parse_parameters():
     if not model['input_output']['save_dir']:
         model['input_output']['save_dir'] = model['input_output']['load_dir']
 
-    logging.info('\nRunning frank on %s'%model['input_output']['uvtable_filename'])
+    logging.basicConfig(level=logging.INFO,
+        format='%(message)s',
+        handlers=[
+        logging.FileHandler(model['input_output']['save_dir'] +
+        '/frank_fit.log', mode='w'), logging.StreamHandler()]
+        )
 
-    logging.info('  Saving parameters to be used in fit to `frank_used_pars.json`')
+    logging.info('\nRunning frank on %s'
+                 %model['input_output']['uvtable_filename'])
+
+    logging.info('  Saving parameters to be used in fit to'
+                 ' `frank_used_pars.json`')
     with open('frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
 
@@ -195,7 +198,7 @@ def perform_fit(model, u, v, vis, weights, geom):
     -------
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter) # TODO: check
+          (see frank.radial_fitters.FrankFitter)
     """
 
     logging.info('  Fitting for brightness profile')
@@ -213,7 +216,7 @@ def perform_fit(model, u, v, vis, weights, geom):
           ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
           time.time() - t1))
 
-    return sol, FF.iteration_diagnostics # TODO: maybe don't store iteration_diagnostics by default (it can be as big as 2e6 elements)
+    return sol, FF.iteration_diagnostics
 
 
 def output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics,
@@ -237,8 +240,8 @@ def output_results(model, u, v, vis, weights, geom, sol, iteration_diagnostics,
           Fitted geometry (see frank.geometry.SourceGeometry)
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter) # TODO: check
-    iteration_diagnostics : dict, size = N_iterations x N_{collocation points}
+          (see frank.radial_fitters.FrankFitter)
+    iteration_diagnostics : dict, size = N_iter x 2 x N_{collocation points}
           Power spectrum parameters and posterior mean brightness profile at
           each fit iteration, and number of iterations
     diag_fig : bool, optional, default=True
