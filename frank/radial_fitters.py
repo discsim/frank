@@ -42,7 +42,7 @@ class _HankelRegressor(object):
     are the baselines and visibility data. :math:`\mu` and :math:`D` are the
     mean and covariance of the posterior distribution.
 
-    If :math:`p` is provided, the covariance matrix of prior is included and,
+    If :math:`p` is provided, the covariance matrix of prior is included and
 
     .. math::
         P(I|p) \propto G(I, S(p)),
@@ -893,6 +893,6 @@ class FrankFitter(FourierBesselFitter):
 
     @property
     def iteration_diagnostics(self):
-        """Dict containing power spectrum parameters and posterior mean brightness 
-        profile at each fit iteration, and number of iterations"""
+        """Power spectrum parameters and posterior mean brightness profile at
+        each fit iteration, and number of iterations"""
         return self._iteration_diagnostics
