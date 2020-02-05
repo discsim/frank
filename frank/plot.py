@@ -16,15 +16,17 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module plots the results and diagnostics of a Frankenstein fit and saves
-   the figures.
+"""This module contains plotting routines for visualizing and analyzing
+Frankenstein fits.
 """
+
+import matplotlib.pyplot as plt
 
 def plot_fit(model, u, v, vis, weights, geom, sol, diag_fig=True,
              save_plots=True):
     """ # TODO: add docstring
     """
-    import matplotlib.pyplot as plt
+
     from frank.constants import deg_to_rad
     plt.figure()
     plt.loglog(np.hypot(u,v), vis.real, 'k.')

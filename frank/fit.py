@@ -256,8 +256,8 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    save_uvtables, plot_fit, plot_diag, save_figs, dist=None):
     """
     Save datafiles of fit results; generate and save figures of fit results.
-    See frank.io.save_fit, frank.make_plots.make_fit_plot and
-    frank.make_plots.make_diag_plot
+    See frank.io.save_fit, frank.make_figs.make_fit_fig and
+    frank.make_figs.make_diag_fig
 
     Parameters
     ----------
@@ -302,11 +302,11 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
 
     logging.info('  Plotting results')
     if plot_fit:
-        frank.make_plots.make_fit_fig(model, u, v, vis, weights, geom, sol,
+        frank.make_figs.make_fit_fig(model, u, v, vis, weights, geom, sol,
                             iteration_diagnostics, save_figs, dist
                             )
     if plot_diag:
-        frank.make_plots.make_diag_fig(model, u, v, vis, weights, geom, sol,
+        frank.make_figs.make_diag_fig(model, u, v, vis, weights, geom, sol,
                             iteration_diagnostics, save_figs, dist
                             )
 
@@ -339,7 +339,7 @@ def main():
                    model['input_output']['save_vis_fit'],
                    model['input_output']['save_uvtables'],
                    model['input_output']['plot_fit'],
-                   model['input_output']['plot_diag'],                   
+                   model['input_output']['plot_diag'],
                    dist
                    )
 
