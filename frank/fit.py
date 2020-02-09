@@ -24,23 +24,25 @@
 import os
 import sys
 import time
+import pkgutil
 import json
 import numpy as np
 
 import logging
 
-import frank
-params_path = os.path.join(os.path.dirname(frank.__file__), '../')
-
 def helper():
-    with open(params_path + 'parameter_descriptions.json') as f:
-        param_descrip = json.load(f) # TODO: how to point to parameter_descriptions.json in package dir? change __init__?
+    param_descrip_file = pkgutil.get_data(__name__, 'parameter_descriptions.json') # TODO
+    print('here',param_descrip_file)
+    #with open(params_path + 'parameter_descriptions.json') as f:
+    #with open(param_descrip_file) as f:
+    #    param_descrip = json.load(f)
+    param_descrip = json.load(param_descrip_file)
 
     print("""
      Fit a 1D radial brightness profile with Frankenstein (frank) from the
      terminal with `python -m frank.fit`. A .json parameter file is required;
      the default is default_parameters.json and is of the form:\n\n""",
-     json.dumps(params_path + param_descrip, indent=4))
+     json.dumps(param_descrip, indent=4)) # TODO
 
 
 def parse_parameters():
@@ -49,9 +51,8 @@ def parse_parameters():
 
     Parameters
     ----------
-    parameter_filename : string
+    parameter_filename : string, default `default_parameters.json`
             Parameter file (.json; see frank.fit.helper).
-            Defaults to `default_parameters.json`
     uvtable_filename : string
             UVTable file with data to be fit (ASCII, .npy or .npz). The UVTable
             column format should be u [lambda]  v [lambda] Re(V) [Jy]
@@ -64,12 +65,14 @@ def parse_parameters():
     """
 
     import argparse
+    
+    default_params = pkgutil.get_data(__name__, 'default_parameters.json')
 
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
                                      " parameters in default_parameters.json")
     parser.add_argument("-p", "--parameter_filename",
-                        default=params_path+'default_parameters.json', type=str,
-                        help="Parameter file (.json; see frank.fit.helper)")
+                        default=default_params, type=str,
+                        help="Parameter file (.json; see frank.fit.helper)") # TODO
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
                         help="UVTable file with data to be fit. See"
                              " frank.io.load_uvtable")
