@@ -29,16 +29,18 @@ import numpy as np
 
 import logging
 
+import frank
+params_path = os.path.join(os.path.dirname(frank.__file__), '../')
 
 def helper():
-    with open('parameter_descriptions.json') as f:
+    with open(params_path + 'parameter_descriptions.json') as f:
         param_descrip = json.load(f) # TODO: how to point to parameter_descriptions.json in package dir? change __init__?
 
     print("""
      Fit a 1D radial brightness profile with Frankenstein (frank) from the
      terminal with `python -m frank.fit`. A .json parameter file is required;
      the default is default_parameters.json and is of the form:\n\n""",
-     json.dumps(param_descrip, indent=4))
+     json.dumps(params_path + param_descrip, indent=4))
 
 
 def parse_parameters():
@@ -66,7 +68,7 @@ def parse_parameters():
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
                                      " parameters in default_parameters.json")
     parser.add_argument("-p", "--parameter_filename",
-                        default='default_parameters.json', type=str,
+                        default=params_path+'default_parameters.json', type=str,
                         help="Parameter file (.json; see frank.fit.helper)")
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
                         help="UVTable file with data to be fit. See"
@@ -101,8 +103,8 @@ def parse_parameters():
                  %model['input_output']['uvtable_filename'])
 
     logging.info('  Saving parameters to be used in fit to'
-                 ' `frank_used_pars.json`')
-    with open('frank_used_pars.json', 'w') as f:
+                 '%s `frank_used_pars.json`'%model['input_output']['save_dir'])
+    with open(model['input_output']['save_dir'] + 'frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
 
     return model

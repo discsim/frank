@@ -8,7 +8,7 @@ Perform a fit from the terminal
 -------------------------------
 
 To perform a quick fit from the terminal, only a UVTable with the data to
-be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
+be fit and a *.json* parameter file (see below xx how to access xx) are needed. A UVTable can be extracted
 from CASA via xx as demonstrated in `this tutorial <tutorials/xx>`_.
 The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
@@ -76,7 +76,7 @@ We've run this example using `fit.py`; if you'd like to modify this file, you ca
 For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_library.ipynb>`_.
 And if you'd like a more qualitative overview of the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
-Perform a fit using the code as a Python module
+Perform a fit using `frank` as a Python module
 -----------------------------------------------
 
 To interface with the code more directly, you can use it as a module.
