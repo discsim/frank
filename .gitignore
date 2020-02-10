@@ -4,6 +4,9 @@ docs/tutorials
 frank_used_params.json
 frank_fit.log
 
+#*.egg
+#MANIFEST
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -28,8 +31,6 @@ var/
 wheels/
 *.egg-info/
 .installed.cfg
-#*.egg
-#MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
