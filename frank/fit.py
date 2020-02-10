@@ -33,9 +33,8 @@ import logging
 def helper():
     param_descrip_file = pkgutil.get_data(__name__, 'parameter_descriptions.json') # TODO
     #with open(params_path + 'parameter_descriptions.json') as f:
-    #with open(param_descrip_file) as f:
-    #    param_descrip = json.load(f)
-    param_descrip = json.load(param_descrip_file)
+    with open(param_descrip_file) as f:
+        param_descrip = json.load(f)
 
     print("""
      Fit a 1D radial brightness profile with Frankenstein (frank) from the
