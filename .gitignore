@@ -6,6 +6,7 @@ frank_fit.log
 
 #*.egg
 #MANIFEST
+#*.egg-info/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -29,7 +30,6 @@ parts/
 sdist/
 var/
 wheels/
-*.egg-info/
 .installed.cfg
 
 # PyInstaller
