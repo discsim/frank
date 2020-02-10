@@ -1,8 +1,8 @@
-include README.rst AUTHORS.rst LICENSE.txt
-graft frank
+include README.rst AUTHORS.rst LICENSE.txt default_parameters.json parameter_descriptions.json
+graft lib
 prune docs
 prune tutorials
-prune .circleci
+prune .ci
 exclude .clang-format
 exclude .gitattributes
 exclude .gitignore
