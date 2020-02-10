@@ -1,4 +1,8 @@
-include README.rst AUTHORS.rst LICENSE.txt default_parameters.json parameter_descriptions.json
+include README.rst
+include AUTHORS.rst
+include LICENSE.txt
+include default_parameters.json
+include parameter_descriptions.json
 graft lib
 prune docs
 prune tutorials

@@ -2,6 +2,7 @@
 docs/tutorials
 
 frank_used_params.json
+frank_fit.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
