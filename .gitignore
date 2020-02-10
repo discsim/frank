@@ -1,5 +1,6 @@
 .DS_Store
 docs/tutorials
+frank.egg-info/
 
 frank_used_params.json
 frank_fit.log
@@ -29,7 +30,7 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
+#MANIFEST
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
