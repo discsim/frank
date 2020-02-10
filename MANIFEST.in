@@ -1,9 +1,5 @@
-include README.rst
-include AUTHORS.rst
-include LICENSE.txt
-include frank/default_parameters.json
-include frank/parameter_descriptions.json
-graft lib
+include README.md AUTHORS.rst LICENSE.txt
+global-include default_parameters.json parameter_descriptions.json
 prune docs
 prune tutorials
 prune .ci
