@@ -30,10 +30,11 @@ import numpy as np
 
 import logging
 
+import frank
+frank_path = os.path.dirname(frank.__file__) # TODO
+
 def helper():
-    param_descrip_file = pkgutil.get_data(__name__, 'parameter_descriptions.json') # TODO
-    #with open(params_path + 'parameter_descriptions.json') as f:
-    with open(param_descrip_file) as f:
+    with open(frank_path + '/parameter_descriptions.json') as f:
         param_descrip = json.load(f)
 
     print("""
@@ -64,13 +65,13 @@ def parse_parameters():
 
     import argparse
 
-    default_param_file = pkgutil.get_data(__name__, 'default_parameters.json')
+    default_param_file = frank_path + '/default_parameters.json' # TODO
 
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
                                      " parameters in default_parameters.json")
     parser.add_argument("-p", "--parameter_filename",
                         default=default_param_file, type=str,
-                        help="Parameter file (.json; see frank.fit.helper)") # TODO
+                        help="Parameter file (.json; see frank.fit.helper)")
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
                         help="UVTable file with data to be fit. See"
                              " frank.io.load_uvtable")
