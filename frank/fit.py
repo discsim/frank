@@ -24,7 +24,6 @@
 import os
 import sys
 import time
-import pkgutil
 import json
 import numpy as np
 
@@ -266,7 +265,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
 
 def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
-                   save_uvtables, plot_fit, plot_diag, save_figs, dist=None):
+                   save_uvtables, plot_fit, plot_diag, save_figs, bin_widths, dist=None):
     """
     Save datafiles of fit results; generate and save figures of fit results.
     See frank.io.save_fit, frank.make_figs.make_fit_fig and
@@ -351,7 +350,7 @@ def main():
                               model['hyperpriors']['alpha'],
                               model['hyperpriors']['wsmooth']
                               )
-
+    print('bin_widths',model['plotting']['bin_widths'])
     figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
@@ -360,8 +359,8 @@ def main():
                    model['input_output']['save_uvtables'],
                    model['plotting']['plot_fit'],
                    model['plotting']['plot_diag'],
-                   model['plotting']['dist'],
-                   model['plotting']['bin_widths']
+                   model['plotting']['bin_widths'],
+                   model['plotting']['dist']
                    )
 
     logging.info("IT'S ALIVE!!\n")
