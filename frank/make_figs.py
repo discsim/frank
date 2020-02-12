@@ -31,6 +31,11 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
     gs = GridSpec(2, 2, hspace=0)
     fig = plt.figure(figsize=(20,16))
 
+    ax0 = fig.add_subplot(gs[0,0])
+    ax1 = fig.add_subplot(gs[1,0])
+    ax3 = fig.add_subplot(gs[0,1])
+    ax4 = fig.add_subplot(gs[1,1])
+
     plot.plot_brightness_profile(sol.r, sol.mean, ax0)
     plot.plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log')
 
@@ -48,6 +53,8 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
 
     plot.plot_vis_resid(binned_data.uv, binned_data.V, )
 
+    plt.setp(ax0.get_xticklabels(), visible=False)
+    plt.setp(ax3.get_xticklabels(), visible=False)
     gs.tight_layout(fig)
     plt.savefig(prefix + '_frank_fit.png')
 

@@ -36,6 +36,20 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', comparison_profil
     ax.set_yscale(yscale)
 
 
+def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear', plot_CIs=False):
+    """ # TODO: add docstring
+    """
+    if plot_CIs:
+        ax.errorbar(baselines, vis, yerr=vis_err, fmt='r.', ecolor='#A4A4A4', label=r'Obs., %s k$\lambda$ bins'%binwidth)
+    else:
+        ax.plot(baselines, vis)
+
+    ax.set_xlabel(r'Baseline [$\lambda$]')
+    ax.set_ylabel('V [Jy]')
+    ax.set_xscale(xscale)
+    ax.set_yscale(yscale)
+
+
 def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
                             comparison_profile=None):
     """ # TODO: add docstring
@@ -50,19 +64,6 @@ def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
 
-
-def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear', plot_CIs=False):
-    """ # TODO: add docstring
-    """
-    if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, fmt='r.', ecolor='#A4A4A4', label=r'Obs., %s k$\lambda$ bins'%binwidth)
-    else:
-        ax.plot(baselines, vis)
-
-    #ax.set_xlabel(r'Baseline [$\lambda$]')
-    #ax.set_ylabel('Re(V) [Jy]')
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
 
 def plot_vis_resid(baselines, vis, vis_err, ax, xscale='log', yscale='linear', normalize_resid=True):
     """ # TODO: add docstring

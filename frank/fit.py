@@ -350,7 +350,7 @@ def main():
                               model['hyperpriors']['alpha'],
                               model['hyperpriors']['wsmooth']
                               )
-    print('bin_widths',model['plotting']['bin_widths'])
+    
     figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
