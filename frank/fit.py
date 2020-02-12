@@ -265,7 +265,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
 
 def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
-                   save_uvtables, plot_fit, plot_diag, save_figs, bin_widths, dist=None):
+                   save_uvtables, plot_fit, plot_diag, bin_widths, dist=None):
     """
     Save datafiles of fit results; generate and save figures of fit results.
     See frank.io.save_fit, frank.make_figs.make_fit_fig and
@@ -302,8 +302,8 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
           Whether to make a figure showing the fit
     plot_diag : bool
           Whether to make a figure showing the fit diagnostics
-    save_figs : bool
-          Whether to save generated figures
+    bin_widths : integer or list
+          Bin widths in which to bin the observed visibilities. [k\\lambda]
     dist : float, optional
           Distance to source. unit = AU
     """
@@ -319,6 +319,7 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
     if plot_fit:
         fit_fig = make_figs.make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
                             )
+
     if plot_diag:
         diag_fig = make_figs.make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
                             )
