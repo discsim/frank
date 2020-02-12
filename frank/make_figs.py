@@ -28,13 +28,14 @@ from frank import plot, useful_funcs
 def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist):
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
-    gs = GridSpec(2, 2, hspace=0)
+    gs = GridSpec(3, 2, hspace=0)
     fig = plt.figure(figsize=(20,16))
 
     ax0 = fig.add_subplot(gs[0,0])
     ax1 = fig.add_subplot(gs[1,0])
     ax3 = fig.add_subplot(gs[0,1])
     ax4 = fig.add_subplot(gs[1,1])
+    ax5 = fig.add_subplot(gs[1,2])
 
     plot.plot_brightness_profile(sol.r, sol.mean, ax0)
     plot.plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log')
@@ -43,13 +44,14 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
     baselines = (u_deproj**2 + v_deproj**2)**.5
 
     for i in bin_widths:
+        print('this bin width',i)
         binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
-        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real, binned_vis.error.real, i, ax3, xscale='log', yscale='linear', plot_CIs=False)
-        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real, binned_vis.error.real, i, ax4, xscale='log', yscale='log', plot_CIs=False)
-        plot.plot_binned_vis(binned_im.uv, binned_vis.V.imag, binned_im.error.imag, i, ax5, xscale='log', yscale='linear', plot_CIs=False)
+        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real, binned_vis.error.real, i, ax3, plot_CIs=False)
+        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real, binned_vis.error.real, i, ax4, plot_CIs=False)
+        plot.plot_binned_vis(binned_im.uv, binned_vis.V.imag, binned_im.error.imag, i, ax5, plot_CIs=False)
 
-    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax3, xscale='log', yscale='linear')
-    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax4, xscale='log', yscale='log')
+    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax3)
+    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax4, yscale='log')
 
     plot.plot_vis_resid(binned_data.uv, binned_data.V, )
 
