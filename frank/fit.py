@@ -311,7 +311,7 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
     from frank import io
     from frank import make_figs
 
-    logging.info('  Saving fit result datafiles')
+    logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
                       save_profile_fit, save_vis_fit, save_uvtables)
 
@@ -350,7 +350,7 @@ def main():
                               model['hyperpriors']['alpha'],
                               model['hyperpriors']['wsmooth']
                               )
-    
+
     figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
