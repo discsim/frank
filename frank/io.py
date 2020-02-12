@@ -20,6 +20,7 @@
    file.
 """
 
+import os
 import numpy as np
 
 def load_uvtable(data_file):
