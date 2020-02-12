@@ -5,11 +5,7 @@
     "save_dir"	       : "",
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
-    "save_uvtables"    : true,
-    "plot_fit"         : true,
-    "plot_diag"        : true,
-    "save_figs"        : true,
-    "dist"             : null
+    "save_uvtables"    : true
   },
 
   "modify_data" : {
@@ -33,5 +29,13 @@
     "alpha"            : 1.05,
     "p0"               : 1e-15,
     "wsmooth"          : 1e-4
+  },
+
+  "plotting" : {
+    "plot_fit"         : true,
+    "plot_diag"        : true,
+    "save_figs"        : true,
+    "dist"             : null,
+    "bin_widths"       : [10, 50]
   }
 }

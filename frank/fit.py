@@ -84,9 +84,12 @@ def parse_parameters():
 
     if ('uvtable_filename' not in model['input_output'] or
         not model['input_output']['uvtable_filename']):
+        model['input_output']['uvtable_filename'] = 'AS209_continuum.txt' # TODO: temp
+        '''
         raise ValueError("    uvtable_filename isn't specified."
                  " Set it in the parameter file or run frank with"
                  " python -m frank.fit -uv <uvtable_filename>")
+        '''
 
     if not model['input_output']['load_dir']:
         model['input_output']['load_dir'] = os.getcwd()
@@ -105,19 +108,21 @@ def parse_parameters():
                  %model['input_output']['uvtable_filename'])
 
     logging.info('  Saving parameters to be used in fit to'
-                 '%s `frank_used_pars.json`'%model['input_output']['save_dir'])
-    with open(model['input_output']['save_dir'] + 'frank_used_pars.json', 'w') as f:
+                 ' %s/frank_used_pars.json'%model['input_output']['save_dir'])
+    with open(model['input_output']['save_dir'] + '/frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
 
     return model
 
 
-def load_data(data_file):
+def load_data(load_dir, data_file):
     """
     Read in a UVTable with data to be fit. See frank.io.load_uvtable
 
     Parameters
     ----------
+    load_dir : string
+          Path to parent directory of data_file
     data_file : string
           UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
                                 Weight [Jy^-2] TODO: update if accept dfft struc
@@ -133,9 +138,10 @@ def load_data(data_file):
           :math:`1 / \\sigma^2`
     """
 
-    logging.info('  Loading UVTable')
+    from frank import io
 
-    u, v, vis, weights = frank.io.load_uvtable(data_file)
+    logging.info('  Loading UVTable')
+    u, v, vis, weights = io.load_uvtable(load_dir + '/' + data_file)
 
     return u, v, vis, weights
 
@@ -176,21 +182,23 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
           Fitted geometry (see frank.geometry.SourceGeometry)
     """
 
+    from frank import geometry
+
     logging.info('  Determining disc geometry')
 
     if not fit_geometry:
-        geom = frank.geometry.FixedGeometry(0., 0., 0., 0.)
+        geom = geometry.FixedGeometry(0., 0., 0., 0.)
 
     else:
         if known_geometry:
-            geom = frank.geometry.FixedGeometry(inc, pa, dra, ddec)
+            geom = geometry.FixedGeometry(inc, pa, dra, ddec)
 
         else:
             if fit_phase_offset:
-                geom = frank.geometry.FitGeometryGaussian()
+                geom = geometry.FitGeometryGaussian()
 
             else:
-                geom = frank.geometry.FitGeometryGaussian(
+                geom = geometry.FitGeometryGaussian(
                                         phase_centre=(dra, ddec))
 
             t1 = time.time()
@@ -240,17 +248,18 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
           (see frank.radial_fitters.FrankFitter)
     """
 
+    from frank import radial_fitters
+
     logging.info('  Fitting for brightness profile')
 
-    FF = frank.radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
+    FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
                      alpha=alpha, weights_smooth=wsmooth
                      )
 
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
-          ' collocation points) %.1f sec'%(len(vis), model['hyperpriors']['n'],
-          time.time() - t1))
+          ' collocation points) %.1f sec'%(len(vis), n, time.time() - t1))
 
     return sol, FF.iteration_diagnostics
 
@@ -300,24 +309,31 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
           Distance to source. unit = AU
     """
 
+    from frank import io
+    from frank import make_figs
+
     logging.info('  Saving fit result datafiles')
-    frank.io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
+    io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
                       save_profile_fit, save_vis_fit, save_uvtables)
 
     logging.info('  Plotting results')
     if plot_fit:
-        frank.make_figs.make_fit_fig(model, u, v, vis, weights, geom, sol,
-                            iteration_diagnostics, save_figs, dist
+        fit_fig = make_figs.make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
                             )
     if plot_diag:
-        frank.make_figs.make_diag_fig(model, u, v, vis, weights, geom, sol,
-                            iteration_diagnostics, save_figs, dist
+        diag_fig = make_figs.make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
                             )
+
+    figs = []
+    if plot_fit: figs.append(fit_fig)
+    if plot_diag: figs.append(diag_fig)
+    return figs
 
 def main():
     model = parse_parameters()
 
-    u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
+    u, v, vis, weights = load_data(model['input_output']['load_dir'],
+                         model['input_output']['uvtable_filename'])
 
     geom = determine_geometry(u, v, vis, weights,
                               model['geometry']['inc'],
@@ -336,15 +352,16 @@ def main():
                               model['hyperpriors']['wsmooth']
                               )
 
-    output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
+    figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
                    model['input_output']['save_profile_fit'],
                    model['input_output']['save_vis_fit'],
                    model['input_output']['save_uvtables'],
-                   model['input_output']['plot_fit'],
-                   model['input_output']['plot_diag'],
-                   dist
+                   model['plotting']['plot_fit'],
+                   model['plotting']['plot_diag'],
+                   model['plotting']['dist'],
+                   model['plotting']['bin_widths']
                    )
 
     logging.info("IT'S ALIVE!!\n")

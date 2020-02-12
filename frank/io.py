@@ -80,8 +80,7 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
           Whether to save fitted and residual UV tables (these are reprojected)
     """
 
-    prefix = save_dir + '/' + \
-             os.path.splitext(uvtable_filename)[0]
+    prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
@@ -89,7 +88,7 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
-        np.savetxt(prefix + '_fit_vis.txt',
+        np.savetxt(prefix + '_frank_vis_fit.txt',
                    np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
                    header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: update
 

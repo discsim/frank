@@ -18,7 +18,45 @@
 #
 """This module generates figures for a Frankenstein fit and/or its diagnostics.
 """
+from frank import plot, useful_funcs
+from matplotlib.gridspec import GridSpec
+import matplotlib.pyplot as plt
 
-def make_fit_fig(xx):
+def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths):
+    prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
+
+    gs = GridSpec(2, 2, hspace=0)
+    fig = plt.figure(figsize=(20,16))
+
+    plot.plot_brightness_profile(sol.r, sol.mean, ax0)
+    plot.plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log')
+
+    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
+    baselines = (u_deproj**2 + v_deproj**2)**.5
+
+    for i in bin_widths:
+        binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
+        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real, binned_vis.error.real, i, ax3, xscale='log', yscale='linear', plot_CIs=False)
+        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real, binned_vis.error.real, i, ax4, xscale='log', yscale='log', plot_CIs=False)
+        plot.plot_binned_vis(binned_im.uv, binned_vis.V.imag, binned_im.error.imag, i, ax5, xscale='log', yscale='linear', plot_CIs=False)
+
+    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax3, xscale='log', yscale='linear')
+    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax4, xscale='log', yscale='log')
+
+    plot.plot_vis_resid(binned_data.uv, binned_data.V, )
+
+    gs.tight_layout(fig)
+    plt.savefig(prefix + '_frank_fit.png')
+
+    return fig
 
 def make_diag_fig(xx):
+    prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
+
+    gs = GridSpec(2, 2, hspace=0)
+    fig = plt.figure(figsize=(20,16))
+
+    gs.tight_layout(fig)
+    plt.savefig(prefix + '_frank_diag.png')
+
+    return fig

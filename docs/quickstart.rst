@@ -94,9 +94,9 @@ just to show how to directly interface with the code's internal classes.
     from frank.constants import rad_to_arcsec
     from frank.radial_fitters import FrankFitter
     from frank.geometry import FitGeometryGaussian
-    from frank.fit import load_uvdata, output_results
+    from frank.fit import load_data, output_results
 
-    u, v, vis, weights = load_uvdata('AS209_continuum.txt')
+    u, v, vis, weights = load_data('AS209_continuum.txt')
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
@@ -105,7 +105,7 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
 .. code-block:: python
 
-    FF = FrankFitter(Rmax=1.6/rad_to_arcsec, 250, FitGeometryGaussian(),
+    FF = FrankFitter(Rmax=1.6, N=250, geometry=FitGeometryGaussian(),
                      alpha=1.05, weights_smooth=1e-4)
 
     sol = FF.fit(u, v, vis, weights)
