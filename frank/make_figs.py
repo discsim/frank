@@ -18,9 +18,12 @@
 #
 """This module generates figures for a Frankenstein fit and/or its diagnostics.
 """
-from frank import plot, useful_funcs
-from matplotlib.gridspec import GridSpec
+import os
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+
+from frank import plot, useful_funcs
+
 
 def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist):
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
