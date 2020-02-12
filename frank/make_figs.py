@@ -22,7 +22,7 @@ from frank import plot, useful_funcs
 from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
 
-def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths):
+def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist):
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(2, 2, hspace=0)
