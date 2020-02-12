@@ -36,6 +36,6 @@
     "plot_diag"        : true,
     "save_figs"        : true,
     "dist"             : null,
-    "bin_widths"       : 50
+    "bin_widths"       : [10, 50]
   }
 }
