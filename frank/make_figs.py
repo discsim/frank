@@ -52,20 +52,19 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
         binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
 
         plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax3, plot_CIs=False)
-        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax4, plot_CIs=False)
+            binned_vis.error.real, ax3, zoom=True)
 
         plot.plot_vis_resid(binned_vis.uv, binned_vis.V.real,
             sol.predict_deprojected(binned_vis.uv).real, ax5)
 
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax3)
-    plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4, yscale='log')
+
+    plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4)
 
     plt.setp(ax0.get_xticklabels(), visible=False)
     plt.setp(ax3.get_xticklabels(), visible=False)
     plt.setp(ax4.get_xticklabels(), visible=False)
-    gs.tight_layout(fig)
+
     plt.savefig(prefix + '_frank_fit.png')
 
     return fig
@@ -80,7 +79,6 @@ def make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_width
         binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
         plot.plot_binned_vis(binned_vis.uv, binned_vis.V.imag, binned_vis.error.imag, ax5, plot_CIs=False)
 
-    gs.tight_layout(fig)
     plt.savefig(prefix + '_frank_diag.png')
 
     return fig

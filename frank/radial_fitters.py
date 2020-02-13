@@ -561,7 +561,7 @@ class FrankFitter(FourierBesselFitter):
         Large temporary matrices are needed to set up the data, if block_data
         is True we avoid this, limiting the memory requirement to block_size
         elements.
-    block_size : int, default = 10**7
+    block_size : int, default = 10**4
         Size of the matrices if blocking is used.
     alpha : float >= 1, default = 1.05
         Order parameter of the inverse gamma prior for the power spectrum.
@@ -569,7 +569,7 @@ class FrankFitter(FourierBesselFitter):
     p_0 : float >= 0, default = 1e-15, unit=Jy^2
         Scale parameter of the inverse gamma prior for the power spectrum.
         coefficients.
-    weights_smooth : float >= 0, default = 0.1
+    weights_smooth : float >= 0, default = 1e-4
         Spectral smoothness prior parameter. Zero is no smoothness prior.
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration.
@@ -588,8 +588,8 @@ class FrankFitter(FourierBesselFitter):
 
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 7,
-                 alpha=1.05, p_0=1e-15, weights_smooth=0.1,
+    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 4,
+                 alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
                  tol=1e-3, max_iter=250, store_iteration_diagnostics=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data, block_size)

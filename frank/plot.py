@@ -35,8 +35,10 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', comparison_profil
     ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
     ax.set_yscale(yscale)
 
+    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear', plot_CIs=False):
+def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear',
+                    plot_CIs=False, zoom=False, zoom_ybounds=None):
     """ # TODO: add docstring
     """
     if plot_CIs:
@@ -44,11 +46,19 @@ def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear', 
     else:
         ax.plot(baselines, vis, '.')
 
+    ax.axhline(0, c='c', ls='--', zorder=10)
     ax.set_xlabel(r'Baseline [$\lambda$]')
     ax.set_ylabel('V [Jy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
 
+    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
+
+    if zoom:
+        if zoom_ybounds: ax.set_ylim(zoom_ybounds)
+        else:
+            ylim_guess = abs(vis[np.int(.5*len(vis)):]).max()
+            ax.set_ylim(-ylim_guess, ylim_guess)
 
 def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
                             comparison_profile=None):
@@ -59,11 +69,13 @@ def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
     if comparison_profile:
         ax.plot(comparison_profile[0], comparison_profile[1], 'c', label='DHT of comparison profile')
 
+    ax.axhline(0, c='c', ls='--', zorder=10)
     ax.set_xlabel(r'Baseline [$\lambda$]')
     ax.set_ylabel('Re(V) [Jy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
 
+    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
 def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', normalize_resid=True):
     """ # TODO: add docstring
@@ -79,3 +91,5 @@ def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', norma
     else: ax.set_ylabel('Residual [Jy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
+
+    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
