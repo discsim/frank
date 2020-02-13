@@ -319,11 +319,11 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
     if plot_fit:
         fit_fig = make_figs.make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
                             )
-
+    """
     if plot_diag:
         diag_fig = make_figs.make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
                             )
-
+    """
     figs = []
     if plot_fit: figs.append(fit_fig)
     if plot_diag: figs.append(diag_fig)
@@ -363,7 +363,7 @@ def main():
                    model['plotting']['bin_widths'],
                    model['plotting']['dist']
                    )
-    
+
     logging.info("IT'S ALIVE!!\n")
 
 if __name__ == "__main__":
