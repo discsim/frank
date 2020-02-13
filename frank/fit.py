@@ -302,7 +302,7 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
           Whether to make a figure showing the fit
     plot_diag : bool
           Whether to make a figure showing the fit diagnostics
-    bin_widths : integer or list
+    bin_widths : list
           Bin widths in which to bin the observed visibilities. [k\\lambda]
     dist : float, optional
           Distance to source. unit = AU
@@ -351,7 +351,7 @@ def main():
                               model['hyperpriors']['alpha'],
                               model['hyperpriors']['wsmooth']
                               )
-
+    """
     figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
@@ -363,7 +363,7 @@ def main():
                    model['plotting']['bin_widths'],
                    model['plotting']['dist']
                    )
-
+    """
     logging.info("IT'S ALIVE!!\n")
 
 if __name__ == "__main__":

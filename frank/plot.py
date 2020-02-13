@@ -19,7 +19,7 @@
 """This module contains plotting routines for visualizing and analyzing
 Frankenstein fits.
 """
-
+import numpy as np
 import matplotlib.pyplot as plt
 
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', comparison_profile=None):
@@ -40,9 +40,9 @@ def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear', 
     """ # TODO: add docstring
     """
     if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, fmt='r.', ecolor='#A4A4A4', label=r'Obs., %s k$\lambda$ bins'%binwidth)
+        ax.errorbar(baselines, vis, yerr=vis_err, fmt='k.', ecolor='#A4A4A4', label=r'Obs., %s k$\lambda$ bins'%binwidth)
     else:
-        ax.plot(baselines, vis)
+        ax.plot(baselines, vis, '.')
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
     ax.set_ylabel('V [Jy]')
@@ -65,14 +65,14 @@ def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
     ax.set_yscale(yscale)
 
 
-def plot_vis_resid(baselines, vis, vis_err, ax, xscale='log', yscale='linear', normalize_resid=True):
+def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', normalize_resid=True):
     """ # TODO: add docstring
     """
     resid = obs - fit
     if normalize_resid: resid /= max(obs)
-    rmse = (mean(resid**2))**.5
+    rmse = (np.mean(resid**2))**.5
 
-    ax.plot(baselines, resid, label='RMSE %.3f'%rmse)
+    ax.plot(baselines, resid, '.', label='RMSE %.3f'%rmse)
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
     if normalize_resid: ax.set_ylabel('Normalized\nresidual')
