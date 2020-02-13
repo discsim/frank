@@ -36,6 +36,6 @@
     "plot_diag"        : "Whether to make a figure showing diagnostics of the fit",
     "save_figs"        : "Whether to save generated figures",
     "dist"             : "Distance to source, optionally used for plotting. [AU]",
-    "bin_widths"       : "Bin widths in which to bin the observed visibilities. [k\\lambda]"
+    "bin_widths"       : "Bin widths in which to bin the observed visibilities. [\\lambda]"
   }
 }
