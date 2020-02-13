@@ -3,6 +3,8 @@ docs/tutorials
 
 frank_used_pars.json
 frank_fit.log
+*_frank_.png
+*_frank_.txt
 
 #*.egg
 #MANIFEST

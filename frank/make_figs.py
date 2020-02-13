@@ -30,7 +30,7 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(3, 2, hspace=0)
-    fig = plt.figure()#figsize=(20,16))
+    fig = plt.figure(figsize=(20,16))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[2])
@@ -61,8 +61,6 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
 
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax3)
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4, yscale='log')
-    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax3)
-    plot.plot_vis_fit(sol.q, sol.predict_deprojected(sol.q).real, ax4, yscale='log')
 
     plt.setp(ax0.get_xticklabels(), visible=False)
     plt.setp(ax3.get_xticklabels(), visible=False)
@@ -72,7 +70,7 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
 
     return fig
 
-def make_diag_fig(xx):
+def make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist):
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(2, 2, hspace=0)
