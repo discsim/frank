@@ -19,6 +19,7 @@
 """This module generates figures for a Frankenstein fit and/or its diagnostics.
 """
 import os
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
