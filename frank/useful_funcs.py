@@ -243,7 +243,7 @@ def show_image(image, ax, nwidth=None, **kwargs):
         kwargs['cmap'] = 'plasma'
     if 'norm' not in kwargs.keys():
         import matplotlib.colors as colors
-        kwargs['norm'] = colors.PowerNorm(gamma=1.)
+        kwargs['norm'] = colors.PowerNorm(gamma=0.4)
 
 
     if not nwidth:
@@ -258,7 +258,7 @@ def show_image(image, ax, nwidth=None, **kwargs):
     ax.matshow(image[(nx//2-nwidth):(nx//2+nwidth), (nx//2-nwidth):(nx//2+nwidth)], **kwargs)
 
 
-def create_image(f, nxy, dxy, inc=0., pa=0., Dx=0, Dy=0, Rmin=1e-6, dR=1e-4, nR=1e5):
+def create_image(f, nxy, dxy, inc=0., pa=0., Dx=0, Dy=0, Rmin=1e-6, dR=0.0001*4.84813681109536e-06, nR=1.5*1e4):
     """
     f:
     nxy: int
