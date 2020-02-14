@@ -240,9 +240,10 @@ def show_image(image, ax, nwidth=None, **kwargs):
     nx, ny = image.shape
 
     if 'cmap' not in kwargs.keys():
-        kwargs['cmap'] = 'gist_heat'
+        kwargs['cmap'] = 'plasma'
     if 'norm' not in kwargs.keys():
-        kwargs['norm'] = colors.PowerNorm(gamma=0.4)
+        import matplotlib.colors as colors
+        kwargs['norm'] = colors.PowerNorm(gamma=1.)
 
 
     if not nwidth:
