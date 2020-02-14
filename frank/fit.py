@@ -32,6 +32,8 @@ import logging
 import frank
 frank_path = os.path.dirname(frank.__file__) # TODO
 
+from frank import io, make_figs
+
 def helper():
     with open(frank_path + '/parameter_descriptions.json') as f:
         param_descrip = json.load(f)
@@ -136,9 +138,6 @@ def load_data(load_dir, data_file):
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
     """
-
-    from frank import io
-
     logging.info('  Loading UVTable')
     u, v, vis, weights = io.load_uvtable(load_dir + '/' + data_file)
 
@@ -307,10 +306,6 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
     dist : float, optional
           Distance to source. unit = AU
     """
-
-    from frank import io
-    from frank import make_figs
-
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
                       save_profile_fit, save_vis_fit, save_uvtables)

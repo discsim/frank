@@ -53,18 +53,18 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
     print('zoom_ylim_guess',zoom_ylim_guess)
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
-    cs = ['#a4a4a4', 'k', '#4CD723', 'b']
-    mss = ['x', '+', '.', 's']
+    colors = ['#a4a4a4', 'k', '#4CD723', 'b']
+    markers = ['x', '+', '.', 's']
     for i in range(len(bin_widths)):
         binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, bin_widths[i])
 
         plot.plot_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax3, c=cs[i], ms=mss[i], binwidth=bin_widths[i])
+            binned_vis.error.real, ax3, c=colors[i], marker=markers[i], binwidth=bin_widths[i])
         plot.plot_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax4, c=cs[i], ms=mss[i], binwidth=bin_widths[i], zoom=zoom_bounds)
+            binned_vis.error.real, ax4, c=colors[i], marker=markers[i], binwidth=bin_widths[i], zoom=zoom_bounds)
 
         plot.plot_vis_resid(binned_vis.uv, binned_vis.V.real,
-            sol.predict_deprojected(binned_vis.uv).real, ax5, c=cs[i], ms=mss[i], binwidth=bin_widths[i], normalize_resid=True)
+            sol.predict_deprojected(binned_vis.uv).real, ax5, c=colors[i], marker=markers[i], binwidth=bin_widths[i], normalize_resid=True)
 
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax3)
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4)

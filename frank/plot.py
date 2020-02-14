@@ -21,6 +21,7 @@ Frankenstein fits.
 """
 import numpy as np
 import matplotlib.pyplot as plt
+from frank import useful_funcs
 
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-', ylolim=None, comparison_profile=None):
     """ # TODO: add docstring
@@ -39,14 +40,14 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-', ylo
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_vis(baselines, vis, vis_err, ax, c='k', ms='.', binwidth='unspecified', xscale='log', yscale='linear',
+def plot_vis(baselines, vis, vis_err, ax, c='k', marker='.', binwidth='unspecified', xscale='log', yscale='linear',
              plot_CIs=False, zoom=None):
     """ # TODO: add docstring
     """
     if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, color=c, fmt=ms, ecolor='#A4A4A4', label=r'Obs., %.0f k$\lambda$ bins'%binwidth/1e3)
+        ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=ms, ecolor='#A4A4A4', label=r'Obs., %.0f k$\lambda$ bins'%binwidth/1e3)
     else:
-        ax.plot(baselines, vis, c=c, ms=ms, label=r'Obs., %.0f k$\lambda$ bins'%(binwidth/1e3))
+        ax.plot(baselines, vis, c=c, marker=marker, label=r'Obs., %.0f k$\lambda$ bins'%(binwidth/1e3))
 
     ax.axhline(0, c='c', ls='--', zorder=10)
     ax.set_xlabel(r'Baseline [$\lambda$]')
@@ -77,14 +78,14 @@ def plot_vis_fit(baselines, vis_fit, ax, c='r', ls='-', xscale='log', yscale='li
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_vis_resid(baselines, obs, fit, ax, c='k', ms='.', binwidth='unspecified', xscale='log', yscale='linear', normalize_resid=False):
+def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', binwidth='unspecified', xscale='log', yscale='linear', normalize_resid=False):
     """ # TODO: add docstring
     """
     resid = obs - fit
     if normalize_resid: resid /= max(obs)
     rmse = (np.mean(resid**2))**.5
 
-    ax.plot(baselines, resid, c=c, ms=ms, label=r'%.0f k$\lambda$ bins, RMSE %.3f'%(binwidth/1e3,rmse))
+    ax.plot(baselines, resid, c=c, marker=marker, label=r'%.0f k$\lambda$ bins, RMSE %.3f'%(binwidth/1e3,rmse))
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
     if normalize_resid: ax.set_ylabel('Normalized\nresidual')
@@ -98,5 +99,5 @@ def plot_vis_resid(baselines, obs, fit, ax, c='k', ms='.', binwidth='unspecified
     ax.set_ylim(-2 * rmse, 2 * rmse)
 
 def plot_2dsweep(brightness, ax):
-    im = create_image(brightness, nxy=1000, dxy=1e-3, Rmin=1e-6, nR=1e5, dR=1e-4, inc=0)
-    show_image(im, ax, origin='lower')
+    im = useful_funcs.create_image(brightness, nxy=1000, dxy=1e-3, Rmin=1e-6, nR=1e5, dR=1e-4, inc=0)
+    useful_funcs.show_image(im, ax, origin='lower')
