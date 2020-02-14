@@ -22,11 +22,11 @@ Frankenstein fits.
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', comparison_profile=None):
+def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-', ylolim=None, comparison_profile=None):
     """ # TODO: add docstring
     """
 
-    ax.plot(fit_r, fit_i / 1e10, 'r', label='Frank')
+    ax.plot(fit_r, fit_i / 1e10, c=c, ls=ls, label='Frank')
 
     if comparison_profile:
         ax.plot(comparison_profile[0], comparison_profile[1] / 1e10, 'c', label='Comparison profile')
@@ -34,60 +34,69 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', comparison_profil
     ax.set_xlabel('r ["]')
     ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
     ax.set_yscale(yscale)
+    if ylolim: ax.set_ylim(bottom=ylolim)
+    ax.legend()
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear',
-                    plot_CIs=False, zoom_bounds=None):
+def plot_vis(baselines, vis, vis_err, ax, c='k', ms='.', binwidth='unspecified', xscale='log', yscale='linear',
+             plot_CIs=False, zoom=None):
     """ # TODO: add docstring
     """
     if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, fmt='k.', ecolor='#A4A4A4', label=r'Obs., %s k$\lambda$ bins'%binwidth)
+        ax.errorbar(baselines, vis, yerr=vis_err, color=c, fmt=ms, ecolor='#A4A4A4', label=r'Obs., %.0f k$\lambda$ bins'%binwidth/1e3)
     else:
-        ax.plot(baselines, vis, '.')
+        ax.plot(baselines, vis, c=c, ms=ms, label=r'Obs., %.0f k$\lambda$ bins'%(binwidth/1e3))
 
     ax.axhline(0, c='c', ls='--', zorder=10)
     ax.set_xlabel(r'Baseline [$\lambda$]')
     ax.set_ylabel('V [Jy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
+    ax.legend()
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-    if zoom_bounds: ax.set_ylim(zoom_bounds)
+    if zoom: ax.set_ylim(zoom)
 
-def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
+def plot_vis_fit(baselines, vis_fit, ax, c='r', ls='-', xscale='log', yscale='linear',
                             comparison_profile=None):
     """ # TODO: add docstring
     """
-    ax.plot(baselines, vis_fit, 'r')
+    ax.plot(baselines, vis_fit, c=c, ls=ls, label='Frank')
 
     if comparison_profile:
-        ax.plot(comparison_profile[0], comparison_profile[1], 'c', label='DHT of comparison profile')
+        ax.plot(comparison_profile[0], comparison_profile[1], '#8E44AD', label='DHT of comparison profile')
 
     ax.axhline(0, c='c', ls='--', zorder=10)
     ax.set_xlabel(r'Baseline [$\lambda$]')
     ax.set_ylabel('Re(V) [Jy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
+    ax.legend()
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', normalize_resid=False):
+def plot_vis_resid(baselines, obs, fit, ax, c='k', ms='.', binwidth='unspecified', xscale='log', yscale='linear', normalize_resid=False):
     """ # TODO: add docstring
     """
     resid = obs - fit
     if normalize_resid: resid /= max(obs)
     rmse = (np.mean(resid**2))**.5
 
-    ax.plot(baselines, resid, '.', label='RMSE %.3f'%rmse)
+    ax.plot(baselines, resid, c=c, ms=ms, label=r'%.0f k$\lambda$ bins, RMSE %.3f'%(binwidth/1e3,rmse))
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
     if normalize_resid: ax.set_ylabel('Normalized\nresidual')
     else: ax.set_ylabel('Residual [Jy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
+    ax.legend()
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
     ax.set_ylim(-2 * rmse, 2 * rmse)
+
+def plot_2dsweep(brightness, ax):
+    im = create_image(brightness, nxy=1000, dxy=1e-3, Rmin=1e-6, nR=1e5, dR=1e-4, inc=0)
+    show_image(im, ax, origin='lower')

@@ -133,3 +133,200 @@ class BinUVData(object):
     def bin_counts(self):
         """Number of points in each bin"""
         return self._count
+
+
+#from galario import arcsec, deg, au
+#from galario.double import sweep
+#arcsec
+arcsec = 4.84813681109536e-06
+deg = 0.017453292519943295
+au = 14959787070000.0
+
+def sweep_ref(I, Rmin, dR, nrow, ncol, dxy, inc, pa, Dx=0., Dy=0., dtype_image='float64', origin='upper'):
+    """
+    Compute the intensity map (i.e. the image) given the radial profile I(R).
+    We assume an axisymmetric profile.
+    The origin of the output image is in the upper left corner.
+    Parameters
+    ----------
+    I: 1D float array
+        Intensity radial profile I(R).
+    Rmin : float
+        Inner edge of the radial grid. At R=Rmin the intensity is intensity[0].
+        For R<Rmin the intensity is assumed to be 0.
+        **units**: rad
+    dR : float
+        Size of the cell of the radial grid, assumed linear.
+        **units**: rad
+    nrow : int
+        Number of rows of the output image.
+        **units**: pixel
+    ncol : int
+        Number of columns of the output image.
+        **units**: pixel
+    dxy : float
+        Size of the image cell, assumed equal and uniform in both x and y direction.
+        **units**: rad
+    inc : float
+        Inclination along North-South axis.
+        **units**: rad
+    Dx : optional, float
+        Right Ascension offset (positive towards East, left).
+        **units**: rad
+    Dy : optional, float
+        Declination offset (positive towards North, top).
+        **units**: rad
+    dtype_image : optional, str
+        numpy dtype specification for the output image.
+    origin: ['upper' | 'lower'], optional, default: 'upper'
+        Set the [0,0] index of the array in the upper left or lower left corner of the axes.
+    Returns
+    -------
+    intensmap: 2D float array
+        The intensity map, sweeped by 2pi.
+    """
+    if origin == 'upper':
+        v_origin = 1.
+    elif origin == 'lower':
+        v_origin = -1.
+
+    inc_cos = np.cos(inc)
+
+    cos_pa = np.cos(pa)
+    sin_pa = np.sin(pa)
+
+    nrad = len(I)
+    gridrad = np.linspace(Rmin, Rmin + dR * (nrad - 1), nrad)
+
+    # create the mesh grid
+    x = (np.linspace(0.5, -0.5 + 1./float(ncol), ncol)) * dxy * ncol
+    y = (np.linspace(0.5, -0.5 + 1./float(nrow), nrow)) * dxy * nrow * v_origin
+
+    # we shrink the x axis, since PA is the angle East of North of the
+    # the plane of the disk (orthogonal to the angular momentum axis)
+    # PA=0 is a disk with vertical orbital node (aligned along North-South)
+
+    ##rotate x,y
+
+    xxx, yyy = np.meshgrid((x - Dx) / inc_cos, (y - Dy))
+    #xxx, yyy = np.meshgrid(((x - Dx) * cos_pa - (y - Dy) * sin_pa) * inc_cos, ((x - Dx) * sin_pa + (y - Dy) * cos_pa))
+
+    x_meshgrid = np.sqrt(xxx ** 2. + yyy ** 2.)
+
+    f = interp1d(gridrad, I, kind='linear', fill_value=0.,
+                 bounds_error=False, assume_sorted=True)
+    intensmap = f(x_meshgrid)
+
+    # central pixel: compute the average brightness
+    intensmap[int(nrow / 2 + Dy / dxy * v_origin), int(ncol / 2 - Dx / dxy)] = central_pixel(I, Rmin, dR, dxy)
+
+    # convert to Jansky
+    intensmap *= dxy**2.
+
+    return intensmap.astype(dtype_image)
+
+def show_image(image, ax, nwidth=None, **kwargs):
+    """
+
+    Parameters
+    ----------
+    image: ndarray, float
+        2D image
+    nwidth: int, optional
+        Portion of the image to show: will crop the image to a size 2*nwidth x 2*nwidth.
+        Units: number of pixels
+    """
+    nx, ny = image.shape
+
+    if 'cmap' not in kwargs.keys():
+        kwargs['cmap'] = 'gist_heat'
+    if 'norm' not in kwargs.keys():
+        kwargs['norm'] = colors.PowerNorm(gamma=0.4)
+
+
+    if not nwidth:
+        # by default, show the whole image
+        nwidth = min(nx // 2, ny // 2)
+    else:
+        nwidth = int(nwidth)
+        if nwidth > nx//2 or nwidth > ny//2:
+            raise ValueError("Expect nwidth to be smaller than half the number of pixels on each direction, "
+                             "got {} for image shape {}".format(nwidth, image.shape))
+
+    ax.matshow(image[(nx//2-nwidth):(nx//2+nwidth), (nx//2-nwidth):(nx//2+nwidth)], **kwargs)
+
+
+def create_image(f, nxy, dxy, inc=0., pa=0., Dx=0, Dy=0, Rmin=1e-6, dR=1e-4, nR=1e5):
+    """
+    f:
+    nxy: int
+        Number of pixels on each dimension (assumes square image);
+    dxy: float
+        Pixel size. Units: arcsec
+    Rmin: float, optional
+        Innermost radius of the radial grid. Units: arcsec
+    dR: float, optional
+        Radial grid cell size. Units: arcsec
+    inc: float, optional
+        Inclination. Units: deg
+    nR: int, optional
+        Number of cells in the radial grid.
+
+    Returns
+    -------
+    image: ndarray, float
+        2D image produced by sweeping the 1D profile
+
+    """
+    dxy *= arcsec
+    inc *= deg
+    Rmin *= arcsec
+    dR *= arcsec
+    nR = int(nR)
+
+    if callable(f):
+        # radial grid
+        gridrad = np.linspace(Rmin, Rmin + dR * (nR - 1), nR)
+        f_arr = f(gridrad)
+    else:
+        f_arr = f
+
+    ##image = sweep(f_arr, Rmin, dR, nxy, dxy, inc)
+    image = sweep_ref(I=f_arr, Rmin=Rmin, dR=dR, nrow=nxy, ncol=nxy, dxy=dxy, inc=inc, pa=pa, Dx=Dx, Dy=Dy)
+
+    print("Emission peak is {:e} mJy/sr at ({})".format(np.max(image)/(dxy**2)*1e3, np.unravel_index(np.argmax(image), shape=image.shape)))
+    print("Total flux: {} mJy".format(np.nansum(image)*1e3))
+
+    return image
+
+def central_pixel(I, Rmin, dR, dxy):
+    """
+    Compute brightness in the central pixel as the average flux in the pixel.
+    """
+    # with quadrature method: tends to over-estimate it
+    # area = np.pi*((dxy/2.)**2-Rmin**2)
+    # flux, _ = quadrature(lambda z: f(z)*z, Rmin, dxy/2., tol=1.49e-25, maxiter=200)
+    # flux *= 2.*np.pi
+    # intensmap[int(nrow/2+Dy/dxy), int(ncol/2-Dx/dxy)] = flux/area
+
+    # with trapezoidal rule: it's the same implementation as in galario.cpp
+    iIN = int(np.floor((dxy / 2 - Rmin) // dR))
+    flux = 0.
+    for i in range(1, iIN):
+        flux += (Rmin + dR * i) * I[i]
+
+    flux *= 2.
+    flux += Rmin * I[0] + (Rmin + iIN * dR) * I[iIN]
+    flux *= dR
+
+    # add flux between Rmin+iIN*dR and dxy/2
+    I_interp = (I[iIN + 1] - I[iIN]) / (dR) * (dxy / 2. - (Rmin + dR * (iIN))) + \
+               I[iIN]  # brightness at R=dxy/2
+    flux += ((Rmin + iIN * dR) * I[iIN] + dxy / 2. * I_interp) * (
+                dxy / 2. - (Rmin + iIN * dR))
+
+    # flux *= 2 * np.pi / 2.  # to complete trapezoidal rule (***)
+    area = (dxy / 2.) ** 2 - Rmin ** 2
+    # area *= np.pi  # elides (***)
+
+    return flux / area

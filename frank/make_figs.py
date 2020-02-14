@@ -30,16 +30,18 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(3, 2, hspace=0)
-    fig = plt.figure(figsize=(20,16))
+    fig = plt.figure(figsize=(8,8))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[2])
+    ax2 = fig.add_subplot(gs[4])
+
     ax3 = fig.add_subplot(gs[1])
     ax4 = fig.add_subplot(gs[3])
     ax5 = fig.add_subplot(gs[5])
 
     plot.plot_brightness_profile(sol.r, sol.mean, ax0)
-    plot.plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log')
+    plot.plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -47,24 +49,28 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    zoom_ylim_guess = abs(vis_deproj[np.int(.5*len(vis_deproj)):]).max()
+    zoom_ylim_guess = abs(sol.predict_deprojected(grid).real[np.int(.5*len(sol.predict_deprojected(grid).real)):]).max()
     print('zoom_ylim_guess',zoom_ylim_guess)
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
-    for i in bin_widths:
-        binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
+    cs = ['#a4a4a4', 'k', '#4CD723', 'b']
+    mss = ['x', '+', '.', 's']
+    for i in range(len(bin_widths)):
+        binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, bin_widths[i])
 
-        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax3)
-        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax4, zoom=zoom_bounds)
+        plot.plot_vis(binned_vis.uv, binned_vis.V.real,
+            binned_vis.error.real, ax3, c=cs[i], ms=mss[i], binwidth=bin_widths[i])
+        plot.plot_vis(binned_vis.uv, binned_vis.V.real,
+            binned_vis.error.real, ax4, c=cs[i], ms=mss[i], binwidth=bin_widths[i], zoom=zoom_bounds)
 
         plot.plot_vis_resid(binned_vis.uv, binned_vis.V.real,
-            sol.predict_deprojected(binned_vis.uv).real, ax5, normalize_resid=True)
+            sol.predict_deprojected(binned_vis.uv).real, ax5, c=cs[i], ms=mss[i], binwidth=bin_widths[i], normalize_resid=True)
 
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax3)
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4)
-    
+
+    plot.plot_2dsweep(sol.mean, ax2)
+
     xlims = ax3.get_xlim()
     ax5.set_xlim(xlims)
 
@@ -84,7 +90,7 @@ def make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_width
 
     for i in bin_widths:
         binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
-        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.imag, binned_vis.error.imag, ax5, plot_CIs=False)
+        plot.plot_vis(binned_vis.uv, binned_vis.V.imag, binned_vis.error.imag, ax5, plot_CIs=False)
 
     plt.savefig(prefix + '_frank_diag.png')
 
