@@ -258,7 +258,7 @@ def show_image(image, ax, nwidth=None, **kwargs):
     ax.matshow(image[(nx//2-nwidth):(nx//2+nwidth), (nx//2-nwidth):(nx//2+nwidth)], **kwargs)
 
 
-def create_image(f, nxy, dxy, inc=0., pa=0., Dx=0, Dy=0, Rmin=1e-6, dR=0.0001*4.84813681109536e-06, nR=1.5*1e4):
+def create_image(f, nxy, dxy, inc=0., pa=0., Dx=0, Dy=0, Rmin=1e-6, dR=0.0001*4.84813681109536e-06, nR=1.7*1e4):
     """
     f:
     nxy: int
@@ -313,8 +313,9 @@ def central_pixel(I, Rmin, dR, dxy):
 
     # with trapezoidal rule: it's the same implementation as in galario.cpp
     iIN = int(np.floor((dxy / 2 - Rmin) // dR))
+    print('iIN',iIN)
     flux = 0.
-    for i in range(1, iIN):
+    for i in range(1, iIN - 1): # TODO: remove - 1
         flux += (Rmin + dR * i) * I[i]
 
     flux *= 2.
