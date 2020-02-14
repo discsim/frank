@@ -38,7 +38,7 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', comparison_profil
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
 def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear',
-                    plot_CIs=False, zoom=False, zoom_ybounds=None):
+                    plot_CIs=False, zoom_bounds=None):
     """ # TODO: add docstring
     """
     if plot_CIs:
@@ -54,11 +54,7 @@ def plot_binned_vis(baselines, vis, vis_err, ax, xscale='log', yscale='linear',
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-    if zoom:
-        if zoom_ybounds: ax.set_ylim(zoom_ybounds)
-        else:
-            ylim_guess = abs(vis[np.int(.5*len(vis)):]).max()
-            ax.set_ylim(-ylim_guess, ylim_guess)
+    if zoom_bounds: ax.set_ylim(zoom_bounds)
 
 def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
                             comparison_profile=None):
@@ -77,7 +73,7 @@ def plot_vis_fit(baselines, vis_fit, ax, xscale='log', yscale='linear',
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', normalize_resid=True):
+def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', normalize_resid=False):
     """ # TODO: add docstring
     """
     resid = obs - fit
@@ -93,3 +89,5 @@ def plot_vis_resid(baselines, obs, fit, ax, xscale='log', yscale='linear', norma
     ax.set_yscale(yscale)
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
+
+    ax.set_ylim(-2 * rmse, 2 * rmse)

@@ -47,19 +47,26 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
+    zoom_ylim_guess = abs(vis_deproj[np.int(.5*len(vis_deproj)):]).max()
+    print('zoom_ylim_guess',zoom_ylim_guess)
+    zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
+
     for i in bin_widths:
-        print('this bin width',i)
         binned_vis = useful_funcs.BinUVData(baselines, vis_deproj, weights, i)
 
         plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real,
-            binned_vis.error.real, ax3, zoom=True)
+            binned_vis.error.real, ax3)
+        plot.plot_binned_vis(binned_vis.uv, binned_vis.V.real,
+            binned_vis.error.real, ax4, zoom=zoom_bounds)
 
         plot.plot_vis_resid(binned_vis.uv, binned_vis.V.real,
-            sol.predict_deprojected(binned_vis.uv).real, ax5)
+            sol.predict_deprojected(binned_vis.uv).real, ax5, normalize_resid=True)
 
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax3)
-
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4)
+    
+    xlims = ax3.get_xlim()
+    ax5.set_xlim(xlims)
 
     plt.setp(ax0.get_xticklabels(), visible=False)
     plt.setp(ax3.get_xticklabels(), visible=False)
