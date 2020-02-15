@@ -23,6 +23,7 @@
 import os
 import numpy as np
 import json
+import pickle
 
 def load_uvtable(data_file):
     """
@@ -84,8 +85,8 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
 
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
-    with open(save_dir + '/_frank_sol.json', 'w') as f:
-        json.dump(sol, f, indent=4)
+    sol_file = open(prefix + '_frank_sol.json', 'wb')
+    pickle.dump(sol, sol_file)
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
