@@ -347,6 +347,10 @@ def main():
                               model['hyperpriors']['wsmooth']
                               )
 
+    import pickle # TODO
+    sol_file = open(model['input_output']['save_dir'] + 'sol.obj', 'w')
+    pickle.dump(sol, sol_file)
+
     figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
