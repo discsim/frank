@@ -71,7 +71,7 @@ def make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax3)
     plot.plot_vis_fit(grid, sol.predict_deprojected(grid).real, ax4)
 
-    plot.plot_2dsweep(sol.mean, ax2)
+    #plot.plot_2dsweep(sol.mean, ax2) # TODO
 
     xlims = ax3.get_xlim()
     ax5.set_xlim(xlims)
