@@ -50,7 +50,7 @@ def load_uvtable(data_file):
     if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
     elif extension in {'.npy', '.npz'}:
-        dat = np.load('data_file')
+        dat = np.load(data_file)
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
     else:
         raise ValueError("    You provided a UVTable with the extension %s."
