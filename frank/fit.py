@@ -208,6 +208,9 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
                  '           dRA  = %.2e mas,\n           dDec = %.2e mas'
                  %(geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
 
+    geom = geom.clone()
+    print('  Storing disc geometry to use for fit')
+
     return geom
 
 
