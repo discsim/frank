@@ -141,7 +141,7 @@ Now we'll just make a simplified figure of the fit (with only subplots (a), (b),
 
 .. code-block:: python
 
-    make_quick_fig(u, v, vis, weights, sol, bin_widths=[1000, 50000], force_style=True)
+    make_quick_fig(u, v, vis, weights, sol, bin_widths=[1e3, 5e4], force_style=True)
 
 which gives this figure,
 
