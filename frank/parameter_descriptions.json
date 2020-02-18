@@ -32,10 +32,11 @@
   },
 
   "plotting" : {
-    "plot_fit"         : "Whether to make a figure showing the fit",
-    "plot_diag"        : "Whether to make a figure showing diagnostics of the fit",
+    "quick_plot"       : "Whether to make a figure showing the simplest plots of the fit",
+    "full_plot"        : "Whether to make a figure more fully showing the fit and its diagnostics",
     "save_figs"        : "Whether to save generated figures",
     "dist"             : "Distance to source, optionally used for plotting. [AU]",
-    "bin_widths"       : "Bin widths in which to bin the observed visibilities. [\\lambda]"
+    "bin_widths"       : "Bin widths in which to bin the observed visibilities. [\\lambda]",
+    "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures"
   }
 }

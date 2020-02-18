@@ -26,7 +26,6 @@ from frank import useful_funcs
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-', ylolim=None, comparison_profile=None):
     """ # TODO: add docstring
     """
-
     ax.plot(fit_r, fit_i / 1e10, c=c, ls=ls, label='Frank')
 
     if comparison_profile:
@@ -40,64 +39,94 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-', ylo
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
 
-def plot_vis(baselines, vis, vis_err, ax, c='k', marker='.', ls=None, binwidth='unspecified', xscale='log', yscale='linear',
-             plot_CIs=False, zoom=None):
-    """ # TODO: add docstring
-    """
-    if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=ms, ecolor='#A4A4A4', label=r'Obs., %.0f k$\lambda$ bins'%binwidth/1e3)
-    else:
-        ax.plot(baselines, vis, c=c, marker=marker, ls=ls, label=r'Obs., %.0f k$\lambda$ bins'%(binwidth/1e3))
-
-    ax.axhline(0, c='c', ls='--', zorder=10)
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel('V [Jy]')
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
-    ax.legend()
-
-    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
-
-    if zoom: ax.set_ylim(zoom)
-
-def plot_vis_fit(baselines, vis_fit, ax, c='r', ls='-', xscale='log', yscale='linear',
+def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-', ls2='None', xscale='log', yscale='linear', ylolim=None,
                             comparison_profile=None):
     """ # TODO: add docstring
     """
-    ax.plot(baselines, vis_fit, c=c, ls=ls, label='Frank')
+    if yscale == 'linear':
+        ax.plot(baselines, vis_fit, c=c, ls=ls, label='Frank')
+        ax.axhline(0, c='c', ls='--', zorder=10)
+    if yscale == 'log':
+        ax.plot(baselines, vis_fit, c=c, ls=ls, label='Frank>0')
+        ax.plot(baselines, -vis_fit, c=c2, ls=ls2, label='Frank<0')
 
-    if comparison_profile:
-        ax.plot(comparison_profile[0], comparison_profile[1], '#8E44AD', label='DHT of comparison profile')
+    if comparison_profile: # TODO: update
+        if yscale == 'linear':
+            ax.plot(comparison_profile[0], comparison_profile[1], '#8E44AD', label='DHT of comparison profile')
+        if yscale == 'log':
+            ax.plot(comparison_profile[0], comparison_profile[1], '#8E44AD', label='DHT of comparison profile')
 
-    ax.axhline(0, c='c', ls='--', zorder=10)
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel('Re(V) [Jy]')
+    ax.set_ylabel('Re(V) [mJy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
     ax.legend()
 
-    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
+    if ylolim: ax.set_ylim(bottom=ylolim)
 
-def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls=None, binwidth='unspecified', xscale='log', yscale='linear', normalize_resid=False):
+def plot_vis(baselines, vis, vis_err, ax, c='k', c2=None, marker='.', marker2='.', ls='None', ls2='None', binwidth='unspecified', xscale='log', yscale='linear',
+             plot_CIs=False, zoom=None, ylabel='Re(V) [mJy]'):
+    """ # TODO: add docstring
+    """
+    if plot_CIs: # TODO: update for log scale
+        ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=ms, ecolor='#A4A4A4', label=r'Obs., %.0f k$\lambda$ bins'%binwidth/1e3)
+    else:
+        if yscale == 'linear':
+            ax.plot(baselines, vis, c=c, marker=marker, ls=ls, label=r'Obs., %.0f k$\lambda$ bins'%(binwidth/1e3))
+            ax.axhline(0, c='c', ls='--', zorder=10)
+        if yscale == 'log':
+            ax.plot(baselines, vis, c=c, marker=marker, ls=ls, label=r'Obs.>0, %.0f k$\lambda$ bins'%(binwidth/1e3))
+            ax.plot(baselines, -vis, c=c2, marker=marker2, ls=ls2, label=r'Obs.<0, %.0f k$\lambda$ bins'%(binwidth/1e3))
+
+    ax.set_xlabel(r'Baseline [$\lambda$]')
+    ax.set_ylabel(ylabel)
+    ax.set_xscale(xscale)
+    ax.set_yscale(yscale)
+    ax.legend()
+
+    if zoom is not None: ax.set_ylim(zoom)
+
+def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None', binwidth='unspecified', xscale='log', yscale='linear', normalize_resid=False):
     """ # TODO: add docstring
     """
     resid = obs - fit
-    if normalize_resid: resid /= max(obs)
+    if normalize_resid: resid /= obs
     rmse = (np.mean(resid**2))**.5
 
     ax.plot(baselines, resid, c=c, marker=marker, ls=ls, label=r'%.0f k$\lambda$ bins, RMSE %.3f'%(binwidth/1e3,rmse))
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
     if normalize_resid: ax.set_ylabel('Normalized\nresidual')
-    else: ax.set_ylabel('Residual [Jy]')
+    else: ax.set_ylabel('Residual [mJy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
     ax.legend()
 
-    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
+    if yscale == 'linear':
+        ax.axhline(0, c='c', ls='--', zorder=10)
+        ax.set_ylim(-2 * rmse, 2 * rmse)
 
-    ax.set_ylim(-2 * rmse, 2 * rmse)
+def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None, xscale='log', yscale='log'):
+    ax.plot(baselines, pwr_spec, c=c, ls=ls)
 
-def plot_2dsweep(brightness, ax):
-    im = useful_funcs.create_image(brightness, nxy=2000, dxy=2e-3)
-    useful_funcs.show_image(im, ax, origin='lower')
+    ax.set_xlabel(r'Baseline [$\lambda$]')
+    ax.set_ylabel(r'Power [Jy$^2$]') # TODO: update units / label
+    ax.set_xscale(xscale)
+    ax.set_yscale(yscale)
+
+    if ylolim: ax.set_ylim(bottom=ylolim)
+
+def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
+    I2D, xmax, ymax = sweep_profile(r, I)
+    I2D /= 1e10
+    ax.imshow(I2D, origin='lower', extent=[xmax,-xmax,-ymax,ymax], vmin=vmin, vmax=vmax, cmap=cmap)
+    ax.set_xlabel('RA offset ["]')
+    ax.set_ylabel('Dec offset ["]')
+
+    from matplotlib import cm # TODO: fix?
+    norm = mpl.colors.Normalize(vmin=I2D.min(), vmax=I2D.max())
+    m = cm.ScalarMappable(norm=norm, cmap=cmap)
+    m.set_array([])
+
+    cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=1.)
+    cbar.set_label(r'I [10$^{10}$ Jy sr$^{-1}$]')

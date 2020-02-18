@@ -205,8 +205,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
                          - t1))
 
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
-                 '           dRA  = %.2e arcsec,\n           dDec = %.2e arcsec'
-                 %(geom.inc, geom.PA, geom.dRA, geom.dDec))
+                 '           dRA  = %.2f mas,\n           dDec = %.2f mas'
+                 %(geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
 
     return geom
 
@@ -264,7 +264,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
 
 def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
-                   save_uvtables, plot_fit, plot_diag, bin_widths, dist=None):
+                   save_uvtables, quick_plot, full_plot, bin_widths, dist=None,
+                   force_style=True):
     """
     Save datafiles of fit results; generate and save figures of fit results.
     See frank.io.save_fit, frank.make_figs.make_fit_fig and
@@ -297,12 +298,14 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
           Whether to save fitted visibility distribution
     save_uvtables : bool
           Whether to save fitted and residual UV tables (these are reprojected)
-    plot_fit : bool
-          Whether to make a figure showing the fit
-    plot_diag : bool
-          Whether to make a figure showing the fit diagnostics
+    quick_plot : bool
+          Whether to make a figure showing the simplest plots of the fit
+    full_plot : bool
+          Whether to make a figure more fully showing the fit and its diagnostics
     bin_widths : list
           Bin widths in which to bin the observed visibilities. [k\\lambda]
+    force_style: bool
+          Whether to use preconfigured matplotlib rcParams in generated figures
     dist : float, optional
           Distance to source. unit = AU
     """
@@ -311,19 +314,24 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                       save_profile_fit, save_vis_fit, save_uvtables)
 
     logging.info('  Plotting results')
-    if plot_fit:
-        fit_fig = make_figs.make_fit_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
-                            )
-    """
-    if plot_diag:
-        diag_fig = make_figs.make_diag_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
-                            )
-
     figs = []
-    if plot_fit: figs.append(fit_fig)
-    if plot_diag: figs.append(diag_fig)
+    if full_plot:
+        full_fig = make_figs.make_full_fig(u, v, vis, weights, sol,
+               model['input_output']['save_dir'],
+               model['input_output']['uvtable_filename'],
+               model['plotting']['bin_widths'],
+               model['plotting']['dist'],
+               model['plotting']['force_style']
+               )
+        figs.append(full_fig)
+
+    if quick_plot:
+        quick_fig = make_figs.make_quick_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
+                            )
+        figs.append(quick_fig)
+
     return figs
-    """
+
 def main():
     model = parse_parameters()
 
@@ -353,9 +361,10 @@ def main():
                    model['input_output']['save_profile_fit'],
                    model['input_output']['save_vis_fit'],
                    model['input_output']['save_uvtables'],
-                   model['plotting']['plot_fit'],
-                   model['plotting']['plot_diag'],
+                   model['plotting']['full_plot'],
+                   model['plotting']['quick_plot'],
                    model['plotting']['bin_widths'],
+                   model['plotting']['force_style'],
                    model['plotting']['dist']
                    )
 

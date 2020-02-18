@@ -32,10 +32,11 @@
   },
 
   "plotting" : {
-    "plot_fit"         : true,
-    "plot_diag"        : true,
+    "quick_plot"       : false,
+    "full_plot"        : true,
     "save_figs"        : true,
     "dist"             : null,
-    "bin_widths"       : [10e3, 50e3]
+    "bin_widths"       : [1e3],
+    "force_style"      : true
   }
 }

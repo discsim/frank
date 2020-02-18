@@ -8,7 +8,7 @@ Perform a fit from the terminal
 -------------------------------
 
 To perform a quick fit from the terminal, only a UVTable with the data to
-be fit and a *.json* parameter file (see below xx how to access xx) are needed. A UVTable can be extracted
+be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
 from CASA via xx as demonstrated in `this tutorial <tutorials/xx>`_.
 The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
@@ -53,16 +53,23 @@ which returns
     :linenos:
     :language: json
 
+A template parameter file is `here <https://github.com/discsim/frank/blob/master/frank/parameter_template.txt>`_;
+just save a local copy and note that anytime you run a fit without specifying `-p`, frank's internal
+`default_parameters.json` will be used.
+
 That's it! By default frank saves (in `save_dir`) the parameter file you use as `frank_used_pars.json`,
 the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`,
 the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, UVTables for the **reprojected**
 fit and its residuals as `<uvtable_filename>_frank_uv_fit.txt` and `<uvtable_filename>_frank_uv_resid.txt`,
-and two figures showing the fit and its diagnostics as `<uvtable_filename>_fit.png` and `<uvtable_filename>_diag.png`.
+and a figure showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_full.png`.
+Optionally frank can save a simpler version of this figure as `<uvtable_filename>_frank_fit_quick.png`.
 
-Here are those figures for a frank fit to the DSHARP continuum observations of the protoplanetary disc
+Here's the full figure for a frank fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
 
- xx add figure with caption xx
+.. figure:: plots/AS209_continuum_frank_fit_full.png
+   :align: left
+   :figwidth: 700
 
 Perform multiple fits in a loop
 ###############################

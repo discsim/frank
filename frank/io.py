@@ -45,12 +45,12 @@ def load_uvtable(data_file):
           :math:`1 / \\sigma^2`
     """
 
-    u, v, vis, weights = np.genfromtxt(data_file).T
+    u, v, re, im, weights = np.genfromtxt(data_file).T
     # TODO: add other file types to accept (.npy, .npz)
     # TODO: allow other column orders in UVTable
-    # TODO: (optionally) convert u, v from [m] to [lambda]?
+    # TODO: allow to convert u, v from [m] to [lambda]
 
-    return u, v, vis, weights
+    return u, v, re, weights
 
 
 def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,

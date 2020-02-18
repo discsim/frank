@@ -24,8 +24,8 @@ from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
 from frank.geometry import FixedGeometry, FitGeometryGaussian
 from frank.constants import deg_to_rad
-from frank.useful_functions import BinnedUVData
-
+from frank.useful_functions import BinUVData
+from frank.io import load_uvtable
 
 def test_hankel_gauss():
     """Check the Hankel Transform"""
@@ -84,8 +84,7 @@ def test_hankel_gauss():
 
 
 def test_import_data():
-    # TODO
-    pass
+    load_uvtable('tutorials/test_datafile.txt') # TODO: ensure correct UVTable column format
 
 
 def load_AS209():
@@ -181,14 +180,14 @@ def test_uvbin():
     AS209, geometry = load_AS209()
 
     uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
-    
+
     uvbin = BinnedUVData(uv, AS209['V'], AS209['weights'], 50e3)
 
     uvmin = 1e6
     uvmax = 1e6 + 50e3
 
     idx = (uv >= uvmin) & (uv < uvmax)
-    
+
     widx = AS209['weights'][idx]
 
     w = np.sum(widx)

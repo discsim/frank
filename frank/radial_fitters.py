@@ -407,12 +407,12 @@ class FourierBesselFitter(object):
         Large temporary matrices are needed to set up the data, if block_data
         is True we avoid this, limiting the memory requirement to block_size
         elements.
-    block_size : int, default = 107
+    block_size : int, default = 10^5
         Size of the matrices if blocking is used.
 
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 7):
+    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 5):
 
         Rmax /= rad_to_arcsec
 
