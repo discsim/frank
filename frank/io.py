@@ -99,6 +99,8 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
 
     with open(prefix + '_frank_sol.obj', 'wb') as f: pickle.dump(sol, f)
 
+    with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f: pickle.dump(sol, f)
+
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,

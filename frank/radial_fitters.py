@@ -247,10 +247,10 @@ class _HankelRegressor(object):
                 like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
 
         return like + self._like_noise
-    
+
     def _predict(self, q, I, block_size):
         """Do the actual visibility prediction"""
-        
+
         # Block the vis calulation for speed:
         Ni = int(block_size / len(I) + 1)
 
@@ -261,9 +261,9 @@ class _HankelRegressor(object):
             start = end
             end = start + Ni
             qi = q[start:end]
-        
+
             V.append(self._DHT.transform(I, qi))
-           
+
         return np.concatenate(V)
 
     def predict(self, u, v, I=None, geometry=None,block_size=10**5):
@@ -330,7 +330,7 @@ class _HankelRegressor(object):
             Geometry used to correct the visibilities for the source
             inclination. If not provided the geometry determined during the
             fit will be used.
-        block_size : int, default=10**5
+       block_size : int, default=10**5
             Maximum matrix size used in the visibisity calculation
 
         Returns
@@ -584,7 +584,7 @@ class FrankFitter(FourierBesselFitter):
         Large temporary matrices are needed to set up the data, if block_data
         is True we avoid this, limiting the memory requirement to block_size
         elements.
-    block_size : int, default = 10**4
+    block_size : int, default = 10**5
         Size of the matrices if blocking is used.
     alpha : float >= 1, default = 1.05
         Order parameter of the inverse gamma prior for the power spectrum.
@@ -611,7 +611,7 @@ class FrankFitter(FourierBesselFitter):
 
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 4,
+    def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 5,
                  alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
                  tol=1e-3, max_iter=1000, store_iteration_diagnostics=False):
 
@@ -661,6 +661,9 @@ class FrankFitter(FourierBesselFitter):
         weights : 1D array, optional, units=Jy^-2
             Weights of the visibilities, weight = 1 / sigma^2, where sigma is
             the standard deviation.
+        iteration_diagnostics : dict, optional, size = N_iter x 2 x N_{collocation points}
+          Power spectrum parameters and posterior mean brightness profile at
+          each fit iteration, and number of iterations
 
         Returns
         -------
@@ -744,7 +747,10 @@ class FrankFitter(FourierBesselFitter):
         self._ps = pi
         self._ps_cov = self._ps_covariance(fit, Tij, rho)
 
-        return self._sol
+        if self._store_iteration_diagnostics:
+            return self._sol, iteration_diagnostics
+        else:
+            return self._sol
 
     def _ps_covariance(self, fit, Tij, rho):
         """

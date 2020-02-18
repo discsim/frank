@@ -214,7 +214,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
     return geom
 
 
-def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
+def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iteration_diag=False):
     """
     Deproject the observed visibilities and fit them for the brightness profile.
 
@@ -241,6 +241,9 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
     wsmooth : float
           Strength of smoothing applied to the power spectrum
           (suggested range 10^-4 - 10^-1)
+    iteration_diag : bool, default = False
+          Whether to return diagnostics of the fit iteration
+          (see radial_fitters.FrankFitter.fit)
 
     Returns
     -------
@@ -262,7 +265,10 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
           ' collocation points) %.1f sec'%(len(vis), n, time.time() - t1))
 
-    return sol
+    if iteration_diag:
+        return sol, FF.iteration_diagnostics
+    else:
+        return sol, [] # TODO: do differently?
 
 
 def output_results(u, v, vis, weights, geom, sol, bin_widths,
@@ -356,12 +362,17 @@ def main():
                               model['geometry']['fit_phase_offset']
                               )
 
-    sol = perform_fit(u, v, vis, weights, geom,
+    sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
                               model['hyperpriors']['rout'],
                               model['hyperpriors']['n'],
                               model['hyperpriors']['alpha'],
-                              model['hyperpriors']['wsmooth']
+                              model['hyperpriors']['wsmooth'],
+                              model['input_output']['iteration_diag']
                               )
+
+    # TODO: temp
+    prefix = model['input_output']['save_dir'] + '/' + os.path.splitext(model['input_output']['uvtable_filename'])[0]
+    with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f: pickle.dump(iteration_diagnostics, f)
 
     figs = output_results(u, v, vis, weights, geom, sol,
                    model['plotting']['bin_widths'],
