@@ -181,7 +181,7 @@ def test_uvbin():
 
     uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
 
-    uvbin = BinnedUVData(uv, AS209['V'], AS209['weights'], 50e3)
+    uvbin = BinUVData(uv, AS209['V'], AS209['weights'], 50e3)
 
     uvmin = 1e6
     uvmax = 1e6 + 50e3

@@ -44,9 +44,17 @@ def load_uvtable(data_file):
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
     """
+    import os.path
+    extension = os.path.splitext(data_file)[1]
 
-    u, v, re, im, weights = np.genfromtxt(data_file).T
-    # TODO: add other file types to accept (.npy, .npz)
+    if extension == ('.txt' or '.dat'):
+        u, v, re, im, weights = np.genfromtxt(data_file).T
+    elif extension == ('.npy' or '.npz'):
+        dat = np.load('data_file')
+        u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
+    else raise OSError("""You provided a UVTable with the format %s. Please
+                       provide it as a `.txt`, `.dat`, `.npy`, or `.npz`."""%extension)
+    # TODO: add other file types?
     # TODO: allow other column orders in UVTable
     # TODO: allow to convert u, v from [m] to [lambda]
 
