@@ -336,12 +336,13 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
         figs.append(quick_fig)
         axes.append(quick_axes)
 
-    return figs, axes
-
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
                       save_profile_fit, save_vis_fit, save_uvtables)
-                      
+
+    return figs, axes
+
+
 def main():
     model = parse_parameters()
 

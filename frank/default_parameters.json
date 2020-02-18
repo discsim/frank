@@ -32,7 +32,7 @@
   },
 
   "plotting" : {
-    "quick_plot"       : false,
+    "quick_plot"       : true,
     "full_plot"        : true,
     "save_figs"        : true,
     "dist"             : null,
