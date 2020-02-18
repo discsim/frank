@@ -122,7 +122,8 @@ just to show how to directly interface with the code's internal classes.
     from frank.make_figs import frank_plotting_style, make_quick_fig
     from frank.io import save_fit
 
-    u, v, vis, weights = load_data('AS209_continuum.txt')
+    uvtable_filename = 'AS209_continuum.txt'
+    u, v, vis, weights = load_data(uvtable_filename)
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
@@ -143,6 +144,7 @@ Now we'll just make a simplified figure of the fit (with only subplots (a), (b),
     make_quick_fig(u, v, vis, weights, sol, bin_widths=[1000, 50000], force_style=True)
 
 which gives this figure,
+
 .. figure:: plots/AS209_continuum_frank_fit_quick.png
    :align: left
    :figwidth: 700
@@ -151,5 +153,7 @@ And finally we'll save the fit results.
 
 .. code-block:: python
 
-    save_fit(u, v, vis, weights, sol, save_dir=os.getcwd(), uvtable_filename='AS209_continuum',
-             save_profile_fit=True, save_vis_fit=True, save_uvtables=True)
+    save_fit(u, v, vis, weights, sol, save_dir=os.getcwd(),
+            uvtable_filename=os.path.splitext(uvtable_filename)[0],
+            save_profile_fit=True, save_vis_fit=True, save_uvtables=True
+            )
