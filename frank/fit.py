@@ -313,10 +313,6 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
     dist : float, optional
           Distance to source. unit = AU
     """
-    logging.info('  Saving results')
-    io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
-                      save_profile_fit, save_vis_fit, save_uvtables)
-
     logging.info('  Plotting results')
 
     figs = []
@@ -342,6 +338,10 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
 
     return figs, axes
 
+    logging.info('  Saving results')
+    io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
+                      save_profile_fit, save_vis_fit, save_uvtables)
+                      
 def main():
     model = parse_parameters()
 
