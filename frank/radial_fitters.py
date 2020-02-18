@@ -248,25 +248,7 @@ class _HankelRegressor(object):
 
         return like + self._like_noise
 
-    def _predict(self, q, I, block_size):
-        """Do the actual visibility prediction"""
-        
-        # Block the vis calulation for speed:
-        Ni = int(block_size / len(I) + 1)
-
-        end = 0
-        start = 0
-        V = []
-        while end < len(q):
-            start = end
-            end = start + Ni
-            qi = q[start:end]
-        
-            V.append(self._DHT.transform(I, qi))
-           
-        return np.concatenate(V)
-
-    def predict(self, u, v, I=None, geometry=None,block_size=10**5):
+    def predict(self, u, v, I=None, geometry=None):
         """
         Predict the visibilities in the sky-plane
 
@@ -299,8 +281,8 @@ class _HankelRegressor(object):
         if geometry is not None:
             u, v = self._geometry.deproject(u, v)
 
-        q = np.hypot(u, v)      
-        V = self._predict(q, I, block_size)
+        q = np.hypot(u, v)
+        V = self._DHT.transform(I, q)
 
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
@@ -310,7 +292,7 @@ class _HankelRegressor(object):
 
         return V
 
-    def predict_deprojected(self, q=None, I=None, geometry=None, block_size=10**5):
+    def predict_deprojected(self, q=None, I=None, geometry=None):
         """
         Predict the visibilities in the deprojected-plane
 
@@ -351,7 +333,7 @@ class _HankelRegressor(object):
         if geometry is None:
             geometry = self._geometry
 
-        V = self._predict(q, I, block_size)
+        V = self._DHT.transform(I, q)
 
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
@@ -608,7 +590,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 4,
                  alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=250, store_iteration_diagnostics=True):
+                 tol=1e-3, max_iter=1000, store_iteration_diagnostics=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data, block_size)
 
@@ -726,7 +708,7 @@ class FrankFitter(FourierBesselFitter):
             if self._store_iteration_diagnostics:
                 self._iteration_diagnostics['power_spectrum'].append(pi)
                 self._iteration_diagnostics['mean'].append(fit.mean)
-
+            print('count',count)
             count += 1
 
         if self._store_iteration_diagnostics:
