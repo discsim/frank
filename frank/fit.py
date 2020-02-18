@@ -318,15 +318,6 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
     figs = []
     axes = []
 
-    if full_plot:
-        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, geom,
-                              sol, bin_widths, dist, force_style, save_dir,
-                              uvtable_filename
-                              )
-
-        figs.append(full_fig)
-        axes.append(axes)
-
     if quick_plot:
         quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
                                 bin_widths, dist, force_style, save_dir,
@@ -335,6 +326,15 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
 
         figs.append(quick_fig)
         axes.append(quick_axes)
+        
+    if full_plot:
+        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, geom,
+                              sol, bin_widths, dist, force_style, save_dir,
+                              uvtable_filename
+                              )
+
+        figs.append(full_fig)
+        axes.append(axes)
 
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,

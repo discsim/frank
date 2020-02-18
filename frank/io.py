@@ -98,7 +98,7 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
 
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
-    with open(prefix + '_frank_sol.obj') as f: pickle.dump(sol, f)
+    with open(prefix + '_frank_sol.obj', 'wb') as f: pickle.dump(sol, f)
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
