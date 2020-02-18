@@ -248,7 +248,25 @@ class _HankelRegressor(object):
 
         return like + self._like_noise
 
-    def predict(self, u, v, I=None, geometry=None):
+    def _predict(self, q, I, block_size):
+        """Do the actual visibility prediction"""
+        
+        # Block the vis calulation for speed:
+        Ni = int(block_size / len(I) + 1)
+
+        end = 0
+        start = 0
+        V = []
+        while end < len(q):
+            start = end
+            end = start + Ni
+            qi = q[start:end]
+        
+            V.append(self._DHT.transform(I, qi))
+           
+        return np.concatenate(V)
+
+    def predict(self, u, v, I=None, geometry=None,block_size=10**5):
         """
         Predict the visibilities in the sky-plane
 
@@ -281,8 +299,8 @@ class _HankelRegressor(object):
         if geometry is not None:
             u, v = self._geometry.deproject(u, v)
 
-        q = np.hypot(u, v)
-        V = self._DHT.transform(I, q)
+        q = np.hypot(u, v)      
+        V = self._predict(q, I, block_size)
 
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
@@ -292,7 +310,7 @@ class _HankelRegressor(object):
 
         return V
 
-    def predict_deprojected(self, q=None, I=None, geometry=None):
+    def predict_deprojected(self, q=None, I=None, geometry=None, block_size=10**5):
         """
         Predict the visibilities in the deprojected-plane
 
@@ -333,7 +351,7 @@ class _HankelRegressor(object):
         if geometry is None:
             geometry = self._geometry
 
-        V = self._DHT.transform(I, q)
+        V = self._predict(q, I, block_size)
 
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
