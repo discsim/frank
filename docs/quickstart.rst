@@ -134,10 +134,12 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Finally we'll make a simple figure of the fit and save the fit results.
+Finally we'll make a simplified figure of the fit (with only some of the subplots from the figure above) and save the fit results.
 
 .. code-block:: python
 
     output_results(u, v, vis, weights, sol, diag_fig=False)
 
-xx add simple fig with caption xx
+.. figure:: plots/AS209_continuum_frank_fit_quick.png
+   :align: left
+   :figwidth: 700
