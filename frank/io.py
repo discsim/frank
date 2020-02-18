@@ -46,10 +46,10 @@ def load_uvtable(data_file):
     """
     import os.path
     extension = os.path.splitext(data_file)[1]
-
-    if extension == ('.txt' or '.dat'):
+    print('extension',extension)
+    if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
-    elif extension == ('.npy' or '.npz'):
+    elif extension in {'.npy', '.npz'}:
         dat = np.load('data_file')
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
     else:
