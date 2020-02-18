@@ -320,12 +320,9 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
     axes = []
 
     if full_plot:
-        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
-                              model['plotting']['bin_widths'],
-                              model['plotting']['dist'],
-                              model['plotting']['force_style'],
-                              model['input_output']['save_dir'],
-                              model['input_output']['uvtable_filename']
+        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, geom,
+                              sol, bin_widths, dist, force_style, save_dir,
+                              uvtable_filename
                               )
 
         figs.append(full_fig)
@@ -333,11 +330,8 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
 
     if quick_plot:
         quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
-                                model['plotting']['bin_widths'],
-                                model['plotting']['dist'],
-                                model['plotting']['force_style'],
-                                model['input_output']['save_dir'],
-                                model['input_output']['uvtable_filename']
+                                bin_widths, dist, force_style, save_dir,
+                                uvtable_filename
                                 )
 
         figs.append(quick_fig)

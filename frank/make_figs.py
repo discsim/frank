@@ -59,7 +59,7 @@ def frank_plotting_style():
     mpl.rcParams['errorbar.capsize'] = 5
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, dist, force_style=True, save_dir=None, uvtable_filename=None):
+def make_full_fig(u, v, vis, weights, geom, sol, bin_widths, dist, force_style=True, save_dir=None, uvtable_filename=None):
     if force_style: frank_plotting_style()
     if save_dir and uvtable_filename:
         prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
