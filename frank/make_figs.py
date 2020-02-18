@@ -26,7 +26,7 @@ from matplotlib.gridspec import GridSpec
 from frank import plot, useful_funcs
 
 #plt.style.use('paper')
-def use_frank_plotting_style():
+def frank_plotting_style():
     """#TODO
     """
     import matplotlib as mpl
@@ -59,8 +59,10 @@ def use_frank_plotting_style():
     mpl.rcParams['errorbar.capsize'] = 5
 
 
-def make_full_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist):
-    prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
+def make_full_fig(u, v, vis, weights, sol, bin_widths, dist, force_style=True, save_dir=None, uvtable_filename=None):
+    if force_style: frank_plotting_style()
+    if save_dir and uvtable_filename:
+        prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(3, 3, hspace=0)
     gs2 = GridSpec(3, 3, hspace=.35)
@@ -140,12 +142,17 @@ def make_full_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_width
 
     plt.tight_layout()
 
-    plt.savefig(prefix + '_frank_fit_full.png', dpi=600)
+    if save_dir and uvtable_filename:
+        plt.savefig(prefix + '_frank_fit_full.png', dpi=600)
+    else: plt.show()
 
     return fig, axes
 
-def make_quick_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist):
-    prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
+
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist, force_style, save_dir, uvtable_filename):
+    if force_style: frank_plotting_style()
+    if save_dir and uvtable_filename:
+        prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(2, 2, hspace=0)
     fig = plt.figure(figsize=(8,6))
@@ -195,6 +202,8 @@ def make_quick_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widt
 
     plt.tight_layout()
 
-    plt.savefig(prefix + '_frank_fit_quick.png', dpi=600)
+    if save_dir and uvtable_filename:
+        plt.savefig(prefix + '_frank_fit_quick.png', dpi=600)
+    else: plt.show()
 
     return fig, axes

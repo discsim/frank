@@ -64,7 +64,7 @@ def load_uvtable(data_file):
 
 
 def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
-             save_profile_fit, save_vis_fit, save_uvtables):
+             save_profile_fit=True, save_vis_fit=True, save_uvtables=True):
     """
     Save datafiles of fit results
 

@@ -314,25 +314,31 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
                       save_profile_fit, save_vis_fit, save_uvtables)
 
     logging.info('  Plotting results')
-    if force_style: make_figs.use_frank_plotting_style()
 
     figs = []
     axes = []
 
     if full_plot:
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
-               model['input_output']['save_dir'],
-               model['input_output']['uvtable_filename'],
-               model['plotting']['bin_widths'],
-               model['plotting']['dist'],
-               model['plotting']['force_style']
-               )
+                              model['plotting']['bin_widths'],
+                              model['plotting']['dist'],
+                              model['plotting']['force_style'],
+                              model['input_output']['save_dir'],
+                              model['input_output']['uvtable_filename']
+                              )
+
         figs.append(full_fig)
         axes.append(axes)
 
     if quick_plot:
-        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol, save_dir, uvtable_filename, bin_widths, dist
-                            )
+        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
+                                model['plotting']['bin_widths'],
+                                model['plotting']['dist'],
+                                model['plotting']['force_style'],
+                                model['input_output']['save_dir'],
+                                model['input_output']['uvtable_filename']
+                                )
+
         figs.append(quick_fig)
         axes.append(quick_axes)
 

@@ -115,10 +115,12 @@ just to show how to directly interface with the code's internal classes.
 
 .. code-block:: python
 
-    from frank.constants import rad_to_arcsec
+    import os
     from frank.radial_fitters import FrankFitter
     from frank.geometry import FitGeometryGaussian
-    from frank.fit import load_data, output_results
+    from frank.fit import load_data
+    from frank.make_figs import frank_plotting_style, make_quick_fig
+    from frank.io import save_fit
 
     u, v, vis, weights = load_data('AS209_continuum.txt')
 
@@ -134,12 +136,20 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Finally we'll make a simplified figure of the fit (with only some of the subplots from the figure above) and save the fit results.
+Now we'll just make a simplified figure of the fit (with only subplots (a), (b), (d), (f) from the figure above),
 
 .. code-block:: python
 
-    output_results(u, v, vis, weights, sol, diag_fig=False)
+    make_quick_fig(u, v, vis, weights, sol, bin_widths=[1000, 50000], force_style=True)
 
+which gives this figure,
 .. figure:: plots/AS209_continuum_frank_fit_quick.png
    :align: left
    :figwidth: 700
+
+And finally we'll save the fit results.
+
+.. code-block:: python
+
+    save_fit(u, v, vis, weights, sol, save_dir=os.getcwd(), uvtable_filename='AS209_continuum',
+             save_profile_fit=True, save_vis_fit=True, save_uvtables=True)
