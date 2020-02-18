@@ -126,8 +126,9 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
     ax.set_xlabel('RA offset ["]')
     ax.set_ylabel('Dec offset ["]')
 
-    import matplotlib
-    norm = matplotlib.colors.Normalize(vmin=I2D.min(), vmax=I2D.max())
+    import matplotlib.colors as mpl_cs
+    from matplotlib import cm
+    norm = mpl_cs.Normalize(vmin=I2D.min(), vmax=I2D.max())
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     m.set_array([])
 

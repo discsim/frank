@@ -39,11 +39,15 @@ If you want to change the default parameters, provide a custom parameter file wi
 
     python -m frank.fit [-uv uvtable_filename.txt] -p <parameter_filename.json>
 
-The default parameter file is ``default_parameters.json``, and it looks like this:
+The default parameter file is ``default_parameters.json``. You can get it
+`here <https://github.com/discsim/frank/blob/master/frank/default_parameters.json>`_,
+and it looks like this:
 
 .. literalinclude:: ../frank/default_parameters.json
     :linenos:
     :language: json
+
+Note that anytime you run a fit without specifying `-p`, frank's internal `default_parameters.json` will be used.
 
 You can get a description for each parameter with
 
@@ -56,10 +60,6 @@ which returns
 .. literalinclude:: ../frank/parameter_descriptions.json
     :linenos:
     :language: json
-
-A template parameter file is `here <https://github.com/discsim/frank/blob/master/frank/parameter_template.txt>`_;
-just save a local copy and note that anytime you run a fit without specifying `-p`, frank's internal
-`default_parameters.json` will be used.
 
 That's it! By default frank saves (in `save_dir`) the parameter file you use as `frank_used_pars.json`,
 the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`,
