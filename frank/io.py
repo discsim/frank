@@ -52,7 +52,8 @@ def load_uvtable(data_file):
     elif extension == ('.npy' or '.npz'):
         dat = np.load('data_file')
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
-    else raise ValuError("    You provided a UVTable with the extension %s."
+    else:
+        raise ValuError("    You provided a UVTable with the extension %s."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`."%extension)
     # TODO: add other file types?
