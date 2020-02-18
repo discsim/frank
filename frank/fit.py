@@ -262,10 +262,11 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
     return sol, FF.iteration_diagnostics
 
 
-def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
+def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_widths,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
-                   save_uvtables, quick_plot, full_plot, bin_widths, dist=None,
-                   force_style=True):
+                   save_uvtables, full_plot, quick_plot, force_style=True,
+                   dist=None
+                   ):
     """
     Save datafiles of fit results; generate and save figures of fit results.
     See frank.io.save_fit, frank.make_figs.make_fit_fig and
@@ -288,6 +289,8 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
     iteration_diagnostics : dict, size = N_iter x 2 x N_{collocation points}
           Power spectrum parameters and posterior mean brightness profile at
           each fit iteration, and number of iterations
+    bin_widths : list
+          Bin widths in which to bin the observed visibilities. [k\\lambda]
     save_dir : string
           Directory in which output datafiles and figures are saved
     uvtable_filename : string
@@ -298,12 +301,10 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
           Whether to save fitted visibility distribution
     save_uvtables : bool
           Whether to save fitted and residual UV tables (these are reprojected)
-    quick_plot : bool
-          Whether to make a figure showing the simplest plots of the fit
     full_plot : bool
           Whether to make a figure more fully showing the fit and its diagnostics
-    bin_widths : list
-          Bin widths in which to bin the observed visibilities. [k\\lambda]
+    quick_plot : bool
+          Whether to make a figure showing the simplest plots of the fit
     force_style: bool
           Whether to use preconfigured matplotlib rcParams in generated figures
     dist : float, optional
@@ -368,6 +369,7 @@ def main():
                               )
 
     figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
+                   model['plotting']['bin_widths'],
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
                    model['input_output']['save_profile_fit'],
@@ -375,7 +377,6 @@ def main():
                    model['input_output']['save_uvtables'],
                    model['plotting']['full_plot'],
                    model['plotting']['quick_plot'],
-                   model['plotting']['bin_widths'],
                    model['plotting']['force_style'],
                    model['plotting']['dist']
                    )
