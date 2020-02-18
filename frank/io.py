@@ -49,6 +49,7 @@ def load_uvtable(data_file):
 
     if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
+        vis = re + 1j*im
 
     elif extension in {'.npy', '.npz'}:
         dat = np.load(data_file)
