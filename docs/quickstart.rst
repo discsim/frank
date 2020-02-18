@@ -6,7 +6,7 @@ Performing a fit
 ================
 
 You can interface with Frankenstein (``frank``) to perform a fit in 2 ways:
-**(1)** run the code directly from the terminal or **(2)** use the code as a library.
+**(1)** run the code directly from the terminal or **(2)** use the code as a Python module.
 
 Perform a fit from the terminal
 -------------------------------
@@ -41,7 +41,7 @@ If you want to change the default parameters, provide a custom parameter file wi
 
 The default parameter file is ``default_parameters.json``, and it looks like this:
 
-.. literalinclude:: ../default_parameters.json
+.. literalinclude:: ../frank/default_parameters.json
     :linenos:
     :language: json
 
@@ -53,7 +53,7 @@ You can get a description for each parameter with
 
 which returns
 
-.. literalinclude:: ../parameter_descriptions.json
+.. literalinclude:: ../frank/parameter_descriptions.json
     :linenos:
     :language: json
 
@@ -74,6 +74,7 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 .. figure:: plots/AS209_continuum_frank_fit_full.png
    :align: left
    :figwidth: 700
+
 **a)** The fitted frank brightness profile. |br|
 **b)** As in (a), on a log scale. The oscillations below :math:`\approx 10^9\ {\rm Jy\ sr}^{-1}` indicate the fit's noise floor. |br|
 **c)** The frank profile swept over :math:`2\pi`. Note this image is not convolved with any beam. |br|
