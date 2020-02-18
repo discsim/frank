@@ -133,7 +133,7 @@ def load_data(load_dir, data_file):
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Real component of observed visibilities
+          Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
@@ -154,7 +154,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Real component of observed visibilities
+          Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
@@ -209,7 +209,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
                  %(geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
 
     geom = geom.clone()
-    print('  Storing disc geometry to use for fit')
+    logging.info('    Storing disc geometry to use for fit')
 
     return geom
 
@@ -223,7 +223,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Real component of observed visibilities
+          Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
@@ -280,7 +280,7 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Real component of observed visibilities
+          Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
@@ -326,7 +326,7 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
 
         figs.append(quick_fig)
         axes.append(quick_axes)
-        
+
     if full_plot:
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, geom,
                               sol, bin_widths, dist, force_style, save_dir,

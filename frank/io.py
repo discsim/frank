@@ -39,7 +39,7 @@ def load_uvtable(data_file):
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Real component of observed visibilities
+          Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
@@ -53,8 +53,6 @@ def load_uvtable(data_file):
     elif extension in {'.npy', '.npz'}:
         dat = np.load(data_file)
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
-        re = vis.real
-        im = vis.imag
 
     else:
         raise ValueError("    You provided a UVTable with the extension %s."
@@ -64,7 +62,7 @@ def load_uvtable(data_file):
     # TODO: allow other column orders in UVTable
     # TODO: allow to convert u, v from [m] to [lambda]
 
-    return u, v, re, weights
+    return u, v, vis, weights
 
 
 def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
@@ -77,7 +75,7 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
     u, v : array, unit = :math:`\\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Real component of observed visibilities
+          Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \\sigma^2`
