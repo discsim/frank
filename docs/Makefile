@@ -15,7 +15,7 @@ help:
 .PHONY: help Makefile
 
 tutorials:
-	@ln -s ../tutorials/ tutorials 
+	@cp -r ../tutorials/ .
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
