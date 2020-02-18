@@ -247,8 +247,26 @@ class _HankelRegressor(object):
                 like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
 
         return like + self._like_noise
+    
+    def _predict(self, q, I, block_size):
+        """Do the actual visibility prediction"""
+        
+        # Block the vis calulation for speed:
+        Ni = int(block_size / len(I) + 1)
 
-    def predict(self, u, v, I=None, geometry=None):
+        end = 0
+        start = 0
+        V = []
+        while end < len(q):
+            start = end
+            end = start + Ni
+            qi = q[start:end]
+        
+            V.append(self._DHT.transform(I, qi))
+           
+        return np.concatenate(V)
+
+    def predict(self, u, v, I=None, geometry=None,block_size=10**5):
         """
         Predict the visibilities in the sky-plane
 
@@ -264,6 +282,8 @@ class _HankelRegressor(object):
             Geometry used to correct the visibilities for the source
             inclination. If not provided the geometry determined during the
             fit will be used.
+        block_size : int, default=10**5
+            Maximum matrix size used in the visibisity calculation
 
         Returns
         -------
@@ -282,7 +302,7 @@ class _HankelRegressor(object):
             u, v = self._geometry.deproject(u, v)
 
         q = np.hypot(u, v)
-        V = self._DHT.transform(I, q)
+        V = self._predict(q, I, block_size)
 
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
@@ -292,7 +312,8 @@ class _HankelRegressor(object):
 
         return V
 
-    def predict_deprojected(self, q=None, I=None, geometry=None):
+    def predict_deprojected(self, q=None, I=None, geometry=None,
+                            block_size=10**5):
         """
         Predict the visibilities in the deprojected-plane
 
@@ -309,6 +330,8 @@ class _HankelRegressor(object):
             Geometry used to correct the visibilities for the source
             inclination. If not provided the geometry determined during the
             fit will be used.
+        block_size : int, default=10**5
+            Maximum matrix size used in the visibisity calculation
 
         Returns
         -------
@@ -333,7 +356,7 @@ class _HankelRegressor(object):
         if geometry is None:
             geometry = self._geometry
 
-        V = self._DHT.transform(I, q)
+        V = self._predict(q, I, block_size)
 
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
