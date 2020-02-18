@@ -54,7 +54,7 @@ def load_uvtable(data_file):
         dat = np.load(data_file)
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
         re = vis.real
-        im = ivs.imag
+        im = vis.imag
 
     else:
         raise ValueError("    You provided a UVTable with the extension %s."
