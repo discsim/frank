@@ -21,6 +21,7 @@ results.
 """
 import numpy as np
 from scipy.interpolate import interp1d
+__all__ = ['arcsec_baseline', 'BinUVData', 'sweep_profile']
 
 def arcsec_baseline(x):
     """

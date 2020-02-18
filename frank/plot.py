@@ -22,6 +22,8 @@ Frankenstein fits.
 import numpy as np
 import matplotlib.pyplot as plt
 from frank import useful_funcs
+__all__ = ['plot_brightness_profile', 'plot_vis_fit', 'plot_vis',
+          'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep']
 
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-', ylolim=None, comparison_profile=None):
     """ # TODO: add docstring

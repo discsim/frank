@@ -205,7 +205,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
                          - t1))
 
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
-                 '           dRA  = %.2f mas,\n           dDec = %.2f mas'
+                 '           dRA  = %.2e mas,\n           dDec = %.2e mas'
                  %(geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
 
     return geom

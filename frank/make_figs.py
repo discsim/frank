@@ -23,7 +23,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
-from frank import plot, useful_funcs
+from frank.plot import *
+from frank.useful_funcs import *
 
 #plt.style.use('paper')
 def frank_plotting_style():
