@@ -115,12 +115,15 @@ just to show how to directly interface with the code's internal classes.
 
 .. code-block:: python
 
-    from frank.constants import rad_to_arcsec
+    import os
     from frank.radial_fitters import FrankFitter
     from frank.geometry import FitGeometryGaussian
-    from frank.fit import load_data, output_results
+    from frank.fit import load_data
+    from frank.make_figs import frank_plotting_style, make_quick_fig
+    from frank.io import save_fit
 
-    u, v, vis, weights = load_data('AS209_continuum.txt')
+    uvtable_filename = 'AS209_continuum.txt'
+    u, v, vis, weights = load_data(uvtable_filename)
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
@@ -134,10 +137,23 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Finally we'll make a simple figure of the fit and save the fit results.
+Now we'll just make a simplified figure of the fit (with only subplots (a), (b), (d), (f) from the figure above),
 
 .. code-block:: python
 
-    output_results(u, v, vis, weights, sol, diag_fig=False)
+    make_quick_fig(u, v, vis, weights, sol, bin_widths=[1e3, 5e4], force_style=True)
 
-xx add simple fig with caption xx
+which gives this figure,
+
+.. figure:: plots/AS209_continuum_frank_fit_quick.png
+   :align: left
+   :figwidth: 700
+
+And finally we'll save the fit results.
+
+.. code-block:: python
+
+    save_fit(u, v, vis, weights, sol, save_dir=os.getcwd(),
+            uvtable_filename=os.path.splitext(uvtable_filename)[0],
+            save_profile_fit=True, save_vis_fit=True, save_uvtables=True
+            )

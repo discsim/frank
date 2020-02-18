@@ -46,14 +46,14 @@ def load_uvtable(data_file):
     """
     import os.path
     extension = os.path.splitext(data_file)[1]
-
-    if extension == ('.txt' or '.dat'):
+    print('extension',extension)
+    if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
-    elif extension == ('.npy' or '.npz'):
-        dat = np.load('data_file')
+    elif extension in {'.npy', '.npz'}:
+        dat = np.load(data_file)
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
     else:
-        raise ValuError("    You provided a UVTable with the extension %s."
+        raise ValueError("    You provided a UVTable with the extension %s."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`."%extension)
     # TODO: add other file types?
@@ -64,7 +64,7 @@ def load_uvtable(data_file):
 
 
 def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
-             save_profile_fit, save_vis_fit, save_uvtables):
+             save_profile_fit=True, save_vis_fit=True, save_uvtables=True):
     """
     Save datafiles of fit results
 
