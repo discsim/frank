@@ -46,15 +46,15 @@ def load_uvtable(data_file):
     """
     import os.path
     extension = os.path.splitext(data_file)[1]
-    
+
     if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
 
     elif extension in {'.npy', '.npz'}:
         dat = np.load(data_file)
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
-        re = vis.real()
-        im = ivs.imag()
+        re = vis.real
+        im = ivs.imag
 
     else:
         raise ValueError("    You provided a UVTable with the extension %s."
