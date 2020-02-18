@@ -265,10 +265,6 @@ class FixedGeometry(SourceGeometry):
     def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
         super(FixedGeometry, self).__init__(inc, PA, dRA, dDec)
 
-    def fit(self, u, v, V, weights):
-        """Dummy method for geometry fitting no fit is required."""
-        pass
-
 
 class FitGeometryGaussian(SourceGeometry):
     """
