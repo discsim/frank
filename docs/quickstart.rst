@@ -1,3 +1,7 @@
+.. |br| raw:: html
+
+    <br>
+
 Performing a fit
 ================
 
@@ -70,6 +74,18 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 .. figure:: plots/AS209_continuum_frank_fit_full.png
    :align: left
    :figwidth: 700
+**a)** The fitted frank brightness profile. |br|
+**b)** As in (a), on a log scale. The oscillations below :math:`\approx 10^9\ {\rm Jy\ sr}^{-1}` indicate the fit's noise floor. |br|
+**c)** The frank profile swept over :math:`2\pi`. Note this image is not convolved with any beam. |br|
+**d)** The visibility domain fit and the data in 1 and 50 :math:`{\rm k}\lambda` bins. |br|
+**e)** As in (d), zooming on the longer baselines. |br|
+**f)** Residuals between the binned data and the fit. The residuals' RMSE is given in the legend;
+note this is being increased by the residuals beyond the baseline at which the fit walks off the data. |br|
+**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale. |br|
+**h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
+To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
+**i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
+it could indicate xx asymmetry in the disc xx that frank will average over.
 
 Perform multiple fits in a loop
 ###############################
