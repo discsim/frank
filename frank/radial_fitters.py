@@ -575,7 +575,7 @@ class FrankFitter(FourierBesselFitter):
         Tolerence for convergence of the power spectrum iteration.
     max_iter: int, default = 250
         Maximum number of fit iterations.
-    store_iteration_diagnostics: bool, default=True
+    store_iteration_diagnostics: bool, default=False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration.
 
@@ -590,7 +590,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 4,
                  alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=1000, store_iteration_diagnostics=True):
+                 tol=1e-3, max_iter=1000, store_iteration_diagnostics=False):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data, block_size)
 

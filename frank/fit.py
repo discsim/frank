@@ -262,18 +262,18 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth):
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
           ' collocation points) %.1f sec'%(len(vis), n, time.time() - t1))
 
-    return sol, FF.iteration_diagnostics
+    return sol
 
 
-def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_widths,
+def output_results(u, v, vis, weights, geom, sol, bin_widths,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
                    save_uvtables, full_plot, quick_plot, force_style=True,
                    dist=None
                    ):
     """
     Save datafiles of fit results; generate and save figures of fit results.
-    See frank.io.save_fit, frank.make_figs.make_fit_fig and
-    frank.make_figs.make_diag_fig
+    See frank.io.save_fit, frank.make_figs.make_full_fig and
+    frank.make_figs.make_quick_fig
 
     Parameters
     ----------
@@ -289,9 +289,6 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diagnostics, bin_wid
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
-    iteration_diagnostics : dict, size = N_iter x 2 x N_{collocation points}
-          Power spectrum parameters and posterior mean brightness profile at
-          each fit iteration, and number of iterations
     bin_widths : list
           Bin widths in which to bin the observed visibilities. [k\\lambda]
     save_dir : string
@@ -359,14 +356,14 @@ def main():
                               model['geometry']['fit_phase_offset']
                               )
 
-    sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
+    sol = perform_fit(u, v, vis, weights, geom,
                               model['hyperpriors']['rout'],
                               model['hyperpriors']['n'],
                               model['hyperpriors']['alpha'],
                               model['hyperpriors']['wsmooth']
                               )
 
-    figs = output_results(u, v, vis, weights, geom, sol, iteration_diagnostics,
+    figs = output_results(u, v, vis, weights, geom, sol,
                    model['plotting']['bin_widths'],
                    model['input_output']['save_dir'],
                    model['input_output']['uvtable_filename'],
