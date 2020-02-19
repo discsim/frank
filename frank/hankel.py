@@ -16,36 +16,36 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module contains functions for computing the Hankel transform and its 
-discrete varient, the Discrete Hankel Transform (DHT).
+"""This module contains functions for computing the
+discrete Hankel transform (DHT).
 """
 
 import numpy as np
 from scipy.special import j0, j1, jn_zeros, jv
 
-from frankenstein.constants import rad_to_arcsec
+from frank.constants import rad_to_arcsec
 
 __all__ = ["DiscreteHankelTransform"]
 
 
 class DiscreteHankelTransform(object):
-    """
-    Utilities for computing the discrete Hankel Transform.
+    r"""
+    Utilities for computing the discrete Hankel transform.
 
-    This class provides the necessary interface to compute the
+    This class provides the necessary interface to compute
     a discrete version of the Hankel transform (DHT):
 
-        H[f](q) = \int_0^R_{max} f(r) J_nu(2*pi*q*r) * 2*pi*r dr,    
+        H[f](q) = \int_0^R_{max} f(r) J_nu(2*pi*q*r) * 2*pi*r dr.
 
     The DHT is based on [1].
 
-    Additionally, this class provides coef
-    DHT [1] and provide Fourier-Bessel series representations.
+    Additionally this class provides coefficients of the DHT [1] transform
+    matrix
 
     Parameters
     ----------
     Rmax : float
-        Maximum radius beyond which f(r) is zero.
+        Maximum radius beyond which f(r) is zero
     N : integer
         Number of terms to use in the series
     nu : integer, default = 0
@@ -60,7 +60,7 @@ class DiscreteHankelTransform(object):
     """
     def __init__(self, Rmax, N, nu=0):
 
-        # Select the fast Bessel functions, if available.
+        # Select the fast Bessel functions, if available
         if nu == 0:
             self._jnu0 = j0
             self._jnup = j1
@@ -86,7 +86,7 @@ class DiscreteHankelTransform(object):
         self._Rmax = Rmax
         self._Qmax = Qmax
 
-        # Compute the weights Matrix
+        # Compute the weights matrix
         Jnk = np.outer(np.ones_like(j_nk), self._jnup(j_nk))
 
         self._Ykm = (2 / (j_nN * Jnk * Jnk)) * \
@@ -100,26 +100,26 @@ class DiscreteHankelTransform(object):
 
     def transform(self, f, q=None, direction='forward'):
         """
-        Computes the Hankel transform of an array.
+        Compute the Hankel transform of an array
 
         Parameters
         ----------
-        f : array, size=N
-            Function to Hankel Transform, evaluated at the collocation points:
-                f[k] = f(r_k) or f[k] = f(q_k).
-        q : array or None.
-            The frequency points at which to evaluate the Hankel 
-            transform. If not specified the conjugate points of the
-            DHT will be used. For the backwards transform q should be
+        f : array, size = N
+            Function to Hankel transform, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k)
+        q : array or None
+            The frequency points at which to evaluate the Hankel
+            transform. If not specified, the conjugate points of the
+            DHT will be used. For the backwards transform, q should be
             the radius points
         direction : { 'forward', 'backward' }, optional
             Direction of the transform. If not supplied, the forward
-            transform is used.
+            transform is used
 
         Returns
         -------
-        H[f] : array, size=N or len(q) if supplied
-            The Hankel transform of the array f.
+        H[f] : array, size = N or len(q) if supplied
+            The Hankel transform of the array f
 
         """
         if q is None:
@@ -141,23 +141,22 @@ class DiscreteHankelTransform(object):
     def coefficients(self, q=None, direction='forward'):
         """
         Coefficients of the transform matrix, defined by
-            H[f](q) = np.dot(Y, f).
+            H[f](q) = np.dot(Y, f)
 
         Parameters
         ----------
-        q : array, or None
-            Frequency points to evaluate the transform at. If q=None, the
-            points of the DHT are used. If direction='backward' then these 
-            points should be the radius points instead.
+        q : array or None
+            Frequency points at which to evaluate the transform. If q = None,
+            the points of the DHT are used. If direction='backward', these
+            points should instead be the radius points
         direction : { 'forward', 'backward' }, optional
-            Direction of the transform. If not supplied, the forward
-            transform is used.
+            Direction of the transform. If not supplied, the forward transform
+            is used
 
         Returns
         -------
-        Y : array, size=(len(q),N)
+        Y : array, size = (len(q), N)
             The transformation matrix
-            
         """
         if direction == 'forward':
             norm = 1 / (np.pi * self._Qmax ** 2)
@@ -185,7 +184,7 @@ class DiscreteHankelTransform(object):
 
     @property
     def Rmax(self):
-        """Maximum Radius"""
+        """Maximum radius"""
         return self._Rmax
 
     @property
@@ -195,7 +194,7 @@ class DiscreteHankelTransform(object):
 
     @property
     def Qmax(self):
-        """Maximum Frequency"""
+        """Maximum frequency"""
         return self._Qmax
 
     @property

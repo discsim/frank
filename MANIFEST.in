@@ -1,0 +1,8 @@
+include README.md AUTHORS.rst LICENSE.txt
+global-include default_parameters.json parameter_descriptions.json
+prune docs
+prune tutorials
+prune .ci
+exclude .clang-format
+exclude .gitattributes
+exclude .gitignore

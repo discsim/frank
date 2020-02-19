@@ -41,7 +41,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            py.test frankenstein/tests.py -rXs
+            py.test frank/tests.py -rXs
       - store_artifacts:
           path: test-reports
           destination: test-reports
@@ -56,6 +56,10 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
+            sudo apt-get install pandoc
+            pip install jupyter_client
+            pip install ipykernel
+            python3 -m ipykernel install --user
             pip install .[docs-build]
       - run:
           name: Build docs

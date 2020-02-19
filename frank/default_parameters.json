@@ -1,0 +1,43 @@
+{
+  "input_output" : {
+    "uvtable_filename" : "",
+    "load_dir"         : "",
+    "save_dir"	       : "",
+    "save_profile_fit" : true,
+    "save_vis_fit"     : true,
+    "save_uvtables"    : true,
+    "iteration_diag"   : false
+  },
+
+  "modify_data" : {
+    "cut_data"         : false,
+    "cut_baseline"     : null
+  },
+
+  "geometry" : {
+    "fit_geometry"     : true,
+    "known_geometry"   : false,
+    "fit_phase_offset" : true,
+    "inc"              : 0.0,
+    "pa"               : 0.0,
+    "dra"              : 0.0,
+    "ddec"             : 0.0
+  },
+
+  "hyperpriors" : {
+    "n"                : 250,
+    "rout"             : 1.6,
+    "alpha"            : 1.05,
+    "p0"               : 1e-15,
+    "wsmooth"          : 1e-4
+  },
+
+  "plotting" : {
+    "quick_plot"       : true,
+    "full_plot"        : true,
+    "save_figs"        : true,
+    "dist"             : null,
+    "bin_widths"       : [1e3],
+    "force_style"      : true
+  }
+}
