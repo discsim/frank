@@ -371,9 +371,9 @@ def main():
                               )
 
     # TODO: temp
-    prefix = model['input_output']['save_dir'] + '/' + os.path.splitext(model['input_output']['uvtable_filename'])[0]
-    import pickle
-    with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f: pickle.dump(iteration_diagnostics, f)
+    #prefix = model['input_output']['save_dir'] + '/' + os.path.splitext(model['input_output']['uvtable_filename'])[0]
+    #import pickle
+    #with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f: pickle.dump(iteration_diagnostics, f)
 
     figs = output_results(u, v, vis, weights, geom, sol,
                    model['plotting']['bin_widths'],
