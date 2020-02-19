@@ -734,7 +734,7 @@ class FrankFitter(FourierBesselFitter):
             if self._store_iteration_diagnostics:
                 self._iteration_diagnostics['power_spectrum'].append(pi)
                 self._iteration_diagnostics['mean'].append(fit.mean)
-            print('count',count)
+
             count += 1
 
         if self._store_iteration_diagnostics:
@@ -748,7 +748,7 @@ class FrankFitter(FourierBesselFitter):
         self._ps_cov = self._ps_covariance(fit, Tij, rho)
 
         if self._store_iteration_diagnostics:
-            return self._sol, iteration_diagnostics
+            return self._sol, self._iteration_diagnostics
         else:
             return self._sol
 
