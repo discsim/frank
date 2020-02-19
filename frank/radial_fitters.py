@@ -698,7 +698,7 @@ class FrankFitter(FourierBesselFitter):
 
         fit = self.fit_powerspectrum(pi)
 
-        pi[:] = np.max(np.dot(Ykm, fit.mean)) ** 2 /
+        pi[:] = np.max(np.dot(Ykm, fit.mean)) ** 2 / \
                 (self._ai + 0.5 * rho - 1.0)
         pi[:] *= (self.q / self.q[0]) ** -2
 
@@ -729,7 +729,7 @@ class FrankFitter(FourierBesselFitter):
             # Tr2 = Trace(Dqq)
             Tr2 = np.einsum('ij,ji->i', Ykm, fit.Dsolve(Ykm.T))
 
-            beta = (self._p0 + 0.5 * (Tr1 + Tr2)) / pi -
+            beta = (self._p0 + 0.5 * (Tr1 + Tr2)) / pi - \
                    (self._ai - 1.0 + 0.5 * rho)
             pi_new = np.exp(sparse_solve(Tij_pI, beta + np.log(pi)))
 
