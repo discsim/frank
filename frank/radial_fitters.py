@@ -613,7 +613,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True, block_size=10 ** 5,
                  alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=1000, store_iteration_diagnostics=False):
+                 tol=1e-3, max_iter=1000, store_iteration_diagnostics=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data, block_size)
 
