@@ -1,123 +1,274 @@
 
-<!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" />
-    <title>Python API reference &#8212; frankenstein 0.0.1 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>The Frankenstein Python API &mdash; frank 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="frankenstein 0.0.1" href="index.html" />
+    <link rel="next" title="Index" href="genindex.html" />
+    <link rel="prev" title="Assessing the uncertainty on a fit" href="tutorials/prior_sensitivity_and_uncertainty.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
-            
-  <div class="section" id="python-api-reference">
-<h1>Python API reference<a class="headerlink" href="#python-api-reference" title="Permalink to this headline">¶</a></h1>
-<p>The documentation of each function that is reported in this page can also be directly accessed from Python with, e.g.:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">frankenstein.radial_fitters</span> <span class="kn">import</span> <span class="n">FrankFitter</span>
+          
+            <a href="index.html" class="icon icon-home"> frank
+          
 
-<span class="n">help</span><span class="p">(</span><span class="n">FrankFitter</span><span class="p">)</span>
-</pre></div>
+          
+            
+            <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
 </div>
-<div class="section" id="determining-the-disc-geometry">
-<h2>Determining the disc geometry<a class="headerlink" href="#determining-the-disc-geometry" title="Permalink to this headline">¶</a></h2>
-<p>The first task before fitting the radial profile with Frankenstein is to determine the geometry of the disc. This is needed to de-project the visibilities so that Frankenstein can be applied to an axisymmetric source. To achieve this, an object specifying how the geometry is determined must be passed to the <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrankFitter</span></code></a>.</p>
-<p>Currently, we provide two classes that can determine the geometry, <a class="reference internal" href="#frankenstein.geometry.FixedGeometry" title="frankenstein.geometry.FixedGeometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedGeometry</span></code></a> and <a class="reference internal" href="#frankenstein.geometry.FitGeometryGaussian" title="frankenstein.geometry.FitGeometryGaussian"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code></a>.
-<a class="reference internal" href="#frankenstein.geometry.FixedGeometry" title="frankenstein.geometry.FixedGeometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">FixedGeometry</span></code></a> uses a known inclination, position angle, and phase centre.</p>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the code</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html"> Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html"> Tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers that use frank</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Under the hood</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#geometry-classes">Geometry classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fitting-classes">Fitting classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html"> Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank"> Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">frank</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>The Frankenstein Python API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="the-frankenstein-python-api">
+<h1>The Frankenstein Python API<a class="headerlink" href="#the-frankenstein-python-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="geometry-classes">
+<h2>Geometry classes<a class="headerlink" href="#geometry-classes" title="Permalink to this headline">¶</a></h2>
+<p>Given a set of visibilities, together these classes: <strong>(1)</strong> optionally fit for the source geometry and
+<strong>(2)</strong> deproject the visibilities by the given or fitted geometry.</p>
 <dl class="class">
-<dt id="frankenstein.geometry.FixedGeometry">
-<em class="property">class </em><code class="sig-prename descclassname">frankenstein.geometry.</code><code class="sig-name descname">FixedGeometry</code><span class="sig-paren">(</span><em class="sig-param">inc</em>, <em class="sig-param">PA</em>, <em class="sig-param">dRA=0.0</em>, <em class="sig-param">dDec=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.FixedGeometry" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.geometry.FixedGeometry">
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FixedGeometry</code><span class="sig-paren">(</span><em class="sig-param">inc</em>, <em class="sig-param">PA</em>, <em class="sig-param">dRA=0.0</em>, <em class="sig-param">dDec=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FixedGeometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Disc Geometry class using pre-determined parameters.</p>
-<p>Centres and deprojects the source to ensure axisymmetry.</p>
+<p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Disc inclination.</p></li>
-<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Disc positition angle.</p></li>
-<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>default=0</em><em>, </em><em>units=arcsec</em>) – Phase centre offset in Right Ascension.</p></li>
-<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>default=0</em><em>, </em><em>units=arcsec</em>) – Phase centre offset in Declination.</p></li>
+<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc inclination</p></li>
+<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc positition angle.</p></li>
+<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension
+NOTE: The sign convention is xx</p></li>
+<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in declination
+NOTE: The sign convention is xx</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-<p><a class="reference internal" href="#frankenstein.geometry.FitGeometryGaussian" title="frankenstein.geometry.FitGeometryGaussian"><code class="xref py py-class docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code></a> determines the geometry by fitting a Gaussian directly to the visibilities. In this case it is only necessary to specify whether the phase centre is already known or should be fitted for.</p>
 <dl class="class">
-<dt id="frankenstein.geometry.FitGeometryGaussian">
-<em class="property">class </em><code class="sig-prename descclassname">frankenstein.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param">phase_centre=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.geometry.FitGeometryGaussian">
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param">phase_centre=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a Gaussian in Fourier space.</p>
-<p>Centres and deprojects the source to ensure axisymmetry.</p>
+<p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>phase_centre</strong> (<em>tuple=</em><em>(</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em> Units=arcsec</em>) – Determines whether to fit for the phase centre of the source. If
-phase_centre=None the phase centre is fit for. Otherwise, the phase
-centre should be provided as a tuple.</p>
+<dd class="field-odd"><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
+phase_centre = None, the phase centre is fit for. Else the phase
+centre should be provided as a tuple</p>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="section" id="adding-your-own-geometry-fit-routine">
-<h3>Adding your own geometry fit routine<a class="headerlink" href="#adding-your-own-geometry-fit-routine" title="Permalink to this headline">¶</a></h3>
-<p>It is possible to extend Frankenstein’s geometry fitting capabilities with your own routines. To do this you should write your own class that inherits from the <a class="reference internal" href="#frankenstein.geometry.SourceGeometry" title="frankenstein.geometry.SourceGeometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span></code></a> base class. The <a class="reference internal" href="#frankenstein.geometry.SourceGeometry" title="frankenstein.geometry.SourceGeometry"><code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span></code></a> base class provides the interface used by Frankenstein to de-project the data, but you must implement your own <a class="reference internal" href="#frankenstein.geometry.SourceGeometry.fit" title="frankenstein.geometry.SourceGeometry.fit"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code></a> method. This method will be called internally by <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrankFitter</span></code></a> to determine the geometry.</p>
-<p>The <a class="reference internal" href="#frankenstein.geometry.SourceGeometry.fit" title="frankenstein.geometry.SourceGeometry.fit"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code></a> method should set the attributes <code class="xref py py-data docutils literal notranslate"><span class="pre">_inc</span></code>,  <code class="xref py py-data docutils literal notranslate"><span class="pre">_PA</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">_dRA</span></code>, and <code class="xref py py-data docutils literal notranslate"><span class="pre">_dDec</span></code>, which are used by the
-<a class="reference internal" href="#frankenstein.geometry.SourceGeometry.apply_correction" title="frankenstein.geometry.SourceGeometry.apply_correction"><code class="xref py py-func docutils literal notranslate"><span class="pre">apply_correction()</span></code></a>,
-<a class="reference internal" href="#frankenstein.geometry.SourceGeometry.apply_correction" title="frankenstein.geometry.SourceGeometry.apply_correction"><code class="xref py py-func docutils literal notranslate"><span class="pre">undo_correction()</span></code></a>,
-<a class="reference internal" href="#frankenstein.geometry.SourceGeometry.apply_correction" title="frankenstein.geometry.SourceGeometry.apply_correction"><code class="xref py py-func docutils literal notranslate"><span class="pre">deproject</span></code></a>,
-and
-<a class="reference internal" href="#frankenstein.geometry.SourceGeometry.apply_correction" title="frankenstein.geometry.SourceGeometry.apply_correction"><code class="xref py py-func docutils literal notranslate"><span class="pre">reproject</span></code></a> methods. For the call signature of <a class="reference internal" href="#frankenstein.geometry.SourceGeometry.fit" title="frankenstein.geometry.SourceGeometry.fit"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code></a>, see below.</p>
 <dl class="class">
-<dt id="frankenstein.geometry.SourceGeometry">
-<em class="property">class </em><code class="sig-prename descclassname">frankenstein.geometry.</code><code class="sig-name descname">SourceGeometry</code><span class="sig-paren">(</span><em class="sig-param">inc=None</em>, <em class="sig-param">PA=None</em>, <em class="sig-param">dRA=None</em>, <em class="sig-param">dDec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.SourceGeometry" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.geometry.SourceGeometry">
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">SourceGeometry</code><span class="sig-paren">(</span><em class="sig-param">inc=None</em>, <em class="sig-param">PA=None</em>, <em class="sig-param">dRA=None</em>, <em class="sig-param">dDec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for geometry corrections.</p>
-<p>Centres and deprojects the source to ensure axisymmetry.</p>
+<p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Inclination of the disc</p></li>
-<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>units=deg</em>) – Position Angle of the disc</p></li>
-<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>units=arcseconds</em>) – Phase centre offset in Right Ascension</p></li>
-<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>units=arcseconds</em>) – Phase centre offset in Declination</p></li>
+<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Inclination of the disc</p></li>
+<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Position angle of the disc</p></li>
+<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension.
+NOTE: The sign convention is xx</p></li>
+<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>units = arcsec</em>) – Phase centre offset in declination.
+NOTE: The sign convention is xx</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
-<dt id="frankenstein.geometry.SourceGeometry.apply_correction">
-<code class="sig-name descname">apply_correction</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">vis</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Correct the phase-centre and de-project the visibilities.</p>
+<dt id="frank.geometry.SourceGeometry.apply_correction">
+<code class="sig-name descname">apply_correction</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correct the phase centre and deproject the visibilities</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
-<li><p><strong>v</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>vis</strong> (<em>array of real</em><em>, </em><em>size=N</em><em>, </em><em>units=Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
+<li><p><strong>V</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>units = Jy</em>) – Complex visibilites</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>up</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
-<li><p><strong>vp</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
-<li><p><strong>visp</strong> (<em>array of real, size=N, units=Jy</em>) – Corrected complex visibilites</p></li>
+<li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
+<li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
+<li><p><strong>Vp</strong> (<em>array of real, size = N, unit = Jy</em>) – Corrected complex visibilites</p></li>
 </ul>
 </p>
 </dd>
@@ -125,50 +276,50 @@ and
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.geometry.SourceGeometry.deproject">
-<code class="sig-name descname">deproject</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.SourceGeometry.deproject" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert uv-points to sky-plane deprojected space</p>
+<dt id="frank.geometry.SourceGeometry.deproject">
+<code class="sig-name descname">deproject</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert uv-points from sky-plane to deprojected space</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.geometry.SourceGeometry.fit">
-<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">visib</em>, <em class="sig-param">weights</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.SourceGeometry.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine geometry using the uv-data provided.</p>
+<dt id="frank.geometry.SourceGeometry.fit">
+<em class="property">abstract </em><code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em>, <em class="sig-param">weights</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine geometry using the provided uv-data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
-<li><p><strong>v</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>visib</strong> (<em>array of complex</em><em>, </em><em>size=N</em><em>, </em><em>units=Jy</em>) – Complex visibilites</p></li>
-<li><p><strong>weights</strong> (<em>array of real</em><em>, </em><em>size=NN</em><em>, </em><em>units=Jy</em>) – Weights on the visibilities.</p></li>
+<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
+<li><p><strong>V</strong> (<em>array of complex</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>weights</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Weights on the visibilities</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.geometry.SourceGeometry.reproject">
-<code class="sig-name descname">reproject</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.SourceGeometry.reproject" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.geometry.SourceGeometry.reproject">
+<code class="sig-name descname">reproject</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert uv-points from deprojected space to sky-plane</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.geometry.SourceGeometry.undo_correction">
-<code class="sig-name descname">undo_correction</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">vis</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.geometry.SourceGeometry.undo_correction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Undo the phase-centre correction and de-projection.</p>
+<dt id="frank.geometry.SourceGeometry.undo_correction">
+<code class="sig-name descname">undo_correction</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.undo_correction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undo the phase centre correction and deprojection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
-<li><p><strong>v</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>vis</strong> (<em>array of real</em><em>, </em><em>size=N</em><em>, </em><em>units=Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
+<li><p><strong>V</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>up</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
-<li><p><strong>vp</strong> (array of real, size=N, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
-<li><p><strong>visp</strong> (<em>array of real, size=N, units=Jy</em>) – Corrected complex visibilites</p></li>
+<li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
+<li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
+<li><p><strong>Vp</strong> (<em>array of real, size = N, unit = Jy</em>) – Corrected complex visibilites</p></li>
 </ul>
 </p>
 </dd>
@@ -178,37 +329,39 @@ and
 </dd></dl>
 
 </div>
-</div>
-<div class="section" id="running-a-fit">
-<h2>Running a fit<a class="headerlink" href="#running-a-fit" title="Permalink to this headline">¶</a></h2>
-<p>Fits are done with Frankenstein using the <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrankFitter</span></code></a> class. The main parameters for <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrankFitter</span></code></a> are <code class="code docutils literal notranslate"><span class="pre">Rmax</span></code> and <code class="code docutils literal notranslate"><span class="pre">N</span></code>, controlling the size of the region fit and the number of points to fit and the <code class="code docutils literal notranslate"><span class="pre">geometry</span></code> object (see above). The hyperprior is controlled through the parameters <code class="code docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="code docutils literal notranslate"><span class="pre">p_0</span></code> and <code class="code docutils literal notranslate"><span class="pre">smooth</span></code>.</p>
-<p>The fit is performed by calling the  <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter.fit" title="frankenstein.radial_fitters.FrankFitter.fit"><code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code></a> of <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrankFitter</span></code></a>.</p>
+<div class="section" id="fitting-classes">
+<h2>Fitting classes<a class="headerlink" href="#fitting-classes" title="Permalink to this headline">¶</a></h2>
+<p>Together these classes reconstruct the 1D radial brightness profile of a source by fitting
+the deprojected visibilities.</p>
 <dl class="class">
-<dt id="frankenstein.radial_fitters.FrankFitter">
-<em class="property">class </em><code class="sig-prename descclassname">frankenstein.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param">Rmax</em>, <em class="sig-param">N</em>, <em class="sig-param">geometry</em>, <em class="sig-param">nu=0</em>, <em class="sig-param">block_data=True</em>, <em class="sig-param">block_size=10000000</em>, <em class="sig-param">alpha=1.05</em>, <em class="sig-param">p_0=1e-15</em>, <em class="sig-param">weights_smooth=0.1</em>, <em class="sig-param">tol=0.001</em>, <em class="sig-param">max_iter=250</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters.FrankFitter">
+<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param">Rmax</em>, <em class="sig-param">N</em>, <em class="sig-param">geometry</em>, <em class="sig-param">nu=0</em>, <em class="sig-param">block_data=True</em>, <em class="sig-param">block_size=100000</em>, <em class="sig-param">alpha=1.05</em>, <em class="sig-param">p_0=1e-15</em>, <em class="sig-param">weights_smooth=0.0001</em>, <em class="sig-param">tol=0.001</em>, <em class="sig-param">max_iter=1000</em>, <em class="sig-param">store_iteration_diagnostics=False</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
 Baddour &amp; Chouinard (2015).</p>
 <p>The GP model is based upon Oppermann et al. (2013), which use a maximum
-aposteriori estimate for the power spectrum as the GP prior for the
-real-space coefficients.</p>
+a posteriori estimate for the power spectrum as the GP prior for the
+real-space coefficients</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit=arcsec</em>) – Radius of support for the functions to transform, i.e. f(r) = 0 for
+<li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Radius of support for the functions to transform, i.e., f(r) = 0 for
 R &gt;= Rmax.</p></li>
 <li><p><strong>N</strong> (<em>int</em>) – Number of collaction points</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em>) – Geometry used to de-project the visibilities before fitting.</p></li>
-<li><p><strong>nu</strong> (<em>int default = 0.</em>) – Order of the discrete Hankel transform, given by J_nu(r).</p></li>
-<li><p><strong>alpha</strong> (<em>float &gt;= 1</em><em>, </em><em>default = 1.05</em>) – Order parameter of the inverse gamma prior for the power spectrum.
-coefficients.</p></li>
-<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-15</em><em>, </em><em>unit=Jy^2</em>) – Scale parameter of the inverse gamma prior for the power spectrum.
-coefficients.</p></li>
-<li><p><strong>smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 0.1</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior.</p></li>
-<li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration.</p></li>
-<li><p><strong>block_data</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Large temporary matrices are needed to set up the data, if block_data
-is True we avoid this, limiting the memory requirement to block_size
-elements.</p></li>
-<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**7</em>) – Size of the matrices if blocking is used.</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em>) – Geometry used to deproject the visibilities before fitting</p></li>
+<li><p><strong>nu</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Order of the discrete Hankel transform, given by J_nu(r)</p></li>
+<li><p><strong>block_data</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Large temporary matrices are needed to set up the data. If block_data
+is True, we avoid this, limiting the memory requirement to block_size
+elements</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Size of the matrices if blocking is used</p></li>
+<li><p><strong>alpha</strong> (<em>float &gt;= 1</em><em>, </em><em>default = 1.05</em>) – Order parameter of the inverse gamma prior for the power spectrum
+coefficients</p></li>
+<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-15</em><em>, </em><em>unit=Jy^2</em>) – Scale parameter of the inverse gamma prior for the power spectrum
+coefficients</p></li>
+<li><p><strong>weights_smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-4</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
+<li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 1000</em>) – Maximum number of fit iterations</p></li>
+<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
+for each fit iteration</p></li>
 </ul>
 </dd>
 </dl>
@@ -220,103 +373,106 @@ elements.</p></li>
 </dd>
 </dl>
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.MAP_solution">
-<em class="property">property </em><code class="sig-name descname">MAP_solution</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.MAP_solution" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters.FrankFitter.MAP_solution">
+<em class="property">property </em><code class="sig-name descname">MAP_solution</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_solution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reconstruction for the maximum a posteriori power spectrum</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.MAP_spectrum">
-<em class="property">property </em><code class="sig-name descname">MAP_spectrum</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.MAP_spectrum" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters.FrankFitter.MAP_spectrum">
+<em class="property">property </em><code class="sig-name descname">MAP_spectrum</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum a posteriori power spectrum</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.MAP_spectrum_covariance">
-<em class="property">property </em><code class="sig-name descname">MAP_spectrum_covariance</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.MAP_spectrum_covariance" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters.FrankFitter.MAP_spectrum_covariance">
+<em class="property">property </em><code class="sig-name descname">MAP_spectrum_covariance</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariance matrix of the maximum a posteriori power spectrum</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.Qmax">
-<em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.Qmax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maximum Frequency, units= <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+<dt id="frank.radial_fitters.FrankFitter.Qmax">
+<em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Qmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.Rmax">
-<em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.Rmax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maximum Radius, units=arcsec</p>
+<dt id="frank.radial_fitters.FrankFitter.Rmax">
+<em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Rmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em>, <em class="sig-param">weights=1</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit the visibilties.</p>
+<dt id="frank.radial_fitters.FrankFitter.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em>, <em class="sig-param">weights=1</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the visibilties</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong><strong>,</strong><strong>v</strong> (1D array, units= <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies.</p></li>
-<li><p><strong>V</strong> (<em>1D array</em><em>, </em><em>units=Jy</em>) – Visibility amplitudes at q</p></li>
-<li><p><strong>weights</strong> (<em>1D array</em><em>, </em><em>optional</em><em>, </em><em>units=Jy^-2</em>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
-the standard deviation.</p></li>
+<li><p><strong>u</strong><strong>,</strong><strong>v</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
+<li><p><strong>V</strong> (<em>1D array</em><em>, </em><em>unit = Jy</em>) – Visibility amplitudes at q</p></li>
+<li><p><strong>weights</strong> (<em>1D array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy^-2</em>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+the standard deviation</p></li>
+<li><p><strong>iteration_diagnostics</strong> (<em>dict</em><em>, </em><em>optional</em><em>,</em>) – size = N_iter x 2 x N_{collocation points}
+Power spectrum parameters and posterior mean brightness profile at
+each fit iteration, and number of iterations</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>MAP_sol</strong> – Reconstructed profile using Maximum a posteriori power spectrum.</p>
+<dd class="field-even"><p><strong>MAP_sol</strong> – Reconstructed profile using maximum a posteriori power spectrum</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor" title="frankenstein.radial_fitters._HankelRegressor">_HankelRegressor</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters._HankelRegressor" title="frank.radial_fitters._HankelRegressor">_HankelRegressor</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.geometry">
-<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.geometry" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters.FrankFitter.geometry">
+<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometry object</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.q">
-<em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.q" title="Permalink to this definition">¶</a></dt>
-<dd><p>Frequency points, units= <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+<dt id="frank.radial_fitters.FrankFitter.q">
+<em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.r">
-<em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.r" title="Permalink to this definition">¶</a></dt>
-<dd><p>Radius points, units=arcsec</p>
+<dt id="frank.radial_fitters.FrankFitter.r">
+<em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters.FrankFitter.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frankenstein.radial_fitters.FrankFitter.size" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters.FrankFitter.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
 </dd></dl>
 
 </dd></dl>
 
-<p>Once the fit is complete the best-fit parameters will be returned and stored in the <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter.MAP_solution" title="frankenstein.radial_fitters.FrankFitter.MAP_solution"><code class="xref py py-data docutils literal notranslate"><span class="pre">MAP_solutution</span></code></a> attribute of the  <a class="reference internal" href="#frankenstein.radial_fitters.FrankFitter" title="frankenstein.radial_fitters.FrankFitter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FrankFitter</span></code></a>. The fit is returned as a <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor" title="frankenstein.radial_fitters._HankelRegressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">_HankelRegressor</span></code></a> object, which provides the posterior <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.mean" title="frankenstein.radial_fitters._HankelRegressor.mean"><code class="xref py py-data docutils literal notranslate"><span class="pre">mean</span></code></a>, <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.covariance" title="frankenstein.radial_fitters._HankelRegressor.covariance"><code class="xref py py-data docutils literal notranslate"><span class="pre">covariance</span></code></a>, and  <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.power_spectrum" title="frankenstein.radial_fitters._HankelRegressor.power_spectrum"><code class="xref py py-data docutils literal notranslate"><span class="pre">power</span> <span class="pre">spectrum</span></code></a>, as well as the <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.r" title="frankenstein.radial_fitters._HankelRegressor.r"><code class="xref py py-data docutils literal notranslate"><span class="pre">radius</span> <span class="pre">points</span></code></a> of the fit and the corresponding  <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.q" title="frankenstein.radial_fitters._HankelRegressor.q"><code class="xref py py-data docutils literal notranslate"><span class="pre">frequency</span> <span class="pre">points</span></code></a>. Additionally, the solution object provides methods to compute the <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.predict" title="frankenstein.radial_fitters._HankelRegressor.predict"><code class="xref py py-func docutils literal notranslate"><span class="pre">visibilities</span></code></a> of the best fit model and evaluate its <a class="reference internal" href="#frankenstein.radial_fitters._HankelRegressor.log_likelihood" title="frankenstein.radial_fitters._HankelRegressor.log_likelihood"><code class="xref py py-func docutils literal notranslate"><span class="pre">log-likelihood</span></code></a>.</p>
 <dl class="class">
-<dt id="frankenstein.radial_fitters._HankelRegressor">
-<em class="property">class </em><code class="sig-prename descclassname">frankenstein.radial_fitters.</code><code class="sig-name descname">_HankelRegressor</code><span class="sig-paren">(</span><em class="sig-param">DHT</em>, <em class="sig-param">M</em>, <em class="sig-param">j</em>, <em class="sig-param">p=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">noise_likelihood=0</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Solves the Linear Regression problem to compute the posterior</p>
+<dt id="frank.radial_fitters._HankelRegressor">
+<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">_HankelRegressor</code><span class="sig-paren">(</span><em class="sig-param">DHT</em>, <em class="sig-param">M</em>, <em class="sig-param">j</em>, <em class="sig-param">p=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">noise_likelihood=0</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves the linear regression problem to compute the posterior,</p>
 <div class="math notranslate nohighlight">
-\[P(I|q,V,p) ~ G(I-\mu, D),\]</div>
-<p>where <span class="math notranslate nohighlight">\(I\)</span> is the intensity to be predicted, <span class="math notranslate nohighlight">\(q\)</span>, and <span class="math notranslate nohighlight">\(V\)</span>
-are the baselines and visibility data. <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(D\)</span> are the
-mean and covariance of the posterior distribution.</p>
-<p>If <span class="math notranslate nohighlight">\(S\)</span> is provided, it is the covariance matrix of prior</p>
+\[P(I|q,V,p) \propto G(I-\mu, D),\]</div>
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is the intensity to be predicted, <span class="math notranslate nohighlight">\(q\)</span> are the
+baselines and <span class="math notranslate nohighlight">\(V\)</span> the visibility data. <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(D\)</span> are
+the mean and covariance of the posterior distribution.</p>
+<p>If <span class="math notranslate nohighlight">\(p\)</span> is provided, the covariance matrix of the prior is included,
+with</p>
 <div class="math notranslate nohighlight">
-\[P(I|p) ~ G(I, S(p)),\]</div>
+\[P(I|p) \propto G(I, S(p)),\]</div>
 <p>and the Bayesian Linear Regression problem is solved. <span class="math notranslate nohighlight">\(S\)</span> is computed
-from the power spectrum, <span class="math notranslate nohighlight">\(p\)</span>, if provided, otherwise the traditional
-(frequentist) Linear Regression is used instead.</p>
-<p>The problem is framed in terms of the design matrix, <span class="math notranslate nohighlight">\(M\)</span> and
-information source, <span class="math notranslate nohighlight">\(j\)</span>.</p>
-<p><span class="math notranslate nohighlight">\(H(q)\)</span> is the matrix that projects the intensity, <span class="math notranslate nohighlight">\(I\)</span>, to
-visibility space and <span class="math notranslate nohighlight">\(M\)</span> is defined by</p>
+from the power spectrum, <span class="math notranslate nohighlight">\(p\)</span>, if provided. Otherwise the traditional
+(frequentist) linear regression is used.</p>
+<p>The problem is framed in terms of the design matrix <span class="math notranslate nohighlight">\(M\)</span> and
+information source <span class="math notranslate nohighlight">\(j\)</span>.</p>
+<p><span class="math notranslate nohighlight">\(H(q)\)</span> is the matrix that projects the intensity <span class="math notranslate nohighlight">\(I\)</span> to
+visibility space. <span class="math notranslate nohighlight">\(M\)</span> is defined by</p>
 <div class="math notranslate nohighlight">
 \[M = H(q)^T w H(q),\]</div>
 <p>where <span class="math notranslate nohighlight">\(w\)</span> is the weights matrix and</p>
@@ -335,61 +491,61 @@ visibility space and <span class="math notranslate nohighlight">\(M\)</span> is 
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>DHT</strong> (<em>DiscreteHankelTransform</em>) – A DHT object with N bins that defines H(p). The DHT is used to compute
-<span class="math notranslate nohighlight">\(S(p)\)</span>.</p></li>
-<li><p><strong>M</strong> (<em>2D array</em><em>, </em><em>size=</em><em>(</em><em>N</em><em>, </em><em>N</em><em>)</em>) – The design matrix, see above.</p></li>
-<li><p><strong>j</strong> (<em>1D array</em><em>, </em><em>size=N</em>) – Information source, see above.</p></li>
-<li><p><strong>p</strong> (<em>1D array</em><em>, </em><em>size=N</em><em>, </em><em>optional</em>) – Power spectrum used to generate the covarience matrix, <span class="math notranslate nohighlight">\(S(p)\)</span>.</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – If provided, this geometry will be used to de-project the visibilities
-in self.predict.</p></li>
-<li><p><strong>noise_likelihood</strong> (<em>floaat</em><em>, </em><em>optional</em>) – <p>An optional parameter needed to compute the full likelihood, which
+<span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
+<li><p><strong>M</strong> (<em>2D array</em><em>, </em><em>size =</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – The design matrix, see above</p></li>
+<li><p><strong>j</strong> (<em>1D array</em><em>, </em><em>size = N</em>) – Information source, see above</p></li>
+<li><p><strong>p</strong> (<em>1D array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em>) – Power spectrum used to generate the covarience matrix <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – If provided, this geometry will be used to deproject the visibilities
+in self.predict</p></li>
+<li><p><strong>noise_likelihood</strong> (<em>float</em><em>, </em><em>optional</em>) – <p>An optional parameter needed to compute the full likelihood, which
 should be equal to</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}-\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log[w/(2*np.pi)]\end{split}\]</div>
+\[-\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2 \pi)].\]</div>
 <p>If not  provided, the likelihood can still be computed up to this
-missing constant.</p>
+missing constant</p>
 </p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.Qmax">
-<em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.Qmax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maximum frequency, units= <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+<dt id="frank.radial_fitters._HankelRegressor.Qmax">
+<em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Qmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.Rmax">
-<em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.Rmax" title="Permalink to this definition">¶</a></dt>
-<dd><p>Maximum Radius, unit=arcsec</p>
+<dt id="frank.radial_fitters._HankelRegressor.Rmax">
+<em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Rmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.covariance">
-<em class="property">property </em><code class="sig-name descname">covariance</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.covariance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Posterior covariance, unit=(Jr/Sr)^2</p>
+<dt id="frank.radial_fitters._HankelRegressor.covariance">
+<em class="property">property </em><code class="sig-name descname">covariance</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Posterior covariance, unit = (Jy / sr)**2</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.geometry">
-<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.geometry" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters._HankelRegressor.geometry">
+<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometry object</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.log_likelihood">
-<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param">I=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes one of two types of likelihood.</p>
+<dt id="frank.radial_fitters._HankelRegressor.log_likelihood">
+<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param">I=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute one of two types of likelihood.</p>
 <p>If <span class="math notranslate nohighlight">\(I\)</span> is provided, this computes</p>
-<p>otherwise the marginalized likelihood is computed:</p>
+<p>Otherwise the marginalized likelihood is computed,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size=N</em><em>, </em><em>optional. Units=Jy/Sr</em>) – Intensity, <span class="math notranslate nohighlight">\(I(r)\)</span>, to compute the likelihood of.</p>
+<dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity <span class="math notranslate nohighlight">\(I(r)\)</span> to compute the likelihood of</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>log_P</strong> – log likelihood, <span class="math notranslate nohighlight">\(\\log[P(I,V|p)]\)</span> or <span class="math notranslate nohighlight">\(\\log[P(V|p)]\)</span></p>
+<dd class="field-even"><p><strong>log_P</strong> – Log likelihood, <span class="math notranslate nohighlight">\(\log[P(I,V|p)]\)</span> or <span class="math notranslate nohighlight">\(\log[P(V|p)]\)</span></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float,</p>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -398,63 +554,73 @@ missing constant.</p>
 <li><p>The likelihoods take the form:</p></li>
 </ol>
 <div class="math notranslate nohighlight">
-\[\begin{split}\\log[P(I,V|p)] = \\frac{1}{2} j^T I - \\frac{1}{2} I^T D^{-1} I
-   - \\frac{1}{2} \\log[\\det(2 \pi S)] + H_0\end{split}\]</div>
+\[\log[P(I,V|p)] = \frac{1}{2} j^T I - \frac{1}{2} I^T D^{-1} I
+   - \frac{1}{2} \log[\det(2 \pi S)] + H_0\]</div>
 <p>and</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\\log[P(V|p)] = \\frac{1}{2} j^T D j
-   + \\frac{1}{2} \\log[\\det(D)/\\det(S)] + H_0\end{split}\]</div>
+\[\log[P(V|p)] = \frac{1}{2} j^T D j
+   + \frac{1}{2} \log[\det(D)/\det(S)] + H_0\]</div>
 <p>where</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}H_0 = -\\frac{1}{2} V^T w V + \\frac{1}{2} \\sum \\log(w /2 \pi)\end{split}\]</div>
+\[H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)\]</div>
 <p>is the noise likelihood.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.mean">
-<em class="property">property </em><code class="sig-name descname">mean</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.mean" title="Permalink to this definition">¶</a></dt>
-<dd><p>Posterior mean, unit=Jr/Sr</p>
+<dt id="frank.radial_fitters._HankelRegressor.mean">
+<em class="property">property </em><code class="sig-name descname">mean</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Posterior mean, unit = Jy / sr</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.power_spectrum">
-<em class="property">property </em><code class="sig-name descname">power_spectrum</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.power_spectrum" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters._HankelRegressor.power_spectrum">
+<em class="property">property </em><code class="sig-name descname">power_spectrum</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.power_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectrum coefficients</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">I=None</em>, <em class="sig-param">geometry=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters._HankelRegressor.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">I=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">block_size=100000</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>v</strong> (<em>u</em><em>,</em>) – uv-points to predict the visibilities at</p></li>
-<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>units=Jy</em>) – Intensity points to predict the vibilities of. If not specified,
+<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy</em>) – Intensity points to predict the vibilities of. If not specified,
 the mean will be used. The intensity should be specified at the
-collocation points, I[k] = <span class="math notranslate nohighlight">\(I(r_k)\)</span>.</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to de-project the visibilities. If not provided
-a default one passed in during construction will be used.</p></li>
+collocation points, I[k] = <span class="math notranslate nohighlight">\(I(r_k)\)</span></p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>V(u,v)</strong> – Predicted visibilties of a source with a radial flux distribution
+given by <span class="math notranslate nohighlight">\(I\)</span> and the position angle, inclination and phase
+centre determined by the geometry object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.q">
-<em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.q" title="Permalink to this definition">¶</a></dt>
-<dd><p>Frequency points, units= <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+<dt id="frank.radial_fitters._HankelRegressor.q">
+<em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.q" title="Permalink to this definition">¶</a></dt>
+<dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.r">
-<em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.r" title="Permalink to this definition">¶</a></dt>
-<dd><p>Radius points, unit=arcsec</p>
+<dt id="frank.radial_fitters._HankelRegressor.r">
+<em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.r" title="Permalink to this definition">¶</a></dt>
+<dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="frankenstein.radial_fitters._HankelRegressor.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frankenstein.radial_fitters._HankelRegressor.size" title="Permalink to this definition">¶</a></dt>
+<dt id="frank.radial_fitters._HankelRegressor.size">
+<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
 </dd></dl>
 
@@ -464,78 +630,55 @@ a default one passed in during construction will be used.</p></li>
 </div>
 
 
+           </div>
+           
           </div>
-          
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">frankenstein</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Python API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#determining-the-disc-geometry">Determining the disc geometry</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#adding-your-own-geometry-fit-routine">Adding your own geometry fit routine</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#running-a-fit">Running a fit</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter"><strong>frankenstein</strong> 0.0.1</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="genindex.html" class="btn btn-neutral float-right" title="Index" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials/prior_sensitivity_and_uncertainty.html" class="btn btn-neutral float-left" title="Assessing the uncertainty on a fit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
     </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+  
 
+  <hr/>
 
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
+      <span class="lastupdated">
+        Last updated on 2020 Feb 19 at 16:45:32 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      </span>
 
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
-
-
-
+</footer>
 
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019-2020, R. Booth, J. Jenning, M. Tazzari.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.3.1</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/py_API.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
 
-    
+    </section>
 
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
     
-  </body>
+   
+
+</body>
 </html>

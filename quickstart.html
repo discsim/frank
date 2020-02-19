@@ -1,0 +1,549 @@
+
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Performing a fit &mdash; frank 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorials" href="tutorials.html" />
+    <link rel="prev" title="Installation" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> frank
+          
+
+          
+            
+            <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the code</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html"> Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#perform-a-fit-from-the-terminal">Perform a fit from the terminal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#perform-multiple-fits-in-a-loop">Perform multiple fits in a loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modify-the-fit-py-script">Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#perform-a-fit-using-frank-as-a-python-module">Perform a fit using <code class="code docutils literal notranslate"><span class="pre">frank</span></code> as a Python module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html"> Tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers that use frank</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Under the hood</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="py_API.html"> API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genindex.html"> Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank"> Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">frank</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Performing a fit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="performing-a-fit">
+<h1>Performing a fit<a class="headerlink" href="#performing-a-fit" title="Permalink to this headline">¶</a></h1>
+<p>You can interface with Frankenstein (<code class="docutils literal notranslate"><span class="pre">frank</span></code>) to perform a fit in 2 ways:
+<strong>(1)</strong> run the code directly from the terminal or <strong>(2)</strong> use the code as a Python module.</p>
+<div class="section" id="perform-a-fit-from-the-terminal">
+<h2>Perform a fit from the terminal<a class="headerlink" href="#perform-a-fit-from-the-terminal" title="Permalink to this headline">¶</a></h2>
+<p>To perform a quick fit from the terminal, only a UVTable with the data to
+be fit and a <em>.json</em> parameter file (see below) are needed. A UVTable can be extracted
+with CASA as demonstrated in <a class="reference external" href="tutorials/xx">this tutorial</a>.
+The column format should be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[m]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[m]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
+<p>If you specify <code class="code docutils literal notranslate"><span class="pre">load_dir</span></code>, <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code> and <code class="code docutils literal notranslate"><span class="pre">uvtable_filename</span></code> in the default parameter file,
+(see below for how to get a template parameter file) you can perform a fit using the default parameters with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit
+</pre></div>
+</div>
+<p>where <code class="code docutils literal notranslate"><span class="pre">-m</span></code> runs the <code class="code docutils literal notranslate"><span class="pre">frank/fit</span></code> module as a script.</p>
+<p>Alternatively you can leave any/all of the load directory, save directory and UVTable filename empty in the parameter file.
+If so, the load directory will be set to your current working directory, the save directory to your load directory,
+and you pass in the UVTable filename with the <code class="code docutils literal notranslate"><span class="pre">-uv</span></code> option.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit -uv &lt;uvtable_filename.txt&gt;
+</pre></div>
+</div>
+<p>If you want to change the default parameters, provide a custom parameter file with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit <span class="o">[</span>-uv uvtable_filename.txt<span class="o">]</span> -p &lt;parameter_filename.json&gt;
+</pre></div>
+</div>
+<p>The default parameter file is <code class="docutils literal notranslate"><span class="pre">default_parameters.json</span></code>. You can get it
+<a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/default_parameters.json">here</a>,
+and it looks like this:</p>
+<div class="highlight-json notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;load_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_dir&quot;</span>	       <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="kc">false</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;cut_data&quot;</span>         <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;cut_baseline&quot;</span>     <span class="p">:</span> <span class="kc">null</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;fit_geometry&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;known_geometry&quot;</span>   <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="mf">0.0</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;hyperpriors&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;n&quot;</span>                <span class="p">:</span> <span class="mi">250</span><span class="p">,</span>
+    <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="mf">1.6</span><span class="p">,</span>
+    <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="mf">1.05</span><span class="p">,</span>
+    <span class="nt">&quot;p0&quot;</span>               <span class="p">:</span> <span class="mf">1e-15</span><span class="p">,</span>
+    <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="mf">1e-4</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;plotting&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;quick_plot&quot;</span>       <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;full_plot&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;save_figs&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;dist&quot;</span>             <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="p">[</span><span class="mf">1e3</span><span class="p">],</span>
+    <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="kc">true</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>Note that anytime you run a fit without specifying <code class="code docutils literal notranslate"><span class="pre">-p</span></code>, frank’s internal <code class="code docutils literal notranslate"><span class="pre">default_parameters.json</span></code> will be used.</p>
+<p>You can get a description for each parameter with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -c <span class="s1">&#39;import frank.fit; frank.fit.helper()&#39;</span>
+</pre></div>
+</div>
+<p>which returns</p>
+<div class="highlight-json notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;load_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory containing UV table&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to save fitted brightness profile&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Whether to save fitted visibility distribution&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to save fitted and residual UV tables (these are reprojected)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Whether to return diagnostics of the fit iteration&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;cut_data&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Whether to truncate the visibilities at a given maximum baseline prior to fitting&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;cut_baseline&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Maximum baseline at which visibilities are truncated&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;fit_geometry&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Whether to fit for the source&#39;s geometry (on-sky projection)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;known_geometry&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Whether to manually specify a geometry (if False, geometry will be fit)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center or just the inclination and position angle&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination. [deg]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle. [deg]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension. [arcsec]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Delta declination. [arcsec]&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;hyperpriors&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;n&quot;</span>                <span class="p">:</span> <span class="s2">&quot;Number of collocation points used in the fit (suggested range 100 - 300)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Maximum disc radius in the fit (best to overestimate size of source). [arcsec]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="s2">&quot;Order parameter for the power spectrum&#39;s inverse Gamma prior (suggested range 1.00 - 1.50)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;p0&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Scale parameter for the power spectrum&#39;s inverse Gamma prior (suggested &gt;0, &lt;&lt;1)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="s2">&quot;Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;plotting&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;quick_plot&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Whether to make a figure showing the simplest plots of the fit&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;full_plot&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to make a figure more fully showing the fit and its diagnostics&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_figs&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to save generated figures&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dist&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Distance to source, optionally used for plotting. [AU]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities. [\\lambda]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="s2">&quot;Whether to use preconfigured matplotlib rcParams in generated figures&quot;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>That’s it! By default frank saves (in <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code>) the parameter file you use as <code class="code docutils literal notranslate"><span class="pre">frank_used_pars.json</span></code>,
+the fitted brightness profile as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_profile_fit.txt</span></code>,
+the visibility domain fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_vis_fit.npz</span></code>, UVTables for the <strong>reprojected</strong>
+fit and its residuals as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_fit.txt</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_resid.txt</span></code>,
+and a figure showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_full.png</span></code>.
+Optionally frank can save a simpler version of this figure as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_quick.png</span></code>.</p>
+<p>Here’s the full figure for a frank fit to the DSHARP continuum observations of the protoplanetary disc
+AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract">Andrews et al. 2018</a>).</p>
+<div class="figure align-left" style="width: 700px">
+<img alt="_images/AS209_continuum_frank_fit_full.png" src="_images/AS209_continuum_frank_fit_full.png" />
+</div>
+<p><strong>a)</strong> The fitted frank brightness profile. <br>
+<strong>b)</strong> As in (a), on a log scale. The oscillations below <span class="math notranslate nohighlight">\(\approx 10^9\ {\rm Jy\ sr}^{-1}\)</span> indicate the fit’s noise floor. <br>
+<strong>c)</strong> The frank profile swept over <span class="math notranslate nohighlight">\(2\pi\)</span>. Note this image is not convolved with any beam. <br>
+<strong>d)</strong> The visibility domain fit and the data in 1 and 50 <span class="math notranslate nohighlight">\({\rm k}\lambda\)</span> bins. <br>
+<strong>e)</strong> As in (d), zooming on the longer baselines. <br>
+<strong>f)</strong> Residuals between the binned data and the fit. The residuals’ RMSE is given in the legend;
+note this is being increased by the residuals beyond the baseline at which the fit walks off the data. <br>
+<strong>g)</strong> As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale. <br>
+<strong>h)</strong> The fit’s reconstructed power spectrum, the prior on the fitted brightness profile.
+To see how this the fit to this dataset is sensitive to the prior, check out <a class="reference internal" href="tutorials/prior_sensitivity_and_uncertainty.html"><span class="doc">this notebook</span></a>. <br>
+<strong>i)</strong> The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
+it could indicate xx asymmetry in the disc xx that frank will average over.</p>
+<div class="section" id="perform-multiple-fits-in-a-loop">
+<h3>Perform multiple fits in a loop<a class="headerlink" href="#perform-multiple-fits-in-a-loop" title="Permalink to this headline">¶</a></h3>
+<p>You can run multiple fits in a single call to frank (e.g., to check a fit’s sensitivity to hyperpriors or run a self-consistent analysis on multiple sources)
+by setting one or more of the parameters in the parameter file as a list.
+See <a class="reference external" href="tutorials/running_fits_in_a_loop.ipynb">this tutorial</a> for an example.</p>
+</div>
+<div class="section" id="modify-the-fit-py-script">
+<h3>Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script<a class="headerlink" href="#modify-the-fit-py-script" title="Permalink to this headline">¶</a></h3>
+<p>We’ve run this example using <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code>; if you’d like to modify this file, you can get it <a class="reference external" href="https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py">here</a>.
+For an ‘under the hood’ look at what this script does, see <a class="reference internal" href="tutorials/using_frank_as_a_module.html"><span class="doc">this tutorial</span></a>.
+And if you’d like a more qualitative overview of the script (with sound), see <a class="reference external" href="https://www.youtube.com/watch?v=xMxsLKQidY4&amp;t=5">here</a>.</p>
+</div>
+</div>
+<div class="section" id="perform-a-fit-using-frank-as-a-python-module">
+<h2>Perform a fit using <code class="code docutils literal notranslate"><span class="pre">frank</span></code> as a Python module<a class="headerlink" href="#perform-a-fit-using-frank-as-a-python-module" title="Permalink to this headline">¶</a></h2>
+<p>To interface with the code more directly, you can use it as a module.</p>
+<p>Let’s first import some basic stuff from frank and load the data
+(again using the DSHARP observations of AS 209, available as a UVTable
+<a class="reference external" href="https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.txt">here</a>).
+Note that the wrapper functions in <code class="docutils literal notranslate"><span class="pre">fit.py</span></code> can do all this for us; of those,
+here we’re not using <code class="code docutils literal notranslate"><span class="pre">parse_parameters</span></code> because we’ll explicitly pass the parameters we need,
+and we’re also not using <code class="code docutils literal notranslate"><span class="pre">determine_geometry</span></code> or <code class="code docutils literal notranslate"><span class="pre">perform_fit</span></code>
+just to show how to directly interface with the code’s internal classes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">frank.radial_fitters</span> <span class="kn">import</span> <span class="n">FrankFitter</span>
+<span class="kn">from</span> <span class="nn">frank.geometry</span> <span class="kn">import</span> <span class="n">FitGeometryGaussian</span>
+<span class="kn">from</span> <span class="nn">frank.fit</span> <span class="kn">import</span> <span class="n">load_data</span>
+<span class="kn">from</span> <span class="nn">frank.make_figs</span> <span class="kn">import</span> <span class="n">frank_plotting_style</span><span class="p">,</span> <span class="n">make_quick_fig</span>
+<span class="kn">from</span> <span class="nn">frank.io</span> <span class="kn">import</span> <span class="n">save_fit</span>
+
+<span class="n">uvtable_filename</span> <span class="o">=</span> <span class="s1">&#39;AS209_continuum.txt&#39;</span>
+<span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">uvtable_filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now run the fit using the <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a> class.
+In this example we’ll ask frank to fit for the disc’s geometry using the <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian">FitGeometryGaussian</a> class.
+<a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a> will then deproject the visibilities
+and fit for the brightness profile. We’ll fit out to 1.6” using 250 collocation points and the code’s default <code class="docutils literal notranslate"><span class="pre">alpha</span></code> and <code class="docutils literal notranslate"><span class="pre">weights_smooth</span></code> hyperprior values.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FF</span> <span class="o">=</span> <span class="n">FrankFitter</span><span class="p">(</span><span class="n">Rmax</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">FitGeometryGaussian</span><span class="p">(),</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mf">1.05</span><span class="p">,</span> <span class="n">weights_smooth</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+
+<span class="n">sol</span> <span class="o">=</span> <span class="n">FF</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we’ll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above),</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">make_quick_fig</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">bin_widths</span><span class="o">=</span><span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>which gives this figure,</p>
+<div class="figure align-left" style="width: 700px">
+<img alt="_images/AS209_continuum_frank_fit_quick.png" src="_images/AS209_continuum_frank_fit_quick.png" />
+</div>
+<p>And finally we’ll save the fit results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">save_fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+        <span class="n">uvtable_filename</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">uvtable_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">save_profile_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_vis_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_uvtables</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorials.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="install.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
+      <span class="lastupdated">
+        Last updated on 2020 Feb 19 at 16:45:32 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
