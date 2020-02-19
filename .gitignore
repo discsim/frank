@@ -1,14 +1,8 @@
-.DS_Store
 docs/tutorials
 
-frank_used_pars.json
-frank_fit.log
-*_frank_.png
-*_frank_.txt
-
-#*.egg
-#MANIFEST
-#*.egg-info/
+**/.DS_Store
+*.egg
+*.egg-info/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
