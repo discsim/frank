@@ -4,7 +4,7 @@ Installation
 With pip
 --------
 
-Install the latest stable version of Frankenstein (``frank``) with `pip <https://pip.pypa.io/en/stable/>`_,
+Install the latest stable version of Frankenstein (``frank``) with `pip <https://pypi.org/project/frank/>`_,
 
 .. code-block:: bash
 
