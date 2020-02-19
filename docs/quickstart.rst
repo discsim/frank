@@ -17,7 +17,7 @@ with CASA as demonstrated in `this tutorial <tutorials/xx>`_.
 The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
 If you specify `load_dir`, `save_dir` and `uvtable_filename` in the default parameter file,
-you can perform a fit using the default parameters with
+(see below for how to get a template parameter file) you can perform a fit using the default parameters with
 
 .. code-block:: bash
 
