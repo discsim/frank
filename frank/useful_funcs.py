@@ -27,26 +27,41 @@ def arcsec_baseline(x):
     """
     Provide x as a radial scale [arcsec] to return the corresponding baseline
     [lambda], or vice-versa.
+
+    Parameters
+    ----------
+    x : float
+        Radial scale [arcsec] or baseline [lambda]
+
+    Returns
+    -------
+    converted : float
+        Baseline [lambda] or radial scale [arcsec]
     """
+
     converted = 1 / (x / 60 / 60 * np.pi / 180)
+
     return converted
 
 
 class BinUVData(object):
-    r"""Average the uv-data into bins of equal size.
-    Computes the weighted mean of the visibilities in each bin.
+    r"""
+    Average uv-data into bins of equal size.
+
+    Compute the weighted mean of the visibilities in each bin
 
     Parameters
     ----------
-    uv : array, unit= :math:`\lambda`
+    uv : array, unit = :math:`\lambda`
         Baselines of the data to bin
-    V : array, unit=Jy
+    V : array, unit = Jy
         Complex visibilities
-    weights : array, unit=Jy^-2
+    weights : array, unit = Jy^-2
         Weights on the visibility points
-    bin_width : float, unit= :math:`\lambda`
+    bin_width : float, unit = :math:`\lambda`
         Width of the uv-bins
     """
+
     def __init__(self, uv, V, weights, bin_width):
         nbins = np.ceil(uv.max() / bin_width).astype('int')
         bins = np.arange(nbins+1, dtype='float64') * bin_width
@@ -62,7 +77,7 @@ class BinUVData(object):
 
         norm = 1 / bin_width
 
-        # Use blocking since its faster and requires less memory
+        # Use blocking for speed and reduced memory usage
         BLOCK = 65536
         for i in range(0, len(uv), BLOCK):
             tmp_uv  = uv[i:i+BLOCK]
@@ -116,19 +131,19 @@ class BinUVData(object):
 
     @property
     def uv(self):
-        r"""Binned uv points, unit= :math:`\lambda`"""
+        r"""Binned uv points, unit = :math:`\lambda`"""
         return self._uv
     @property
     def V(self):
-        """Binned visibility, unit=Jy"""
+        """Binned visibility, unit = Jy"""
         return self._V
     @property
     def weights(self):
-        """Binned weights, unit=Jy^-2"""
+        """Binned weights, unit = Jy^-2"""
         return self._w
     @property
     def error(self):
-        """Uncertainty on the binned visibilities, unit=Jy"""
+        """Uncertainty on the binned visibilities, unit = Jy"""
         return self._Verr
     @property
     def bin_counts(self):
@@ -137,6 +152,29 @@ class BinUVData(object):
 
 
 def sweep_profile(r, I, axis=0):
+    r"""
+    Sweep a 1D radial brightness profile over :math:`2 \pi` to yield a 2D
+    brightness distribution
+
+    Parameters
+    ----------
+    r : array
+          Radial coordinates at which the 1D brightness profile is defined
+    I : array
+          Brightness values at r
+    axis : int, default = 0
+          Axis over which to interpolate the 1D profile
+
+    Returns
+    -------
+    I2D : array, shape = (r, 2)
+        2D brightness distribution
+    xmax : float
+        Maximum x-value of the 2D grid
+    ymax : float
+        Maximum y-value of the 2D grid
+    """
+
     rmax = xmax = ymax = r.max()
     dr = np.mean(np.diff(r))
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)

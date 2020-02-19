@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module has functions that read in datafiles and save fit results to
+"""This module has functions that read in a UVTable and save fit results to
    file.
 """
 
@@ -25,24 +25,24 @@ import numpy as np
 import pickle
 
 def load_uvtable(data_file):
-    """
-    Read in a UVTable with data to be fit.
+    r"""
+    Read in a UVTable with data to be fit
 
     Parameters
     ----------
     data_file : string
-          UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
-                                Weight [Jy^-2] TODO: update if accept dfft struc
+          UVTable with data to be fit, with columns:
+          u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
 
     Returns
     -------
-    u, v : array, unit = :math:`\\lambda`
+    u, v : array, unit = :math:`\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
           Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
+          Weights on the visibilities, of the form
+          :math:`1 / \sigma^2`
     """
     import os.path
     extension = os.path.splitext(data_file)[1]
@@ -59,47 +59,55 @@ def load_uvtable(data_file):
         raise ValueError("    You provided a UVTable with the extension %s."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`."%extension)
-    # TODO: add other file types?
-    # TODO: allow other column orders in UVTable
-    # TODO: allow to convert u, v from [m] to [lambda]
 
     return u, v, vis, weights
 
 
 def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
-             save_profile_fit=True, save_vis_fit=True, save_uvtables=True):
-    """
+             save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
+             save_iteration_diag=False
+             ):
+    r"""
     Save datafiles of fit results
 
     Parameters
     ----------
-    u, v : array, unit = :math:`\\lambda`
+    u, v : array, unit = :math:`\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
+          Complex visibilities
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
+          Weights on the visibilities, of the form
+          :math:`1 / \sigma^2`
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
     save_dir : string
           Directory in which output datafiles and figures are saved
+          UVTable with fitted visibilities, with columns:
+          u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
     uvtable_filename : string
-          UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights) # TODO
+          Filename for observed UVTable. The saved datafiles use this as their
+          filename prefix
     save_profile_fit : bool
           Whether to save fitted brightness profile
     save_vis_fit : bool
-          Whether to save fitted visibility distribution
+          Whether to save fitted visibility distribution.
+          NOTE: This is deprojected
     save_uvtables : bool
-          Whether to save fitted and residual UV tables (these are reprojected)
+          Whether to save fitted and residual UV tables.
+          NOTE: These are reprojected
+    save_iteration_diag : bool
+          Whether to save diagnostics of the fit iteration
     """
 
     prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     with open(prefix + '_frank_sol.obj', 'wb') as f: pickle.dump(sol, f)
 
-    with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f: pickle.dump(sol, f)
+    if save_iteration_diag:
+        with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f:
+            pickle.dump(iteration_diagnostics, f)
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
@@ -109,13 +117,14 @@ def save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
     if save_vis_fit:
         np.savetxt(prefix + '_frank_vis_fit.txt',
                    np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                   header='Baseline [lambda]\tProjected Re(V) [Jy]') # TODO: update
+                   header='Baseline [lambda]\tProjected Re(V) [Jy]')
 
     if save_uvtables:
         np.savetxt(prefix + '_frank_uv_fit.txt',
                 np.stack([u, v, sol.predict(u,v).real, sol.predict(u,v).imag,
                 weights], axis=-1), header='u [lambda]\tv [lambda]\tRe(V)'
                 ' [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]')
+
         np.savetxt(prefix + '_frank_uv_resid.txt',
                 np.stack([u, v, vis.real - sol.predict(u,v).real,
                 vis.imag - sol.predict(u,v).imag, weights], axis=-1),

@@ -17,10 +17,10 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
 """This module contains methods for fitting a source's geometry and deprojecting
-   the visibilties by the geometry.
-"""
+   the visibilties by a fitted or a given geometry.
 
-# TODO: check if sign convention for dRA, dDec consistent w/ galario; specify convention in docstrings
+   NOTE: The sign convention used here is xx.
+"""
 
 import abc
 import numpy as np
@@ -32,28 +32,30 @@ __all__ = ["SourceGeometry", "FixedGeometry", "FitGeometryGaussian"]
 
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
-    """
+    r"""
     Shift the phase centre of the visibilties.
 
-    Corrects the image centering in visibility space
+    Correct the image centering in visibility space
 
     Parameters
     ----------
-    u : array of real, size=N, units= :math:`\\lambda`
+    u : array of real, size = N, unit = :math:`\lambda`
         u-points of the visibilities
-    v : array of real, size=N, units= :math:`\\lambda`
+    v : array of real, size = N, unit = :math:`\lambda`
         v-points of the visibilities
-    V : array of real, size=N, units=Jy
+    V : array of real, size = N, unit = Jy
         Complex visibilites
-    dRA : float, units=arcseconds
-        Phase-shift in Right Ascenion
-    dDec : float, units=arcseconds
-        Phase-shift in Declination
+    dRA : float, unit = arcsec
+        Phase shift in right ascenion.
+        NOTE: The sign convention is xx
+    dDec : float, unit = arcsec
+        Phase shift in declination.
+        NOTE: The sign convention is xx
 
     Returns
     -------
-    shifted_vis : array of real, size=N, units=Jy
-        Phase shifted visibilites.
+    shifted_vis : array of real, size = N, unit = Jy
+        Phase shifted visibilites
 
     """
     dRA *= 2. * np.pi / rad_to_arcsec
@@ -65,27 +67,27 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
 
 
 def deproject(u, v, inc, PA, inverse=False):
-    """
-    De-project the image in visibily space
+    r"""
+    Deproject the image in visibily space
 
     Parameters
     ----------
-    u : array of real, size=N, units= :math:`\\lambda`
+    u : array of real, size = N, unit = :math:`\lambda`
         u-points of the visibilities
-    v : array of real, size=N, units= :math:`\\lambda`
+    v : array of real, size = N, unit = :math:`\lambda`
         v-points of the visibilities
-    inc : float, units=deg
+    inc : float, unit = deg
         Inclination
-    PA : float, units=deg
-        Position Angle
+    PA : float, unit = deg
+        Position angle
     inverse : bool, default=False
-        If True the uv-points are re-projected rather than de-projected.
+        If True, the uv-points are reprojected rather than deprojected
 
     Returns
     -------
-    up : array, size=N, units= :math:`\\lambda`
+    up : array, size = N, unit = :math:`\lambda`
         Deprojected u-points
-    vp : array, size=N, units= :math:`\\lambda`
+    vp : array, size = N, unit = :math:`\lambda`
         Deprojected v-points
 
     """
@@ -102,7 +104,7 @@ def deproject(u, v, inc, PA, inverse=False):
     up = u * cos_t - v * sin_t
     vp = u * sin_t + v * cos_t
 
-    #   De-project
+    # Deproject
     if inverse:
         up /= np.cos(inc)
     else:
@@ -115,18 +117,20 @@ class SourceGeometry(object):
     """
     Base class for geometry corrections.
 
-    Centres and deprojects the source to ensure axisymmetry.
+    Centre and deproject the source to ensure axisymmetry
 
     Parameters
     ----------
-    inc : float, units=deg
+    inc : float, unit = deg
         Inclination of the disc
-    PA : float, units=deg
-        Position Angle of the disc
-    dRA : float, units=arcseconds
-        Phase centre offset in Right Ascension
-    dDec : float, units=arcseconds
-        Phase centre offset in Declination
+    PA : float, unit = deg
+        Position angle of the disc
+    dRA : float, unit = arcsec
+        Phase centre offset in right ascension.
+        NOTE: The sign convention is xx
+    dDec : float, units = arcsec
+        Phase centre offset in declination.
+        NOTE: The sign convention is xx
 
     """
 
@@ -137,25 +141,25 @@ class SourceGeometry(object):
         self._dDec = dDec
 
     def apply_correction(self, u, v, V):
-        """
-        Correct the phase-centre and de-project the visibilities.
+        r"""
+        Correct the phase centre and deproject the visibilities
 
         Parameters
         ----------
-        u : array of real, size=N, units= :math:`\\lambda`
+        u : array of real, size = N, unit = :math:`\lambda`
             u-points of the visibilities
-        v : array of real, size=N, units= :math:`\\lambda`
+        v : array of real, size = N, unit = :math:`\lambda`
             v-points of the visibilities
-        V : array of real, size=N, units=Jy
+        V : array of real, size = N, units = Jy
             Complex visibilites
 
         Returns
         -------
-        up : array of real, size=N, units= :math:`\\lambda`
+        up : array of real, size = N, unit = :math:`\lambda`
             Corrected u-points of the visibilities
-        vp : array of real, size=N, units= :math:`\\lambda`
+        vp : array of real, size = N, unit = :math:`\lambda`
             Corrected v-points of the visibilities
-        Vp : array of real, size=N, units=Jy
+        Vp : array of real, size = N, unit = Jy
             Corrected complex visibilites
 
         """
@@ -165,35 +169,35 @@ class SourceGeometry(object):
         return u, v, V
 
     def undo_correction(self, u, v, V):
-        """
-        Undo the phase-centre correction and de-projection.
+        r"""
+        Undo the phase centre correction and deprojection
 
         Parameters
         ----------
-        u : array of real, size=N, units= :math:`\\lambda`
+        u : array of real, size = N, unit = :math:`\lambda`
             u-points of the visibilities
-        v : array of real, size=N, units= :math:`\\lambda`
+        v : array of real, size = N, unit = :math:`\lambda`
             v-points of the visibilities
-        V : array of real, size=N, units=Jy
+        V : array of real, size = N, unit = Jy
             Complex visibilites
 
         Returns
         -------
-        up : array of real, size=N, units= :math:`\\lambda`
+        up : array of real, size = N, unit = :math:`\lambda`
             Corrected u-points of the visibilities
-        vp : array of real, size=N, units= :math:`\\lambda`
+        vp : array of real, size = N, unit = :math:`\lambda`
             Corrected v-points of the visibilities
-        Vp : array of real, size=N, units=Jy
+        Vp : array of real, size = N, unit = Jy
             Corrected complex visibilites
-
         """
+
         u, v = self.reproject(u, v)
         vis = apply_phase_shift(u, v, V, -self._dRA, -self._dDec)
 
         return u, v, V
 
     def deproject(self, u, v):
-        """Convert uv-points to sky-plane deprojected space"""
+        """Convert uv-points from sky-plane to deprojected space"""
         return deproject(u, v, self._inc, self._PA)
 
     def reproject(self, u, v):
@@ -202,44 +206,44 @@ class SourceGeometry(object):
 
     @abc.abstractmethod
     def fit(self, u, v, V, weights):
-        """
-        Determine geometry using the uv-data provided.
+        r"""
+        Determine geometry using the provided uv-data
 
         Parameters
         ----------
-        u : array of real, size=N, units= :math:`\\lambda`
+        u : array of real, size = N, unit = :math:`\lambda`
             u-points of the visibilities
-        v : array of real, size=N, units= :math:`\\lambda`
+        v : array of real, size = N, unit = :math:`\lambda`
             v-points of the visibilities
-        V : array of complex, size=N, units=Jy
+        V : array of complex, size = N, unit = Jy
             Complex visibilites
-        weights : array of real, size=NN, units=Jy
-            Weights on the visibilities.
+        weights : array of real, size = N, unit = Jy
+            Weights on the visibilities
         """
         return
 
     def clone(self):
-        """Save the geometry parameters in a seperate geometry object."""
+        """Save the geometry parameters in a seperate geometry object"""
         return FixedGeometry(self.inc, self.PA, self.dRA, self.dDec)
 
     @property
     def dRA(self):
-        """Phase centre offset in Right Ascension, units=arcsec"""
+        """Phase centre offset in right ascension, unit = arcsec"""
         return self._dRA
 
     @property
     def dDec(self):
-        """Phase centre offset in Declination, units=arcsec"""
+        """Phase centre offset in declination, unit = arcsec"""
         return self._dDec
 
     @property
     def PA(self):
-        """Position angle of the disc, units=radians"""
+        """Position angle of the disc, unit = rad"""
         return self._PA
 
     @property
     def inc(self):
-        """Inclination of the disc, units=radians"""
+        """Inclination of the disc, unit = rad"""
         return self._inc
 
 
@@ -247,18 +251,20 @@ class FixedGeometry(SourceGeometry):
     """
     Disc Geometry class using pre-determined parameters.
 
-    Centres and deprojects the source to ensure axisymmetry.
+    Centre and deproject the source to ensure axisymmetry
 
     Parameters
     ----------
-    inc : float, units=deg
-        Disc inclination.
-    PA : float, units=deg
+    inc : float, unit = deg
+        Disc inclination
+    PA : float, unit = deg
         Disc positition angle.
-    dRA : float, default=0, units=arcsec
-        Phase centre offset in Right Ascension.
-    dDec : float, default=0, units=arcsec
-        Phase centre offset in Declination.
+    dRA : float, default = 0, unit = arcsec
+        Phase centre offset in right ascension
+        NOTE: The sign convention is xx
+    dDec : float, default = 0, unit = arcsec
+        Phase centre offset in declination
+        NOTE: The sign convention is xx
 
     """
 
@@ -270,14 +276,14 @@ class FitGeometryGaussian(SourceGeometry):
     """
     Determine the disc geometry by fitting a Gaussian in Fourier space.
 
-    Centres and deprojects the source to ensure axisymmetry.
+    Centre and deproject the source to ensure axisymmetry
 
     Parameters
     ----------
-    phase_centre : tuple=(dRA, dDec) or None (default). Units=arcsec
-         Determines whether to fit for the phase centre of the source. If
-         phase_centre=None the phase centre is fit for. Otherwise, the phase
-         centre should be provided as a tuple.
+    phase_centre : tuple = (dRA, dDec) or None (default), unit = arcsec
+         Determine whether to fit for the source's phase centre. If
+         phase_centre = None, the phase centre is fit for. Else the phase
+         centre should be provided as a tuple
 
     """
     def __init__(self, phase_centre=None):
@@ -286,19 +292,19 @@ class FitGeometryGaussian(SourceGeometry):
         self._phase_centre = phase_centre
 
     def fit(self, u, v, V, weights):
-        """
-        Determine geometry using the uv-data provided.
+        r"""
+        Determine geometry using the provided uv-data
 
         Parameters
         ----------
-        u : array of real, size=N, units= :math:`\\lambda`
+        u : array of real, size = N, unit = :math:`\lambda`
             u-points of the visibilities
-        v : array of real, size=N, units= :math:`\\lambda`
+        v : array of real, size = N, unit = :math:`\lambda`
             v-points of the visibilities
-        V : array of complex, size=N, units=Jy
+        V : array of complex, size = N, unit = Jy
             Complex visibilites
-        weights : array of real, size=N, units=Jy^-2
-            Weights on the visibilities.
+        weights : array of real, size=N, unit = Jy^-2
+            Weights on the visibilities
         """
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
@@ -310,28 +316,27 @@ class FitGeometryGaussian(SourceGeometry):
         self._dDec = dDec
 
 def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
-    """
-    Esimate the source geometry by fitting a Gaussian in uv-space.
+    r"""
+    Estimate the source geometry by fitting a Gaussian in uv-space
 
     Parameters
     ----------
-    u : array of real, size=N, units= :math:`\\lambda`
+    u : array of real, size = N, unit = :math:`\lambda`
         u-points of the visibilities
-    v : array of real, size=N, units= :math:`\\lambda`
+    v : array of real, size = N, unit = :math:`\lambda`
         v-points of the visibilities
-    V : array of complex, size=N, units=Jy
+    V : array of complex, size = N, unit = Jy
         Complex visibilites
-    weights : array of real, size=N, units=Jy^-2
-        Weights on the visibilities.
-    phase_centre: [dRA, dDec], optional, units=arcsec
-        The Phase centre offsets dRA and dDec in arcseconds.
-        If not provided, these will be fit for.
+    weights : array of real, size = N, unit = Jy^-2
+        Weights on the visibilities
+    phase_centre: [dRA, dDec], optional, unit = arcsec
+        The phase centre offsets dRA and dDec.
+        If not provided, these will be fit for
 
     Returns
     -------
     geometry : SourceGeometry object
-        Fitted geometry.
-
+        Fitted geometry
     """
     fac = 2*np.pi / rad_to_arcsec
     w = np.sqrt(weights)

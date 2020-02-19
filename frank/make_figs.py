@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module generates figures for a Frankenstein fit and/or its diagnostics.
+"""This module generates figures for a Frankenstein fit and its diagnostics.
 """
 import os
 import numpy as np
@@ -26,10 +26,8 @@ from matplotlib.gridspec import GridSpec
 from frank.plot import *
 from frank.useful_funcs import *
 
-#plt.style.use('paper')
 def frank_plotting_style():
-    """#TODO
-    """
+    """Apply custom alterations to the matplotlib style"""
     import matplotlib as mpl
     mpl.rcParams['font.size'] = 6
     mpl.rcParams['axes.titlesize'] = 6
@@ -60,7 +58,44 @@ def frank_plotting_style():
     mpl.rcParams['errorbar.capsize'] = 5
 
 
-def make_full_fig(u, v, vis, weights, geom, sol, bin_widths, dist, force_style=True, save_dir=None, uvtable_filename=None):
+def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
+                  force_style=True, save_dir=None, uvtable_filename=None
+                  ):
+    r"""
+    Produce a figure showing a Frankenstein fit and some useful diagnostics
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \sigma^2`
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter)
+    bin_widths : list, unit = \lambda
+          Bin widths in which to bin the observed visibilities
+    dist : float, optional, unit = AU, default = None
+          Distance to source, used to show second x-axis for brightness profile
+    force_style: bool, default = True
+          Whether to use preconfigured matplotlib rcParams in generated figure
+    save_dir : string, default = None
+          Directory in which to save produced figure. If None, the figure will
+          be produced but not saved
+    uvtable_filename : string, default = None
+          Filename for observed UVTable. If the figure is being saved, it will
+          use this as its filename prefix
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+          The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+          The axes of the produce figure
+    """
     if force_style: frank_plotting_style()
     if save_dir and uvtable_filename:
         prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
@@ -92,7 +127,8 @@ def make_full_fig(u, v, vis, weights, geom, sol, bin_widths, dist, force_style=T
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    zoom_ylim_guess = abs(sol.predict_deprojected(grid).real[np.int(.5*len(sol.predict_deprojected(grid).real)):]).max()
+    ReV = sol.predict_deprojected(grid).real
+    zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
     cs = ['#a4a4a4', 'k', '#896360', 'b']
@@ -109,15 +145,19 @@ def make_full_fig(u, v, vis, weights, geom, sol, bin_widths, dist, force_style=T
         plot_vis(binned_vis.uv, vis_re_kl,
             vis_err_re_kl, ax3, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
         plot_vis(binned_vis.uv, vis_re_kl,
-            vis_err_re_kl, ax4, c=cs[i], marker=ms[i], binwidth=bin_widths[i], zoom=np.multiply(zoom_bounds, 1e3))
+            vis_err_re_kl, ax4, c=cs[i], marker=ms[i], binwidth=bin_widths[i],
+            zoom=np.multiply(zoom_bounds, 1e3))
         plot_vis(binned_vis.uv, vis_re_kl,
-            vis_err_re_kl, ax6, c=cs[i], c2=cs2[i], marker=ms[i], marker2=ms[i], binwidth=bin_widths[i], yscale='log')
+            vis_err_re_kl, ax6, c=cs[i], c2=cs2[i], marker=ms[i], marker2=ms[i],
+            binwidth=bin_widths[i], yscale='log')
 
         plot_vis(binned_vis.uv, vis_im_kl,
-            vis_err_im_kl, ax8, c=cs[i], marker=ms[i], binwidth=bin_widths[i], ylabel='Im(V) [mJy]')
+            vis_err_im_kl, ax8, c=cs[i], marker=ms[i], binwidth=bin_widths[i],
+            ylabel='Im(V) [mJy]')
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-            sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5, c=cs[i], marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+            sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5, c=cs[i],
+            marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3)
@@ -150,7 +190,45 @@ def make_full_fig(u, v, vis, weights, geom, sol, bin_widths, dist, force_style=T
     return fig, axes
 
 
-def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist, force_style, save_dir, uvtable_filename):
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
+                   force_style=True, save_dir=None, uvtable_filename=None
+                   ):
+    r"""
+    Produce a simple figure showing just a Frankenstein fit, not any diagnostics
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \sigma^2`
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter)
+    bin_widths : list, unit = \lambda
+          Bin widths in which to bin the observed visibilities
+    dist : float, optional, unit = AU, default = None
+          Distance to source, used to show second x-axis for brightness profile
+    force_style: bool, default = True
+          Whether to use preconfigured matplotlib rcParams in generated figure
+    save_dir : string, default = None
+          Directory in which to save produced figure. If None, the figure will
+          be produced but not saved
+    uvtable_filename : string, default = None
+          Filename for observed UVTable. If the figure is being saved, it will
+          use this as its filename prefix
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+          The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+          The axes of the produce figure
+    """
+
     if force_style: frank_plotting_style()
     if save_dir and uvtable_filename:
         prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
@@ -190,7 +268,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist, force_style, save_
             vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-            sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i], marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+            sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
+                marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax2)

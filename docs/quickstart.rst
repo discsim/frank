@@ -137,7 +137,7 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Now we'll just make a simplified figure of the fit (with only subplots (a), (b), (d), (f) from the figure above),
+Now we'll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above),
 
 .. code-block:: python
 

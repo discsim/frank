@@ -47,16 +47,16 @@ def helper():
 
 def parse_parameters():
     """
-    Read in a .json parameter file to set the fit parameters.
+    Read in a .json parameter file to set the fit parameters
 
     Parameters
     ----------
     parameter_filename : string, default `default_parameters.json`
-            Parameter file (.json; see frank.fit.helper).
+            Parameter file (.json; see frank.fit.helper)
     uvtable_filename : string
-            UVTable file with data to be fit (ASCII, .npy or .npz). The UVTable
-            column format should be u [lambda]  v [lambda] Re(V) [Jy]
-            Im(V) [Jy] Weight [Jy^-2] # TODO: update if accept dfft formats
+            UVTable file with data to be fit (.txt, .dat, .npy, or .npz).
+            The UVTable column format should be:
+            u [lambda] v [lambda] Re(V) [Jy] Im(V) [Jy] Weight [Jy^-2]
 
     Returns
     -------
@@ -85,12 +85,9 @@ def parse_parameters():
 
     if ('uvtable_filename' not in model['input_output'] or
         not model['input_output']['uvtable_filename']):
-        model['input_output']['uvtable_filename'] = 'AS209_continuum.txt' # TODO: temp
-        '''
         raise ValueError("    uvtable_filename isn't specified."
                  " Set it in the parameter file or run frank with"
                  " python -m frank.fit -uv <uvtable_filename>")
-        '''
 
     if not model['input_output']['load_dir']:
         model['input_output']['load_dir'] = os.getcwd()
@@ -110,14 +107,15 @@ def parse_parameters():
 
     logging.info('  Saving parameters to be used in fit to'
                  ' %s/frank_used_pars.json'%model['input_output']['save_dir'])
-    with open(model['input_output']['save_dir'] + '/frank_used_pars.json', 'w') as f:
+    with open(model['input_output']['save_dir'] +
+        '/frank_used_pars.json', 'w') as f:
         json.dump(model, f, indent=4)
 
     return model
 
 
 def load_data(load_dir, data_file):
-    """
+    r"""
     Read in a UVTable with data to be fit. See frank.io.load_uvtable
 
     Parameters
@@ -125,18 +123,18 @@ def load_data(load_dir, data_file):
     load_dir : string
           Path to parent directory of data_file
     data_file : string
-          UVTable with columns: u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]
-                                Weight [Jy^-2] TODO: update if accept dfft struc
+          UVTable with columns:
+          u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
 
     Returns
     -------
-    u, v : array, unit = :math:`\\lambda`
+    u, v : array, unit = :math:`\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
           Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
+          :math:`1 / \sigma^2`
     """
     logging.info('  Loading UVTable')
     u, v, vis, weights = io.load_uvtable(load_dir + '/' + data_file)
@@ -145,27 +143,28 @@ def load_data(load_dir, data_file):
 
 
 def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
-                       known_geometry, fit_phase_offset):
-    """
-    Determine the source geometry (inclination, position angle, phase offset).
+                       known_geometry, fit_phase_offset
+                       ):
+    r"""
+    Determine the source geometry (inclination, position angle, phase offset)
 
     Parameters
     ----------
-    u, v : array, unit = :math:`\\lambda`
+    u, v : array, unit = :math:`\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
           Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
-    inc: float
-          Source inclination. unit = deg
-    pa : float
-          Source position angle. unit = deg
-    dra : float
-          Source right ascension offset from 0. unit = arcsec
-    ddec : float
-          Source declination offset from 0. unit = arcsec
+          :math:`1 / \sigma^2`
+    inc: float, unit = deg
+          Source inclination
+    pa : float, unit = deg
+          Source position angle
+    dra : float, unit = arcsec
+          Source right ascension offset from 0
+    ddec : float, unit = arcsec
+          Source declination offset from 0
     fit_geometry: bool
           Whether to fit for the source geometry
     known_geometry: bool
@@ -214,24 +213,25 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
     return geom
 
 
-def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iteration_diag=False):
-    """
-    Deproject the observed visibilities and fit them for the brightness profile.
+def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
+                iteration_diag=False
+                ):
+    r"""
+    Deproject the observed visibilities and fit them for the brightness profile
 
     Parameters
     ----------
-    u, v : array, unit = :math:`\\lambda`
+    u, v : array, unit = :math:`\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
           Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
+          :math:`1 / \sigma^2`
     geom : SourceGeometry object
           Fitted geometry (see frank.geometry.SourceGeometry)
-    rout : float
-          Maximum disc radius in the fit (best to overestimate size of source).
-          unit = arcsec
+    rout : float, unit = arcsec
+          Maximum disc radius in the fit (best to overestimate size of source)
     n : int
           Number of collocation points used in the fit
           (suggested range 100 - 300)
@@ -250,6 +250,9 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iteration_dia
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
+    iteration_diag : _HankelRegressor object
+          Diagnostics of the fit iteration
+          (see radial_fitters.FrankFitter.fit)
     """
 
     from frank import radial_fitters
@@ -268,53 +271,58 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iteration_dia
     if iteration_diag:
         return sol, FF.iteration_diagnostics
     else:
-        return sol, [] # TODO: do differently?
+        return sol, None
 
 
 def output_results(u, v, vis, weights, geom, sol, bin_widths,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
-                   save_uvtables, full_plot, quick_plot, force_style=True,
-                   dist=None
+                   save_uvtables, save_iteration_diag, full_plot, quick_plot,
+                   force_style=True, dist=None
                    ):
-    """
-    Save datafiles of fit results; generate and save figures of fit results.
-    See frank.io.save_fit, frank.make_figs.make_full_fig and
-    frank.make_figs.make_quick_fig
+    r"""
+    Save datafiles of fit results; generate and save figures of fit results (see
+    frank.io.save_fit, frank.make_figs.make_full_fig and
+    frank.make_figs.make_quick_fig)
 
     Parameters
     ----------
-    u, v : array, unit = :math:`\\lambda`
+    u, v : array, unit = :math:`\lambda`
           u and v coordinates of observations
     vis : array, unit = Jy
           Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
-          :math:`1 / \\sigma^2`
+          :math:`1 / \sigma^2`
     geom : SourceGeometry object
           Fitted geometry (see frank.geometry.SourceGeometry)
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
-    bin_widths : list
-          Bin widths in which to bin the observed visibilities. [k\\lambda]
+    bin_widths : list, unit = \lambda
+          Bin widths in which to bin the observed visibilities
     save_dir : string
           Directory in which output datafiles and figures are saved
     uvtable_filename : string
-          UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights) # TODO
+          Filename for observed UVTable. The saved datafiles and figures use
+          this as their filename prefix
     save_profile_fit : bool
           Whether to save fitted brightness profile
     save_vis_fit : bool
           Whether to save fitted visibility distribution
     save_uvtables : bool
-          Whether to save fitted and residual UV tables (these are reprojected)
+          Whether to save fitted and residual UV tables.
+          NOTE: These are reprojected
+    save_iteration_diag : bool
+          Whether to save diagnostics of the fit iteration
     full_plot : bool
-          Whether to make a figure more fully showing the fit and its diagnostics
+          Whether to make a figure more fully showing the fit and its
+          diagnostics
     quick_plot : bool
           Whether to make a figure showing the simplest plots of the fit
-    force_style: bool
+    force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figures
-    dist : float, optional
-          Distance to source. unit = AU
+    dist : float, optional, unit = AU, default = None
+          Distance to source, used to show second x-axis for brightness profile
     """
     logging.info('  Plotting results')
 
@@ -322,8 +330,8 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
     axes = []
 
     if quick_plot:
-        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
-                                bin_widths, dist, force_style, save_dir,
+        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights,
+                                sol, bin_widths, dist, force_style, save_dir,
                                 uvtable_filename
                                 )
 
@@ -331,7 +339,7 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
         axes.append(quick_axes)
 
     if full_plot:
-        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, geom,
+        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights,
                               sol, bin_widths, dist, force_style, save_dir,
                               uvtable_filename
                               )
@@ -341,7 +349,9 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
 
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
-                      save_profile_fit, save_vis_fit, save_uvtables)
+                      save_profile_fit, save_vis_fit, save_uvtables,
+                      save_iteration_diag
+                      )
 
     return figs, axes
 
@@ -370,10 +380,6 @@ def main():
                               model['input_output']['iteration_diag']
                               )
 
-    # TODO: temp
-    #prefix = model['input_output']['save_dir'] + '/' + os.path.splitext(model['input_output']['uvtable_filename'])[0]
-    #import pickle
-    #with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f: pickle.dump(iteration_diagnostics, f)
 
     figs = output_results(u, v, vis, weights, geom, sol,
                    model['plotting']['bin_widths'],
@@ -382,6 +388,7 @@ def main():
                    model['input_output']['save_profile_fit'],
                    model['input_output']['save_vis_fit'],
                    model['input_output']['save_uvtables'],
+                   model['input_output']['iteration_diag'],
                    model['plotting']['full_plot'],
                    model['plotting']['quick_plot'],
                    model['plotting']['force_style'],
