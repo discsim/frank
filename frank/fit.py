@@ -21,6 +21,7 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
+from frank import io, make_figs
 import os
 import sys
 import time
@@ -30,19 +31,18 @@ import numpy as np
 import logging
 
 import frank
-frank_path = os.path.dirname(frank.__file__) # TODO
+frank_path = os.path.dirname(frank.__file__)  # TODO
 
-from frank import io, make_figs
 
 def helper():
     with open(frank_path + '/parameter_descriptions.json') as f:
         param_descrip = json.load(f)
 
     print("""
-     Fit a 1D radial brightness profile with Frankenstein (frank) from the
-     terminal with `python -m frank.fit`. A .json parameter file is required;
-     the default is default_parameters.json and is of the form:\n\n""",
-     json.dumps(param_descrip, indent=4)) # TODO
+         Fit a 1D radial brightness profile with Frankenstein (frank) from the
+         terminal with `python -m frank.fit`. A .json parameter file is required;
+         the default is default_parameters.json and is of the form:\n\n""",
+         json.dumps(param_descrip, indent=4))  # TODO
 
 
 def parse_parameters():
@@ -66,7 +66,7 @@ def parse_parameters():
 
     import argparse
 
-    default_param_file = frank_path + '/default_parameters.json' # TODO
+    default_param_file = frank_path + '/default_parameters.json'  # TODO
 
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
                                      " parameters in default_parameters.json")
@@ -84,10 +84,10 @@ def parse_parameters():
         model['input_output']['uvtable_filename'] = args.uvtable_filename
 
     if ('uvtable_filename' not in model['input_output'] or
-        not model['input_output']['uvtable_filename']):
+            not model['input_output']['uvtable_filename']):
         raise ValueError("    uvtable_filename isn't specified."
-                 " Set it in the parameter file or run frank with"
-                 " python -m frank.fit -uv <uvtable_filename>")
+                         " Set it in the parameter file or run frank with"
+                         " python -m frank.fit -uv <uvtable_filename>")
 
     if not model['input_output']['load_dir']:
         model['input_output']['load_dir'] = os.getcwd()
@@ -96,19 +96,23 @@ def parse_parameters():
         model['input_output']['save_dir'] = model['input_output']['load_dir']
 
     logging.basicConfig(level=logging.INFO,
-        format='%(message)s',
-        handlers=[
-        logging.FileHandler(model['input_output']['save_dir'] +
-        '/frank_fit.log', mode='w'), logging.StreamHandler()]
-        )
+                        format='%(message)s',
+                        handlers=[
+                            logging.FileHandler(
+                                os.path.join(model['input_output']['save_dir'],
+                                             'frank_fit.log'),
+                                mode='w'),
+                            logging.StreamHandler()]
+                        )
 
     logging.info('\nRunning frank on %s'
-                 %model['input_output']['uvtable_filename'])
+                 % model['input_output']['uvtable_filename'])
 
-    logging.info('  Saving parameters to be used in fit to'
-                 ' %s/frank_used_pars.json'%model['input_output']['save_dir'])
-    with open(model['input_output']['save_dir'] +
-        '/frank_used_pars.json', 'w') as f:
+    param_path = os.path.join(model['input_output']['save_dir'],
+                              'frank_used_pars.json')
+    logging.info(
+        '  Saving parameters to be used in fit to {}'.format(param_path))
+    with open(param_path, 'w') as f:
         json.dump(model, f, indent=4)
 
     return model
@@ -137,7 +141,7 @@ def load_data(load_dir, data_file):
           :math:`1 / \sigma^2`
     """
     logging.info('  Loading UVTable')
-    u, v, vis, weights = io.load_uvtable(load_dir + '/' + data_file)
+    u, v, vis, weights = io.load_uvtable(os.path.join(load_dir, data_file))
 
     return u, v, vis, weights
 
@@ -196,16 +200,16 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
 
             else:
                 geom = geometry.FitGeometryGaussian(
-                                        phase_centre=(dra, ddec))
+                    phase_centre=(dra, ddec))
 
             t1 = time.time()
             geom.fit(u, v, vis, weights)
-            logging.info('    Time taken to fit geometry %.1f sec'%(time.time()
-                         - t1))
+            logging.info('    Time taken to fit geometry %.1f sec' % (time.time()
+                                                                      - t1))
 
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
                  '           dRA  = %.2e mas,\n           dDec = %.2e mas'
-                 %(geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
+                 % (geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
 
     geom = geom.clone()
     logging.info('    Storing disc geometry to use for fit')
@@ -260,13 +264,13 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
     logging.info('  Fitting for brightness profile')
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                     alpha=alpha, weights_smooth=wsmooth
-                     )
+                                    alpha=alpha, weights_smooth=wsmooth
+                                    )
 
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
-          ' collocation points) %.1f sec'%(len(vis), n, time.time() - t1))
+                 ' collocation points) %.1f sec' % (len(vis), n, time.time() - t1))
 
     if iteration_diag:
         return sol, FF.iteration_diagnostics
@@ -330,28 +334,30 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
     axes = []
 
     if quick_plot:
-        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights,
-                                sol, bin_widths, dist, force_style, save_dir,
-                                uvtable_filename
-                                )
+        quick_fig, quick_axes = \
+              make_figs.make_quick_fig(u, v, vis, weights,
+                                       sol, bin_widths, dist, force_style, save_dir,
+                                       uvtable_filename
+                                       )
 
         figs.append(quick_fig)
         axes.append(quick_axes)
 
     if full_plot:
-        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights,
-                              sol, bin_widths, dist, force_style, save_dir,
-                              uvtable_filename
-                              )
+        full_fig, full_axes = \
+              make_figs.make_full_fig(u, v, vis, weights,
+                                      sol, bin_widths, dist, force_style, save_dir,
+                                      uvtable_filename
+                                      )
 
         figs.append(full_fig)
         axes.append(axes)
 
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
-                      save_profile_fit, save_vis_fit, save_uvtables,
-                      save_iteration_diag
-                      )
+                save_profile_fit, save_vis_fit, save_uvtables,
+                save_iteration_diag
+                )
 
     return figs, axes
 
@@ -360,7 +366,7 @@ def main():
     model = parse_parameters()
 
     u, v, vis, weights = load_data(model['input_output']['load_dir'],
-                         model['input_output']['uvtable_filename'])
+                                   model['input_output']['uvtable_filename'])
 
     geom = determine_geometry(u, v, vis, weights,
                               model['geometry']['inc'],
@@ -373,29 +379,29 @@ def main():
                               )
 
     sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
-                              model['hyperpriors']['rout'],
-                              model['hyperpriors']['n'],
-                              model['hyperpriors']['alpha'],
-                              model['hyperpriors']['wsmooth'],
-                              model['input_output']['iteration_diag']
-                              )
-
+                                             model['hyperpriors']['rout'],
+                                             model['hyperpriors']['n'],
+                                             model['hyperpriors']['alpha'],
+                                             model['hyperpriors']['wsmooth'],
+                                             model['input_output']['iteration_diag']
+                                             )
 
     figs = output_results(u, v, vis, weights, geom, sol,
-                   model['plotting']['bin_widths'],
-                   model['input_output']['save_dir'],
-                   model['input_output']['uvtable_filename'],
-                   model['input_output']['save_profile_fit'],
-                   model['input_output']['save_vis_fit'],
-                   model['input_output']['save_uvtables'],
-                   model['input_output']['iteration_diag'],
-                   model['plotting']['full_plot'],
-                   model['plotting']['quick_plot'],
-                   model['plotting']['force_style'],
-                   model['plotting']['dist']
-                   )
+                          model['plotting']['bin_widths'],
+                          model['input_output']['save_dir'],
+                          model['input_output']['uvtable_filename'],
+                          model['input_output']['save_profile_fit'],
+                          model['input_output']['save_vis_fit'],
+                          model['input_output']['save_uvtables'],
+                          model['input_output']['iteration_diag'],
+                          model['plotting']['full_plot'],
+                          model['plotting']['quick_plot'],
+                          model['plotting']['force_style'],
+                          model['plotting']['dist']
+                          )
 
     logging.info("IT'S ALIVE!!\n")
+
 
 if __name__ == "__main__":
     main()
