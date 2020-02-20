@@ -308,12 +308,13 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
     ax.plot(range(0, N_iter), convergence_criterion)
 
     ax.set_xlabel('Fit iteration')
-    ax.set_ylabel(r'Convergence criterion, max(|$I_i - I_{i-1}$|) / max($I_i$)') # TODO: update units / label
+    ax.set_ylabel('Convergence criterion,\n' + \
+                 r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
 
     ax.set_yscale('log')
 
 
-def make_colorbar(ax, vmin, vmax, cmap, label):
+def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
     """
     Custom format to place a colorbar in an inset
 
@@ -321,20 +322,21 @@ def make_colorbar(ax, vmin, vmax, cmap, label):
     ----------
     ax : Matplotlib axis
           Axis in which to inset the colorbar
-
     vmin, vmax : int
           Lower and upper bounds of colorbar scale
-
     cmap : plt.cm colormap
           Colormap to apply to the colorbar
-
     label : string
           Label for colorbar
+    loc : int, one of [1, 2, 3, 4], default = 3
+          Quadrant position of colorbar in ax
+    bbox_x, bbox_y : float, default = 0.05 and 0.175
+          x- and y-value where the colorbar is placed
     """
 
     from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-    axins1 = inset_axes(ax1, width="50%", height="5%", loc=3,
-                   bbox_to_anchor=(.05,.175, 1, 1),
+    axins1 = inset_axes(ax, width="50%", height="5%", loc=loc,
+                   bbox_to_anchor=(bbox_x, bbox_y, 1, 1),
                    bbox_transform=ax.transAxes
                    )
     sm = plt.cm.ScalarMappable(cmap=cmap,
@@ -370,21 +372,24 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool,
            y-label of the plot
     """
 
-    for i in range(n_iter[0], n_iter[1]):
-        ax.plot(r, profile_iter[i] / 1e10, c=cmap(i / len(n_iter)))
+    iter_range = range(n_iter[0], n_iter[1])
+    for i in iter_range:
+        ax.plot(r, profile_iter[i] / 1e10, c=cmap(i / len(iter_range)))
     ax.plot(r, profile_iter[-1] / 1e10, ':', c='k', label='Last iteration')
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration'
+                  label='Iteration', loc=1, bbox_x=-.1, bbox_y=-.2
                   )
 
-    ax.legend()
+    ax.legend(loc='upper right')
 
     ax.set_xlabel('r ["]')
     ax.set_ylabel(ylabel)
 
 
-def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool):
+def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool,
+                            ylabel=r'Power [Jy$^2$]'
+                            ):
     r"""
     Plot a fit's power spectrum reconstruction over a chosen range of
     the fit's iterations
@@ -401,24 +406,28 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool):
           Chosen range of iterations in the fit over which to plot pwr_spec_iter
     ax : Matplotlib axis
           Axis on which to plot the power spectrum iterations
+    ylabel : string, default = r'Power [Jy$^2$]'
+           y-label of the plot
     cmap : plt.cm colormap, default=plt.cm.cool
           Colormap to apply to the overplotted power spectra
     """
 
-    for i in range(n_iter[0], n_iter[1]):
-        ax.plot(q, pwr_spec_iter[i], c=plt.cm.cool(i / len(n_iter)))
+    iter_range = range(n_iter[0], n_iter[1])
+    for i in iter_range:
+        ax.plot(q, pwr_spec_iter[i], c=cmap(i / len(iter_range)))
     ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration')
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration'
+                  label='Iteration', loc=3, bbox_x=.05, bbox_y=.175
                   )
 
-    ax.legend()
+    ax.legend(loc='upper right')
 
+    ax.set_ylim(bottom=1e-16)
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(r'Power [Jy$^2$]') # TODO: update units / label
+    ax.set_ylabel(ylabel) # TODO: update units / label
 
 
 def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):

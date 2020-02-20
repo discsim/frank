@@ -66,7 +66,7 @@ def load_uvtable(data_file):
 
 def save_fit(u, v, vis, weights, sol, prefix,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
-             save_iteration_diag=False
+             save_iteration_diag=True, iteration_diag=None
              ):
     r"""
     Save datafiles of fit results
@@ -95,6 +95,9 @@ def save_fit(u, v, vis, weights, sol, prefix,
         NOTE: These are reprojected
     save_iteration_diag : bool
         Whether to save diagnostics of the fit iteration
+    iteration_diag : _HankelRegressor object
+        Diagnostics of the fit iteration
+        (see radial_fitters.FrankFitter.fit)
     """
 
     with open(prefix + '_frank_sol.obj', 'wb') as f:
@@ -102,7 +105,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
 
     if save_iteration_diag:
         with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f:
-            pickle.dump(iteration_diagnostics, f)
+            pickle.dump(iteration_diag, f)
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
