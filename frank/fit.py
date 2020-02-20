@@ -42,7 +42,7 @@ def helper():
          Fit a 1D radial brightness profile with Frankenstein (frank) from the
          terminal with `python -m frank.fit`. A .json parameter file is required;
          the default is default_parameters.json and is of the form:\n\n""",
-         json.dumps(param_descrip, indent=4))  # TODO
+          json.dumps(param_descrip, indent=4))  # TODO
 
 
 def parse_parameters():
@@ -89,11 +89,11 @@ def parse_parameters():
                          " Set it in the parameter file or run frank with"
                          " python -m frank.fit -uv <uvtable_filename>")
 
-    if not model['input_output']['load_dir']:
-        model['input_output']['load_dir'] = os.getcwd()
-
     if not model['input_output']['save_dir']:
-        model['input_output']['save_dir'] = model['input_output']['load_dir']
+        # Use the uv table location as save point:
+        uv_path = model['input_output']['uvtable_filename']
+        if uv_path:
+            model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
     logging.basicConfig(level=logging.INFO,
                         format='%(message)s',
@@ -118,14 +118,12 @@ def parse_parameters():
     return model
 
 
-def load_data(load_dir, data_file):
+def load_data(data_file):
     r"""
     Read in a UVTable with data to be fit. See frank.io.load_uvtable
 
     Parameters
     ----------
-    load_dir : string
-          Path to parent directory of data_file
     data_file : string
           UVTable with columns:
           u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
@@ -141,7 +139,7 @@ def load_data(load_dir, data_file):
           :math:`1 / \sigma^2`
     """
     logging.info('  Loading UVTable')
-    u, v, vis, weights = io.load_uvtable(os.path.join(load_dir, data_file))
+    u, v, vis, weights = io.load_uvtable(data_file)
 
     return u, v, vis, weights
 
@@ -333,28 +331,30 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
     figs = []
     axes = []
 
+    save_prefix = \
+        os.path.join(save_dir,
+                     os.path.splitext(os.path.basename(uvtable_filename))[0])
+
     if quick_plot:
         quick_fig, quick_axes = \
-              make_figs.make_quick_fig(u, v, vis, weights,
-                                       sol, bin_widths, dist, force_style, save_dir,
-                                       uvtable_filename
-                                       )
+            make_figs.make_quick_fig(u, v, vis, weights,
+                                     sol, bin_widths, dist, force_style, save_prefix
+                                     )
 
         figs.append(quick_fig)
         axes.append(quick_axes)
 
     if full_plot:
         full_fig, full_axes = \
-              make_figs.make_full_fig(u, v, vis, weights,
-                                      sol, bin_widths, dist, force_style, save_dir,
-                                      uvtable_filename
-                                      )
+            make_figs.make_full_fig(u, v, vis, weights,
+                                    sol, bin_widths, dist, force_style, save_prefix
+                                    )
 
         figs.append(full_fig)
         axes.append(axes)
 
     logging.info('  Saving results')
-    io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
+    io.save_fit(u, v, vis, weights, sol, save_prefix,
                 save_profile_fit, save_vis_fit, save_uvtables,
                 save_iteration_diag
                 )
@@ -365,8 +365,7 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
 def main():
     model = parse_parameters()
 
-    u, v, vis, weights = load_data(model['input_output']['load_dir'],
-                                   model['input_output']['uvtable_filename'])
+    u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
 
     geom = determine_geometry(u, v, vis, weights,
                               model['geometry']['inc'],

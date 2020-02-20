@@ -1,7 +1,6 @@
 {
   "input_output" : {
     "uvtable_filename" : "",
-    "load_dir"         : "",
     "save_dir"	       : "",
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
