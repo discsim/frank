@@ -124,9 +124,7 @@ class UVDataBinner(object):
         bin_vis_err[idx2].imag = \
             np.sqrt(bin_vis_err[idx2].imag - bin_vis[idx2].imag**2)
 
-
         # Use a sensible error for bins with one baseline
-        idx1 = bin_n == 1
         bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
             1 / np.sqrt(bin_wgt[idx1])
 
