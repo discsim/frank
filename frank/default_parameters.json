@@ -29,7 +29,8 @@
     "rout"             : 1.6,
     "alpha"            : 1.05,
     "p0"               : 1e-15,
-    "wsmooth"          : 1e-4
+    "wsmooth"          : 1e-4,
+    "max_iter"         : 1500
   },
 
   "plotting" : {

@@ -29,7 +29,8 @@
     "rout"             : "Maximum disc radius in the fit (best to overestimate size of source). [arcsec]",
     "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
     "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
-    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)"
+    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
+    "max_iter"         : "Maximum number of fit iterations"    
   },
 
   "plotting" : {
