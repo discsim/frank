@@ -66,7 +66,7 @@ def parse_parameters():
 
     import argparse
 
-    default_param_file = frank_path + '/default_parameters.json'  # TODO
+    default_param_file = os.path.join(frank_path, 'default_parameters.json')
 
     parser = argparse.ArgumentParser("Run a Frank fit, by default using"
                                      " parameters in default_parameters.json")
@@ -144,8 +144,8 @@ def load_data(data_file):
     return u, v, vis, weights
 
 
-def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
-                       known_geometry, fit_phase_offset
+def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
+                       fit_phase_offset
                        ):
     r"""
     Determine the source geometry (inclination, position angle, phase offset)
@@ -153,27 +153,27 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
     Parameters
     ----------
     u, v : array, unit = :math:`\lambda`
-          u and v coordinates of observations
+        u and v coordinates of observations
     vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
+        Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \sigma^2`
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
     inc: float, unit = deg
-          Source inclination
+        Source inclination
     pa : float, unit = deg
-          Source position angle
+        Source position angle
     dra : float, unit = arcsec
-          Source right ascension offset from 0
+        Source right ascension offset from 0
     ddec : float, unit = arcsec
-          Source declination offset from 0
-    fit_geometry: bool
-          Whether to fit for the source geometry
-    known_geometry: bool
-          Whether to supply a known source geometry
+        Source declination offset from 0
+    geometry_type: string, from {'known', 'gaussian' }
+        Specifies how the geometry is determined. Options:
+            'known' :  a prescribed geometry
+            'gaussian' : determine geometry by fitting a Gaussian
     fit_phase_offset: bool
-          Whether to fit for the source's right ascension offset and declination
-          offset from 0
+        Whether to fit for the source's right ascension offset and declination
+        offset from 0
 
     Returns
     -------
@@ -185,25 +185,23 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
 
     logging.info('  Determining disc geometry')
 
-    if not fit_geometry:
-        geom = geometry.FixedGeometry(0., 0., 0., 0.)
+    if geometry_type == 'known':
+        geom = geometry.FixedGeometry(inc, pa, dra, ddec)
 
-    else:
-        if known_geometry:
-            geom = geometry.FixedGeometry(inc, pa, dra, ddec)
+    elif geometry_type == 'gaussian':
+        if fit_phase_offset:
+            geom = geometry.FitGeometryGaussian()
 
         else:
-            if fit_phase_offset:
-                geom = geometry.FitGeometryGaussian()
+            geom = geometry.FitGeometryGaussian(
+                phase_centre=(dra, ddec))
 
-            else:
-                geom = geometry.FitGeometryGaussian(
-                    phase_centre=(dra, ddec))
-
-            t1 = time.time()
-            geom.fit(u, v, vis, weights)
-            logging.info('    Time taken to fit geometry %.1f sec' % (time.time()
-                                                                      - t1))
+        t1 = time.time()
+        geom.fit(u, v, vis, weights)
+        logging.info('    Time taken to fit geometry %.1f sec' % (time.time()
+                                                                  - t1))
+    else:
+        raise ValueError("geometry_type must be one of 'known' or 'gaussian'")
 
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
                  '           dRA  = %.2e mas,\n           dDec = %.2e mas'
@@ -372,8 +370,7 @@ def main():
                               model['geometry']['pa'],
                               model['geometry']['dra'],
                               model['geometry']['ddec'],
-                              model['geometry']['fit_geometry'],
-                              model['geometry']['known_geometry'],
+                              model['geometry']['geometry_type'],
                               model['geometry']['fit_phase_offset']
                               )
 
