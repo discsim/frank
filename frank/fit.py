@@ -184,37 +184,43 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, fit_geometry,
     logging.info('  Determining disc geometry')
 
     if not fit_geometry:
+        logging.info("    All geometry parameters are 0: won't apply any"
+                     " deprojection")
         geom = geometry.FixedGeometry(0., 0., 0., 0.)
 
     else:
         if known_geometry:
+            logging.info('    Using your provided geometry for deprojection')
             geom = geometry.FixedGeometry(inc, pa, dra, ddec)
 
         else:
             if fit_phase_offset:
+                logging.info('    Fitting Gaussian to determine geometry')
                 geom = geometry.FitGeometryGaussian()
 
             else:
+                logging.info('    Fitting Gaussian to determine geometry'
+                             ' (not fitting for phase center)')
                 geom = geometry.FitGeometryGaussian(
                                         phase_centre=(dra, ddec))
 
             t1 = time.time()
             geom.fit(u, v, vis, weights)
-            logging.info('    Time taken to fit geometry %.1f sec'%(time.time()
-                         - t1))
+            logging.info('    Time taken for geometry routines'
+                         ' %.1f sec'%(time.time() - t1))
 
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
                  '           dRA  = %.2e mas,\n           dDec = %.2e mas'
                  %(geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
 
+    # Store geometry
     geom = geom.clone()
-    logging.info('    Storing disc geometry to use for fit')
 
     return geom
 
 
 def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
-                iteration_diag=True
+                return_iteration_diag=True
                 ):
     r"""
     Deproject the observed visibilities and fit them for the brightness profile
@@ -243,7 +249,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
           (suggested range 10^-4 - 10^-1)
     max_iter : int
           Maximum number of fit iterations
-    iteration_diag : bool, default = False
+    return_iteration_diag : bool, default = True
           Whether to return diagnostics of the fit iteration
           (see radial_fitters.FrankFitter.fit)
 
@@ -263,24 +269,28 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
                      alpha=alpha, weights_smooth=wsmooth, max_iter=max_iter,
-                     store_iteration_diagnostics=iteration_diag
+                     store_iteration_diagnostics=return_iteration_diag
                      )
 
     t1 = time.time()
-    sol = FF.fit(u, v, vis, weights)
+    if return_iteration_diag:
+        sol, iteration_diag = FF.fit(u, v, vis, weights)
+    else:
+        sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
           ' collocation points) %.1f sec'%(len(vis), n, time.time() - t1))
 
-    if iteration_diag:
-        return sol, FF.iteration_diagnostics
+    if return_iteration_diag:
+        return sol, iteration_diag
     else:
-        return sol, None
+        return sol, None # TODO: handle better
 
 
-def output_results(u, v, vis, weights, sol, iteration_diag, bin_widths,
-                   save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
-                   save_uvtables, save_iteration_diag, full_plot, quick_plot,
-                   diag_plot, force_style=True, dist=None
+def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
+                   stop_iter, bin_widths, save_dir, uvtable_filename,
+                   save_profile_fit, save_vis_fit, save_uvtables,
+                   save_iteration_diag, full_plot, quick_plot, diag_plot,
+                   force_style=True, dist=None
                    ):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
@@ -358,9 +368,9 @@ def output_results(u, v, vis, weights, sol, iteration_diag, bin_widths,
 
     if diag_plot:
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
-                          iteration_diag.mean, sol.q,
-                          iteration_diag.power_spectrum,
-                          iteration_diag.num_iterations, start_iter, stop_iter,
+                          iteration_diag['mean'], sol.q,
+                          iteration_diag['power_spectrum'],
+                          iteration_diag['num_iterations'], start_iter, stop_iter,
                           force_style, save_dir, uvtable_filename
                           )
 
@@ -370,7 +380,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, bin_widths,
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_dir, uvtable_filename,
                       save_profile_fit, save_vis_fit, save_uvtables,
-                      save_iteration_diag
+                      save_iteration_diag, iteration_diag
                       )
 
     return figs, axes
@@ -401,7 +411,6 @@ def main():
                               model['input_output']['iteration_diag']
                               )
 
-
     figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
                    model['plotting']['start_iter'],
                    model['plotting']['stop_iter'],
@@ -414,6 +423,7 @@ def main():
                    model['input_output']['iteration_diag'],
                    model['plotting']['full_plot'],
                    model['plotting']['quick_plot'],
+                   model['plotting']['diag_plot'],
                    model['plotting']['force_style'],
                    model['plotting']['dist'],
                    )

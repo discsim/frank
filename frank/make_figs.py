@@ -23,8 +23,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
+# To suppress `plt.tight_layout()` warning
+import warnings
+warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+
 from frank.plot import *
 from frank.useful_funcs import *
+
 
 def frank_plotting_style():
     """Apply custom alterations to the matplotlib style"""
@@ -102,7 +107,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     gs = GridSpec(3, 3, hspace=0)
     gs2 = GridSpec(3, 3, hspace=.35)
-    fig = plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(8, 6))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[3])
@@ -234,7 +239,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
     gs = GridSpec(2, 2, hspace=0)
-    fig = plt.figure(figsize=(8,6))
+    fig = plt.figure(figsize=(8, 6))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[2])
@@ -336,9 +341,9 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     if save_dir and uvtable_filename:
         prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
 
-    gs = GridSpec(3, 2, hspace=0, bottom=.15)
-    gs2 = GridSpec(3, 2, hspace=0, top=.85)
-    fig = plt.figure(figsize=(8,6))
+    gs = GridSpec(2, 2, hspace=0, bottom=.3)
+    gs2 = GridSpec(3, 2, hspace=0, top=.7)
+    fig = plt.figure(figsize=(8, 6))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[2])
@@ -346,7 +351,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     ax2 = fig.add_subplot(gs[1])
     ax3 = fig.add_subplot(gs[3])
 
-    ax4 = fig.add_subplot(gs2[2])
+    ax4 = fig.add_subplot(gs2[4])
 
     axes = [ax0, ax1, ax2, ax3, ax4]
 
@@ -356,15 +361,18 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     plot_profile_iterations(r, profile_iter, iter_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
-    iter_range_end = [N_iter - 100, N_iter]
-    plot_profile_iterations(r, np.diff(profile_iter), iter_range_end, ax1,
+    iter_range_end = [N_iter - 100, N_iter - 1]
+
+    plot_profile_iterations(r, np.diff(profile_iter, axis=0),
+                            iter_range_end, ax1, cmap=plt.cm.cividis,
                             ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'
                             )
 
     plot_pwr_spec_iterations(q, pwr_spec_iter, iter_range, ax2)
 
     # Plot the difference in the power spectrum between the last 100 iterations
-    plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter), iter_range_end, ax1,
+    plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
+                            iter_range_end, ax3, cmap=plt.cm.cividis,
                             ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]' # TODO: check unit
                             )
 
