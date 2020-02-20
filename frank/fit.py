@@ -21,7 +21,6 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
-from frank import io, make_figs
 import os
 import sys
 import time
@@ -29,6 +28,8 @@ import json
 import numpy as np
 
 import logging
+
+from frank import io, make_figs # TODO
 
 import frank
 frank_path = os.path.dirname(frank.__file__)  # TODO
@@ -41,8 +42,8 @@ def helper():
     print("""
          Fit a 1D radial brightness profile with Frankenstein (frank) from the
          terminal with `python -m frank.fit`. A .json parameter file is required;
-         the default is default_parameters.json and is of the form:\n\n""",
-          json.dumps(param_descrip, indent=4))  # TODO
+         the default is default_parameters.json and is
+         of the form:\n\n {}""".format(json.dumps(param_descrip, indent=4)))  # TODO
 
 
 def parse_parameters():
@@ -95,21 +96,22 @@ def parse_parameters():
         if uv_path:
             model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
+    log_path = os.path.join(model['input_output']['save_dir'],
+                              model['input_output']['uvtable_filename'] + \
+                              '_frank_fit.log')
     logging.basicConfig(level=logging.INFO,
                         format='%(message)s',
                         handlers=[
-                            logging.FileHandler(
-                                os.path.join(model['input_output']['save_dir'],
-                                             'frank_fit.log'),
-                                mode='w'),
+                            logging.FileHandler(log_path, mode='w'),
                             logging.StreamHandler()]
                         )
 
-    logging.info('\nRunning frank on %s'
-                 % model['input_output']['uvtable_filename'])
+    logging.info('\nRunning frank on'
+                 ' {}'.format(model['input_output']['uvtable_filename']))
 
     param_path = os.path.join(model['input_output']['save_dir'],
-                              'frank_used_pars.json')
+                              model['input_output']['uvtable_filename'] + \
+                              '_frank_used_pars.json')
     logging.info(
         '  Saving parameters to be used in fit to {}'.format(param_path))
     with open(param_path, 'w') as f:
@@ -188,8 +190,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     if geometry_type == 'known':
         logging.info('    Using your provided geometry for deprojection')
         if all(x == 0 for x in (inc, pa, dra, ddec)):
-            logging.info("      N.B.: All geometery parameters are 0: won't"
-                         " apply any correction"
+            logging.info("      N.B.: All geometry parameters are 0: I won't"
+                         " apply any geometry correction to the visibilities"
         geom = geometry.FixedGeometry(inc, pa, dra, ddec)
 
     elif geometry_type == 'gaussian':
@@ -204,14 +206,15 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
 
         t1 = time.time()
         geom.fit(u, v, vis, weights)
-        logging.info('    Time taken for geometry routines %.1f sec' %
+        logging.info('    Time taken for geometry %.1f sec' %
                     (time.time() - t1))
     else:
         raise ValueError("geometry_type must be one of 'known' or 'gaussian'")
 
-    logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
-                 '           dRA  = %.2e mas,\n           dDec = %.2e mas'
-                 % (geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
+    logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
+                 '           dRA  = {.2e} mas,\n'
+                 '           dDec = {.2e} mas'.format(geom.inc, geom.PA,
+                 geom.dRA*1e3, geom.dDec*1e3))
 
     # Store geometry
     geom = geom.clone()
@@ -281,17 +284,17 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
         sol, iteration_diag = FF.fit(u, v, vis, weights)
     elif diag_plot:
         logging.info("    Your parameter file has 'iteration_diag=False' but"
-                     " 'diag_plot=True'. I'll act as if `iteration_diag=True`.")
+                     " 'diag_plot=True'. I'll act as if 'iteration_diag=True'.")
     else:
         sol = FF.fit(u, v, vis, weights)
-    logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
-                 ' collocation points) %.1f sec' % (len(vis), n,
+    logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
+                 '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
                  time.time() - t1))
 
     if return_iteration_diag:
         return sol, FF.iteration_diagnostics
     else:
-        return [sol, ]
+        return [sol, ] # TODO: handle better
 
 
 def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
@@ -414,31 +417,31 @@ def main():
                               )
 
     sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
-                              model['hyperpriors']['rout'],
-                              model['hyperpriors']['n'],
-                              model['hyperpriors']['alpha'],
-                              model['hyperpriors']['wsmooth'],
-                              model['hyperpriors']['max_iter'],
-                              model['input_output']['iteration_diag'],
-                              model['plotting']['diag_plot']
-                              )
+                                             model['hyperpriors']['rout'],
+                                             model['hyperpriors']['n'],
+                                             model['hyperpriors']['alpha'],
+                                             model['hyperpriors']['wsmooth'],
+                                             model['hyperpriors']['max_iter'],
+                                             model['input_output']['iteration_diag'],
+                                             model['plotting']['diag_plot']
+                                             )
 
     figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
-                   model['plotting']['start_iter'],
-                   model['plotting']['stop_iter'],
-                   model['plotting']['bin_widths'],
-                   model['input_output']['save_dir'],
-                   model['input_output']['uvtable_filename'],
-                   model['input_output']['save_profile_fit'],
-                   model['input_output']['save_vis_fit'],
-                   model['input_output']['save_uvtables'],
-                   model['input_output']['iteration_diag'],
-                   model['plotting']['full_plot'],
-                   model['plotting']['quick_plot'],
-                   model['plotting']['diag_plot'],
-                   model['plotting']['force_style'],
-                   model['plotting']['dist'],
-                   )
+                          model['plotting']['start_iter'],
+                          model['plotting']['stop_iter'],
+                          model['plotting']['bin_widths'],
+                          model['input_output']['save_dir'],
+                          model['input_output']['uvtable_filename'],
+                          model['input_output']['save_profile_fit'],
+                          model['input_output']['save_vis_fit'],
+                          model['input_output']['save_uvtables'],
+                          model['input_output']['iteration_diag'],
+                          model['plotting']['full_plot'],
+                          model['plotting']['quick_plot'],
+                          model['plotting']['diag_plot'],
+                          model['plotting']['force_style'],
+                          model['plotting']['dist'],
+                          )
 
     logging.info("IT'S ALIVE!!\n")
 
