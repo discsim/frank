@@ -57,7 +57,7 @@ def load_uvtable(data_file):
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
 
     else:
-        raise ValueError("    You provided a UVTable with the extension %s."
+        raise ValueError("You provided a UVTable with the extension %s."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`." % extension)
 
