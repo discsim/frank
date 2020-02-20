@@ -22,7 +22,6 @@
    NOTE: The sign convention used here is xx.
 """
 
-import abc
 import numpy as np
 from scipy.optimize import least_squares
 
@@ -204,7 +203,6 @@ class SourceGeometry(object):
         """Convert uv-points from deprojected space to sky-plane"""
         return deproject(u, v, self._inc, self._PA, inverse=True)
 
-    @abc.abstractmethod
     def fit(self, u, v, V, weights):
         r"""
         Determine geometry using the provided uv-data
@@ -286,6 +284,7 @@ class FitGeometryGaussian(SourceGeometry):
          centre should be provided as a tuple
 
     """
+
     def __init__(self, phase_centre=None):
         super(FitGeometryGaussian, self).__init__()
 
@@ -314,6 +313,7 @@ class FitGeometryGaussian(SourceGeometry):
         self._PA = PA
         self._dRA = dRA
         self._dDec = dDec
+
 
 def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     r"""
