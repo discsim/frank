@@ -278,7 +278,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
     if return_iteration_diag:
         return sol, FF.iteration_diagnostics
     else:
-        return [sol, ] None  # TODO: handle better
+        return [sol, ]  # TODO: handle better
 
 
 def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
