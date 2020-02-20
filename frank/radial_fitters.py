@@ -615,7 +615,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=1500, store_iteration_diagnostics=True):
+                 tol=1e-3, max_iter=1500, store_iteration_diagnostics=False):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
                                           block_size
@@ -754,10 +754,7 @@ class FrankFitter(FourierBesselFitter):
         self._ps = pi
         self._ps_cov = self._ps_covariance(fit, Tij, rho)
 
-        if self._store_iteration_diagnostics:
-            return self._sol, self._iteration_diagnostics
-        else:
-            return self._sol
+        return self._sol
 
     def _ps_covariance(self, fit, Tij, rho):
         """

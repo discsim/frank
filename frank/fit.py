@@ -84,10 +84,10 @@ def parse_parameters():
         model['input_output']['uvtable_filename'] = args.uvtable_filename
 
     if ('uvtable_filename' not in model['input_output'] or
-        not model['input_output']['uvtable_filename']):
+            not model['input_output']['uvtable_filename']):
         raise ValueError("uvtable_filename isn't specified."
-                 " Set it in the parameter file or run frank with"
-                 " python -m frank.fit -uv <uvtable_filename>")
+                         " Set it in the parameter file or run frank with"
+                         " python -m frank.fit -uv <uvtable_filename>")
 
     if not model['input_output']['save_dir']:
         # Use the uv table location as save point:
@@ -207,7 +207,6 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     else:
         raise ValueError("geometry_type must be one of 'known' or 'gaussian'")
 
-
     logging.info('    Using: inc  = %.2f deg,\n           PA   = %.2f deg,\n'
                  '           dRA  = %.2e mas,\n           dDec = %.2e mas'
                  % (geom.inc, geom.PA, geom.dRA*1e3, geom.dDec*1e3))
@@ -272,17 +271,14 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
                                     )
 
     t1 = time.time()
-    if return_iteration_diag:
-        sol, iteration_diag = FF.fit(u, v, vis, weights)
-    else:
-        sol = FF.fit(u, v, vis, weights)
+    sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with %.0e visibilities and %s'
                  ' collocation points) %.1f sec' % (len(vis), n, time.time() - t1))
 
     if return_iteration_diag:
-        return sol, iteration_diag
+        return sol, FF.iteration_diagnostics
     else:
-        return sol, None # TODO: handle better
+        return [sol, ] None  # TODO: handle better
 
 
 def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
@@ -371,11 +367,11 @@ def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
 
     if diag_plot:
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
-                          iteration_diag['mean'], sol.q,
-                          iteration_diag['power_spectrum'],
-                          iteration_diag['num_iterations'], start_iter, stop_iter,
-                          force_style, save_dir, uvtable_filename
-                          )
+                                                      iteration_diag['mean'], sol.q,
+                                                      iteration_diag['power_spectrum'],
+                                                      iteration_diag['num_iterations'], start_iter, stop_iter,
+                                                      force_style, save_dir, uvtable_filename
+                                                      )
 
         figs.append(diag_fig)
         axes.append(diag_axes)
