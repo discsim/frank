@@ -94,7 +94,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     fig : Matplotlib `.Figure` instance
           The produced figure, including the GridSpec
     axes : Matplotlib `~.axes.Axes` class
-          The axes of the produce figure
+          The axes of the produced figure
     """
     if force_style: frank_plotting_style()
     if save_dir and uvtable_filename:
@@ -226,7 +226,107 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     fig : Matplotlib `.Figure` instance
           The produced figure, including the GridSpec
     axes : Matplotlib `~.axes.Axes` class
-          The axes of the produce figure
+          The axes of the produced figure
+    """
+
+    if force_style: frank_plotting_style()
+    if save_dir and uvtable_filename:
+        prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
+
+    gs = GridSpec(2, 2, hspace=0)
+    fig = plt.figure(figsize=(8,6))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax1 = fig.add_subplot(gs[2])
+
+    ax2 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[3])
+
+    axes = [ax0, ax1, ax2, ax3]
+
+    plot_brightness_profile(sol.r, sol.mean, ax0)
+    plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
+
+    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
+    baselines = (u_deproj**2 + v_deproj**2)**.5
+    grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
+                       np.log10(max(baselines.max(), sol.q[-1])),
+                       10**4)
+
+    cs = ['#a4a4a4', 'k', '#896360', 'b']
+    cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
+    ms = ['x', '+', '.', '1']
+
+    for i in range(len(bin_widths)):
+        binned_vis = BinUVData(baselines, vis_deproj, weights, bin_widths[i])
+        vis_re_kl = binned_vis.V.real * 1e3
+        vis_im_kl = binned_vis.V.imag * 1e3
+        vis_err_re_kl = binned_vis.error.real * 1e3
+        vis_err_im_kl = binned_vis.error.imag * 1e3
+
+        plot_vis(binned_vis.uv, vis_re_kl,
+            vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+
+        plot_vis_resid(binned_vis.uv, vis_re_kl,
+            sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
+                marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+
+    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
+    plot_vis_fit(grid, vis_fit_kl, ax2)
+
+    xlims = ax2.get_xlim()
+    ax3.set_xlim(xlims)
+
+    plt.setp(ax0.get_xticklabels(), visible=False)
+    plt.setp(ax2.get_xticklabels(), visible=False)
+
+    plt.tight_layout()
+
+    if save_dir and uvtable_filename:
+        plt.savefig(prefix + '_frank_fit_quick.png', dpi=600)
+    else: plt.show()
+
+    return fig, axes
+
+
+def make_diag_fig(u, v, vis, weights, sol, bin_widths, dist=None,
+                   iteration_diag, force_style=True, save_dir=None,
+                   uvtable_filename=None
+                   ):
+    r"""
+    Produce a diagnostic figure showing fit convergence metrics
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+          Weights assigned to observed visibilities, of the form
+          :math:`1 / \sigma^2`
+    sol : _HankelRegressor object
+          Reconstructed profile using Maximum a posteriori power spectrum
+          (see frank.radial_fitters.FrankFitter)
+    bin_widths : list, unit = \lambda
+          Bin widths in which to bin the observed visibilities
+    dist : float, optional, unit = AU, default = None
+          Distance to source, used to show second x-axis for brightness profile
+    force_style: bool, default = True
+          Whether to use preconfigured matplotlib rcParams in generated figure
+    save_dir : string, default = None
+          Directory in which to save produced figure. If None, the figure will
+          be produced but not saved
+    uvtable_filename : string, default = None
+          Filename for observed UVTable. If the figure is being saved, it will
+          use this as its filename prefix
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+          The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+          The axes of the produced figure
     """
 
     if force_style: frank_plotting_style()

@@ -167,7 +167,7 @@ def sweep_profile(r, I, axis=0):
 
     Returns
     -------
-    I2D : array, shape = (r, 2)
+    I2D : array, shape = (2, len(r)) # TODO: check
         2D brightness distribution
     xmax : float
         Maximum x-value of the 2D grid

@@ -25,7 +25,10 @@ import matplotlib.pyplot as plt
 from frank.useful_funcs import sweep_profile
 
 __all__ = ['plot_brightness_profile', 'plot_vis_fit', 'plot_vis',
-          'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep']
+          'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep',
+          'plot_convergence_criterion', 'plot_profile_iterations',
+          'plot_pwr_spec_iterations'
+          ]
 
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-',
                             ylolim=None
@@ -61,6 +64,7 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-',
     ax.legend()
 
     if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
+
 
 def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-',
                  ls2='None', xscale='log', yscale='linear', ylolim=None
@@ -109,6 +113,7 @@ def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-',
     ax.legend()
 
     if ylolim: ax.set_ylim(bottom=ylolim)
+
 
 def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
              marker2='.', binwidth='unspecified', xscale='log', yscale='linear',
@@ -180,6 +185,7 @@ def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
 
     if zoom is not None: ax.set_ylim(zoom)
 
+
 def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
                    binwidth='unspecified', xscale='log', yscale='linear',
                    normalize_resid=False
@@ -236,6 +242,7 @@ def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
         ax.axhline(0, c='c', ls='--', zorder=10)
         ax.set_ylim(-2 * rmse, 2 * rmse)
 
+
 def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
                   xscale='log', yscale='log'
                   ):
@@ -248,7 +255,8 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
           Baseline coordinates. The assumed unit (for the x-label) is
           :math:`\lambda`
     pwr_spec : array
-          Reconstructed power spectral mode amplitudes at baselines
+          Reconstructed power spectral mode amplitudes at baselines. The assumed
+          unit (for the y-label) is Jy^-2 # TODO: check
     ax : Matplotlib axis
           Axis on which to plot the power spectrum
     c : Matplotlib color, default = '#B123D7'
@@ -271,6 +279,141 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
     ax.set_yscale(yscale)
 
     if ylolim: ax.set_ylim(bottom=ylolim)
+
+
+def plot_convergence_criterion(profile_iter, N_iter, ax):
+    r"""
+    Plot a generic convergence criterion for a Frankenstein fit,
+        :math:`{\rm max}(|$I_i - I_{i-1}$|) / {\rm max}($I_i$)`,
+    where $I_i$ is the brightness profile at iteration $i$
+
+    Parameters
+    ----------
+    profile_iter : list, shape = (N_iter, N_coll)
+          Brightness profile reconstruction over N_iter iterations.
+          N_coll is the number of collocation points, i.e., the number of grid
+          points at which the profile is defined
+    N_iter : int
+          Total number of iterations in the fit
+    ax : Matplotlib axis
+          Axis on which to plot the convergence criterion
+    """
+
+    convergence_criterion = []
+    for i in range(N_iter):
+        this_conv_cri = np.max(np.abs(profile_iter[i] - profile_iter[i-1])) / \
+        np.max(profile_iter[i])
+        convergence_criterion.append(this_conv_cri)
+
+    ax.plot(range(0, N_iter), convergence_criterion)
+
+    ax.set_xlabel('Fit iteration number')
+    ax.set_ylabel(r'Convergence criterion, max(|$I_i - I_{i-1}$|) / max($I_i$)') # TODO: update units / label
+
+    ax.set_yscale('log')
+
+
+def make_colorbar(ax, vmin, vmax, cmap, label):
+    """
+    Custom format to place a colorbar in an inset
+
+    Parameters
+    ----------
+    ax : Matplotlib axis
+          Axis in which to inset the colorbar
+
+    vmin, vmax : int
+          Lower and upper bounds of colorbar scale
+
+    cmap : plt.cm colormap
+          Colormap to apply to the colorbar
+
+    label : string
+          Label for colorbar
+    """
+
+    from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+    axins1 = inset_axes(ax1, width="50%", height="5%", loc=3,
+                   bbox_to_anchor=(.05,.175, 1, 1),
+                   bbox_transform=ax.transAxes)
+    sm = plt.cm.ScalarMappable(cmap=cmap,
+                   norm=plt.Normalize(vmin=vmin, vmax=vmax))
+    cbar = plt.colorbar(sm, cax=axins1, orientation="horizontal")
+    cbar.set_label(label)
+    axins1.xaxis.set_ticks_position("bottom")
+
+
+def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool):
+    r"""
+    Plot a fit's brightness profile reconstruction over a chosen range of
+    the fit's iterations
+
+    Parameters
+    ----------
+    r : array
+          Radial data coordinates at which the brightness profile is defined.
+          The assumed unit (for the x-label) is arcsec
+    profile_iter : list, shape = (n_iter, N_coll)
+          Brightness profile reconstruction at each of n_iter iterations. The
+          assumed unit (for the y-label) is Jy / sr
+    n_iter : list, of the form [start_iteration, stop_iteration]
+          Chosen range of iterations in the fit over which to plot profile_iter
+    ax : Matplotlib axis
+          Axis on which to plot the profile iterations
+    cmap : plt.cm colormap, default=plt.cm.cool
+          Colormap to apply to the overplotted profiles
+    """
+
+    for i in range(n_iter[0], n_iter[1]):
+        ax.plot(r, profile_iter[i], c=cmap(i / len(n_iter)))
+    ax.plot(r, profile_iter[-1], ':', c='k', label='Last iteration')
+
+    make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
+                  label='Iteration'
+                  )
+
+    ax.legend()
+
+    ax.set_xlabel('r ["]')
+    ax.set_ylabel(r'I [10$^{10}$ Jy sr$^{-1}$]')
+
+
+def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool):
+    r"""
+    Plot a fit's power spectrum reconstruction over a chosen range of
+    the fit's iterations
+
+    Parameters
+    ----------
+    q : array
+          Baselines at which the power spectrum is defined.
+          The assumed unit (for the x-label) is :math:`\lambda`
+    pwr_spec_iter : list, shape = (n_iter, N_coll)
+          Power spectrum reconstruction at each of n_iter iterations. The
+          assumed unit (for the y-label) is Jy^-2 # TODO: check
+    n_iter : list, of the form [start_iteration, stop_iteration]
+          Chosen range of iterations in the fit over which to plot pwr_spec_iter
+    ax : Matplotlib axis
+          Axis on which to plot the power spectrum iterations
+    cmap : plt.cm colormap, default=plt.cm.cool
+          Colormap to apply to the overplotted power spectra
+    """
+
+    for i in range(n_iter[0], n_iter[1]):
+        ax.plot(q, pwr_spec_iter[i], c=plt.cm.cool(i / len(n_iter)))
+    ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration')
+
+    make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
+                  label='Iteration'
+                  )
+
+    ax.legend()
+
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.set_xlabel(r'Baseline [$\lambda$]')
+    ax.set_ylabel(r'Power [Jy$^2$]') # TODO: update units / label
+
 
 def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
     r"""

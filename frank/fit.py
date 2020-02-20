@@ -85,12 +85,9 @@ def parse_parameters():
 
     if ('uvtable_filename' not in model['input_output'] or
         not model['input_output']['uvtable_filename']):
-        model['input_output']['uvtable_filename'] = 'AS209_continuum.npz' # TODO: temp
-        """
         raise ValueError("uvtable_filename isn't specified."
                  " Set it in the parameter file or run frank with"
                  " python -m frank.fit -uv <uvtable_filename>")
-        """
 
     if not model['input_output']['load_dir']:
         model['input_output']['load_dir'] = os.getcwd()
