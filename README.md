@@ -1,5 +1,5 @@
 <p align="center">
-  <img width = "800" src="https://github.com/discsim/frank/blob/docs_and_runner_jj/docs/images/day_off.png?raw=true"/>
+  <img width = "800" src="https://github.com/discsim/frank/blob/master/docs/images/day_off.png?raw=true"/>
 </p>
 
 .. image:: https://circleci.com/xx/frank.svg?branch=master
