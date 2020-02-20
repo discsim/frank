@@ -265,7 +265,7 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
           :math:`\lambda`
     pwr_spec : array
           Reconstructed power spectral mode amplitudes at baselines. The assumed
-          unit (for the y-label) is Jy^-2 # TODO: check
+          unit (for the y-label) is Jy^2 
     ax : Matplotlib axis
           Axis on which to plot the power spectrum
     c : Matplotlib color, default = '#B123D7'
@@ -283,7 +283,7 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
     ax.plot(baselines, pwr_spec, c=c, ls=ls)
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(r'Power [Jy$^2$]')  # TODO: update units / label
+    ax.set_ylabel(r'Power [Jy$^2$]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
 
@@ -416,7 +416,7 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
           The assumed unit (for the x-label) is :math:`\lambda`
     pwr_spec_iter : list, shape = (n_iter, N_coll)
           Power spectrum reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy^-2 # TODO: check
+          assumed unit (for the y-label) is Jy^2
     n_iter : list, of the form [start_iteration, stop_iteration]
           Chosen range of iterations in the fit over which to plot pwr_spec_iter
     ax : Matplotlib axis
@@ -442,7 +442,7 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(ylabel)  # TODO: update units / label
+    ax.set_ylabel(ylabel)
 
 
 def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):

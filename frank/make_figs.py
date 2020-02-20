@@ -314,7 +314,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
           The assumed unit (for the x-label) is :math:`\lambda`
     pwr_spec_iter : list, shape = (n_iter, N_coll)
           Power spectrum reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy^-2 # TODO: check
+          assumed unit (for the y-label) is Jy^2
     N_iter : int
           Total number of iterations in the fit
     start_iter, stop_iter : int
@@ -370,7 +370,6 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     # Plot the difference in the power spectrum between the last 100 iterations
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
                              iter_range_end, ax3, cmap=plt.cm.cividis,
-                             # TODO: check unit
                              ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]'
                              )
 
