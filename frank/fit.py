@@ -84,10 +84,13 @@ def parse_parameters():
         model['input_output']['uvtable_filename'] = args.uvtable_filename
 
     if ('uvtable_filename' not in model['input_output'] or
-            not model['input_output']['uvtable_filename']):
-        raise ValueError("    uvtable_filename isn't specified."
-                         " Set it in the parameter file or run frank with"
-                         " python -m frank.fit -uv <uvtable_filename>")
+        not model['input_output']['uvtable_filename']):
+        model['input_output']['uvtable_filename'] = 'AS209_continuum.npz' # TODO: temp
+        """
+        raise ValueError("uvtable_filename isn't specified."
+                 " Set it in the parameter file or run frank with"
+                 " python -m frank.fit -uv <uvtable_filename>")
+        """
 
     if not model['input_output']['save_dir']:
         # Use the uv table location as save point:
@@ -214,7 +217,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
 
 
 def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
-                iteration_diag=False
+                iteration_diag=True
                 ):
     r"""
     Deproject the observed visibilities and fit them for the brightness profile
@@ -260,7 +263,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
     logging.info('  Fitting for brightness profile')
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                                    alpha=alpha, weights_smooth=wsmooth
+                                    alpha=alpha, weights_smooth=wsmooth, max_iter=5000,
+                                    store_iteration_diagnostics=iteration_diag
                                     )
 
     t1 = time.time()
@@ -274,7 +278,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
         return sol, None
 
 
-def output_results(u, v, vis, weights, geom, sol, bin_widths,
+def output_results(u, v, vis, weights, sol, bin_widths,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
                    save_uvtables, save_iteration_diag, full_plot, quick_plot,
                    force_style=True, dist=None
@@ -293,8 +297,6 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
     weights : array, unit = Jy^-2
           Weights assigned to observed visibilities, of the form
           :math:`1 / \sigma^2`
-    geom : SourceGeometry object
-          Fitted geometry (see frank.geometry.SourceGeometry)
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
@@ -382,7 +384,7 @@ def main():
                                              model['input_output']['iteration_diag']
                                              )
 
-    figs = output_results(u, v, vis, weights, geom, sol,
+    figs = output_results(u, v, vis, weights, sol,
                           model['plotting']['bin_widths'],
                           model['input_output']['save_dir'],
                           model['input_output']['uvtable_filename'],

@@ -196,7 +196,7 @@ def test_fit_geometry_inside():
 
 
 def test_uvbin():
-    """Check the uv-data binning routine"""    
+    """Check the uv-data binning routine"""
     AS209, geometry = load_AS209()
 
     uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
