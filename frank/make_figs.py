@@ -18,6 +18,8 @@
 #
 """This module generates figures for a Frankenstein fit and its diagnostics.
 """
+from frank.utilities import *
+from frank.plot import *
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -26,10 +28,6 @@ from matplotlib.gridspec import GridSpec
 # To suppress `plt.tight_layout()` warning
 import warnings
 warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
-
-from frank.plot import *
-from frank.utilities import *
-
 
 
 def frank_plotting_style():
@@ -98,7 +96,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     axes : Matplotlib `~.axes.Axes` class
           The axes of the produced figure
     """
-    if force_style: frank_plotting_style()
+    if force_style:
+        frank_plotting_style()
 
     gs = GridSpec(3, 3, hspace=0)
     gs2 = GridSpec(3, 3, hspace=.35)
@@ -231,9 +230,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
           The axes of the produced figure
     """
 
-    if force_style: frank_plotting_style()
-    if save_dir and uvtable_filename:
-        prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
+    if force_style:
+        frank_plotting_style()
 
     gs = GridSpec(2, 2, hspace=0)
     fig = plt.figure(figsize=(8, 6))
@@ -260,18 +258,19 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ms = ['x', '+', '.', '1']
 
     for i in range(len(bin_widths)):
-        binned_vis = BinUVData(baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(
+            baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
         vis_err_im_kl = binned_vis.error.imag * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl,
-            vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+                 vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-            sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
-                marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
+                       marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax2)
@@ -284,16 +283,16 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     plt.tight_layout()
 
-    if save_dir and uvtable_filename:
-        plt.savefig(prefix + '_frank_fit_quick.png', dpi=600)
-    else: plt.show()
+    if save_prefix:
+        plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+    else:
+        plt.show()
 
     return fig, axes
 
 
 def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
-                  stop_iter, force_style=True, save_dir=None,
-                  uvtable_filename=None
+                  stop_iter, force_style=True, save_prefix=None
                   ):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
@@ -319,12 +318,9 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
           plot profile_iter and pwr_spec_iter
     force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figure
-    save_dir : string, default = None
-          Directory in which to save produced figure. If None, the figure will
-          be produced but not saved
-    uvtable_filename : string, default = None
-          Filename for observed UVTable. If the figure is being saved, it will
-          use this as its filename prefix
+    save_prefix : string, default = None
+        Prefix used in saving the figure names. If None, The figure will not be
+        saved.
 
     Returns
     -------
@@ -368,9 +364,10 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
 
     # Plot the difference in the power spectrum between the last 100 iterations
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
-                            iter_range_end, ax3, cmap=plt.cm.cividis,
-                            ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]' # TODO: check unit
-                            )
+                             iter_range_end, ax3, cmap=plt.cm.cividis,
+                             # TODO: check unit
+                             ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]'
+                             )
 
     plot_convergence_criterion(profile_iter, N_iter, ax4)
 

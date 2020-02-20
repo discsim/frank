@@ -25,12 +25,13 @@ import matplotlib.pyplot as plt
 from frank.utilities import sweep_profile
 
 __all__ = ['plot_brightness_profile', 'plot_vis_fit', 'plot_vis',
-          'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep',
-          'plot_convergence_criterion', 'plot_profile_iterations',
-          'plot_pwr_spec_iterations'
-          ]
+           'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep',
+           'plot_convergence_criterion', 'plot_profile_iterations',
+           'plot_pwr_spec_iterations'
+           ]
 
-def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-',
+
+def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
                             ylolim=None
                             ):
     """
@@ -60,10 +61,12 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear',c='r', ls='-',
     ax.set_xlabel('r ["]')
     ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
     ax.set_yscale(yscale)
-    if ylolim: ax.set_ylim(bottom=ylolim)
+    if ylolim:
+        ax.set_ylim(bottom=ylolim)
     ax.legend()
 
-    if yscale == 'linear': ax.axhline(0, c='c', ls='--', zorder=10)
+    if yscale == 'linear':
+        ax.axhline(0, c='c', ls='--', zorder=10)
 
 
 def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-',
@@ -112,7 +115,8 @@ def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-',
     ax.set_yscale(yscale)
     ax.legend()
 
-    if ylolim: ax.set_ylim(bottom=ylolim)
+    if ylolim:
+        ax.set_ylim(bottom=ylolim)
 
 
 def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
@@ -160,21 +164,21 @@ def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
     if plot_CIs:
         ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=ms,
                     ecolor='#A4A4A4',
-                    label=r'Obs., %.0f k$\lambda$ bins'%binwidth/1e3
+                    label=r'Obs., %.0f k$\lambda$ bins' % binwidth/1e3
                     )
     else:
         if yscale == 'linear':
             ax.plot(baselines, vis, c=c, marker=marker,
-                    label=r'Obs., %.0f k$\lambda$ bins'%(binwidth/1e3)
+                    label=r'Obs., %.0f k$\lambda$ bins' % (binwidth/1e3)
                     )
             ax.axhline(0, c='c', ls='--', zorder=10)
 
         if yscale == 'log':
             ax.plot(baselines, vis, c=c, marker=marker,
-                    label=r'Obs.>0, %.0f k$\lambda$ bins'%(binwidth/1e3)
+                    label=r'Obs.>0, %.0f k$\lambda$ bins' % (binwidth/1e3)
                     )
             ax.plot(baselines, -vis, c=c2, marker=marker2,
-                    label=r'Obs.<0, %.0f k$\lambda$ bins'%(binwidth/1e3)
+                    label=r'Obs.<0, %.0f k$\lambda$ bins' % (binwidth/1e3)
                     )
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
@@ -183,7 +187,8 @@ def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
     ax.set_yscale(yscale)
     ax.legend()
 
-    if zoom is not None: ax.set_ylim(zoom)
+    if zoom is not None:
+        ax.set_ylim(zoom)
 
 
 def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
@@ -224,16 +229,19 @@ def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
     """
 
     resid = obs - fit
-    if normalize_resid: resid /= obs
+    if normalize_resid:
+        resid /= obs
     rmse = (np.mean(resid**2))**.5
 
     ax.plot(baselines, resid, c=c, marker=marker, ls=ls,
-            label=r'%.0f k$\lambda$ bins, RMSE %.3f'%(binwidth/1e3,rmse)
+            label=r'%.0f k$\lambda$ bins, RMSE %.3f' % (binwidth/1e3, rmse)
             )
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    if normalize_resid: ax.set_ylabel('Normalized\nresidual')
-    else: ax.set_ylabel('Residual [mJy]')
+    if normalize_resid:
+        ax.set_ylabel('Normalized\nresidual')
+    else:
+        ax.set_ylabel('Residual [mJy]')
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
     ax.legend()
@@ -274,11 +282,12 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
     ax.plot(baselines, pwr_spec, c=c, ls=ls)
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(r'Power [Jy$^2$]') # TODO: update units / label
+    ax.set_ylabel(r'Power [Jy$^2$]')  # TODO: update units / label
     ax.set_xscale(xscale)
     ax.set_yscale(yscale)
 
-    if ylolim: ax.set_ylim(bottom=ylolim)
+    if ylolim:
+        ax.set_ylim(bottom=ylolim)
 
 
 def plot_convergence_criterion(profile_iter, N_iter, ax):
@@ -302,14 +311,14 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
     convergence_criterion = []
     for i in range(N_iter):
         this_conv_cri = np.max(np.abs(profile_iter[i] - profile_iter[i-1])) / \
-        np.max(profile_iter[i])
+            np.max(profile_iter[i])
         convergence_criterion.append(this_conv_cri)
 
     ax.plot(range(0, N_iter), convergence_criterion)
 
     ax.set_xlabel('Fit iteration')
-    ax.set_ylabel('Convergence criterion,\n' + \
-                 r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
+    ax.set_ylabel('Convergence criterion,\n' +
+                  r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
 
     ax.set_yscale('log')
 
@@ -336,12 +345,12 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
 
     from mpl_toolkits.axes_grid1.inset_locator import inset_axes
     axins1 = inset_axes(ax, width="50%", height="5%", loc=loc,
-                   bbox_to_anchor=(bbox_x, bbox_y, 1, 1),
-                   bbox_transform=ax.transAxes
-                   )
+                        bbox_to_anchor=(bbox_x, bbox_y, 1, 1),
+                        bbox_transform=ax.transAxes
+                        )
     sm = plt.cm.ScalarMappable(cmap=cmap,
-                   norm=plt.Normalize(vmin=vmin, vmax=vmax)
-                   )
+                               norm=plt.Normalize(vmin=vmin, vmax=vmax)
+                               )
     cbar = plt.colorbar(sm, cax=axins1, orientation="horizontal")
     cbar.set_label(label)
     axins1.xaxis.set_ticks_position("bottom")
@@ -388,8 +397,8 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool,
 
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool,
-                            ylabel=r'Power [Jy$^2$]'
-                            ):
+                             ylabel=r'Power [Jy$^2$]'
+                             ):
     r"""
     Plot a fit's power spectrum reconstruction over a chosen range of
     the fit's iterations
@@ -427,7 +436,7 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool,
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(ylabel) # TODO: update units / label
+    ax.set_ylabel(ylabel)  # TODO: update units / label
 
 
 def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
@@ -454,7 +463,7 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
     I2D, xmax, ymax = sweep_profile(r, I)
     I2D /= 1e10
 
-    ax.imshow(I2D, origin='lower', extent=[xmax,-xmax,-ymax,ymax], vmin=vmin,
+    ax.imshow(I2D, origin='lower', extent=[xmax, -xmax, -ymax, ymax], vmin=vmin,
               vmax=vmax, cmap=cmap
               )
 
