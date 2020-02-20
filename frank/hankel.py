@@ -20,12 +20,10 @@
 discrete Hankel transform (DHT).
 """
 
-import numpy as np
-from scipy.special import j0, j1, jn_zeros, jv
-
 from frank.constants import rad_to_arcsec
 
-__all__ = ["DiscreteHankelTransform"]
+import numpy as np
+from scipy.special import j0, j1, jn_zeros, jv
 
 
 class DiscreteHankelTransform(object):

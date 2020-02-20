@@ -21,6 +21,10 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
+import frank
+frank_path = os.path.dirname(frank.__file__)  # TODO
+from frank import io, make_figs
+
 import os
 import sys
 import time
@@ -28,11 +32,6 @@ import json
 import numpy as np
 
 import logging
-
-from frank import io, make_figs # TODO
-
-import frank
-frank_path = os.path.dirname(frank.__file__)  # TODO
 
 
 def helper():
@@ -91,9 +90,9 @@ def parse_parameters():
                          " python -m frank.fit -uv <uvtable_filename>")
 
     if not model['input_output']['save_dir']:
-        # Use the uv table location as save point:
+        # If not specified, use the UVTable directory as the save directory
         uv_path = model['input_output']['uvtable_filename']
-        if uv_path:
+        if uv_path: # TODO: why? this will always be true
             model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
     log_path = os.path.join(model['input_output']['save_dir'],
@@ -169,10 +168,10 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
         Source right ascension offset from 0
     ddec : float, unit = arcsec
         Source declination offset from 0
-    geometry_type: string, from {'known', 'gaussian' }
+    geometry_type: string, from {'known', 'gaussian'}
         Specifies how the geometry is determined. Options:
-            'known' :  a prescribed geometry
-            'gaussian' : determine geometry by fitting a Gaussian
+            'known' : The user-provided geometry will be used
+            'gaussian' : Determine the geometry by fitting a Gaussian
     fit_phase_offset: bool
         Whether to fit for the source's right ascension offset and declination
         offset from 0
@@ -285,6 +284,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
     elif diag_plot:
         logging.info("    Your parameter file has 'iteration_diag=False' but"
                      " 'diag_plot=True'. I'll act as if 'iteration_diag=True'.")
+        return_iteration_diag = True
+        sol, iteration_diag = FF.fit(u, v, vis, weights)
     else:
         sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
@@ -382,6 +383,17 @@ def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
         axes.append(full_axes)
 
     if diag_plot:
+        if start_iter > iteration_diag['num_iterations']:
+            raise ValueError("    Your parameter file has"
+                             " 'start_iter' > 'max_iter'. I'll use 'max_iter'"
+                             " as 'stop_iter' instead.")
+            stop_iter = iteration_diag['num_iterations'] * 1.
+
+        if stop_iter > iteration_diag['num_iterations']:
+            logging.info("    Your parameter file has 'stop_iter' > 'max_iter'."
+                         " I'll use 'max_iter' as 'stop_iter' instead.")
+            stop_iter = iteration_diag['num_iterations'] * 1.
+
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
                   iteration_diag['mean'], sol.q,
                   iteration_diag['power_spectrum'],

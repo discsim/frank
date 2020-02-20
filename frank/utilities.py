@@ -19,9 +19,9 @@
 """This module has functions that are useful for plotting and analyzing fit
 results.
 """
+
 import numpy as np
 from scipy.interpolate import interp1d
-__all__ = ['arcsec_baseline', 'UVDataBinner', 'sweep_profile']
 
 
 def arcsec_baseline(x):

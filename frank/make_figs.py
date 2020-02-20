@@ -28,6 +28,7 @@ from frank.plot import (
     plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -98,8 +99,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
       force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figure
       save_prefix : string, default = None
-          Prefix used in saving the figure names. If None, The figure will not be
-          saved.
+          Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
@@ -108,8 +108,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     axes : Matplotlib `~.axes.Axes` class
           The axes of the produced figure
     """
-    if force_style:
-        frank_plotting_style()
+
+    if force_style: frank_plotting_style()
 
     gs = GridSpec(3, 3, hspace=0)
     gs2 = GridSpec(3, 3, hspace=.35)
@@ -130,50 +130,50 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
 
     plot_brightness_profile(sol.r, sol.mean, ax0)
-    plot_brightness_profile(sol.r, sol.mean, ax1,
-                            yscale='log', ylolim=1e-3)
+    plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
 
-    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(
-        u, v, vis)
+    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
     grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
-                       np.log10(max(baselines.max(), sol.q[-1])),
-                       10**4)
+                       np.log10(max(baselines.max(), sol.q[-1])), 10**4
+                       )
 
     ReV = sol.predict_deprojected(grid).real
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
     for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(
-            baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
         vis_err_im_kl = binned_vis.error.imag * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax3, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+                 vis_err_re_kl, ax3, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i])
+
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax4, c=cs[i], marker=ms[i], binwidth=bin_widths[i],
-                 zoom=np.multiply(zoom_bounds, 1e3))
+                 vis_err_re_kl, ax4, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i], zoom=np.multiply(zoom_bounds, 1e3))
+
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax6, c=cs[i], c2=cs2[i], marker=ms[i], marker2=ms[i],
-                 binwidth=bin_widths[i], yscale='log')
+                 vis_err_re_kl, ax6, c=cs[i], c2=cs2[i], marker=ms[i],
+                 marker2=ms[i], binwidth=bin_widths[i], yscale='log')
 
         plot_vis(binned_vis.uv, vis_im_kl,
-                 vis_err_im_kl, ax8, c=cs[i], marker=ms[i], binwidth=bin_widths[i],
-                 ylabel='Im(V) [mJy]')
+                 vis_err_im_kl, ax8, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i], ylabel='Im(V) [mJy]')
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5, c=cs[i],
-                       marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5,
+                       c=cs[i], marker=ms[i], binwidth=bin_widths[i],
+                       normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3)
     plot_vis_fit(grid, vis_fit_kl, ax4)
-    plot_vis_fit(grid, vis_fit_kl, ax6,
-                 yscale='log', ylolim=1e-4, ls2='--')
+    plot_vis_fit(grid, vis_fit_kl, ax6, yscale='log', ylolim=1e-4, ls2='--')
 
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7)
 
@@ -227,8 +227,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
-        Prefix used in saving the figure names. If None, The figure will not be
-        saved.
+        Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
@@ -262,17 +261,18 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        10**4)
 
     for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(
-            baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+                 vis_err_re_kl, ax2, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i])
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
-                       marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3,
+                       c=cs[i], marker=ms[i], binwidth=bin_widths[i],
+                       normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax2)
@@ -321,8 +321,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
-        Prefix used in saving the figure names. If None, The figure will not be
-        saved.
+        Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
@@ -409,7 +408,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
           The assumed unit (for the x-label) is :math:`\lambda`
     pwr_spec_iter : list, shape = (n_iter, N_coll)
           Power spectrum reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy^-2 # TODO: check
+          assumed unit (for the y-label) is Jy^2 #
     N_iter : int
           Total number of iterations in the fit
     start_iter, stop_iter : int
@@ -468,7 +467,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     # Plot the difference in the power spectrum between the last 100 iterations
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
                             iter_range_end, ax3, cmap=plt.cm.cividis,
-                            ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]' # TODO: check unit
+                            ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]'
                             )
 
     plot_convergence_criterion(profile_iter, N_iter, ax4)

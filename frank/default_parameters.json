@@ -1,7 +1,6 @@
 {
   "input_output" : {
     "uvtable_filename" : "",
-    "load_dir"         : "",
     "save_dir"	       : "",
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
@@ -24,8 +23,8 @@
   },
 
   "hyperpriors" : {
-    "n"                : 250,
-    "rout"             : 1.6,
+    "n"                : 300,
+    "rout"             : 2.0,
     "alpha"            : 1.05,
     "p0"               : 1e-15,
     "wsmooth"          : 1e-4,

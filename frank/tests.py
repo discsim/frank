@@ -18,14 +18,15 @@
 #
 """This module runs tests to confirm Frankenstein is working correctly."""
 
-import numpy as np
-
 from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
 from frank.geometry import FixedGeometry, FitGeometryGaussian
 from frank.constants import deg_to_rad
 from frank.utilities import UVDataBinner
 from frank.io import load_uvtable
+
+import numpy as np
+
 
 def test_hankel_gauss():
     """Check the Hankel transform"""

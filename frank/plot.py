@@ -20,16 +20,10 @@
 Frankenstein fits.
 """
 
+from frank.utilities import sweep_profile
 
 import numpy as np
 import matplotlib.pyplot as plt
-from frank.utilities import sweep_profile
-
-__all__ = ['plot_brightness_profile', 'plot_vis_fit', 'plot_vis',
-           'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep',
-           'plot_convergence_criterion', 'plot_profile_iterations',
-           'plot_pwr_spec_iterations'
-           ]
 
 
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
@@ -167,21 +161,21 @@ def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
     if plot_CIs:
         ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=marker,
                     ecolor='#A4A4A4',
-                    label=r'Obs., %.0f k$\lambda$ bins' % binwidth/1e3
+                    label=r'Obs., {:.0f} k$\lambda$ bins'.format(binwidth/1e3)
                     )
     else:
         if yscale == 'linear':
             ax.plot(baselines, vis, c=c, marker=marker,
-                    label=r'Obs., %.0f k$\lambda$ bins' % (binwidth/1e3)
+                    label=r'Obs., {:.0f} k$\lambda$ bins'.format(binwidth/1e3)
                     )
             ax.axhline(0, c='c', ls='--', zorder=10)
 
         if yscale == 'log':
             ax.plot(baselines, vis, c=c, marker=marker,
-                    label=r'Obs.>0, %.0f k$\lambda$ bins' % (binwidth/1e3)
+                    label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(binwidth/1e3)
                     )
             ax.plot(baselines, -vis, c=c2, marker=marker2,
-                    label=r'Obs.<0, %.0f k$\lambda$ bins' % (binwidth/1e3)
+                    label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(binwidth/1e3)
                     )
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
@@ -238,7 +232,8 @@ def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
     rmse = (np.mean(resid**2))**.5
 
     ax.plot(baselines, resid, c=c, marker=marker, ls=ls,
-            label=r'%.0f k$\lambda$ bins, RMSE %.3f' % (binwidth/1e3, rmse)
+            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(binwidth/1e3,
+            rmse)
             )
 
     ax.set_xlabel(r'Baseline [$\lambda$]')
@@ -268,7 +263,7 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
           :math:`\lambda`
     pwr_spec : array
           Reconstructed power spectral mode amplitudes at baselines. The assumed
-          unit (for the y-label) is Jy^2 
+          unit (for the y-label) is Jy^2
     ax : Matplotlib axis
           Axis on which to plot the power spectrum
     c : Matplotlib color, default = '#B123D7'
@@ -386,8 +381,8 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
            y-label of the plot
     """
     if n_iter[0] >= n_iter[1] or n_iter[1] > len(profile_iter):
-        raise ValueError("Require: n_iter[0] < n_iter[1] and "
-                         "n_iter[1] <= len(profile_iter")
+        raise ValueError("Require: n_iter[0] < n_iter[1] and"
+                         " n_iter[1] <= len(profile_iter)")
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
@@ -446,7 +441,6 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
     ax.set_yscale('log')
     ax.set_xlabel(r'Baseline [$\lambda$]')
     ax.set_ylabel(ylabel)
-
 
 
 def plot_convergence_criterion(profile_iter, N_iter, ax):
