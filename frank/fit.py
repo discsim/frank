@@ -370,7 +370,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
                                                       iteration_diag['mean'], sol.q,
                                                       iteration_diag['power_spectrum'],
                                                       iteration_diag['num_iterations'], start_iter, stop_iter,
-                                                      force_style, save_dir, uvtable_filename
+                                                      force_style, save_prefix
                                                       )
 
         figs.append(diag_fig)
@@ -409,22 +409,22 @@ def main():
                                              model['input_output']['iteration_diag']
                                              )
 
-    figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
-                          model['plotting']['start_iter'],
-                          model['plotting']['stop_iter'],
-                          model['plotting']['bin_widths'],
-                          model['input_output']['save_dir'],
-                          model['input_output']['uvtable_filename'],
-                          model['input_output']['save_profile_fit'],
-                          model['input_output']['save_vis_fit'],
-                          model['input_output']['save_uvtables'],
-                          model['input_output']['iteration_diag'],
-                          model['plotting']['full_plot'],
-                          model['plotting']['quick_plot'],
-                          model['plotting']['diag_plot'],
-                          model['plotting']['force_style'],
-                          model['plotting']['dist']
-                          )
+    output_results(u, v, vis, weights, sol, iteration_diagnostics,
+                   model['plotting']['start_iter'],
+                   model['plotting']['stop_iter'],
+                   model['plotting']['bin_widths'],
+                   model['input_output']['save_dir'],
+                   model['input_output']['uvtable_filename'],
+                   model['input_output']['save_profile_fit'],
+                   model['input_output']['save_vis_fit'],
+                   model['input_output']['save_uvtables'],
+                   model['input_output']['iteration_diag'],
+                   model['plotting']['full_plot'],
+                   model['plotting']['quick_plot'],
+                   model['plotting']['diag_plot'],
+                   model['plotting']['force_style'],
+                   model['plotting']['dist']
+                   )
 
     logging.info("IT'S ALIVE!!\n")
 

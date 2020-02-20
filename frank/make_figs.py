@@ -18,8 +18,16 @@
 #
 """This module generates figures for a Frankenstein fit and its diagnostics.
 """
-from frank.utilities import *
-from frank.plot import *
+from frank.utilities import UVDataBinner
+from frank.plot import (
+    plot_brightness_profile,
+    plot_vis, plot_vis_fit, plot_vis_resid,
+    plot_profile_iterations,
+    plot_2dsweep,
+    plot_pwr_spec,
+    plot_pwr_spec_iterations,
+    plot_convergence_criterion
+)
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,6 +36,12 @@ from matplotlib.gridspec import GridSpec
 # To suppress `plt.tight_layout()` warning
 import warnings
 warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+
+
+# Global settings for plots:
+cs = ['#a4a4a4', 'k', '#896360', 'b']
+cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
+ms = ['x', '+', '.', '1']
 
 
 def frank_plotting_style():
@@ -131,10 +145,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ReV = sol.predict_deprojected(grid).real
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
-
-    cs = ['#a4a4a4', 'k', '#896360', 'b']
-    cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
-    ms = ['x', '+', '.', '1']
 
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
@@ -253,17 +263,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    cs = ['#a4a4a4', 'k', '#896360', 'b']
-    cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
-    ms = ['x', '+', '.', '1']
-
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
             baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
-        vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
-        vis_err_im_kl = binned_vis.error.imag * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl,
                  vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
@@ -355,6 +359,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     # Plot the difference in the profile between the last 100 iterations
     iter_range_end = [N_iter - 100, N_iter - 1]
 
+    # pylint: disable=no-member
     plot_profile_iterations(r, np.diff(profile_iter, axis=0),
                             iter_range_end, ax1, cmap=plt.cm.cividis,
                             ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'

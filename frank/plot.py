@@ -20,6 +20,7 @@
 Frankenstein fits.
 """
 
+
 import numpy as np
 import matplotlib.pyplot as plt
 from frank.utilities import sweep_profile
@@ -162,7 +163,7 @@ def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
     """
 
     if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=ms,
+        ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=marker,
                     ecolor='#A4A4A4',
                     label=r'Obs., %.0f k$\lambda$ bins' % binwidth/1e3
                     )
@@ -356,7 +357,8 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
     axins1.xaxis.set_ticks_position("bottom")
 
 
-def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool,
+def plot_profile_iterations(r, profile_iter, n_iter, ax,
+                            cmap=plt.cm.cool,  # pylint: disable=no-member
                             ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]'
                             ):
     r"""
@@ -380,6 +382,9 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool,
     ylabel : string, default = r'I [10$^{10}$ Jy sr$^{-1}$]'
            y-label of the plot
     """
+    if n_iter[0] >= n_iter[1] or n_iter[1] > len(profile_iter):
+        raise ValueError("Require: n_iter[0] < n_iter[1] and "
+                         "n_iter[1] <= len(profile_iter")
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
@@ -396,7 +401,8 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool,
     ax.set_ylabel(ylabel)
 
 
-def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool,
+def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
+                             cmap=plt.cm.cool,  # pylint: disable=no-member
                              ylabel=r'Power [Jy$^2$]'
                              ):
     r"""
