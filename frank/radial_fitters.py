@@ -266,7 +266,7 @@ class _HankelRegressor(object):
 
         return np.concatenate(V)
 
-    def predict(self, u, v, I=None, geometry=None,block_size=10**5):
+    def predict(self, u, v, I=None, geometry=None, block_size=10**5):
         r"""
         Predict the visibilities in the sky-plane
 
@@ -615,11 +615,11 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=1500, store_iteration_diagnostics=True):
+                 tol=1e-3, max_iter=1500, store_iteration_diagnostics=False):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
-              block_size
-              )
+                                          block_size
+                                          )
 
         self._p0 = p_0
         self._ai = alpha
@@ -699,7 +699,7 @@ class FrankFitter(FourierBesselFitter):
         fit = self.fit_powerspectrum(pi)
 
         pi[:] = np.max(np.dot(Ykm, fit.mean)) ** 2 / \
-                (self._ai + 0.5 * rho - 1.0)
+            (self._ai + 0.5 * rho - 1.0)
         pi[:] *= (self.q / self.q[0]) ** -2
 
         fit = self.fit_powerspectrum(pi)
@@ -754,10 +754,7 @@ class FrankFitter(FourierBesselFitter):
         self._ps = pi
         self._ps_cov = self._ps_covariance(fit, Tij, rho)
 
-        if self._store_iteration_diagnostics:
-            return self._sol, self._iteration_diagnostics
-        else:
-            return self._sol
+        return self._sol
 
     def _ps_covariance(self, fit, Tij, rho):
         """
