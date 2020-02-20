@@ -307,7 +307,7 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
 
     ax.plot(range(0, N_iter), convergence_criterion)
 
-    ax.set_xlabel('Fit iteration number')
+    ax.set_xlabel('Fit iteration')
     ax.set_ylabel(r'Convergence criterion, max(|$I_i - I_{i-1}$|) / max($I_i$)') # TODO: update units / label
 
     ax.set_yscale('log')
@@ -335,15 +335,19 @@ def make_colorbar(ax, vmin, vmax, cmap, label):
     from mpl_toolkits.axes_grid1.inset_locator import inset_axes
     axins1 = inset_axes(ax1, width="50%", height="5%", loc=3,
                    bbox_to_anchor=(.05,.175, 1, 1),
-                   bbox_transform=ax.transAxes)
+                   bbox_transform=ax.transAxes
+                   )
     sm = plt.cm.ScalarMappable(cmap=cmap,
-                   norm=plt.Normalize(vmin=vmin, vmax=vmax))
+                   norm=plt.Normalize(vmin=vmin, vmax=vmax)
+                   )
     cbar = plt.colorbar(sm, cax=axins1, orientation="horizontal")
     cbar.set_label(label)
     axins1.xaxis.set_ticks_position("bottom")
 
 
-def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool):
+def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool,
+                            ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]'
+                            ):
     r"""
     Plot a fit's brightness profile reconstruction over a chosen range of
     the fit's iterations
@@ -362,11 +366,13 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool):
           Axis on which to plot the profile iterations
     cmap : plt.cm colormap, default=plt.cm.cool
           Colormap to apply to the overplotted profiles
+    ylabel : string, default = r'I [10$^{10}$ Jy sr$^{-1}$]'
+           y-label of the plot
     """
 
     for i in range(n_iter[0], n_iter[1]):
-        ax.plot(r, profile_iter[i], c=cmap(i / len(n_iter)))
-    ax.plot(r, profile_iter[-1], ':', c='k', label='Last iteration')
+        ax.plot(r, profile_iter[i] / 1e10, c=cmap(i / len(n_iter)))
+    ax.plot(r, profile_iter[-1] / 1e10, ':', c='k', label='Last iteration')
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
                   label='Iteration'
@@ -375,7 +381,7 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax, cmap=plt.cm.cool):
     ax.legend()
 
     ax.set_xlabel('r ["]')
-    ax.set_ylabel(r'I [10$^{10}$ Jy sr$^{-1}$]')
+    ax.set_ylabel(ylabel)
 
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax, cmap=plt.cm.cool):
