@@ -4,13 +4,13 @@ Installation
 With pip
 --------
 
-Install the latest stable version of Frankenstein (``frank``) with `pip <https://pypi.org/project/frank/>`_,
+Install the latest stable version of Frankenstein (``frank``) with `pip <https://pip.pypa.io/en/stable/>`_,
 
 .. code-block:: bash
 
     pip install frank
 
-Then play this `this <https://drive.google.com/file/d/1SEz8YqB2rRS1uMguXxI1RI7Jk27yQfLO/view?usp=sharing>`_ loud.
+Then play `this <https://drive.google.com/file/d/1SEz8YqB2rRS1uMguXxI1RI7Jk27yQfLO/view?usp=sharing>`_ loud.
 
 From source
 -----------
@@ -28,7 +28,7 @@ Test the install
 ################
 
 If you cloned the source repo and you have `py.test <https://docs.pytest.org/en/latest/>`_,
-run it from the code's root directory (it takes ~5 sec),
+run it from the code's root directory (it takes <1 min),
 
 .. code-block:: bash
 

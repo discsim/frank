@@ -1,37 +1,42 @@
 {
-    "input_output": {
-        "uvtable_filename": "UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights)",
-        "save_dir": "Directory in which output datafiles and figures are saved",
-        "save_profile_fit": "Whether to save fitted brightness profile",
-        "save_vis_fit": "Whether to save fitted visibility distribution",
-        "save_uvtables": "Whether to save fitted and residual UV tables (these are reprojected)",
-        "iteration_diag": "Whether to return diagnostics of the fit iteration"
-    },
-    "modify_data": {
-        "cut_data": "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
-        "cut_baseline": "Maximum baseline at which visibilities are truncated"
-    },
-    "geometry": {
-        "geometry_type": "'known' or 'gaussian'.  Specifies how the geometry is determines",
-        "fit_phase_offset": "Whether to fit for the phase center or just the inclination and position angle",
-        "inc": "Inclination. [deg]",
-        "pa": "Position angle. [deg]",
-        "dra": "Delta (offset from 0) right ascension. [arcsec]",
-        "ddec": "Delta declination. [arcsec]"
-    },
-    "hyperpriors": {
-        "n": "Number of collocation points used in the fit (suggested range 100 - 300)",
-        "rout": "Maximum disc radius in the fit (best to overestimate size of source). [arcsec]",
-        "alpha": "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
-        "p0": "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
-        "wsmooth": "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)"
-    },
-    "plotting": {
-        "quick_plot": "Whether to make a figure showing the simplest plots of the fit",
-        "full_plot": "Whether to make a figure more fully showing the fit and its diagnostics",
-        "save_figs": "Whether to save generated figures",
-        "dist": "Distance to source, optionally used for plotting. [AU]",
-        "bin_widths": "Bin widths in which to bin the observed visibilities. [\\lambda]",
-        "force_style": "Whether to use preconfigured matplotlib rcParams in generated figures"
-    }
+  "input_output" : {
+    "uvtable_filename" : "UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights)",
+    "save_dir"         : "Directory in which output datafiles and figures are saved",
+    "save_profile_fit" : "Whether to save fitted brightness profile",
+    "save_vis_fit"     : "Whether to save fitted visibility distribution",
+    "save_uvtables"    : "Whether to save fitted and residual UV tables (these are reprojected)",
+    "iteration_diag"   : "Whether to return diagnostics of the fit iteration"
+  },
+
+  "modify_data" : {
+    "cut_data"         : "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
+    "cut_baseline"     : "Maximum baseline at which visibilities are truncated"
+  },
+
+  "geometry" : {
+    "geometry_type": "'known' or 'gaussian'.  Specifies how the geometry is determines",
+    "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
+    "inc"              : "Inclination. [deg]",
+    "pa"               : "Position angle. [deg]",
+    "dra"              : "Delta (offset from 0) right ascension. [arcsec]",
+    "ddec"             : "Delta declination. [arcsec]"
+  },
+
+  "hyperpriors" : {
+    "n"                : "Number of collocation points used in the fit (suggested range 100 - 300)",
+    "rout"             : "Maximum disc radius in the fit (best to overestimate size of source). [arcsec]",
+    "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
+    "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
+    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
+    "max_iter"         : "Maximum number of fit iterations"    
+  },
+
+  "plotting" : {
+    "quick_plot"       : "Whether to make a figure showing the simplest plots of the fit",
+    "full_plot"        : "Whether to make a figure more fully showing the fit and its diagnostics",
+    "save_figs"        : "Whether to save generated figures",
+    "dist"             : "Distance to source, optionally used for plotting. [AU]",
+    "bin_widths"       : "Bin widths in which to bin the observed visibilities. [\\lambda]",
+    "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures"
+  }
 }

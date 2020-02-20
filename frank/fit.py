@@ -216,7 +216,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     return geom
 
 
-def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
+def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
                 iteration_diag=True
                 ):
     r"""
@@ -244,6 +244,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
     wsmooth : float
           Strength of smoothing applied to the power spectrum
           (suggested range 10^-4 - 10^-1)
+    max_iter : int
+          Maximum number of fit iterations
     iteration_diag : bool, default = False
           Whether to return diagnostics of the fit iteration
           (see radial_fitters.FrankFitter.fit)
@@ -263,7 +265,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
     logging.info('  Fitting for brightness profile')
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                                    alpha=alpha, weights_smooth=wsmooth, max_iter=5000,
+                                    alpha=alpha, weights_smooth=wsmooth, max_iter=max_iter,
                                     store_iteration_diagnostics=iteration_diag
                                     )
 
@@ -381,6 +383,7 @@ def main():
                                              model['hyperpriors']['n'],
                                              model['hyperpriors']['alpha'],
                                              model['hyperpriors']['wsmooth'],
+                                             model['hyperpriors']['max_iter'],
                                              model['input_output']['iteration_diag']
                                              )
 
