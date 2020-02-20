@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
 from frank.plot import *
-from frank.useful_funcs import *
+from frank.utilities import *
 
 def frank_plotting_style():
     """Apply custom alterations to the matplotlib style"""
@@ -136,7 +136,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ms = ['x', '+', '.', '1']
 
     for i in range(len(bin_widths)):
-        binned_vis = BinUVData(baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
@@ -258,7 +258,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ms = ['x', '+', '.', '1']
 
     for i in range(len(bin_widths)):
-        binned_vis = BinUVData(baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3

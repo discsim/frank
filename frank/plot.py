@@ -22,7 +22,7 @@ Frankenstein fits.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from frank.useful_funcs import sweep_profile
+from frank.utilities import sweep_profile
 
 __all__ = ['plot_brightness_profile', 'plot_vis_fit', 'plot_vis',
           'plot_vis_resid', 'plot_pwr_spec', 'plot_2dsweep']

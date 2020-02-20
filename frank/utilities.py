@@ -21,7 +21,7 @@ results.
 """
 import numpy as np
 from scipy.interpolate import interp1d
-__all__ = ['arcsec_baseline', 'BinUVData', 'sweep_profile']
+__all__ = ['arcsec_baseline', 'UVDataBinner', 'sweep_profile']
 
 def arcsec_baseline(x):
     """
@@ -44,7 +44,7 @@ def arcsec_baseline(x):
     return converted
 
 
-class BinUVData(object):
+class UVDataBinner(object):
     r"""
     Average uv-data into bins of equal size.
 
@@ -119,7 +119,7 @@ class BinUVData(object):
 
         # Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
-        bin_vis_err.real[idx1] = bin_vis_err.imag[idx1] = 1 / np.sqrt(bin_wgt[idx1])
+        bin_vis_err[idx1].real = bin_vis_err[idx1] .imag= 1 / np.sqrt(bin_wgt[idx1])
 
 
         # Mask the empty bins
@@ -175,7 +175,7 @@ def sweep_profile(r, I, axis=0):
         Maximum y-value of the 2D grid
     """
 
-    rmax = xmax = ymax = r.max()
+    xmax = ymax = r.max()
     dr = np.mean(np.diff(r))
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
