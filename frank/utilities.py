@@ -114,8 +114,16 @@ class UVDataBinner(object):
 
         bin_vis_err[idx] /= w
 
-        bin_vis_err.real = np.sqrt(bin_vis_err.real - bin_vis.real**2)
-        bin_vis_err.imag = np.sqrt(bin_vis_err.imag - bin_vis.imag**2)
+
+        # Compute the variance for cells with 2 or more data points
+        idx1 = bin_n == 1
+        idx2 = idx & ~idx1
+        
+        bin_vis_err[idx2].real = \
+            np.sqrt(bin_vis_err[idx2].real - bin_vis[idx2].real**2)
+        bin_vis_err[idx2].imag = \
+            np.sqrt(bin_vis_err[idx2].imag - bin_vis[idx2].imag**2)
+
 
         # Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
