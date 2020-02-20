@@ -277,15 +277,15 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
         return sol, None
 
 
-def output_results(u, v, vis, weights, sol, bin_widths,
+def output_results(u, v, vis, weights, sol, iteration_diag, bin_widths,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
                    save_uvtables, save_iteration_diag, full_plot, quick_plot,
-                   force_style=True, dist=None
+                   diag_plot, force_style=True, dist=None
                    ):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
-    frank.io.save_fit, frank.make_figs.make_full_fig and
-    frank.make_figs.make_quick_fig)
+    frank.io.save_fit, frank.make_figs.make_full_fig,
+    frank.make_figs.make_quick_fig, frank.make_figs.make_diag_fig)
 
     Parameters
     ----------
@@ -299,6 +299,12 @@ def output_results(u, v, vis, weights, sol, bin_widths,
     sol : _HankelRegressor object
           Reconstructed profile using Maximum a posteriori power spectrum
           (see frank.radial_fitters.FrankFitter)
+    iteration_diag : _HankelRegressor object
+          Diagnostics of the fit iteration
+          (see radial_fitters.FrankFitter.fit)
+    start_iter, stop_iter : int
+          Chosen start and stop range of iterations in the fit over which to
+          plot brightness profile and power spectrum reconstructions
     bin_widths : list, unit = \lambda
           Bin widths in which to bin the observed visibilities
     save_dir : string
@@ -320,6 +326,8 @@ def output_results(u, v, vis, weights, sol, bin_widths,
           diagnostics
     quick_plot : bool
           Whether to make a figure showing the simplest plots of the fit
+    diag_plot : bool
+          Whether to make a figure showing convergence diagnostics for the fit
     force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figures
     dist : float, optional, unit = AU, default = None
@@ -350,7 +358,18 @@ def output_results(u, v, vis, weights, sol, bin_widths,
                                     )
 
         figs.append(full_fig)
-        axes.append(axes)
+        axes.append(full_axes)
+
+    if diag_plot:
+        diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
+                          iteration_diag.mean, sol.q,
+                          iteration_diag.power_spectrum,
+                          iteration_diag.num_iterations, start_iter, stop_iter,
+                          force_style, save_dir, uvtable_filename
+                          )
+
+        figs.append(diag_fig)
+        axes.append(diag_axes)
 
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_prefix,
@@ -384,7 +403,9 @@ def main():
                                              model['input_output']['iteration_diag']
                                              )
 
-    figs = output_results(u, v, vis, weights, sol,
+    figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
+                          model['plotting']['start_iter'],
+                          model['plotting']['stop_iter'],
                           model['plotting']['bin_widths'],
                           model['input_output']['save_dir'],
                           model['input_output']['uvtable_filename'],

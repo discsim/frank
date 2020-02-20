@@ -286,29 +286,32 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_diag_fig(u, v, vis, weights, sol, bin_widths, dist=None,
-                   iteration_diag, force_style=True, save_dir=None,
-                   uvtable_filename=None
-                   ):
+def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
+                  stop_iter, force_style=True, save_dir=None,
+                  uvtable_filename=None
+                  ):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
 
     Parameters
     ----------
-    u, v : array, unit = :math:`\lambda`
-          u and v coordinates of observations
-    vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
-    weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \sigma^2`
-    sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter)
-    bin_widths : list, unit = \lambda
-          Bin widths in which to bin the observed visibilities
-    dist : float, optional, unit = AU, default = None
-          Distance to source, used to show second x-axis for brightness profile
+    r : array
+          Radial data coordinates at which the brightness profile is defined.
+          The assumed unit (for the x-label) is arcsec
+    profile_iter : list, shape = (n_iter, N_coll)
+          Brightness profile reconstruction at each of n_iter iterations. The
+          assumed unit (for the y-label) is Jy / sr
+    q : array
+          Baselines at which the power spectrum is defined.
+          The assumed unit (for the x-label) is :math:`\lambda`
+    pwr_spec_iter : list, shape = (n_iter, N_coll)
+          Power spectrum reconstruction at each of n_iter iterations. The
+          assumed unit (for the y-label) is Jy^-2 # TODO: check
+    N_iter : int
+          Total number of iterations in the fit
+    start_iter, stop_iter : int
+          Chosen start and stop range of iterations in the fit over which to
+          plot profile_iter and pwr_spec_iter
     force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figure
     save_dir : string, default = None
@@ -329,8 +332,9 @@ def make_diag_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     if force_style:
         frank_plotting_style()
 
-    gs = GridSpec(2, 2, hspace=0)
-    fig = plt.figure(figsize=(8, 6))
+    gs = GridSpec(3, 2, hspace=0, bottom=.15)
+    gs2 = GridSpec(3, 2, hspace=0, top=.85)
+    fig = plt.figure(figsize=(8,6))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[2])
@@ -338,38 +342,29 @@ def make_diag_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax2 = fig.add_subplot(gs[1])
     ax3 = fig.add_subplot(gs[3])
 
-    axes = [ax0, ax1, ax2, ax3]
+    ax4 = fig.add_subplot(gs2[2])
 
-    plot_brightness_profile(sol.r, sol.mean, ax0)
-    plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
+    axes = [ax0, ax1, ax2, ax3, ax4]
 
-    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
-    baselines = (u_deproj**2 + v_deproj**2)**.5
-    grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
-                       np.log10(max(baselines.max(), sol.q[-1])),
-                       10**4)
+    # Specify the range in iterations over which to plot
+    iter_range = [start_iter, stop_iter]
 
-    cs = ['#a4a4a4', 'k', '#896360', 'b']
-    cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
-    ms = ['x', '+', '.', '1']
+    plot_profile_iterations(r, profile_iter, iter_range, ax0)
 
-    for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(
-            baselines, vis_deproj, weights, bin_widths[i])
-        vis_re_kl = binned_vis.V.real * 1e3
-        vis_im_kl = binned_vis.V.imag * 1e3
-        vis_err_re_kl = binned_vis.error.real * 1e3
-        vis_err_im_kl = binned_vis.error.imag * 1e3
+    # Plot the difference in the profile between the last 100 iterations
+    iter_range_end = [N_iter - 100, N_iter]
+    plot_profile_iterations(r, np.diff(profile_iter), iter_range_end, ax1,
+                            ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'
+                            )
 
-        plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+    plot_pwr_spec_iterations(q, pwr_spec_iter, iter_range, ax2)
 
-        plot_vis_resid(binned_vis.uv, vis_re_kl,
-                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
-                       marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+    # Plot the difference in the power spectrum between the last 100 iterations
+    plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter), iter_range_end, ax1,
+                            ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]' # TODO: check unit
+                            )
 
-    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-    plot_vis_fit(grid, vis_fit_kl, ax2)
+    plot_convergence_criterion(profile_iter, N_iter, ax4)
 
     xlims = ax2.get_xlim()
     ax3.set_xlim(xlims)
@@ -380,7 +375,7 @@ def make_diag_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     plt.tight_layout()
 
     if save_prefix:
-        plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+        plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
     else:
         plt.show()
 

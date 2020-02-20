@@ -28,15 +28,18 @@
     "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
     "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
     "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
-    "max_iter"         : "Maximum number of fit iterations"    
+    "max_iter"         : "Maximum number of fit iterations"
   },
 
   "plotting" : {
     "quick_plot"       : "Whether to make a figure showing the simplest plots of the fit",
     "full_plot"        : "Whether to make a figure more fully showing the fit and its diagnostics",
+    "diag_plot"        : "Whether to make a diagnostic figure showing fit convergence metrics",
     "save_figs"        : "Whether to save generated figures",
     "dist"             : "Distance to source, optionally used for plotting. [AU]",
+    "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
     "bin_widths"       : "Bin widths in which to bin the observed visibilities. [\\lambda]",
-    "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures"
+    "start_iter"       : "First iteration in the range of iterations to be plotted in the diagnostic figure",
+    "stop_iter"        : "Last iteration in the range of iterations to be plotted in the diagnostic figure"
   }
 }
