@@ -88,19 +88,19 @@ def save_fit(u, v, vis, weights, sol, prefix,
     save_profile_fit : bool
         Whether to save fitted brightness profile
     save_vis_fit : bool
-        Whether to save fitted visibility distribution.
+        Whether to save fitted visibility distribution
         NOTE: This is deprojected
     save_uvtables : bool
-        Whether to save fitted and residual UV tables.
+        Whether to save fitted and residual UVTables
         NOTE: These are reprojected
     save_iteration_diag : bool
         Whether to save diagnostics of the fit iteration
-    format : string, default=npz
-        Format to save the uvtables in.
+    format : string, default = 'npz'
+        File format in which to save the fit's output UVTable(s)
     """
 
-    if not (format == 'txt' or format == 'dat' or format == 'npz'):
-        raise ValueError("Format must be 'npz', 'txt', or 'dat'.")
+    if not format in {'txt', 'dat', 'npz'}:
+        raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
 
     with open(prefix + '_frank_sol.obj', 'wb') as f:
         pickle.dump(sol, f)
@@ -115,7 +115,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
-        if format == 'txt' or format == 'dat':
+        if format in {'txt', 'dat'}:
             np.savetxt(prefix + '_frank_vis_fit.' + format,
                        np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
                        header='Baseline [lambda]\tProjected Re(V) [Jy]')
@@ -127,7 +127,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
     if save_uvtables:
         V_pred = sol.predict(u, v)
 
-        if format == 'txt' or format == 'dat':
+        if format in {'txt', 'dat'}:
             header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
 
             np.savetxt(prefix + '_frank_uv_fit.' + format,
