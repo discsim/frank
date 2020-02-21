@@ -363,6 +363,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
                      os.path.splitext(os.path.basename(uvtable_filename))[0])
 
     if quick_plot:
+        logging.info('    Making quick figure')
         quick_fig, quick_axes = \
             make_figs.make_quick_fig(u, v, vis, weights, sol, bin_widths, dist,
                                      force_style, save_prefix
@@ -372,6 +373,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         axes.append(quick_axes)
 
     if full_plot:
+        logging.info('    Making full figure')                
         full_fig, full_axes = \
             make_figs.make_full_fig(u, v, vis, weights, sol, bin_widths, dist,
                                     force_style, save_prefix
@@ -393,6 +395,8 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
                          " 'iter_plot_range'[1] instead.")
             iter_plot_range[1] = iteration_diag['num_iterations'] * 1.
 
+        logging.info('    Making diagnostic figure using fit iterations over'
+                     ' the range {}'.format(iter_plot_range))
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
                   iteration_diag['mean'], sol.q,
                   iteration_diag['power_spectrum'],
