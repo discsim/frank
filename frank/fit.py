@@ -213,7 +213,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
                  '           dRA  = {:.2e} mas,\n'
                  '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
-                                                       geom.dRA*1e3, geom.dDec*1e3))
+                                                       geom.dRA*1e3,
+                                                       geom.dDec*1e3))
 
     # Store geometry
     geom = geom.clone()
@@ -276,7 +277,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
     need_iterations = return_iteration_diag or diag_plot
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                                    alpha=alpha, weights_smooth=wsmooth, max_iter=max_iter,
+                                    alpha=alpha, weights_smooth=wsmooth,
+                                    max_iter=max_iter,
                                     store_iteration_diagnostics=need_iterations
                                     )
 
@@ -397,7 +399,8 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
                                                       iteration_diag['mean'], sol.q,
                                                       iteration_diag['power_spectrum'],
-                                                      iteration_diag['num_iterations'], new_plot_iter,
+                                                      iteration_diag['num_iterations'],
+                                                      new_plot_iter,
                                                       force_style, save_prefix
                                                       )
 
