@@ -286,9 +286,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
                  '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
                                                               time.time() - t1))
 
-    if return_iteration_diag:
-        return sol, FF.iteration_diagnostics
-    elif diag_plot:
+    if need_iterations:
         return sol, FF.iteration_diagnostics
     else:
         return [sol, ]
