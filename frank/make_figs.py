@@ -129,6 +129,18 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax7 = fig.add_subplot(gs[5])
     ax8 = fig.add_subplot(gs[8])
 
+    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
+    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+    ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
+
+    ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
+    ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
+    ax5.text(.92, .9, 'f)', transform=ax5.transAxes)
+
+    ax6.text(.1, .65, 'g)', transform=ax6.transAxes)
+    ax7.text(.1, .5, 'h)', transform=ax7.transAxes)
+    ax8.text(.1, .7, 'i)', transform=ax8.transAxes)
+
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
 
     plot_brightness_profile(sol.r, sol.mean, ax0)
@@ -252,6 +264,12 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax2 = fig.add_subplot(gs[1])
     ax3 = fig.add_subplot(gs[3])
 
+    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
+    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+
+    ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
+    ax3.text(.92, .9, 'd)', transform=ax3.transAxes)
+
     axes = [ax0, ax1, ax2, ax3]
 
     plot_brightness_profile(sol.r, sol.mean, ax0)
@@ -348,6 +366,14 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     ax3 = fig.add_subplot(gs[3])
 
     ax4 = fig.add_subplot(gs2[4])
+
+    ax0.text(.92, .5, 'a)', transform=ax0.transAxes)
+    ax1.text(.92, .1, 'b)', transform=ax1.transAxes)
+
+    ax2.text(.05, .5, 'c)', transform=ax2.transAxes)
+    ax3.text(.92, .5, 'd)', transform=ax3.transAxes)
+
+    ax4.text(.92, .9, 'e)', transform=ax4.transAxes)
 
     axes = [ax0, ax1, ax2, ax3, ax4]
 

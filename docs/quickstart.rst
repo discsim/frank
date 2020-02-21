@@ -41,7 +41,7 @@ If you want to change the default parameters, provide a custom parameter file wi
 
 The default parameter file is ``default_parameters.json``. You can get it
 `here <https://github.com/discsim/frank/blob/master/frank/default_parameters.json>`_,
-and it looks like this:
+and it looks like this,
 
 .. literalinclude:: ../frank/default_parameters.json
     :linenos:
@@ -82,15 +82,16 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 **e)** As in (d), zooming on the longer baselines. |br|
 **f)** Residuals between the binned data and the fit. The residuals' RMSE is given in the legend;
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. |br|
-**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale. |br|
+**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
+On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
 To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
 **i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
-it could indicate xx asymmetry in the disc xx that frank will average over.
+it could indicate azimuthal asymmetry in the disc that frank will average over.
 
 Test a fit's convergence
 ########################
-Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this.
+Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
@@ -111,7 +112,7 @@ So in this case the oscillations remaining at the end of the fit (:math:`\approx
 |br|
 **c)** The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 250` iterations,
-and then we continue iterating to suppress the high power placed at the data's noise-dominated, longest baselines. |br|
+and then we continue iterating to suppress the high power placed at the data's noisiest, longest baselines. |br|
 **d)** Sequential difference between the last 100 brightness profile iterations.
 Note the y-scale here is small compared to (b),
 and the largest variation is at the baseline where the fit walks off the visibilities. |br|
@@ -132,7 +133,7 @@ Modify the `fit.py` script
 ##########################
 We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py>`_.
 For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_a_module.ipynb>`_.
-And if you'd like a more qualitative overview of the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
+If you'd like a video demonstration of the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
 Perform a fit using `frank` as a Python module
 -----------------------------------------------

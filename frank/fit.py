@@ -488,7 +488,7 @@ def main(*args):
                                              model['plotting']['diag_plot']
                                              )
 
-    figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
+    figs, axes = output_results(u, v, vis, weights, sol, iteration_diagnostics,
                           model['plotting']['iter_plot_range'],
                           model['plotting']['bin_widths'],
                           model['input_output']['format'],
@@ -506,7 +506,7 @@ def main(*args):
 
     logging.info("IT'S ALIVE!!\n")
 
-    return figs
+    return figs, axes
 
 
 if __name__ == "__main__":
