@@ -1,11 +1,12 @@
 {
   "input_output" : {
     "uvtable_filename" : "",
-    "save_dir"	       : "",
+    "save_dir"         : "",
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
     "save_uvtables"    : false,
-    "iteration_diag"   : true
+    "iteration_diag"   : true,
+    "format"           : null      
   },
 
   "modify_data" : {

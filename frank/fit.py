@@ -151,6 +151,7 @@ def parse_parameters():
                 raise err
 
     param_path = save_prefix + '_frank_used_pars.json'
+
     logging.info(
         '  Saving parameters to be used in fit to {}'.format(param_path))
     with open(param_path, 'w') as f:
@@ -334,10 +335,10 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
         return [sol, ]
 
 
-def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
-                   bin_widths, save_prefix,
-                   save_profile_fit, save_vis_fit, save_uvtables,
-                   save_iteration_diag, full_plot, quick_plot, diag_plot,
+def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_range,
+                   bin_widths, output_format, save_prefix,
+                   save_profile_fit, save_vis_fit,
+                   save_uvtables, save_iteration_diag, full_plot, quick_plot,
                    force_style=True, dist=None
                    ):
     r"""
@@ -442,7 +443,8 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
 
     io.save_fit(u, v, vis, weights, sol, save_prefix,
                 save_profile_fit, save_vis_fit, save_uvtables,
-                save_iteration_diag, iteration_diag
+                save_iteration_diag, iteration_diag,
+                format=output_format
                 )
 
     return figs, axes
@@ -475,7 +477,9 @@ def main():
     figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
                           model['plotting']['iter_plot_range'],
                           model['plotting']['bin_widths'],
+                          model['input_output']['format'],                          
                           model['input_output']['save_prefix'],
+                          model['input_output']['save_profile_fit'],
                           model['input_output']['save_vis_fit'],
                           model['input_output']['save_uvtables'],
                           model['input_output']['iteration_diag'],
