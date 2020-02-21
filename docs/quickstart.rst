@@ -101,7 +101,7 @@ here's the diagnostic plot frank produces (if `diag_plot=True` in your parameter
  Note how small amplitude, fast oscillations ('ringing') that are due to unconstrained
  baselines are smoothed over the first :math:`\approx 300` iterations. |br|
  **b)** Sequential difference between the last 100 brightness profile iterations.
- Note the y-scale here is :math:`10^5\ {\rm Jy\ sr^{-1}`, as opposed to :math:`10^10\ {\rm Jy\ sr^{-1}` in (a).
+ Note the y-scale here is :math:`10^5\ {\rm Jy\ sr}^{-1}`, as opposed to :math:`10^10\ {\rm Jy\ sr}^{-1}` in (a).
  So in this case the oscillations remaining at the end of the fit are at a part in :math:`10^6` of the profile brightness.
  |br|
  **c)** The reconstructed power spectrum over all fit iterations. ... |br|

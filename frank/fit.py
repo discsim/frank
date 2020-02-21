@@ -363,7 +363,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
     iter_plot_range : list or None
         Range of iterations in the fit over which to
         plot brightness profile and power spectrum reconstructions. If None,
-        then the full range will be plotted.
+        then the full range will be plotted
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
     save_prefix : string

@@ -1,44 +1,44 @@
 {
-    "input_output": {
-        "uvtable_filename": "",
-        "save_dir": "",
-        "save_profile_fit": true,
-        "save_vis_fit": true,
-        "save_uvtables": true,
-        "iteration_diag": true
-    },
+  "input_output" : {
+    "uvtable_filename" : "",
+    "save_dir"	       : "",
+    "save_profile_fit" : true,
+    "save_vis_fit"     : true,
+    "save_uvtables"    : false,
+    "iteration_diag"   : true
+  },
 
-    "modify_data": {
-        "cut_data": false,
-        "cut_baseline": null
-    },
+  "modify_data" : {
+    "cut_data"         : false,
+    "cut_baseline"     : null
+  },
 
-    "geometry": {
-        "geometry_type": "gaussian",
-        "fit_phase_offset": true,
-        "inc": 0.0,
-        "pa": 0.0,
-        "dra": 0.0,
-        "ddec": 0.0
-    },
+  "geometry" : {
+    "geometry_type"    : "gaussian",
+    "fit_phase_offset" : true,
+    "inc"              : 0.0,
+    "pa"               : 0.0,
+    "dra"              : 0.0,
+    "ddec"             : 0.0
+  },
 
-    "hyperpriors": {
-        "n": 300,
-        "rout": 2.0,
-        "alpha": 1.05,
-        "p0": 1e-15,
-        "wsmooth": 1e-4,
-        "max_iter": 1500
-    },
+  "hyperpriors" : {
+    "n"                : 300,
+    "rout"             : 2.0,
+    "alpha"            : 1.05,
+    "p0"               : 1e-15,
+    "wsmooth"          : 1e-4,
+    "max_iter"         : 1500
+  },
 
-    "plotting": {
-        "quick_plot": true,
-        "full_plot": true,
-        "diag_plot": true,
-        "save_figs": true,
-        "dist": null,
-        "force_style": true,
-        "bin_widths": [1e3, 5e4],
-        "iter_plot_range": null
-    }
+  "plotting" : {
+    "quick_plot"       : true,
+    "full_plot"        : true,
+    "diag_plot"        : true,
+    "save_figs"        : true,
+    "dist"             : null,
+    "force_style"      : true,
+    "bin_widths"       : [5e4],
+    "iter_plot_range"  : [0,5000]
+  }
 }
