@@ -361,7 +361,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
-    iter_plot_range_end = [iter_plot_range[1] - 100, iter_plot_range[1] - 1]
+    iter_plot_range_end = [max(iter_plot_range[1] - 100, 0),
+                           iter_plot_range[1] - 1]
 
     plot_profile_iterations(r, np.diff(profile_iter, axis=0) * 1e5,
                             iter_plot_range_end, ax1,

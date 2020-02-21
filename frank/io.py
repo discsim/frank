@@ -64,6 +64,41 @@ def load_uvtable(data_file):
     return u, v, vis, weights
 
 
+def save_uvtable(filename, u, v, vis, weights):
+    r"""Save a uvtable to file.
+
+    Parameters
+    ----------
+    filename : string
+        File to save the uvtable to.
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Complex visibilities
+    weights : array, unit = Jy^-2
+        Weights on the visibilities, of the form
+        :math:`1 / \sigma^2`
+    """
+
+    extension = os.path.splitext(filename)[1]
+    if extension not in {'.txt', '.dat', '.npz'}:
+        raise ValueError("file extension must be 'npz', 'txt', or 'dat'.")
+
+    if extension in {'.txt', '.dat'}:
+        header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
+
+        np.savetxt(filename,
+                   np.stack([u, v, vis.real, vis.imag,
+                             weights], axis=-1),
+                   header=header)
+
+    elif extension == '.npz':
+        np.savez(filename,
+                 u=u, v=v, V=vis, weights=weights,
+                 units={'u': 'lambda', 'v': 'lambda',
+                        'V': 'Jy', 'weights': "Jy^-2"})
+
+
 def save_fit(u, v, vis, weights, sol, prefix,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
              save_iteration_diag=True, iteration_diag=None,
@@ -102,11 +137,13 @@ def save_fit(u, v, vis, weights, sol, prefix,
     format : string, default = 'npz'
         File format in which to save the fit's output UVTable(s)
     """
-    
+
+    print(format)
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
-    
-    with open(prefix + '_frank_sol.obj', 'wb') as f: pickle.dump(sol, f)
+
+    with open(prefix + '_frank_sol.obj', 'wb') as f:
+        pickle.dump(sol, f)
 
     if save_iteration_diag:
         with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f:
@@ -124,31 +161,13 @@ def save_fit(u, v, vis, weights, sol, prefix,
                        header='Baseline [lambda]\tProjected Re(V) [Jy]')
         elif format == 'npz':
             np.savez(prefix + '_frank_vis_fit.' + format,
-                     uv=sol.q, V=sol.sol.predict_deprojected(sol.q),
+                     uv=sol.q, V=sol.predict_deprojected(sol.q),
                      units={'uv': 'lambda', 'V': 'Jy'})
 
     if save_uvtables:
         V_pred = sol.predict(u, v)
 
-        if format in {'txt', 'dat'}:
-            header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
-
-            np.savetxt(prefix + '_frank_uv_fit.' + format,
-                       np.stack([u, v, V_pred.real, V_pred.imag,
-                                 weights], axis=-1), header=header)
-
-            np.savetxt(prefix + '_frank_uv_resid.' + format,
-                       np.stack([u, v, vis.real - V_pred.real,
-                                 vis.imag - V_pred.imag, weights], axis=-1),
-                       header=header)
-
-        elif format == 'npz':
-            units = {'u': 'lambda', 'v': 'lambda',
-                     'V': 'Jy', 'weights': "Jy^-2"}
-            np.savez(prefix + '_frank_vis_fit.' + format,
-                     u=u, v=v, V=V_pred, weights=weights,
-                     units=units)
-
-            np.savez(prefix + '_frank_vis_resid.' + format,
-                     u=u, v=v, V=vis - V_pred, weights=weights,
-                     units=units)
+        save_uvtable(prefix + '_frank_uv_fit.' + format,
+                     u, v, V_pred, weights)
+        save_uvtable(prefix + '_frank_uv_resid.' + format,
+                     u, v, vis - V_pred, weights)

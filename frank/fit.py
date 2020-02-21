@@ -62,7 +62,7 @@ def helper():
          of the form:\n\n {}""".format(json.dumps(param_descrip, indent=4)))
 
 
-def parse_parameters():
+def parse_parameters(*args):
     """
     Read in a .json parameter file to set the fit parameters
 
@@ -97,7 +97,7 @@ def parse_parameters():
                         action="store_true",
                         help="Print the full description of all fit parameters")
 
-    args = parser.parse_args()
+    args = parser.parse_args(*args)
 
     if args.print_parameter_description:
         helper()
@@ -140,14 +140,17 @@ def parse_parameters():
         plotting = model['plotting']
 
         if plotting['iter_plot_range'] is not None:
-            err = ValueError("iter_plot_range should be 'null' (None)"
-                             " or a list specifying the start and end"
-                             " points of the range to be plotted")
+            err = ValueError("iter_plot_range should be 'null' (None) "
+                             "or a list specifying the start and end "
+                             "points of the range to be plotted")
             try:
                 if len(plotting['iter_plot_range']) != 2:
                     raise err
             except TypeError:
                 raise err
+
+    if model['input_output']['format'] is None:
+        model['input_output']['format'] = os.path.splitext(uv_path)[1][1:]
 
     param_path = save_prefix + '_frank_used_pars.json'
 
@@ -334,13 +337,14 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
     if need_iterations:
         return sol, FF.iteration_diagnostics
     else:
-        return [sol, ]
+        return [sol, None]
 
 
-def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_range,
+def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
                    bin_widths, output_format, save_prefix,
                    save_profile_fit, save_vis_fit,
-                   save_uvtables, save_iteration_diag, full_plot, quick_plot,
+                   save_uvtables, save_iteration_diag,
+                   full_plot, quick_plot, diag_plot,
                    force_style=True, dist=None
                    ):
     r"""
@@ -452,8 +456,15 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_rang
     return figs, axes
 
 
-def main():
-    model = parse_parameters()
+def main(*args):
+    """Run the frank pipeline
+
+    Parameters
+    ----------
+    *args : strings
+        Simulates the command-line arguments
+    """
+    model = parse_parameters(*args)
 
     u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
 
@@ -462,7 +473,7 @@ def main():
                               model['geometry']['pa'],
                               model['geometry']['dra'],
                               model['geometry']['ddec'],
-                              model['geometry']['geometry_type'],
+                              model['geometry']['type'],
                               model['geometry']['fit_phase_offset']
                               )
 
