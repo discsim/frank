@@ -15,7 +15,7 @@
   },
 
   "geometry" : {
-    "geometry_type"    : "gaussian",
+    "type"             : "gaussian",
     "fit_phase_offset" : true,
     "inc"              : 0.0,
     "pa"               : 0.0,

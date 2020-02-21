@@ -80,11 +80,11 @@ def save_uvtable(filename, u, v, vis, weights):
         :math:`1 / \sigma^2`
     """
 
-    format = os.path.splitext(filename[1])
-    if format not in {'.txt', '.dat', '.npz'}:
-        raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
+    extension = os.path.splitext(filename)[1]
+    if extension not in {'.txt', '.dat', '.npz'}:
+        raise ValueError("file extension must be 'npz', 'txt', or 'dat'.")
 
-    if format in {'.txt', '.dat'}:
+    if extension in {'.txt', '.dat'}:
         header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
 
         np.savetxt(filename,
@@ -92,7 +92,7 @@ def save_uvtable(filename, u, v, vis, weights):
                              weights], axis=-1),
                    header=header)
 
-    elif format == '.npz':
+    elif extension == '.npz':
         np.savez(filename,
                  u=u, v=v, V=vis, weights=weights,
                  units={'u': 'lambda', 'v': 'lambda',

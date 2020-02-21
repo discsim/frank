@@ -24,6 +24,7 @@ from frank.geometry import FixedGeometry, FitGeometryGaussian
 from frank.constants import deg_to_rad
 from frank.utilities import UVDataBinner
 from frank.io import load_uvtable, save_uvtable
+from frank import fit
 
 import numpy as np
 import os
@@ -239,7 +240,9 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     save_uvtable(uv_table, u, v, vis, weights)
 
     # Next build a paramterfile to work with
-    params = frank.fit.load_default_parameters()
+    params = fit.load_default_parameters()
+
+    params['input_output']['uvtable_filename'] = uv_table
 
     # Set the model parameters
     params['hyperpriors']['n'] = 20
@@ -256,7 +259,19 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     # Save our new parameterfile:
     param_file = os.path.join(tmp_dir, 'params.json')
     with open(param_file, 'w') as f:
-        json.dump(f, geom)
+        json.dump(params, f)
 
     # Now call the pipeline to perform the fit
-    frank.fit.main([['-p', param_file]])
+    fit.main(['-p', param_file])
+
+
+def test_pipeline_full_geom():
+    _run_pipeline('gaussian', True)
+
+
+def test_pipeline_no_phase():
+    _run_pipeline('gaussian', False)
+
+
+def test_pipeline_known_geom():
+    _run_pipeline('known')

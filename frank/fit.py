@@ -340,7 +340,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
 def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_range,
                    bin_widths, output_format, save_prefix,
                    save_profile_fit, save_vis_fit,
-                   save_uvtables, save_iteration_diag, full_plot, quick_plot,
+                   save_uvtables, save_iteration_diag,
+                   full_plot, quick_plot, diag_plot,
                    force_style=True, dist=None
                    ):
     r"""
@@ -462,7 +463,7 @@ def main(*args):
                               model['geometry']['pa'],
                               model['geometry']['dra'],
                               model['geometry']['ddec'],
-                              model['geometry']['geometry_type'],
+                              model['geometry']['type'],
                               model['geometry']['fit_phase_offset']
                               )
 
