@@ -23,9 +23,11 @@ from frank.radial_fitters import FourierBesselFitter, FrankFitter
 from frank.geometry import FixedGeometry, FitGeometryGaussian
 from frank.constants import deg_to_rad
 from frank.utilities import UVDataBinner
-from frank.io import load_uvtable
+from frank.io import load_uvtable, save_uvtable
 
 import numpy as np
+import os
+import json
 
 
 def test_hankel_gauss():
@@ -97,7 +99,7 @@ def load_AS209():
     """Load data for subsequent tests"""
     uv_AS209_DHSARP = np.load('tutorials/AS209_continuum.npz')
     geometry = FixedGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97,
-                              PA=85.76)
+                             PA=85.76)
 
     return uv_AS209_DHSARP, geometry
 
@@ -111,9 +113,9 @@ def test_fit_geometry():
     geom.fit(u, v, vis, weights)
 
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
-                               1e3 * geom.dDec],
+                                1e3 * geom.dDec],
                                [1.4916013559412147 / deg_to_rad,
-                               -0.5395904796783955 / deg_to_rad,
+                                -0.5395904796783955 / deg_to_rad,
                                 0.6431627790617276, 1.161768824369382],
                                err_msg="Gaussian geometry fit")
 
@@ -189,9 +191,9 @@ def test_fit_geometry_inside():
 
     geom = sol.geometry
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
-                               1e3 * geom.dDec],
-                               [1.4916013559412147  / deg_to_rad,
-                               -0.5395904796783955  / deg_to_rad,
+                                1e3 * geom.dDec],
+                               [1.4916013559412147 / deg_to_rad,
+                                -0.5395904796783955 / deg_to_rad,
                                 0.6431627790617276, 1.161768824369382],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
@@ -221,3 +223,40 @@ def test_uvbin():
     np.testing.assert_allclose(V, uvbin.V[i])
     np.testing.assert_allclose(w, uvbin.weights[i])
     np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
+
+
+def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
+
+    # First job is to build a sub-set of the data that we want to load
+
+    AS209, AS209_geometry = load_AS209()
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    tmp_dir = '/tmp/frank/tests'
+    os.makedirs(tmp_dir, exist_ok=True)
+
+    uv_table = os.path.join(tmp_dir, 'small_uv.npz')
+    save_uvtable(uv_table, u, v, vis, weights)
+
+    # Next build a paramterfile to work with
+    params = frank.fit.load_default_parameters()
+
+    # Set the model parameters
+    params['hyperpriors']['n'] = 20
+    params['hyperpriors']['rout'] = 1.6
+
+    geom = params['geometry']
+    geom['type'] = geometry
+    geom['fit_phase_offset'] = fit_phase_offset
+    geom['inc'] = AS209_geometry.inc
+    geom['pa'] = AS209_geometry.PA
+    geom['dra'] = AS209_geometry.dRA
+    geom['ddev'] = AS209_geometry.dDec
+
+    # Save our new parameterfile:
+    param_file = os.path.join(tmp_dir, 'params.json')
+    with open(param_file, 'w') as f:
+        json.dump(f, geom)
+
+    # Now call the pipeline to perform the fit
+    frank.fit.main([['-p', param_file]])

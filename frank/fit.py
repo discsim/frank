@@ -62,7 +62,7 @@ def helper():
          of the form:\n\n {}""".format(json.dumps(param_descrip, indent=4)))
 
 
-def parse_parameters():
+def parse_parameters(*args):
     """
     Read in a .json parameter file to set the fit parameters
 
@@ -97,7 +97,7 @@ def parse_parameters():
                         action="store_true",
                         help="Print the full description of all fit parameters")
 
-    args = parser.parse_args()
+    args = parser.parse_args(*args)
 
     if args.print_parameter_description:
         helper()
@@ -140,9 +140,9 @@ def parse_parameters():
         plotting = model['plotting']
 
         if plotting['iter_plot_range'] is not None:
-            err = ValueError("iter_plot_range should be 'null' (None)"
-                             " or a list specifying the start and end"
-                             " points of the range to be plotted")
+            err = ValueError("iter_plot_range should be 'null' (None) "
+                             "or a list specifying the start and end "
+                             "points of the range to be plotted")
             try:
                 if len(plotting['iter_plot_range']) != 2:
                     raise err
@@ -452,8 +452,8 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_rang
     return figs, axes
 
 
-def main():
-    model = parse_parameters()
+def main(*args):
+    model = parse_parameters(*args)
 
     u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
 
