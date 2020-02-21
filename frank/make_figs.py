@@ -356,6 +356,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     # Plot the difference in the profile between the last 100 iterations
     iter_range_end = [N_iter - 100, N_iter - 1]
 
+    # pylint: disable=no-member
     plot_profile_iterations(r, np.diff(profile_iter, axis=0),
                             iter_range_end, ax1, cmap=plt.cm.cividis,
                             ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'

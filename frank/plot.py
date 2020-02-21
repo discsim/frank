@@ -355,7 +355,7 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
 
 
 def plot_profile_iterations(r, profile_iter, n_iter, ax,
-                            cmap=plt.cm.cool,
+                            cmap=plt.cm.cool, # pylint: disable=no-member
                             ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]'
                             ):
     r"""
@@ -399,7 +399,7 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
 
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
-                             cmap=plt.cm.cool,
+                             cmap=plt.cm.cool, # pylint: disable=no-member
                              ylabel=r'Power [Jy$^2$]'
                              ):
     r"""
