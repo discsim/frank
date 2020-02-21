@@ -88,7 +88,7 @@ To see how this the fit to this dataset is sensitive to the prior, check out `th
 **i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate xx asymmetry in the disc xx that frank will average over.
 
-Testing a fit's convergence
+Test a fit's convergence
 ###########################
 Just to be safe, it's always good to check how well a fit has converged. Using the fit from the above figure,
 here's the diagnostic plot frank produces (if `diag_plot=True` in your parameter file).
@@ -99,10 +99,10 @@ here's the diagnostic plot frank produces (if `diag_plot=True` in your parameter
 
  **a)** The fitted frank brightness profile over all fit iterations.
  Note how small amplitude, fast oscillations ('ringing') that are due to unconstrained
- baselines are smoothed over the first :math:`\approx 300` iterations. |br|
+ baselines are damped over the first :math:`\approx 300` iterations. |br|
  **b)** Sequential difference between the last 100 brightness profile iterations.
  Note the y-scale here is :math:`10^5\ {\rm Jy\ sr}^{-1}`, as opposed to :math:`10^10\ {\rm Jy\ sr}^{-1}` in (a).
- So in this case the oscillations remaining at the end of the fit are at a part in :math:`10^6` of the profile brightness.
+ So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at a part in :math:`10^6`.
  |br|
  **c)** The reconstructed power spectrum over all fit iterations. ... |br|
  **d)** Sequential difference between the last 100 brightness profile iterations. ... |br|
