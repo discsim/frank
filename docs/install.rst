@@ -24,7 +24,7 @@ Clone the source repository from `GitHub <https://github.com/discsim/frank>`_,
 
     pip install git+https://github.com/discsim/frank.git
 
-(this is the same as `git clone https://github.com/discsim/frank.git; cd frank`).
+(this is the same as `git clone https://github.com/discsim/frank.git && cd frank && pip install .`).
 
 Test the install
 ################
