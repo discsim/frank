@@ -101,7 +101,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
 
     if not (format == 'txt' or format == 'dat' or
             format == 'npy' or format == 'npz'):
-        raise ValueError("Format must be 'npy', 'npz', 'txt' or 'dat'.")
+        raise ValueError("Format must be 'npy', 'npz', 'txt', or 'dat'.")
 
     with open(prefix + '_frank_sol.obj', 'wb') as f:
         pickle.dump(sol, f)
