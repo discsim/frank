@@ -90,7 +90,7 @@ it could indicate xx asymmetry in the disc xx that frank will average over.
 
 Test a fit's convergence
 ########################
-Just to be safe, it's always good to check how well a fit has converged. Using the fit from the above figure,
+Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this.
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
