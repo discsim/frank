@@ -267,44 +267,54 @@ and it looks like this:</p>
 36
 37
 38
-39</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;input_output&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;uvtable_filename&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_profile_fit&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;save_vis_fit&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;save_uvtables&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;iteration_diag&quot;</span><span class="p">:</span> <span class="kc">false</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;modify_data&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cut_data&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-        <span class="nt">&quot;cut_baseline&quot;</span><span class="p">:</span> <span class="kc">null</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;geometry_type&quot;</span><span class="p">:</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;fit_phase_offset&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;inc&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="nt">&quot;pa&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="nt">&quot;dra&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="nt">&quot;ddec&quot;</span><span class="p">:</span> <span class="mf">0.0</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;hyperpriors&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span>
-        <span class="nt">&quot;rout&quot;</span><span class="p">:</span> <span class="mf">1.6</span><span class="p">,</span>
-        <span class="nt">&quot;alpha&quot;</span><span class="p">:</span> <span class="mf">1.05</span><span class="p">,</span>
-        <span class="nt">&quot;p0&quot;</span><span class="p">:</span> <span class="mf">1e-15</span><span class="p">,</span>
-        <span class="nt">&quot;wsmooth&quot;</span><span class="p">:</span> <span class="mf">1e-4</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;plotting&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;quick_plot&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;full_plot&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;save_figs&quot;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-        <span class="nt">&quot;dist&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-        <span class="nt">&quot;bin_widths&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="mf">1e3</span>
-        <span class="p">],</span>
-        <span class="nt">&quot;force_style&quot;</span><span class="p">:</span> <span class="kc">true</span>
-    <span class="p">}</span>
+39
+40
+41
+42
+43
+44</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;format&quot;</span>           <span class="p">:</span> <span class="kc">null</span>      
+  <span class="p">},</span>
+
+  <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;cut_data&quot;</span>         <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;cut_baseline&quot;</span>     <span class="p">:</span> <span class="kc">null</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;geometry_type&quot;</span>    <span class="p">:</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="mf">0.0</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;hyperpriors&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;n&quot;</span>                <span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
+    <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="mf">1.05</span><span class="p">,</span>
+    <span class="nt">&quot;p0&quot;</span>               <span class="p">:</span> <span class="mf">1e-15</span><span class="p">,</span>
+    <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
+    <span class="nt">&quot;max_iter&quot;</span>         <span class="p">:</span> <span class="mi">1500</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;plotting&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;quick_plot&quot;</span>       <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;full_plot&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;diag_plot&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;save_figs&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;dist&quot;</span>             <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">]</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
@@ -350,42 +360,56 @@ and it looks like this:</p>
 34
 35
 36
-37</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="nt">&quot;input_output&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;uvtable_filename&quot;</span><span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit. (columns: u, v, Re(V), Im(V), weights)&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_profile_fit&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to save fitted brightness profile&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_vis_fit&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to save fitted visibility distribution&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_uvtables&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to save fitted and residual UV tables (these are reprojected)&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;iteration_diag&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to return diagnostics of the fit iteration&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;modify_data&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;cut_data&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to truncate the visibilities at a given maximum baseline prior to fitting&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;cut_baseline&quot;</span><span class="p">:</span> <span class="s2">&quot;Maximum baseline at which visibilities are truncated&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;geometry&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;geometry_type&quot;</span><span class="p">:</span> <span class="s2">&quot;&#39;known&#39; or &#39;gaussian&#39;.  Specifies how the geometry is determines&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;fit_phase_offset&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center or just the inclination and position angle&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;inc&quot;</span><span class="p">:</span> <span class="s2">&quot;Inclination. [deg]&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;pa&quot;</span><span class="p">:</span> <span class="s2">&quot;Position angle. [deg]&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;dra&quot;</span><span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension. [arcsec]&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;ddec&quot;</span><span class="p">:</span> <span class="s2">&quot;Delta declination. [arcsec]&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;hyperpriors&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;n&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of collocation points used in the fit (suggested range 100 - 300)&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;rout&quot;</span><span class="p">:</span> <span class="s2">&quot;Maximum disc radius in the fit (best to overestimate size of source). [arcsec]&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;alpha&quot;</span><span class="p">:</span> <span class="s2">&quot;Order parameter for the power spectrum&#39;s inverse Gamma prior (suggested range 1.00 - 1.50)&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;p0&quot;</span><span class="p">:</span> <span class="s2">&quot;Scale parameter for the power spectrum&#39;s inverse Gamma prior (suggested &gt;0, &lt;&lt;1)&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;wsmooth&quot;</span><span class="p">:</span> <span class="s2">&quot;Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)&quot;</span>
-    <span class="p">},</span>
-    <span class="nt">&quot;plotting&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="nt">&quot;quick_plot&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to make a figure showing the simplest plots of the fit&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;full_plot&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to make a figure more fully showing the fit and its diagnostics&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;save_figs&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to save generated figures&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;dist&quot;</span><span class="p">:</span> <span class="s2">&quot;Distance to source, optionally used for plotting. [AU]&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;bin_widths&quot;</span><span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities. [\\lambda]&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;force_style&quot;</span><span class="p">:</span> <span class="s2">&quot;Whether to use preconfigured matplotlib rcParams in generated figures&quot;</span>
-    <span class="p">}</span>
+37
+38
+39
+40
+41
+42
+43
+44</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u, v, Re(V), Im(V), weights)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to save fitted brightness profile&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Whether to save fitted visibility distribution&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to save fitted and residual UV tables (these are reprojected)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Whether to return diagnostics of the fit iteration (needed for diag_plot)&quot;</span>
+    <span class="s2">&quot;format&quot;</span>           <span class="p">:</span> <span class="s2">&quot;Output file format. Default is the same as for &#39;uvtable_filename&#39;, else choose from &#39;npz&#39; or &#39;txt&#39;&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;cut_data&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Whether to truncate the visibilities at a given maximum baseline prior to fitting&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;cut_baseline&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Maximum baseline at which visibilities are truncated&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;geometry_type&quot;</span>    <span class="p">:</span> <span class="s2">&quot;How the geometry is determined: &#39;known&#39; if user-supplied, &#39;gaussian&#39; if it is to be fit&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center or just the inclination and position angle&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination [deg]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle [deg]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension [arcsec]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Delta declination [arcsec]&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;hyperpriors&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;n&quot;</span>                <span class="p">:</span> <span class="s2">&quot;Number of collocation points used in the fit (suggested range 100 - 300)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Maximum disc radius in the fit (best to overestimate size of source) [arcsec]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="s2">&quot;Order parameter for the power spectrum&#39;s inverse Gamma prior (suggested range 1.00 - 1.50)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;p0&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Scale parameter for the power spectrum&#39;s inverse Gamma prior (suggested &gt;0, &lt;&lt;1)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="s2">&quot;Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;max_iter&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Maximum number of fit iterations&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;plotting&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;quick_plot&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Whether to make a figure showing the simplest plots of the fit&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;full_plot&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to make a figure more fully showing the fit and its diagnostics&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;diag_plot&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to make a diagnostic figure showing fit convergence metrics&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_figs&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to save generated figures&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dist&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Distance to source, optionally used for plotting [AU]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="s2">&quot;Whether to use preconfigured matplotlib rcParams in generated figures&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities [\\lambda]&quot;</span><span class="p">,</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
@@ -496,7 +520,7 @@ and fit for the brightness profile. We’ll fit out to 1.6” using 250 collocat
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Feb 20 at 19:31:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Feb 21 at 14:01:56 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
