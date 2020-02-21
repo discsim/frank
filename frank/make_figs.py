@@ -334,7 +334,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     if force_style:
         frank_plotting_style()
 
-    gs = GridSpec(2, 2, hspace=0, bottom=.3)
+    gs = GridSpec(2, 2, hspace=0, bottom=.35)
     gs2 = GridSpec(3, 2, hspace=0, top=.7)
     fig = plt.figure(figsize=(8, 6))
 
@@ -356,7 +356,6 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
     # Plot the difference in the profile between the last 100 iterations
     iter_range_end = [N_iter - 100, N_iter - 1]
 
-    # pylint: disable=no-member
     plot_profile_iterations(r, np.diff(profile_iter, axis=0),
                             iter_range_end, ax1, cmap=plt.cm.cividis,
                             ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'
@@ -384,104 +383,5 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
         plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
     else:
         plt.show()
-
-    return fig, axes
-
-
-def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
-                  stop_iter, force_style=True, save_dir=None,
-                  uvtable_filename=None
-                  ):
-    r"""
-    Produce a diagnostic figure showing fit convergence metrics
-
-    Parameters
-    ----------
-    r : array
-          Radial data coordinates at which the brightness profile is defined.
-          The assumed unit (for the x-label) is arcsec
-    profile_iter : list, shape = (n_iter, N_coll)
-          Brightness profile reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy / sr
-    q : array
-          Baselines at which the power spectrum is defined.
-          The assumed unit (for the x-label) is :math:`\lambda`
-    pwr_spec_iter : list, shape = (n_iter, N_coll)
-          Power spectrum reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy^2 #
-    N_iter : int
-          Total number of iterations in the fit
-    start_iter, stop_iter : int
-          Chosen start and stop range of iterations in the fit over which to
-          plot profile_iter and pwr_spec_iter
-    force_style: bool, default = True
-          Whether to use preconfigured matplotlib rcParams in generated figure
-    save_dir : string, default = None
-          Directory in which to save produced figure. If None, the figure will
-          be produced but not saved
-    uvtable_filename : string, default = None
-          Filename for observed UVTable. If the figure is being saved, it will
-          use this as its filename prefix
-
-    Returns
-    -------
-    fig : Matplotlib `.Figure` instance
-          The produced figure, including the GridSpec
-    axes : Matplotlib `~.axes.Axes` class
-          The axes of the produced figure
-    """
-
-    if force_style: frank_plotting_style()
-    if save_dir and uvtable_filename:
-        prefix = save_dir + '/' + os.path.splitext(uvtable_filename)[0]
-
-    gs = GridSpec(2, 2, hspace=0, bottom=.3)
-    gs2 = GridSpec(3, 2, hspace=0, top=.7)
-    fig = plt.figure(figsize=(8, 6))
-
-    ax0 = fig.add_subplot(gs[0])
-    ax1 = fig.add_subplot(gs[2])
-
-    ax2 = fig.add_subplot(gs[1])
-    ax3 = fig.add_subplot(gs[3])
-
-    ax4 = fig.add_subplot(gs2[4])
-
-    axes = [ax0, ax1, ax2, ax3, ax4]
-
-    # Specify the range in iterations over which to plot
-    iter_range = [start_iter, stop_iter]
-
-    plot_profile_iterations(r, profile_iter, iter_range, ax0)
-
-    # Plot the difference in the profile between the last 100 iterations
-    iter_range_end = [N_iter - 100, N_iter - 1]
-
-    plot_profile_iterations(r, np.diff(profile_iter, axis=0),
-                            iter_range_end, ax1, cmap=plt.cm.cividis,
-                            ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'
-                            )
-
-    plot_pwr_spec_iterations(q, pwr_spec_iter, iter_range, ax2)
-
-    # Plot the difference in the power spectrum between the last 100 iterations
-    plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
-                            iter_range_end, ax3, cmap=plt.cm.cividis,
-                            ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]'
-                            )
-
-    plot_convergence_criterion(profile_iter, N_iter, ax4)
-
-    xlims = ax2.get_xlim()
-    ax3.set_xlim(xlims)
-
-    plt.setp(ax0.get_xticklabels(), visible=False)
-    plt.setp(ax2.get_xticklabels(), visible=False)
-
-    plt.tight_layout()
-
-    if save_dir and uvtable_filename:
-        plt.savefig(prefix + '_frank_fit_diag.png', dpi=600)
-    else: plt.show()
 
     return fig, axes

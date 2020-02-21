@@ -21,8 +21,6 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
-import frank
-frank_path = os.path.dirname(frank.__file__)  # TODO
 from frank import io, make_figs
 
 import os
@@ -33,6 +31,9 @@ import numpy as np
 
 import logging
 
+import frank
+frank_path = os.path.dirname(frank.__file__)  # TODO
+
 
 def helper():
     with open(frank_path + '/parameter_descriptions.json') as f:
@@ -42,7 +43,7 @@ def helper():
          Fit a 1D radial brightness profile with Frankenstein (frank) from the
          terminal with `python -m frank.fit`. A .json parameter file is required;
          the default is default_parameters.json and is
-         of the form:\n\n {}""".format(json.dumps(param_descrip, indent=4)))  # TODO
+         of the form:\n\n {}""".format(json.dumps(param_descrip, indent=4)))
 
 
 def parse_parameters():
@@ -95,9 +96,11 @@ def parse_parameters():
         if uv_path: # TODO: why? this will always be true
             model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
-    log_path = os.path.join(model['input_output']['save_dir'],
-                              model['input_output']['uvtable_filename'] + \
-                              '_frank_fit.log')
+    save_prefix = \
+        os.path.join(model['input_output']['save_dir'],
+                     os.path.splitext(os.path.basename(model['input_output']['uvtable_filename']))[0])
+
+    log_path = save_prefix + '_frank_fit.log'
     logging.basicConfig(level=logging.INFO,
                         format='%(message)s',
                         handlers=[
@@ -108,9 +111,7 @@ def parse_parameters():
     logging.info('\nRunning frank on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
-    param_path = os.path.join(model['input_output']['save_dir'],
-                              model['input_output']['uvtable_filename'] + \
-                              '_frank_used_pars.json')
+    param_path = save_prefix + '_frank_used_pars.json'
     logging.info(
         '  Saving parameters to be used in fit to {}'.format(param_path))
     with open(param_path, 'w') as f:
@@ -189,8 +190,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     if geometry_type == 'known':
         logging.info('    Using your provided geometry for deprojection')
         if all(x == 0 for x in (inc, pa, dra, ddec)):
-            logging.info("      N.B.: All geometry parameters are 0: I won't"
-                         " apply any geometry correction to the visibilities"
+            logging.info("      N.B.: All geometry parameters are 0, so I won't"
+                         " apply any geometry correction to the visibilities")
         geom = geometry.FixedGeometry(inc, pa, dra, ddec)
 
     elif geometry_type == 'gaussian':
@@ -211,8 +212,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
         raise ValueError("geometry_type must be one of 'known' or 'gaussian'")
 
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
-                 '           dRA  = {.2e} mas,\n'
-                 '           dDec = {.2e} mas'.format(geom.inc, geom.PA,
+                 '           dRA  = {:.2e} mas,\n'
+                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
                  geom.dRA*1e3, geom.dDec*1e3))
 
     # Store geometry
@@ -279,23 +280,19 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
                      )
 
     t1 = time.time()
-    if return_iteration_diag:
-        sol, iteration_diag = FF.fit(u, v, vis, weights)
-    elif diag_plot:
-        logging.info("    Your parameter file has 'iteration_diag=False' but"
-                     " 'diag_plot=True'. I'll act as if 'iteration_diag=True'.")
-        return_iteration_diag = True
-        sol, iteration_diag = FF.fit(u, v, vis, weights)
-    else:
-        sol = FF.fit(u, v, vis, weights)
+    sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
                  time.time() - t1))
 
     if return_iteration_diag:
         return sol, FF.iteration_diagnostics
+    elif diag_plot:
+        logging.info("    Your parameter file has 'iteration_diag=False' but"
+                     " 'diag_plot=True'. I'll act as if 'iteration_diag=True'.")
+        return sol, FF.iteration_diagnostics
     else:
-        return [sol, ] # TODO: handle better
+        return [sol, ]
 
 
 def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
@@ -355,6 +352,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
     dist : float, optional, unit = AU, default = None
           Distance to source, used to show second x-axis for brightness profile
     """
+
     logging.info('  Plotting results')
 
     figs = []
@@ -452,7 +450,7 @@ def main():
                           model['plotting']['quick_plot'],
                           model['plotting']['diag_plot'],
                           model['plotting']['force_style'],
-                          model['plotting']['dist'],
+                          model['plotting']['dist']
                           )
 
     logging.info("IT'S ALIVE!!\n")
