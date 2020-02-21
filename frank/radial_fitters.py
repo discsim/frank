@@ -714,7 +714,7 @@ class FrankFitter(FourierBesselFitter):
 
         count = 0
         pi_old = 0
-        while (np.any(np.abs(pi - pi_old) > self._tol * np.abs(pi)) and
+        while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
