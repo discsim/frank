@@ -320,9 +320,10 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
     iteration_diag : _HankelRegressor object
           Diagnostics of the fit iteration
           (see radial_fitters.FrankFitter.fit)
-    iter_plot_range : list
+    iter_plot_range : list or None
           Range of iterations in the fit over which to
-          plot brightness profile and power spectrum reconstructions
+          plot brightness profile and power spectrum reconstructions. If None,
+          then the full range will be plotted.
     bin_widths : list, unit = \lambda
           Bin widths in which to bin the observed visibilities
     save_dir : string
@@ -382,24 +383,9 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         axes.append(full_axes)
 
     if diag_plot:
-        if iter_plot_range[0] > iteration_diag['num_iterations']:
-            raise ValueError("    Your parameter file has"
-                             " 'iter_plot_range'[0] > the number of fit"
-                             " iterations: {} > {}. I'll"
-                             " use 0 as 'iter_plot_range'[0]"
-                             " instead.".format(iter_plot_range[1],
-                                                iteration_diag['num_iterations']))
-            iter_plot_range[0] = 0.
-
-        # Update the iteration range using the actual fit iteration count
-        new_plot_iter = [iter_plot_range[0], iteration_diag['num_iterations']]
-
-        logging.info('    Making diagnostic figure using fit iterations over'
-                     ' the range {}'.format(new_plot_iter))
-        diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
-                                                      iteration_diag['mean'], sol.q,
-                                                      iteration_diag['power_spectrum'],
-                                                      iteration_diag['num_iterations'], new_plot_iter,
+        diag_fig, diag_axes = make_figs.make_diag_fig(sol.r, sol.q,
+                                                      iteration_diag,
+                                                      iter_plot_range,
                                                       force_style, save_prefix
                                                       )
 
