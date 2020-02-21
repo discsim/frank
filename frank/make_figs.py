@@ -43,6 +43,7 @@ cs = ['#a4a4a4', 'k', '#896360', 'b']
 cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
 ms = ['x', '+', '.', '1']
 
+
 def frank_plotting_style():
     """Apply custom alterations to the matplotlib style"""
     import matplotlib as mpl
@@ -109,7 +110,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
           The axes of the produced figure
     """
 
-    if force_style: frank_plotting_style()
+    if force_style:
+        frank_plotting_style()
 
     gs = GridSpec(3, 3, hspace=0)
     gs2 = GridSpec(3, 3, hspace=.35)
@@ -143,7 +145,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
     for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(
+            baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
@@ -261,7 +264,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        10**4)
 
     for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(
+            baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
 
@@ -293,7 +297,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
+def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
                   force_style=True, save_prefix=None
                   ):
     r"""
@@ -310,9 +314,8 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
     q : array
           Baselines at which the power spectrum is defined.
           The assumed unit (for the x-label) is :math:`\lambda`
-    pwr_spec_iter : list, shape = (n_iter, N_coll)
-          Power spectrum reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy^2
+    iteration_diagnostics : dict
+          The iteration_diagnositics from FrankFitter
     N_iter : int
           Total number of iterations in the fit
     iter_range : list
@@ -348,10 +351,17 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
 
     axes = [ax0, ax1, ax2, ax3, ax4]
 
+    profile_iter = iteration_diagnostics['mean']
+    pwr_spec_iter = iteration_diagnostics['power_spectrum']
+    num_iter = iteration_diagnostics['num_iterations']
+
+    if iter_plot_range is None:
+        iter_plot_range = [0, num_iter]
+
     plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
-    iter_plot_range_end = [N_iter - 100, N_iter - 1]
+    iter_plot_range_end = [num_iter - 100, num_iter - 1]
 
     # pylint: disable=no-member
     plot_profile_iterations(r, np.diff(profile_iter, axis=0) * 1e5,
@@ -367,7 +377,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
                              ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]', bbox_x=.45
                              )
 
-    plot_convergence_criterion(profile_iter, N_iter, ax4)
+    plot_convergence_criterion(profile_iter, num_iter, ax4)
 
     xlims = ax2.get_xlim()
     ax3.set_xlim(xlims)
