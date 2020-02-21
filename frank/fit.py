@@ -121,8 +121,9 @@ def parse_parameters():
         model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
     # Add a save prefix to the json for later use.
-    model['input_output']['save_prefix'] = save_prefix = os.path.join(model['input_output']['save_dir'],
-                                                                      os.path.splitext(os.path.basename(uv_path))[0])
+    model['input_output']['save_prefix'] = save_prefix =  \
+        os.path.join(model['input_output']['save_dir'],
+                     os.path.splitext(os.path.basename(uv_path))[0])
 
     log_path = save_prefix + '_frank_fit.log'
     logging.basicConfig(level=logging.INFO,
@@ -134,6 +135,20 @@ def parse_parameters():
 
     logging.info('\nRunning frank on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
+
+    # Sanity check some of json parameters
+    if model['plotting']['diag_plot']:
+        plotting = model['plotting']
+
+        if plotting['iter_plot_range'] is not None:
+            err = ValueError("iter_plot_range should be 'null' (None) "
+                             "or a list specifying the start and end "
+                             "points of the range to be plotted".)
+            try:
+                if len(plotting['iter_plot_range']) != 2:
+                    raise err
+            except TypeError:
+                raise err
 
     param_path = save_prefix + '_frank_used_pars.json'
     logging.info(
