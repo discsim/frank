@@ -93,10 +93,9 @@ def parse_parameters():
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
                         help="UVTable file with data to be fit. See"
                              " frank.io.load_uvtable")
-    parser.add_argument("--print_parameter_description", default=None,
+    parser.add_argument("-desc", "--print_parameter_description", default=None,
                         action="store_true",
-                        help="Print the full description of each of the fit "
-                        "parameters")
+                        help="Print the full description of all fit parameters")
 
     args = parser.parse_args()
 
@@ -141,9 +140,9 @@ def parse_parameters():
         plotting = model['plotting']
 
         if plotting['iter_plot_range'] is not None:
-            err = ValueError("iter_plot_range should be 'null' (None) "
-                             "or a list specifying the start and end "
-                             "points of the range to be plotted".)
+            err = ValueError("iter_plot_range should be 'null' (None)"
+                             " or a list specifying the start and end"
+                             " points of the range to be plotted")
             try:
                 if len(plotting['iter_plot_range']) != 2:
                     raise err
