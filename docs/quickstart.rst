@@ -88,6 +88,14 @@ To see how this the fit to this dataset is sensitive to the prior, check out `th
 **i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate xx asymmetry in the disc xx that frank will average over.
 
+Testing a fit's convergence
+###########################
+Just to be safe, it's always good to check how well a fit has converged. Using the fit from the above figure,
+
+.. figure:: plots/AS209_continuum_frank_fit_diag.png
+   :align: left
+   :figwidth: 700
+
 Perform multiple fits in a loop
 ###############################
 You can run multiple fits in a single call to frank (e.g., to check a fit's sensitivity to hyperpriors or run a self-consistent analysis on multiple sources)

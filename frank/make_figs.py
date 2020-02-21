@@ -315,7 +315,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
           assumed unit (for the y-label) is Jy^2
     N_iter : int
           Total number of iterations in the fit
-    iter_plot_range : list
+    iter_range : list
           Range of iterations in the fit over which to
           plot brightness profile and power spectrum reconstructions
     force_style: bool, default = True
@@ -347,7 +347,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
     ax4 = fig.add_subplot(gs2[4])
 
     axes = [ax0, ax1, ax2, ax3, ax4]
-
+    
     plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
