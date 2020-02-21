@@ -281,7 +281,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
-                 '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
+                 ' {:d} collocation points) {:.1f} sec'.format(len(vis), n,
                  time.time() - t1))
 
     if return_iteration_diag:

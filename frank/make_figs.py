@@ -347,16 +347,16 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
     ax4 = fig.add_subplot(gs2[4])
 
     axes = [ax0, ax1, ax2, ax3, ax4]
-    
+
     plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
     iter_plot_range_end = [N_iter - 100, N_iter - 1]
 
     # pylint: disable=no-member
-    plot_profile_iterations(r, np.diff(profile_iter, axis=0),
+    plot_profile_iterations(r, np.diff(profile_iter, axis=0) * 1e5,
                             iter_plot_range_end, ax1, cmap=plt.cm.cividis,
-                            ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'
+                            ylabel=r'$I_i - I_{i-1}$ [$10^{5}$ Jy sr$^{-1}$]'
                             )
 
     plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
@@ -364,7 +364,7 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
     # Plot the difference in the power spectrum between the last 100 iterations
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
                              iter_plot_range_end, ax3, cmap=plt.cm.cividis,
-                             ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]'
+                             ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]', bbox_x=.45
                              )
 
     plot_convergence_criterion(profile_iter, N_iter, ax4)

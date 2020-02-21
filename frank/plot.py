@@ -312,7 +312,7 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
             np.max(profile_iter[i])
         convergence_criterion.append(this_conv_cri)
 
-    ax.plot(range(0, N_iter), convergence_criterion)
+    ax.plot(range(0, N_iter), convergence_criterion, 'k')
 
     ax.set_xlabel('Fit iteration')
     ax.set_ylabel('Convergence criterion,\n' +
@@ -356,7 +356,8 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
 
 def plot_profile_iterations(r, profile_iter, n_iter, ax,
                             cmap=plt.cm.cool, # pylint: disable=no-member
-                            ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]'
+                            ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]',
+                            bbox_x=-.02, bbox_y=-.1
                             ):
     r"""
     Plot a fit's brightness profile reconstruction over a chosen range of
@@ -378,6 +379,8 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
           Colormap to apply to the overplotted profiles
     ylabel : string, default = r'I [10$^{10}$ Jy sr$^{-1}$]'
            y-label of the plot
+    bbox_x, bbox_y : float, default = -0.02 and -0.1
+          x- and y-value where the colorbar is placed
     """
     if n_iter[0] >= n_iter[1] or n_iter[1] > len(profile_iter):
         raise ValueError("Require: n_iter[0] < n_iter[1] and"
@@ -389,7 +392,7 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
     ax.plot(r, profile_iter[-1] / 1e10, ':', c='k', label='Last iteration')
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=1, bbox_x=-.1, bbox_y=-.5
+                  label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y
                   )
 
     ax.legend(loc='upper right')
@@ -400,7 +403,8 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
                              cmap=plt.cm.cool, # pylint: disable=no-member
-                             ylabel=r'Power [Jy$^2$]'
+                             ylabel=r'Power [Jy$^2$]',
+                             bbox_x=.05, bbox_y=.175
                              ):
     r"""
     Plot a fit's power spectrum reconstruction over a chosen range of
@@ -418,10 +422,12 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
           Chosen range of iterations in the fit over which to plot pwr_spec_iter
     ax : Matplotlib axis
           Axis on which to plot the power spectrum iterations
-    ylabel : string, default = r'Power [Jy$^2$]'
-           y-label of the plot
     cmap : plt.cm colormap, default=plt.cm.cool
           Colormap to apply to the overplotted power spectra
+    ylabel : string, default = r'Power [Jy$^2$]'
+           y-label of the plot
+    bbox_x, bbox_y : float, default = 0.05 and 0.175
+          x- and y-value where the colorbar is placed
     """
 
     iter_range = range(n_iter[0], n_iter[1])
@@ -430,12 +436,12 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
     ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration')
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=3, bbox_x=.05, bbox_y=.175
+                  label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y
                   )
 
     ax.legend(loc='upper right')
 
-    ax.set_ylim(bottom=1e-16)
+    ax.set_ylim(bottom=1.1e-16)
     ax.set_xscale('log')
     ax.set_yscale('log')
     ax.set_xlabel(r'Baseline [$\lambda$]')
