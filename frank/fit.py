@@ -90,14 +90,15 @@ def parse_parameters():
                          " Set it in the parameter file or run frank with"
                          " python -m frank.fit -uv <uvtable_filename>")
 
+    uv_path = model['input_output']['uvtable_filename']
     if not model['input_output']['save_dir']:
         # If not specified, use the UVTable directory as the save directory
-        uv_path = model['input_output']['uvtable_filename']
         model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
-    save_prefix = \
+    # Add a save prefix to the json for later use.
+    model['input_output']['save_prefix'] = save_prefix = \
         os.path.join(model['input_output']['save_dir'],
-                     os.path.splitext(os.path.basename(model['input_output']['uvtable_filename']))[0])
+                     os.path.splitext(os.path.basename(uv_path))[0])
 
     log_path = save_prefix + '_frank_fit.log'
     logging.basicConfig(level=logging.INFO,
@@ -179,7 +180,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     Returns
     -------
     geom : SourceGeometry object
-          Fitted geometry (see frank.geometry.SourceGeometry)
+        Fitted geometry (see frank.geometry.SourceGeometry)
     """
 
     from frank import geometry
@@ -295,7 +296,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
 
 
 def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
-                   bin_widths, save_dir, uvtable_filename,
+                   bin_widths, save_prefix,
                    save_profile_fit, save_vis_fit, save_uvtables,
                    save_iteration_diag, full_plot, quick_plot, diag_plot,
                    force_style=True, dist=None
@@ -326,11 +327,8 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         then the full range will be plotted.
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    save_dir : string
-        Directory in which output datafiles and figures are saved
-    uvtable_filename : string
-        Filename for observed UVTable. The saved datafiles and figures use
-        this as their filename prefix
+    save_prefix : string
+        Prefix for output filenames
     save_profile_fit : bool
         Whether to save fitted brightness profile
     save_vis_fit : bool
@@ -357,10 +355,6 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
 
     figs = []
     axes = []
-
-    save_prefix = \
-        os.path.join(save_dir,
-                     os.path.splitext(os.path.basename(uvtable_filename))[0])
 
     if quick_plot:
         logging.info('    Making quick figure')
@@ -444,9 +438,7 @@ def main():
     figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
                           model['plotting']['iter_plot_range'],
                           model['plotting']['bin_widths'],
-                          model['input_output']['save_dir'],
-                          model['input_output']['uvtable_filename'],
-                          model['input_output']['save_profile_fit'],
+                          model['input_output']['save_prefix'],
                           model['input_output']['save_vis_fit'],
                           model['input_output']['save_uvtables'],
                           model['input_output']['iteration_diag'],
@@ -458,6 +450,8 @@ def main():
                           )
 
     logging.info("IT'S ALIVE!!\n")
+
+    return figs
 
 
 if __name__ == "__main__":
