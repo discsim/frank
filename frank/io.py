@@ -52,7 +52,7 @@ def load_uvtable(data_file):
         u, v, re, im, weights = np.genfromtxt(data_file).T
         vis = re + 1j*im
 
-    elif extension in {'.npy', '.npz'}:
+    elif extension == '.npz':
         dat = np.load(data_file)
         u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
 
@@ -99,9 +99,8 @@ def save_fit(u, v, vis, weights, sol, prefix,
         Format to save the uvtables in.
     """
 
-    if not (format == 'txt' or format == 'dat' or
-            format == 'npy' or format == 'npz'):
-        raise ValueError("Format must be 'npy', 'npz', 'txt', or 'dat'.")
+    if not (format == 'txt' or format == 'dat' or format == 'npz'):
+        raise ValueError("Format must be 'npz', 'txt', or 'dat'.")
 
     with open(prefix + '_frank_sol.obj', 'wb') as f:
         pickle.dump(sol, f)
@@ -120,7 +119,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
             np.savetxt(prefix + '_frank_vis_fit.' + format,
                        np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
                        header='Baseline [lambda]\tProjected Re(V) [Jy]')
-        elif format == 'npz' or format == 'npy':
+        elif format == 'npz':
             np.savez(prefix + '_frank_vis_fit.' + format,
                      uv=sol.q, V=sol.sol.predict_deprojected(sol.q),
                      units={'uv': 'lambda', 'V': 'Jy'})
@@ -140,7 +139,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
                                  vis.imag - V_pred.imag, weights], axis=-1),
                        header=header)
 
-        elif format == 'npz' or format == 'npy':
+        elif format == 'npz':
             units = {'u': 'lambda', 'v': 'lambda',
                      'V': 'Jy', 'weights': "Jy^-2"}
             np.savez(prefix + '_frank_vis_fit.' + format,

@@ -111,7 +111,7 @@ def parse_parameters():
     # Determine the output format to use:
     if model['input_output']['format'] is None:
         model['input_output']['format'] = \
-            os.path.splitext(model['input_output']['uvtable_filename'])[1]
+            os.path.splitext(model['input_output']['uvtable_filename'])[1][1:]
 
     param_path = os.path.join(model['input_output']['save_dir'],
                               'frank_used_pars.json')
