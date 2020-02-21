@@ -103,7 +103,7 @@ The fit runs until a convergence criterion on the power spectrum is met at every
 :math:`|(P_{\rm i} - P_{\rm i-1}| <= {\rm tol} * \pi`,
 where :math:`P_{\rm i}` is the power spectrum at iteration :math:`i`
 and :math:`{\rm tol}` is the tolerance (`iter_tol`) in your parameter file.
-This criterion is more robust than one on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.
+This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.
 If this stopping condition is not met, the fit runs until `max_iter` as set in your parameter file. |br|
 **b)** Sequential difference between the last 100 brightness profile iterations.
 Note the y-scale here is :math:`10^5\ {\rm Jy\ sr}^{-1}`, as opposed to :math:`10^{10}\ {\rm Jy\ sr}^{-1}` in (a).
