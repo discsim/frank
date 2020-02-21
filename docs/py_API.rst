@@ -25,3 +25,39 @@ the deprojected visibilities.
 
 .. autoclass:: frank.radial_fitters._HankelRegressor
   :members: mean, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, log_likelihood
+
+Plotting functions: Figure generation
+-------------------------------------
+
+These functions make the figures frank will produce when `quick_plot`, `full_plot` and/or `diag_plot` are `True` in your parameter file.
+
+.. autofunction:: frank.make_figs.make_quick_fig
+
+.. autofunction:: frank.make_figs.make_full_fig
+
+.. autofunction:: frank.make_figs.make_diag_fig
+
+Plotting functions: Individual plots
+####################################
+
+And these are the plotting functions those figures call.
+
+.. autofunction:: frank.plot.plot_brightness_profile
+
+.. autofunction:: frank.plot.plot_vis_fit
+
+.. autofunction:: frank.plot.plot_vis
+
+.. autofunction:: frank.plot.plot_vis_resid
+
+.. autofunction:: frank.plot.plot_pwr_spec
+
+.. autofunction:: frank.plot.plot_convergence_criterion
+
+.. autofunction:: frank.plot.make_colorbar
+
+.. autofunction:: frank.plot.plot_profile_iterations
+
+.. autofunction:: frank.plot.plot_pwr_spec_iterations
+
+.. autofunction:: frank.plot.plot_2dsweep

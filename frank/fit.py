@@ -93,8 +93,7 @@ def parse_parameters():
     if not model['input_output']['save_dir']:
         # If not specified, use the UVTable directory as the save directory
         uv_path = model['input_output']['uvtable_filename']
-        if uv_path: # TODO: why? this will always be true
-            model['input_output']['save_dir'] = os.path.dirname(uv_path)
+        model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
     save_prefix = \
         os.path.join(model['input_output']['save_dir'],
