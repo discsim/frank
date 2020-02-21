@@ -388,8 +388,8 @@ def main():
                                              )
 
     figs = output_results(u, v, vis, weights, geom, sol,
-                          model['input_output']['format'],
                           model['plotting']['bin_widths'],
+                          model['input_output']['format'],
                           model['input_output']['save_dir'],
                           model['input_output']['uvtable_filename'],
                           model['input_output']['save_profile_fit'],
