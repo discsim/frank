@@ -66,7 +66,7 @@ def load_uvtable(data_file):
 
 def save_fit(u, v, vis, weights, sol, prefix,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
-             save_iteration_diag=False
+             save_iteration_diag=False, format='npz',
              ):
     r"""
     Save datafiles of fit results
@@ -95,7 +95,12 @@ def save_fit(u, v, vis, weights, sol, prefix,
         NOTE: These are reprojected
     save_iteration_diag : bool
         Whether to save diagnostics of the fit iteration
+    format : string, default=npz
+        Format to save the uvtables in.
     """
+
+    if not (format == 'txt' or format == 'npy'or format == 'npz')):
+        raise ValueError("Format must be 'npy', 'npz', or 'txt'.")
 
     with open(prefix + '_frank_sol.obj', 'wb') as f:
         pickle.dump(sol, f)
@@ -107,21 +112,40 @@ def save_fit(u, v, vis, weights, sol, prefix,
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
-                   header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
+                   header = 'r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
-        np.savetxt(prefix + '_frank_vis_fit.txt',
-                   np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                   header='Baseline [lambda]\tProjected Re(V) [Jy]')
+        if format == 'txt':
+            np.savetxt(prefix + '_frank_vis_fit.txt',
+                       np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
+                       header = 'Baseline [lambda]\tProjected Re(V) [Jy]')
+        elif format == 'npz' or format == 'npy':
+            np.savez(prefix + '_frank_vis_fit.' + format,
+                     uv=sol.q, V=sol.sol.predict_deprojected(sol.q),
+                     units={'uv': 'lambda', 'V': 'Jy'})
 
     if save_uvtables:
-        np.savetxt(prefix + '_frank_uv_fit.txt',
-                   np.stack([u, v, sol.predict(u, v).real, sol.predict(u, v).imag,
-                             weights], axis=-1), header='u [lambda]\tv [lambda]\tRe(V)'
-                   ' [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]')
+        V_pred = sol.predict(u, v)
 
-        np.savetxt(prefix + '_frank_uv_resid.txt',
-                   np.stack([u, v, vis.real - sol.predict(u, v).real,
-                             vis.imag - sol.predict(u, v).imag, weights], axis=-1),
-                   header='u [lambda]\tv [lambda]\tRe(V) [Jy]\tIm(V) [Jy]\tWeight'
-                   ' [Jy^-2]')
+        if format == 'txt':
+            header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
+
+            np.savetxt(prefix + '_frank_uv_fit.txt',
+                       np.stack([u, v, Vpred.real, V_pred.imag,
+                                 weights], axis=-1), header=header)
+
+            np.savetxt(prefix + '_frank_uv_resid.txt',
+                       np.stack([u, v, vis.real - V_pred.real,
+                                 vis.imag - V_pred.imag, weights], axis=-1),
+                       header=header)
+
+        elif format == 'npz' or format == 'npy':
+            units = {'u': 'lambda', 'v': 'lambda',
+                     'V': 'Jy', 'weights': "Jy^-2"}
+            np.savez(prefix + '_frank_vis_fit.' + format,
+                     u=u, v=v, V=V_pred, weights=weights,
+                     units=units)
+
+            np.savez(prefix + '_frank_vis_resid.' + format,
+                     u=u, v=v, V=vis - V_pred, weights=weights,
+                     units=units)

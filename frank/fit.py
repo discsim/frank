@@ -108,6 +108,11 @@ def parse_parameters():
     logging.info('\nRunning frank on %s'
                  % model['input_output']['uvtable_filename'])
 
+    # Determine the output format to use:
+    if model['input_output']['format'] is None:
+        model['input_output']['format'] = \
+            os.path.splitext(model['input_output']['uvtable_filename'])[1]
+
     param_path = os.path.join(model['input_output']['save_dir'],
                               'frank_used_pars.json')
     logging.info(
@@ -274,7 +279,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth,
         return sol, None
 
 
-def output_results(u, v, vis, weights, geom, sol, bin_widths,
+def output_results(u, v, vis, weights, geom, sol, bin_widths, output_format,
                    save_dir, uvtable_filename, save_profile_fit, save_vis_fit,
                    save_uvtables, save_iteration_diag, full_plot, quick_plot,
                    force_style=True, dist=None
@@ -354,7 +359,7 @@ def output_results(u, v, vis, weights, geom, sol, bin_widths,
     logging.info('  Saving results')
     io.save_fit(u, v, vis, weights, sol, save_prefix,
                 save_profile_fit, save_vis_fit, save_uvtables,
-                save_iteration_diag
+                save_iteration_diag, format=output_format
                 )
 
     return figs, axes
@@ -383,6 +388,7 @@ def main():
                                              )
 
     figs = output_results(u, v, vis, weights, geom, sol,
+                          model['input_output']['format'],
                           model['plotting']['bin_widths'],
                           model['input_output']['save_dir'],
                           model['input_output']['uvtable_filename'],

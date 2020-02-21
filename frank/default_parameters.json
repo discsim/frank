@@ -5,7 +5,8 @@
         "save_profile_fit": true,
         "save_vis_fit": true,
         "save_uvtables": true,
-        "iteration_diag": false
+        "iteration_diag": false,
+        "format": null
     },
     "modify_data": {
         "cut_data": false,

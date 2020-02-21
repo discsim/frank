@@ -5,7 +5,8 @@
         "save_profile_fit": "Whether to save fitted brightness profile",
         "save_vis_fit": "Whether to save fitted visibility distribution",
         "save_uvtables": "Whether to save fitted and residual UV tables (these are reprojected)",
-        "iteration_diag": "Whether to return diagnostics of the fit iteration"
+        "iteration_diag": "Whether to return diagnostics of the fit iteration",
+        "format": "Output file format. Default is the same as input, otherwise chhose from 'npz' or 'txt'."
     },
     "modify_data": {
         "cut_data": "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
