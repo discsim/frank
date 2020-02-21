@@ -138,7 +138,6 @@ def save_fit(u, v, vis, weights, sol, prefix,
         File format in which to save the fit's output UVTable(s)
     """
 
-    print(format)
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
 
