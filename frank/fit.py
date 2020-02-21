@@ -149,6 +149,9 @@ def parse_parameters(*args):
             except TypeError:
                 raise err
 
+    if model['input_output']['format'] is None:
+        model['input_output']['format'] = os.path.splitext(uv_path)[1][1:]
+
     param_path = save_prefix + '_frank_used_pars.json'
 
     logging.info(
@@ -334,10 +337,10 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
     if need_iterations:
         return sol, FF.iteration_diagnostics
     else:
-        return [sol, ]
+        return [sol, None]
 
 
-def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_range,
+def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
                    bin_widths, output_format, save_prefix,
                    save_profile_fit, save_vis_fit,
                    save_uvtables, save_iteration_diag,
@@ -454,6 +457,13 @@ def output_results(u, v, vis, weights, geom, sol, iteration_diag, iter_plot_rang
 
 
 def main(*args):
+    """Run the frank pipeline
+
+    Parameters
+    ----------
+    *args : strings
+        Simulates the command-line arguments
+    """
     model = parse_parameters(*args)
 
     u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])

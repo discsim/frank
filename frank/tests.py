@@ -247,6 +247,8 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     # Set the model parameters
     params['hyperpriors']['n'] = 20
     params['hyperpriors']['rout'] = 1.6
+    params['hyperpriors']['alpha'] = 1.05
+    params['hyperpriors']['wmsooth'] = 1e-2
 
     geom = params['geometry']
     geom['type'] = geometry

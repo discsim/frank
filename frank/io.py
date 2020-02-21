@@ -138,6 +138,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
         File format in which to save the fit's output UVTable(s)
     """
 
+    print(format)
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
 
@@ -160,7 +161,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
                        header='Baseline [lambda]\tProjected Re(V) [Jy]')
         elif format == 'npz':
             np.savez(prefix + '_frank_vis_fit.' + format,
-                     uv=sol.q, V=sol.sol.predict_deprojected(sol.q),
+                     uv=sol.q, V=sol.predict_deprojected(sol.q),
                      units={'uv': 'lambda', 'V': 'Jy'})
 
     if save_uvtables:
