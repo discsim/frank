@@ -383,6 +383,21 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         axes.append(full_axes)
 
     if diag_plot:
+        if iter_plot_range is not None:
+            if iter_plot_range[1] > iteration_diag['num_iterations']:
+                if iter_plot_range[0] < iteration_diag['num_iterations']:
+                    logging.info('    Upper limit of iteration plot range '
+                                 'exceeds number of iterations, truncating '
+                                 'to the number of iterations used')
+                    iter_plot_range = [iter_plot_range[0],
+                                       iteration_diag['num_iterations']]
+                else:
+                    logging.info('    Lower limit of iteration plot range '
+                                 'exceeds number of iterations, no iterations '
+                                 'will be plotted')
+                    iter_plot_range = [iteration_diag['num_iterations'],
+                                       iteration_diag['num_iterations']]
+
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r, sol.q,
                                                       iteration_diag,
                                                       iter_plot_range,
