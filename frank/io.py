@@ -131,7 +131,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
             header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
 
             np.savetxt(prefix + '_frank_uv_fit.txt',
-                       np.stack([u, v, Vpred.real, V_pred.imag,
+                       np.stack([u, v, V_pred.real, V_pred.imag,
                                  weights], axis=-1), header=header)
 
             np.savetxt(prefix + '_frank_uv_resid.txt',
