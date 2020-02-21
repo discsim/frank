@@ -99,7 +99,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
         Format to save the uvtables in.
     """
 
-    if not (format == 'txt' or format == 'npy'or format == 'npz')):
+    if not (format == 'txt' or format == 'npy'or format == 'npz'):
         raise ValueError("Format must be 'npy', 'npz', or 'txt'.")
 
     with open(prefix + '_frank_sol.obj', 'wb') as f:
@@ -112,13 +112,13 @@ def save_fit(u, v, vis, weights, sol, prefix,
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
                    np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
-                   header = 'r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
+                   header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
         if format == 'txt':
             np.savetxt(prefix + '_frank_vis_fit.txt',
                        np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                       header = 'Baseline [lambda]\tProjected Re(V) [Jy]')
+                       header='Baseline [lambda]\tProjected Re(V) [Jy]')
         elif format == 'npz' or format == 'npy':
             np.savez(prefix + '_frank_vis_fit.' + format,
                      uv=sol.q, V=sol.sol.predict_deprojected(sol.q),
