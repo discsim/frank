@@ -68,7 +68,7 @@ fit and its residuals as `<uvtable_filename>_frank_uv_fit.txt` and `<uvtable_fil
 and a figure showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_full.png`.
 Optionally frank can save a simpler version of this figure as `<uvtable_filename>_frank_fit_quick.png`.
 
-Here's the full figure for a frank fit to the DSHARP continuum observations of the protoplanetary disc
+Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
 
 .. figure:: plots/AS209_continuum_frank_fit_full.png
@@ -91,10 +91,24 @@ it could indicate xx asymmetry in the disc xx that frank will average over.
 Testing a fit's convergence
 ###########################
 Just to be safe, it's always good to check how well a fit has converged. Using the fit from the above figure,
+here's the diagnostic plot frank produces (if `diag_plot=True` in your parameter file).
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
    :figwidth: 700
+
+ **a)** The fitted frank brightness profile over all fit iterations.
+ Note how small amplitude, fast oscillations ('ringing') that are due to unconstrained
+ baselines are smoothed over the first :math:`\approx 300` iterations. |br|
+ **b)** Sequential difference between the last 100 brightness profile iterations.
+ Note the y-scale here is :math:`10^5\ {\rm Jy\ sr^{-1}`, as opposed to :math:`10^10\ {\rm Jy\ sr^{-1}` in (a).
+ So in this case the oscillations remaining at the end of the fit are at a part in :math:`10^6` of the profile brightness.
+ |br|
+ **c)** The reconstructed power spectrum over all fit iterations. ... |br|
+ **d)** Sequential difference between the last 100 brightness profile iterations. ... |br|
+ **e)** A simple convergence criterion for the fit, ...
+
+The fit runs until a convergence criterion
 
 Perform multiple fits in a loop
 ###############################
@@ -145,7 +159,8 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Now we'll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above),
+Now we'll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file),
 
 .. code-block:: python
 

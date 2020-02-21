@@ -213,7 +213,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
                  '           dRA  = {:.2e} mas,\n'
                  '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
-                                                       geom.dRA*1e3, geom.dDec*1e3))
+                                                       geom.dRA*1e3,
+                                                       geom.dDec*1e3))
 
     # Store geometry
     geom = geom.clone()
@@ -276,7 +277,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
     need_iterations = return_iteration_diag or diag_plot
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                                    alpha=alpha, weights_smooth=wsmooth, max_iter=max_iter,
+                                    alpha=alpha, weights_smooth=wsmooth,
+                                    max_iter=max_iter,
                                     store_iteration_diagnostics=need_iterations
                                     )
 
@@ -286,9 +288,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
                  '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
                                                               time.time() - t1))
 
-    if return_iteration_diag:
-        return sol, FF.iteration_diagnostics
-    elif diag_plot:
+    if need_iterations:
         return sol, FF.iteration_diagnostics
     else:
         return [sol, ]
