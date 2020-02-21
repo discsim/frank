@@ -66,7 +66,7 @@ def load_uvtable(data_file):
 
 def save_fit(u, v, vis, weights, sol, prefix,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
-             save_iteration_diag=True, iteration_diag=None
+             save_iteration_diag=True, iteration_diag=None,
              format='npz',
              ):
     r"""
