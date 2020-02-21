@@ -373,7 +373,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         axes.append(quick_axes)
 
     if full_plot:
-        logging.info('    Making full figure')                
+        logging.info('    Making full figure')
         full_fig, full_axes = \
             make_figs.make_full_fig(u, v, vis, weights, sol, bin_widths, dist,
                                     force_style, save_prefix
@@ -385,14 +385,18 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
     if diag_plot:
         if iter_plot_range[0] > iteration_diag['num_iterations']:
             raise ValueError("    Your parameter file has"
-                             " 'iter_plot_range'[0] > 'max_iter'. I'll use"
-                             " 0 as 'iter_plot_range'[0] instead.")
+                             " 'iter_plot_range'[0] > 'max_iter': {} > {}. I'll"
+                             " use 0 as 'iter_plot_range'[0]"
+                             " instead.".format(iter_plot_range[1],
+                             iteration_diag['num_iterations']))
             iter_plot_range[0] = 0.
 
         if iter_plot_range[1] > iteration_diag['num_iterations']:
             logging.info("    Your parameter file has 'iter_plot_range'[1] >"
-                         " 'max_iter'. I'll use 'max_iter' as"
-                         " 'iter_plot_range'[1] instead.")
+                         " 'max_iter': {} > {}. I'll use 'max_iter' as"
+                         " 'iter_plot_range'[1]"
+                         " instead.".format(iter_plot_range[1],
+                         iteration_diag['num_iterations']))
             iter_plot_range[1] = iteration_diag['num_iterations'] * 1.
 
         logging.info('    Making diagnostic figure using fit iterations over'
