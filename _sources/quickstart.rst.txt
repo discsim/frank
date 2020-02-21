@@ -68,7 +68,7 @@ fit and its residuals as `<uvtable_filename>_frank_uv_fit.txt` and `<uvtable_fil
 and a figure showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_full.png`.
 Optionally frank can save a simpler version of this figure as `<uvtable_filename>_frank_fit_quick.png`.
 
-Here's the full figure for a frank fit to the DSHARP continuum observations of the protoplanetary disc
+Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
 
 .. figure:: plots/AS209_continuum_frank_fit_full.png
@@ -87,6 +87,40 @@ note this is being increased by the residuals beyond the baseline at which the f
 To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
 **i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate xx asymmetry in the disc xx that frank will average over.
+
+Test a fit's convergence
+########################
+Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this.
+
+.. figure:: plots/AS209_continuum_frank_fit_diag.png
+   :align: left
+   :figwidth: 700
+
+**a)** The fitted frank brightness profile over all fit iterations.
+Note how small amplitude, fast oscillations ('ringing') that are due to unconstrained
+baselines are damped over the first :math:`\approx 300` iterations.
+The fit runs until a convergence criterion on the power spectrum is met at every collocation point,
+:math:`|(P_{\rm i} - P_{\rm i-1}| <= {\rm tol} * \pi`,
+where :math:`P_{\rm i}` is the power spectrum at iteration :math:`i`
+and :math:`{\rm tol}` is the tolerance (`iter_tol`) in your parameter file.
+This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.
+If this stopping condition is not met, the fit runs until `max_iter` as set in your parameter file. |br|
+**b)** Sequential difference between the last 100 brightness profile iterations.
+Note the y-scale here is :math:`10^5\ {\rm Jy\ sr}^{-1}`, as opposed to :math:`10^{10}\ {\rm Jy\ sr}^{-1}` in (a).
+So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at a part in :math:`10^6`.
+|br|
+**c)** The reconstructed power spectrum over all fit iterations.
+Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 250` iterations,
+and then we continue iterating to suppress the high power placed at the data's noise-dominated, longest baselines. |br|
+**d)** Sequential difference between the last 100 brightness profile iterations.
+Note the y-scale here is small compared to (b),
+and the largest variation is at the baseline where the fit walks off the visibilities. |br|
+**e)** A simple metric for the brightness profile's convergence, :math:`{\rm max}(|(I_{\rm i} - I_{\rm i-1}|)\ /\ {\rm max}(I_i)`,
+where :math:`I_i` is the brightness profile at iteration :math:`i` and :math:`{\rm max}` entails the largest value across all collocation points.
+In this case the largest variation across all collocation points at the last iteration is thus at a part in :math:`10^6` of the profile's peak brightness, consistent with (b).
+We want to ensure this convergence metric isn't going start increasing again if we iterate for longer, so we wouldn't have wanted to stop at iteration :math:`\approx 750`,
+while by iteration :math:`\approx 1000` the trend looks good. frank's internal stopping criterion for the fit, as described above in (a), is not yet met at
+iteration 1000, as that criterion is conservative to help ensure the power spectrum (and thus the brightness profile) is no longer appreciably changing.
 
 Perform multiple fits in a loop
 ###############################
@@ -137,7 +171,8 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Now we'll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above),
+Now we'll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file),
 
 .. code-block:: python
 

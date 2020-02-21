@@ -105,6 +105,10 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> API</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#geometry-classes">Geometry classes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#fitting-classes">Fitting classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#plotting-functions-figure-generation">Plotting functions: Figure generation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plotting-functions-individual-plots">Plotting functions: Individual plots</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html"> Index</a></li>
@@ -335,7 +339,7 @@ NOTE: The sign convention is xx</p></li>
 the deprojected visibilities.</p>
 <dl class="class">
 <dt id="frank.radial_fitters.FrankFitter">
-<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param">Rmax</em>, <em class="sig-param">N</em>, <em class="sig-param">geometry</em>, <em class="sig-param">nu=0</em>, <em class="sig-param">block_data=True</em>, <em class="sig-param">block_size=100000</em>, <em class="sig-param">alpha=1.05</em>, <em class="sig-param">p_0=1e-15</em>, <em class="sig-param">weights_smooth=0.0001</em>, <em class="sig-param">tol=0.001</em>, <em class="sig-param">max_iter=1000</em>, <em class="sig-param">store_iteration_diagnostics=False</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param">Rmax</em>, <em class="sig-param">N</em>, <em class="sig-param">geometry</em>, <em class="sig-param">nu=0</em>, <em class="sig-param">block_data=True</em>, <em class="sig-param">block_size=100000</em>, <em class="sig-param">alpha=1.05</em>, <em class="sig-param">p_0=1e-15</em>, <em class="sig-param">weights_smooth=0.0001</em>, <em class="sig-param">tol=0.001</em>, <em class="sig-param">max_iter=1500</em>, <em class="sig-param">store_iteration_diagnostics=False</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
 Baddour &amp; Chouinard (2015).</p>
 <p>The GP model is based upon Oppermann et al. (2013), which use a maximum
@@ -359,8 +363,8 @@ coefficients</p></li>
 coefficients</p></li>
 <li><p><strong>weights_smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-4</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
 <li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 1000</em>) – Maximum number of fit iterations</p></li>
-<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 1500</em>) – Maximum number of fit iterations</p></li>
+<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to store the power spectrum parameters and brightness profile
 for each fit iteration</p></li>
 </ul>
 </dd>
@@ -627,6 +631,336 @@ centre determined by the geometry object</p>
 </dd></dl>
 
 </div>
+<div class="section" id="plotting-functions-figure-generation">
+<h2>Plotting functions: Figure generation<a class="headerlink" href="#plotting-functions-figure-generation" title="Permalink to this headline">¶</a></h2>
+<p>These functions make the figures frank will produce when <code class="code docutils literal notranslate"><span class="pre">quick_plot</span></code>, <code class="code docutils literal notranslate"><span class="pre">full_plot</span></code> and/or <code class="code docutils literal notranslate"><span class="pre">diag_plot</span></code> are <code class="code docutils literal notranslate"><span class="pre">True</span></code> in your parameter file.</p>
+<dl class="function">
+<dt id="frank.make_figs.make_quick_fig">
+<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_quick_fig</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">vis</em>, <em class="sig-param">weights</em>, <em class="sig-param">sol</em>, <em class="sig-param">bin_widths</em>, <em class="sig-param">dist=None</em>, <em class="sig-param">force_style=True</em>, <em class="sig-param">save_prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_quick_fig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a simple figure showing just a Frankenstein fit, not any diagnostics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>u</em><em>,</em>) – u and v coordinates of observations</p></li>
+<li><p><strong>vis</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Observed visibilities (complex: real + imag * 1j)</p></li>
+<li><p><strong>weights</strong> (<em>array</em><em>, </em><em>unit = Jy^-2</em>) – Weights assigned to observed visibilities, of the form
+<span class="math notranslate nohighlight">\(1 / \sigma^2\)</span></p></li>
+<li><p><strong>sol</strong> (<em>_HankelRegressor object</em>) – Reconstructed profile using Maximum a posteriori power spectrum
+(see frank.radial_fitters.FrankFitter)</p></li>
+<li><p><strong>bin_widths</strong> (<em>list</em><em>, </em><em>unit = lambda</em>) – Bin widths in which to bin the observed visibilities</p></li>
+<li><p><strong>dist</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>unit = AU</em><em>, </em><em>default = None</em>) – Distance to source, used to show second x-axis for brightness profile</p></li>
+<li><p><strong>force_style</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to use preconfigured matplotlib rcParams in generated figure</p></li>
+<li><p><strong>save_prefix</strong> (<em>string</em><em>, </em><em>default = None</em>) – Prefix for saved figure name. If None, the figure won’t be saved</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (Matplotlib <code class="code docutils literal notranslate"><span class="pre">.Figure</span></code> instance) – The produced figure, including the GridSpec</p></li>
+<li><p><strong>axes</strong> (Matplotlib <code class="code docutils literal notranslate"><span class="pre">~.axes.Axes</span></code> class) – The axes of the produced figure</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.make_figs.make_full_fig">
+<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_full_fig</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">vis</em>, <em class="sig-param">weights</em>, <em class="sig-param">sol</em>, <em class="sig-param">bin_widths</em>, <em class="sig-param">dist=None</em>, <em class="sig-param">force_style=True</em>, <em class="sig-param">save_prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_full_fig" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Produce a figure showing a Frankenstein fit and some useful diagnostics</p>
+<dl>
+<dt>u, v<span class="classifier">array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></span></dt><dd><p>u and v coordinates of observations</p>
+</dd>
+<dt>vis<span class="classifier">array, unit = Jy</span></dt><dd><p>Observed visibilities (complex: real + imag * 1j)</p>
+</dd>
+<dt>weights<span class="classifier">array, unit = Jy^-2</span></dt><dd><p>Weights assigned to observed visibilities, of the form
+<span class="math notranslate nohighlight">\(1 / \sigma^2\)</span></p>
+</dd>
+<dt>sol<span class="classifier">_HankelRegressor object</span></dt><dd><p>Reconstructed profile using Maximum a posteriori power spectrum
+(see frank.radial_fitters.FrankFitter)</p>
+</dd>
+<dt>bin_widths<span class="classifier">list, unit = lambda</span></dt><dd><p>Bin widths in which to bin the observed visibilities</p>
+</dd>
+<dt>dist<span class="classifier">float, optional, unit = AU, default = None</span></dt><dd><p>Distance to source, used to show second x-axis for brightness profile</p>
+</dd>
+<dt>force_style: bool, default = True</dt><dd><p>Whether to use preconfigured matplotlib rcParams in generated figure</p>
+</dd>
+<dt>save_prefix<span class="classifier">string, default = None</span></dt><dd><p>Prefix for saved figure name. If None, the figure won’t be saved</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><strong>fig</strong> (Matplotlib <code class="code docutils literal notranslate"><span class="pre">.Figure</span></code> instance) – The produced figure, including the GridSpec</p></li>
+<li><p><strong>axes</strong> (Matplotlib <code class="code docutils literal notranslate"><span class="pre">~.axes.Axes</span></code> class) – The axes of the produced figure</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.make_figs.make_diag_fig">
+<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_diag_fig</code><span class="sig-paren">(</span><em class="sig-param">r</em>, <em class="sig-param">q</em>, <em class="sig-param">iteration_diagnostics</em>, <em class="sig-param">iter_plot_range=None</em>, <em class="sig-param">force_style=True</em>, <em class="sig-param">save_prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_diag_fig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a diagnostic figure showing fit convergence metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>array</em>) – Radial data coordinates at which the brightness profile is defined.
+The assumed unit (for the x-label) is arcsec</p></li>
+<li><p><strong>profile_iter</strong> (<em>list</em><em>, </em><em>shape =</em><em> (</em><em>n_iter</em><em>, </em><em>N_coll</em><em>)</em>) – Brightness profile reconstruction at each of n_iter iterations. The
+assumed unit (for the y-label) is Jy / sr</p></li>
+<li><p><strong>q</strong> (<em>array</em>) – Baselines at which the power spectrum is defined.
+The assumed unit (for the x-label) is <span class="math notranslate nohighlight">\(\lambda\)</span></p></li>
+<li><p><strong>iteration_diagnostics</strong> (<em>dict</em>) – The iteration_diagnositics from FrankFitter</p></li>
+<li><p><strong>N_iter</strong> (<em>int</em>) – Total number of iterations in the fit</p></li>
+<li><p><strong>iter_range</strong> (<em>list</em>) – Range of iterations in the fit over which to
+plot brightness profile and power spectrum reconstructions</p></li>
+<li><p><strong>force_style</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to use preconfigured matplotlib rcParams in generated figure</p></li>
+<li><p><strong>save_prefix</strong> (<em>string</em><em>, </em><em>default = None</em>) – Prefix for saved figure name. If None, the figure won’t be saved</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>fig</strong> (Matplotlib <code class="code docutils literal notranslate"><span class="pre">.Figure</span></code> instance) – The produced figure, including the GridSpec</p></li>
+<li><p><strong>axes</strong> (Matplotlib <code class="code docutils literal notranslate"><span class="pre">~.axes.Axes</span></code> class) – The axes of the produced figure</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="plotting-functions-individual-plots">
+<h3>Plotting functions: Individual plots<a class="headerlink" href="#plotting-functions-individual-plots" title="Permalink to this headline">¶</a></h3>
+<p>And these are the plotting functions those figures call.</p>
+<dl class="function">
+<dt id="frank.plot.plot_brightness_profile">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_brightness_profile</code><span class="sig-paren">(</span><em class="sig-param">fit_r</em>, <em class="sig-param">fit_i</em>, <em class="sig-param">ax</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">c='r'</em>, <em class="sig-param">ls='-'</em>, <em class="sig-param">ylolim=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_brightness_profile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a brightness profile as a function of disc radius, I(r)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fit_r</strong> (<em>array</em>) – Radial data coordinates. The assumed unit (for the x-label) is arcsec</p></li>
+<li><p><strong>fit_i</strong> (<em>array</em>) – Brightness values at fit_r. The assumed unit (for the y-label) is
+Jy / sr</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the brightness profile</p></li>
+<li><p><strong>yscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'linear'</em>) – Scale for y-axis</p></li>
+<li><p><strong>c</strong> (<em>Matplotlib color</em><em>, </em><em>default = 'r'</em>) – Color of brightness profile line</p></li>
+<li><p><strong>ls</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '-'</em>) – Style of brightness profile line</p></li>
+<li><p><strong>ylolim</strong> (<em>float</em><em>, </em><em>default = None</em>) – Lower limit of plot’s y-axis. If None, it will be set by Matplotlib</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_vis_fit">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis_fit</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">vis_fit</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='r'</em>, <em class="sig-param">c2='#1EFEDC'</em>, <em class="sig-param">ls='-'</em>, <em class="sig-param">ls2='None'</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">ylolim=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a visibility domain fit as a function of baseline, V(q)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baselines</strong> (<em>array</em>) – Baseline data coordinates. The assumed unit (for the x-label) is
+<span class="math notranslate nohighlight">\(\lambda\)</span></p></li>
+<li><p><strong>vis_fit</strong> (<em>array</em>) – Visibility amplitude at baselines. The assumed unit (for the y-label)
+is mJy</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the visibility fit</p></li>
+<li><p><strong>c</strong> (<em>Matplotlib color</em><em>, </em><em>default = 'r'</em>) – Color of visibility fit line</p></li>
+<li><p><strong>c2</strong> (<em>Matplotlib color</em><em>, </em><em>default = '#1EFEDC'</em>) – Color of negative regions of visibility fit line for log-y plots</p></li>
+<li><p><strong>ls</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '-'</em>) – Style of visibility fit line</p></li>
+<li><p><strong>ls2</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '-'</em>) – Style of negative regions of visibility fit line for log-y plots</p></li>
+<li><p><strong>xscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'log'</em>) – Scale for x-axis</p></li>
+<li><p><strong>yscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'linear'</em>) – Scale for y-axis</p></li>
+<li><p><strong>ylolim</strong> (<em>float</em><em>, </em><em>default = None</em>) – Lower limit of plot’s y-axis. If None, it will be set by Matplotlib</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_vis">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">vis</em>, <em class="sig-param">vis_err</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='k'</em>, <em class="sig-param">c2='g'</em>, <em class="sig-param">marker='.'</em>, <em class="sig-param">marker2='.'</em>, <em class="sig-param">binwidth='unspecified'</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">plot_CIs=False</em>, <em class="sig-param">zoom=None</em>, <em class="sig-param">ylabel='Re(V) [mJy]'</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot visibility datapoints as a function of baseline, V(q)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baselines</strong> (<em>array</em>) – Baseline data coordinates. The assumed unit (for the x-label) is
+<span class="math notranslate nohighlight">\(\lambda\)</span></p></li>
+<li><p><strong>vis</strong> (<em>array</em>) – Visibility amplitude at baselines. The assumed unit (for the y-label)
+is mJy</p></li>
+<li><p><strong>vis_err</strong> (<em>array</em>) – Uncertainty on the visibility amplitudes at baselines. The assumed
+unit (for the y-label) is mJy</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the visibilities</p></li>
+<li><p><strong>c</strong> (<em>Matplotlib color</em><em>, </em><em>default = 'k'</em>) – Color of visibility points</p></li>
+<li><p><strong>c2</strong> (<em>Matplotlib color</em><em>, </em><em>default = 'g'</em>) – Color of negative values of visibility points for log-y plots</p></li>
+<li><p><strong>marker</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '.'</em>) – Marker style of visibility points</p></li>
+<li><p><strong>marker2</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '.'</em>) – Marker style of negative values of visibility points for log-y plots</p></li>
+<li><p><strong>binwidth</strong> (<em>int</em><em>, </em><em>float</em><em> or </em><em>string</em><em>, </em><em>default = 'unspecified'</em>) – Width of bins in which data is binned (for legend labels)</p></li>
+<li><p><strong>xscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'log'</em>) – Scale for x-axis</p></li>
+<li><p><strong>yscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'linear'</em>) – Scale for y-axis</p></li>
+<li><p><strong>plot_CIs</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to show errorbars on the plotted visibilities</p></li>
+<li><p><strong>zoom</strong> (<em>list =</em><em> [</em><em>lower bound</em><em>, </em><em>upper bound</em><em>] or </em><em>None</em><em> (</em><em>default</em><em>)</em>) – Lower and upper y-bounds for making a zoomed-in plot</p></li>
+<li><p><strong>ylabel</strong> (<em>string</em><em>, </em><em>default = 'Re</em><em>(</em><em>V</em><em>) </em><em>[</em><em>mJy</em><em>]</em><em>'</em>) – y-label of the plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_vis_resid">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis_resid</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">obs</em>, <em class="sig-param">fit</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='k'</em>, <em class="sig-param">marker='.'</em>, <em class="sig-param">ls='None'</em>, <em class="sig-param">binwidth='unspecified'</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">normalize_resid=False</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis_resid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot residuals between visibility datapoints and a visibility domain fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baselines</strong> (<em>array</em>) – Baseline data coordinates. The assumed unit (for the x-label) is
+<span class="math notranslate nohighlight">\(\lambda\)</span></p></li>
+<li><p><strong>obs</strong> (<em>array</em>) – Observed visibility amplitude at baselines.
+The assumed unit (for the y-label) is mJy</p></li>
+<li><p><strong>vis</strong> (<em>array</em>) – Fitted visibility amplitude at baselines.
+The assumed unit (for the y-label) is mJy</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the residuals</p></li>
+<li><p><strong>c</strong> (<em>Matplotlib color</em><em>, </em><em>default = 'k'</em>) – Color of residual points</p></li>
+<li><p><strong>marker</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '.'</em>) – Marker style of residual points</p></li>
+<li><p><strong>ls</strong> (<em>Matplotlib line style</em><em>, </em><em>default = 'None'</em>) – Style of residual line</p></li>
+<li><p><strong>binwidth</strong> (<em>int</em><em>, </em><em>float</em><em> or </em><em>string</em><em>, </em><em>default = 'unspecified'</em>) – Width of bins in which data is binned (for legend labels)</p></li>
+<li><p><strong>xscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'log'</em>) – Scale for x-axis</p></li>
+<li><p><strong>yscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'linear'</em>) – Scale for y-axis</p></li>
+<li><p><strong>normalize_resid</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to plot the residuals normalized pointwise (i.e., locally)
+by the data amplitude</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_pwr_spec">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_pwr_spec</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">pwr_spec</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='#B123D7'</em>, <em class="sig-param">ls='-'</em>, <em class="sig-param">ylolim=None</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='log'</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_pwr_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the reconstructed power spectrum of a Frankenstein fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>baselines</strong> (<em>array</em>) – Baseline coordinates. The assumed unit (for the x-label) is
+<span class="math notranslate nohighlight">\(\lambda\)</span></p></li>
+<li><p><strong>pwr_spec</strong> (<em>array</em>) – Reconstructed power spectral mode amplitudes at baselines. The assumed
+unit (for the y-label) is Jy^2</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the power spectrum</p></li>
+<li><p><strong>c</strong> (<em>Matplotlib color</em><em>, </em><em>default = '#B123D7'</em>) – Color of power spectrum line</p></li>
+<li><p><strong>ls</strong> (<em>Matplotlib line style</em><em>, </em><em>default = '-'</em>) – Style of power spectrum line</p></li>
+<li><p><strong>ylolim</strong> (<em>float</em><em>, </em><em>default = None</em>) – Lower limit of plot’s y-axis. If None, it will be set by Matplotlib</p></li>
+<li><p><strong>xscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'log'</em>) – Scale for x-axis</p></li>
+<li><p><strong>yscale</strong> (<em>Matplotlib axis scale</em><em>, </em><em>default = 'log'</em>) – Scale for y-axis</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_convergence_criterion">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_convergence_criterion</code><span class="sig-paren">(</span><em class="sig-param">profile_iter</em>, <em class="sig-param">N_iter</em>, <em class="sig-param">ax</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_convergence_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Plot a generic convergence criterion for a Frankenstein fit,</dt><dd><p><span class="math notranslate nohighlight">\({\rm max}(|$I_i - I_{i-1}$|) / {\rm max}($I_i$)\)</span>,</p>
+</dd>
+</dl>
+<p>where $I_i$ is the brightness profile at iteration $i$</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>profile_iter</strong> (<em>list</em><em>, </em><em>shape =</em><em> (</em><em>N_iter</em><em>, </em><em>N_coll</em><em>)</em>) – Brightness profile reconstruction over N_iter iterations.
+N_coll is the number of collocation points, i.e., the number of grid
+points at which the profile is defined</p></li>
+<li><p><strong>N_iter</strong> (<em>int</em>) – Total number of iterations in the fit</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the convergence criterion</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.make_colorbar">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">make_colorbar</code><span class="sig-paren">(</span><em class="sig-param">ax</em>, <em class="sig-param">vmin</em>, <em class="sig-param">vmax</em>, <em class="sig-param">cmap</em>, <em class="sig-param">label</em>, <em class="sig-param">loc=3</em>, <em class="sig-param">bbox_x=0.05</em>, <em class="sig-param">bbox_y=0.175</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.make_colorbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom format to place a colorbar in an inset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis in which to inset the colorbar</p></li>
+<li><p><strong>vmax</strong> (<em>vmin</em><em>,</em>) – Lower and upper bounds of colorbar scale</p></li>
+<li><p><strong>cmap</strong> (<em>plt.cm colormap</em>) – Colormap to apply to the colorbar</p></li>
+<li><p><strong>label</strong> (<em>string</em>) – Label for colorbar</p></li>
+<li><p><strong>loc</strong> (<em>int</em><em>, </em><em>one of</em><em> [</em><em>1</em><em>, </em><em>2</em><em>, </em><em>3</em><em>, </em><em>4</em><em>]</em><em>, </em><em>default = 3</em>) – Quadrant position of colorbar in ax</p></li>
+<li><p><strong>bbox_y</strong> (<em>bbox_x</em><em>,</em>) – x- and y-value where the colorbar is placed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_profile_iterations">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_profile_iterations</code><span class="sig-paren">(</span><em class="sig-param">r</em>, <em class="sig-param">profile_iter</em>, <em class="sig-param">n_iter</em>, <em class="sig-param">ax</em>, <em class="sig-param">cmap=&lt;matplotlib.colors.LinearSegmentedColormap object&gt;</em>, <em class="sig-param">ylabel='I [10$^{10}$ Jy sr$^{-1}$]'</em>, <em class="sig-param">bbox_x=-0.02</em>, <em class="sig-param">bbox_y=-0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_profile_iterations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a fit’s brightness profile reconstruction over a chosen range of
+the fit’s iterations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>array</em>) – Radial data coordinates at which the brightness profile is defined.
+The assumed unit (for the x-label) is arcsec</p></li>
+<li><p><strong>profile_iter</strong> (<em>list</em><em>, </em><em>shape =</em><em> (</em><em>n_iter</em><em>, </em><em>N_coll</em><em>)</em>) – Brightness profile reconstruction at each of n_iter iterations. The
+assumed unit (for the y-label) is Jy / sr</p></li>
+<li><p><strong>n_iter</strong> (<em>list</em><em>, </em><em>of the form</em><em> [</em><em>start_iteration</em><em>, </em><em>stop_iteration</em><em>]</em>) – Chosen range of iterations in the fit over which to plot profile_iter</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the profile iterations</p></li>
+<li><p><strong>cmap</strong> (<em>plt.cm colormap</em><em>, </em><em>default=plt.cm.cool</em>) – Colormap to apply to the overplotted profiles</p></li>
+<li><p><strong>ylabel</strong> (<em>string</em><em>, </em><em>default = r'I</em><em> [</em><em>10$^{10}$ Jy sr$^{-1}$</em><em>]</em><em>'</em>) – y-label of the plot</p></li>
+<li><p><strong>bbox_y</strong> (<em>bbox_x</em><em>,</em>) – x- and y-value where the colorbar is placed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_pwr_spec_iterations">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_pwr_spec_iterations</code><span class="sig-paren">(</span><em class="sig-param">q</em>, <em class="sig-param">pwr_spec_iter</em>, <em class="sig-param">n_iter</em>, <em class="sig-param">ax</em>, <em class="sig-param">cmap=&lt;matplotlib.colors.LinearSegmentedColormap object&gt;</em>, <em class="sig-param">ylabel='Power [Jy$^2$]'</em>, <em class="sig-param">bbox_x=0.05</em>, <em class="sig-param">bbox_y=0.175</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_pwr_spec_iterations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a fit’s power spectrum reconstruction over a chosen range of
+the fit’s iterations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>array</em>) – Baselines at which the power spectrum is defined.
+The assumed unit (for the x-label) is <span class="math notranslate nohighlight">\(\lambda\)</span></p></li>
+<li><p><strong>pwr_spec_iter</strong> (<em>list</em><em>, </em><em>shape =</em><em> (</em><em>n_iter</em><em>, </em><em>N_coll</em><em>)</em>) – Power spectrum reconstruction at each of n_iter iterations. The
+assumed unit (for the y-label) is Jy^2</p></li>
+<li><p><strong>n_iter</strong> (<em>list</em><em>, </em><em>of the form</em><em> [</em><em>start_iteration</em><em>, </em><em>stop_iteration</em><em>]</em>) – Chosen range of iterations in the fit over which to plot pwr_spec_iter</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the power spectrum iterations</p></li>
+<li><p><strong>cmap</strong> (<em>plt.cm colormap</em><em>, </em><em>default=plt.cm.cool</em>) – Colormap to apply to the overplotted power spectra</p></li>
+<li><p><strong>ylabel</strong> (<em>string</em><em>, </em><em>default = r'Power</em><em> [</em><em>Jy$^2$</em><em>]</em><em>'</em>) – y-label of the plot</p></li>
+<li><p><strong>bbox_y</strong> (<em>bbox_x</em><em>,</em>) – x- and y-value where the colorbar is placed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="frank.plot.plot_2dsweep">
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_2dsweep</code><span class="sig-paren">(</span><em class="sig-param">r</em>, <em class="sig-param">I</em>, <em class="sig-param">ax</em>, <em class="sig-param">cax=None</em>, <em class="sig-param">cmap='inferno'</em>, <em class="sig-param">vmin=None</em>, <em class="sig-param">vmax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_2dsweep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a radial profile swept over <span class="math notranslate nohighlight">\(2 \pi\)</span> to produce an image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>array</em>) – Radial coordinates at which the 1D brightness profile is defined.
+The assumed unit (for the x- and y-label) is arcsec</p></li>
+<li><p><strong>I</strong> (<em>array</em>) – Brightness values at r. The assumed unit (for the colorbar) is Jy / sr</p></li>
+<li><p><strong>ax</strong> (<em>Matplotlib axis</em>) – Axis on which to plot the 2D image</p></li>
+<li><p><strong>cmap</strong> (<em>Matplotlib colormap</em><em>, </em><em>default = 'inferno'</em>) – Colormap to apply to the 2D image</p></li>
+<li><p><strong>vmax</strong> (<em>vmin</em><em>,</em>) – Lower and upper brightness values (assumed in Jy / sr) for the 2D
+image and colorbar plot’s y-axis. If None, they will be set by
+Matplotlib</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
 </div>
 
 
@@ -651,7 +985,7 @@ centre determined by the geometry object</p>
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Feb 21 at 14:01:56 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Feb 21 at 17:10:25 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
