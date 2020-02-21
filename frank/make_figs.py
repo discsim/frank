@@ -84,30 +84,30 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
       Parameters
       ----------
       u, v : array, unit = :math:`\lambda`
-          u and v coordinates of observations
+        u and v coordinates of observations
       vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
+        Observed visibilities (complex: real + imag * 1j)
       weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \sigma^2`
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
       sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter)
+        Reconstructed profile using Maximum a posteriori power spectrum
+        (see frank.radial_fitters.FrankFitter)
       bin_widths : list, unit = \lambda
-          Bin widths in which to bin the observed visibilities
+        Bin widths in which to bin the observed visibilities
       dist : float, optional, unit = AU, default = None
-          Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis for brightness profile
       force_style: bool, default = True
-          Whether to use preconfigured matplotlib rcParams in generated figure
+        Whether to use preconfigured matplotlib rcParams in generated figure
       save_prefix : string, default = None
-          Prefix for saved figure name. If None, the figure won't be saved
+        Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
     fig : Matplotlib `.Figure` instance
-          The produced figure, including the GridSpec
+        The produced figure, including the GridSpec
     axes : Matplotlib `~.axes.Axes` class
-          The axes of the produced figure
+        The axes of the produced figure
     """
 
     if force_style:
@@ -214,30 +214,30 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     Parameters
     ----------
     u, v : array, unit = :math:`\lambda`
-          u and v coordinates of observations
+        u and v coordinates of observations
     vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
+        Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \sigma^2`
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
     sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter)
+        Reconstructed profile using Maximum a posteriori power spectrum
+        (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
-          Bin widths in which to bin the observed visibilities
+        Bin widths in which to bin the observed visibilities
     dist : float, optional, unit = AU, default = None
-          Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
-          Whether to use preconfigured matplotlib rcParams in generated figure
+        Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
     fig : Matplotlib `.Figure` instance
-          The produced figure, including the GridSpec
+        The produced figure, including the GridSpec
     axes : Matplotlib `~.axes.Axes` class
-          The axes of the produced figure
+        The axes of the produced figure
     """
 
     if force_style:
@@ -306,32 +306,32 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     Parameters
     ----------
     r : array
-          Radial data coordinates at which the brightness profile is defined.
-          The assumed unit (for the x-label) is arcsec
+        Radial data coordinates at which the brightness profile is defined.
+        The assumed unit (for the x-label) is arcsec
     profile_iter : list, shape = (n_iter, N_coll)
-          Brightness profile reconstruction at each of n_iter iterations. The
-          assumed unit (for the y-label) is Jy / sr
+        Brightness profile reconstruction at each of n_iter iterations. The
+        assumed unit (for the y-label) is Jy / sr
     q : array
-          Baselines at which the power spectrum is defined.
-          The assumed unit (for the x-label) is :math:`\lambda`
+        Baselines at which the power spectrum is defined.
+        The assumed unit (for the x-label) is :math:`\lambda`
     iteration_diagnostics : dict
-          The iteration_diagnositics from FrankFitter
+        The iteration_diagnositics from FrankFitter
     N_iter : int
-          Total number of iterations in the fit
+        Total number of iterations in the fit
     iter_range : list
-          Range of iterations in the fit over which to
-          plot brightness profile and power spectrum reconstructions
+        Range of iterations in the fit over which to
+        plot brightness profile and power spectrum reconstructions
     force_style: bool, default = True
-          Whether to use preconfigured matplotlib rcParams in generated figure
+        Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
     fig : Matplotlib `.Figure` instance
-          The produced figure, including the GridSpec
+        The produced figure, including the GridSpec
     axes : Matplotlib `~.axes.Axes` class
-          The axes of the produced figure
+        The axes of the produced figure
     """
 
     if force_style:
@@ -363,9 +363,9 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     # Plot the difference in the profile between the last 100 iterations
     iter_plot_range_end = [iter_plot_range[1] - 100, iter_plot_range[1] - 1]
 
-    # pylint: disable=no-member
     plot_profile_iterations(r, np.diff(profile_iter, axis=0) * 1e5,
-                            iter_plot_range_end, ax1, cmap=plt.cm.cividis,
+                            iter_plot_range_end, ax1,
+                            cmap=plt.cm.cividis,    # pylint: disable=no-member
                             ylabel=r'$I_i - I_{i-1}$ [$10^{5}$ Jy sr$^{-1}$]'
                             )
 
@@ -373,7 +373,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
     # Plot the difference in the power spectrum between the last 100 iterations
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
-                             iter_plot_range_end, ax3, cmap=plt.cm.cividis,
+                             iter_plot_range_end, ax3,
+                             cmap=plt.cm.cividis,  # pylint: disable=no-member
                              ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]', bbox_x=.45
                              )
 
