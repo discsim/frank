@@ -206,14 +206,14 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
         t1 = time.time()
         geom.fit(u, v, vis, weights)
         logging.info('    Time taken for geometry %.1f sec' %
-                    (time.time() - t1))
+                     (time.time() - t1))
     else:
         raise ValueError("geometry_type must be one of 'known' or 'gaussian'")
 
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
                  '           dRA  = {:.2e} mas,\n'
                  '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
-                 geom.dRA*1e3, geom.dDec*1e3))
+                                                       geom.dRA*1e3, geom.dDec*1e3))
 
     # Store geometry
     geom = geom.clone()
@@ -273,22 +273,22 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
 
     logging.info('  Fitting for brightness profile')
 
+    need_iterations = return_iteration_diag or diag_plot
+
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                     alpha=alpha, weights_smooth=wsmooth, max_iter=max_iter,
-                     store_iteration_diagnostics=return_iteration_diag
-                     )
+                                    alpha=alpha, weights_smooth=wsmooth, max_iter=max_iter,
+                                    store_iteration_diagnostics=need_iterations
+                                    )
 
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
-                 ' {:d} collocation points) {:.1f} sec'.format(len(vis), n,
-                 time.time() - t1))
+                 '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
+                                                              time.time() - t1))
 
     if return_iteration_diag:
         return sol, FF.iteration_diagnostics
     elif diag_plot:
-        logging.info("    Your parameter file has 'iteration_diag=False' but"
-                     " 'diag_plot=True'. I'll act as if 'iteration_diag=True'.")
         return sol, FF.iteration_diagnostics
     else:
         return [sol, ]
@@ -388,7 +388,7 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
                              " iterations: {} > {}. I'll"
                              " use 0 as 'iter_plot_range'[0]"
                              " instead.".format(iter_plot_range[1],
-                             iteration_diag['num_iterations']))
+                                                iteration_diag['num_iterations']))
             iter_plot_range[0] = 0.
 
         # Update the iteration range using the actual fit iteration count
@@ -397,11 +397,11 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
         logging.info('    Making diagnostic figure using fit iterations over'
                      ' the range {}'.format(new_plot_iter))
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
-                  iteration_diag['mean'], sol.q,
-                  iteration_diag['power_spectrum'],
-                  iteration_diag['num_iterations'], new_plot_iter,
-                  force_style, save_prefix
-                  )
+                                                      iteration_diag['mean'], sol.q,
+                                                      iteration_diag['power_spectrum'],
+                                                      iteration_diag['num_iterations'], new_plot_iter,
+                                                      force_style, save_prefix
+                                                      )
 
         figs.append(diag_fig)
         axes.append(diag_axes)
