@@ -18,13 +18,30 @@
 #
 """This module generates figures for a Frankenstein fit and its diagnostics.
 """
+from frank.utilities import UVDataBinner
+from frank.plot import (
+    plot_brightness_profile,
+    plot_vis, plot_vis_fit, plot_vis_resid,
+    plot_profile_iterations,
+    plot_2dsweep,
+    plot_pwr_spec,
+    plot_pwr_spec_iterations,
+    plot_convergence_criterion
+)
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
-from frank.plot import *
-from frank.utilities import *
+# Suppress `plt.tight_layout()` warning
+import warnings
+warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+
+# Global settings for plots
+cs = ['#a4a4a4', 'k', '#896360', 'b']
+cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
+ms = ['x', '+', '.', '1']
 
 
 def frank_plotting_style():
@@ -67,31 +84,32 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
       Parameters
       ----------
       u, v : array, unit = :math:`\lambda`
-          u and v coordinates of observations
+        u and v coordinates of observations
       vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
+        Observed visibilities (complex: real + imag * 1j)
       weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \sigma^2`
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
       sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter)
+        Reconstructed profile using Maximum a posteriori power spectrum
+        (see frank.radial_fitters.FrankFitter)
       bin_widths : list, unit = \lambda
-          Bin widths in which to bin the observed visibilities
+        Bin widths in which to bin the observed visibilities
       dist : float, optional, unit = AU, default = None
-          Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis for brightness profile
       force_style: bool, default = True
-          Whether to use preconfigured matplotlib rcParams in generated figure
+        Whether to use preconfigured matplotlib rcParams in generated figure
       save_prefix : string, default = None
-          Prefix used in saving the figure names. If None, The figure will not be
-          saved.
-      Returns
-      -------
-      fig : Matplotlib `.Figure` instance
-            The produced figure, including the GridSpec
-      axes : Matplotlib `~.axes.Axes` class
-            The axes of the produce figure
-      """
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+
     if force_style:
         frank_plotting_style()
 
@@ -114,23 +132,17 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
 
     plot_brightness_profile(sol.r, sol.mean, ax0)
-    plot_brightness_profile(sol.r, sol.mean, ax1,
-                            yscale='log', ylolim=1e-3)
+    plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
 
-    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(
-        u, v, vis)
+    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
     grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
-                       np.log10(max(baselines.max(), sol.q[-1])),
-                       10**4)
+                       np.log10(max(baselines.max(), sol.q[-1])), 10**4
+                       )
 
     ReV = sol.predict_deprojected(grid).real
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
-
-    cs = ['#a4a4a4', 'k', '#896360', 'b']
-    cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
-    ms = ['x', '+', '.', '1']
 
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
@@ -141,27 +153,30 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         vis_err_im_kl = binned_vis.error.imag * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax3, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+                 vis_err_re_kl, ax3, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i])
+
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax4, c=cs[i], marker=ms[i], binwidth=bin_widths[i],
-                 zoom=np.multiply(zoom_bounds, 1e3))
+                 vis_err_re_kl, ax4, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i], zoom=np.multiply(zoom_bounds, 1e3))
+
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax6, c=cs[i], c2=cs2[i], marker=ms[i], marker2=ms[i],
-                 binwidth=bin_widths[i], yscale='log')
+                 vis_err_re_kl, ax6, c=cs[i], c2=cs2[i], marker=ms[i],
+                 marker2=ms[i], binwidth=bin_widths[i], yscale='log')
 
         plot_vis(binned_vis.uv, vis_im_kl,
-                 vis_err_im_kl, ax8, c=cs[i], marker=ms[i], binwidth=bin_widths[i],
-                 ylabel='Im(V) [mJy]')
+                 vis_err_im_kl, ax8, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i], ylabel='Im(V) [mJy]')
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5, c=cs[i],
-                       marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5,
+                       c=cs[i], marker=ms[i], binwidth=bin_widths[i],
+                       normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3)
     plot_vis_fit(grid, vis_fit_kl, ax4)
-    plot_vis_fit(grid, vis_fit_kl, ax6,
-                 yscale='log', ylolim=1e-4, ls2='--')
+    plot_vis_fit(grid, vis_fit_kl, ax6, yscale='log', ylolim=1e-4, ls2='--')
 
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7)
 
@@ -199,31 +214,30 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     Parameters
     ----------
     u, v : array, unit = :math:`\lambda`
-          u and v coordinates of observations
+        u and v coordinates of observations
     vis : array, unit = Jy
-          Observed visibilities (complex: real + imag * 1j)
+        Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
-          Weights assigned to observed visibilities, of the form
-          :math:`1 / \sigma^2`
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
     sol : _HankelRegressor object
-          Reconstructed profile using Maximum a posteriori power spectrum
-          (see frank.radial_fitters.FrankFitter)
+        Reconstructed profile using Maximum a posteriori power spectrum
+        (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
-          Bin widths in which to bin the observed visibilities
+        Bin widths in which to bin the observed visibilities
     dist : float, optional, unit = AU, default = None
-          Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
-          Whether to use preconfigured matplotlib rcParams in generated figure
+        Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
-        Prefix used in saving the figure names. If None, The figure will not be
-        saved.
+        Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
     fig : Matplotlib `.Figure` instance
-          The produced figure, including the GridSpec
+        The produced figure, including the GridSpec
     axes : Matplotlib `~.axes.Axes` class
-          The axes of the produce figure
+        The axes of the produced figure
     """
 
     if force_style:
@@ -249,24 +263,20 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    cs = ['#a4a4a4', 'k', '#896360', 'b']
-    cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
-    ms = ['x', '+', '.', '1']
-
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
             baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
-        vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
-        vis_err_im_kl = binned_vis.error.imag * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl,
-                 vis_err_re_kl, ax2, c=cs[i], marker=ms[i], binwidth=bin_widths[i])
+                 vis_err_re_kl, ax2, c=cs[i], marker=ms[i],
+                 binwidth=bin_widths[i])
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
-                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3, c=cs[i],
-                       marker=ms[i], binwidth=bin_widths[i], normalize_resid=False)
+                       sol.predict_deprojected(binned_vis.uv).real * 1e3, ax3,
+                       c=cs[i], marker=ms[i], binwidth=bin_widths[i],
+                       normalize_resid=False)
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax2)
@@ -281,6 +291,106 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+    else:
+        plt.show()
+
+    return fig, axes
+
+
+def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
+                  force_style=True, save_prefix=None
+                  ):
+    r"""
+    Produce a diagnostic figure showing fit convergence metrics
+
+    Parameters
+    ----------
+    r : array
+        Radial data coordinates at which the brightness profile is defined.
+        The assumed unit (for the x-label) is arcsec
+    profile_iter : list, shape = (n_iter, N_coll)
+        Brightness profile reconstruction at each of n_iter iterations. The
+        assumed unit (for the y-label) is Jy / sr
+    q : array
+        Baselines at which the power spectrum is defined.
+        The assumed unit (for the x-label) is :math:`\lambda`
+    iteration_diagnostics : dict
+        The iteration_diagnositics from FrankFitter
+    N_iter : int
+        Total number of iterations in the fit
+    iter_range : list
+        Range of iterations in the fit over which to
+        plot brightness profile and power spectrum reconstructions
+    force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+    save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+
+    if force_style:
+        frank_plotting_style()
+
+    gs = GridSpec(2, 2, hspace=0, bottom=.35)
+    gs2 = GridSpec(3, 2, hspace=0, top=.7)
+    fig = plt.figure(figsize=(8, 6))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax1 = fig.add_subplot(gs[2])
+
+    ax2 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[3])
+
+    ax4 = fig.add_subplot(gs2[4])
+
+    axes = [ax0, ax1, ax2, ax3, ax4]
+
+    profile_iter = iteration_diagnostics['mean']
+    pwr_spec_iter = iteration_diagnostics['power_spectrum']
+    num_iter = iteration_diagnostics['num_iterations']
+
+    if iter_plot_range is None:
+        iter_plot_range = [0, num_iter]
+
+    plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
+
+    # Plot the difference in the profile between the last 100 iterations
+    iter_plot_range_end = [max(iter_plot_range[1] - 100, 0),
+                           iter_plot_range[1] - 1]
+
+    plot_profile_iterations(r, np.diff(profile_iter, axis=0) * 1e5,
+                            iter_plot_range_end, ax1,
+                            cmap=plt.cm.cividis,    # pylint: disable=no-member
+                            ylabel=r'$I_i - I_{i-1}$ [$10^{5}$ Jy sr$^{-1}$]'
+                            )
+
+    plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
+
+    # Plot the difference in the power spectrum between the last 100 iterations
+    plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
+                             iter_plot_range_end, ax3,
+                             cmap=plt.cm.cividis,  # pylint: disable=no-member
+                             ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]', bbox_x=.45
+                             )
+
+    plot_convergence_criterion(profile_iter, num_iter, ax4)
+
+    xlims = ax2.get_xlim()
+    ax3.set_xlim(xlims)
+
+    plt.setp(ax0.get_xticklabels(), visible=False)
+    plt.setp(ax2.get_xticklabels(), visible=False)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
     else:
         plt.show()
 

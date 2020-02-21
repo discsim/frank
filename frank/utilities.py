@@ -19,9 +19,9 @@
 """This module has functions that are useful for plotting and analyzing fit
 results.
 """
+
 import numpy as np
 from scipy.interpolate import interp1d
-__all__ = ['arcsec_baseline', 'UVDataBinner', 'sweep_profile']
 
 
 def arcsec_baseline(x):
@@ -177,7 +177,7 @@ def sweep_profile(r, I, axis=0):
 
     Returns
     -------
-    I2D : array, shape = (r, 2)
+    I2D : array, shape = (len(r), len(r))
         2D brightness distribution
     xmax : float
         Maximum x-value of the 2D grid

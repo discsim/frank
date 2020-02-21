@@ -20,15 +20,13 @@
    of deprojected visibities.
 """
 
+from frank.hankel import DiscreteHankelTransform
+from frank.constants import rad_to_arcsec, deg_to_rad
+
 import numpy as np
 import scipy.linalg
 import scipy.sparse
 from collections import defaultdict
-
-from frank.hankel import DiscreteHankelTransform
-from frank.constants import rad_to_arcsec, deg_to_rad
-
-__all__ = ["FourierBesselFitter", "FrankFitter"]
 
 
 class _HankelRegressor(object):
@@ -599,9 +597,9 @@ class FrankFitter(FourierBesselFitter):
         Spectral smoothness prior parameter. Zero is no smoothness prior
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration
-    max_iter: int, default = 1000
+    max_iter: int, default = 1500
         Maximum number of fit iterations
-    store_iteration_diagnostics: bool, default = False
+    store_iteration_diagnostics: bool, default = True
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
 
@@ -615,7 +613,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=1000, store_iteration_diagnostics=False):
+                 tol=1e-3, max_iter=1500, store_iteration_diagnostics=False):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
                                           block_size
@@ -716,7 +714,7 @@ class FrankFitter(FourierBesselFitter):
 
         count = 0
         pi_old = 0
-        while (np.any(np.abs(pi - pi_old) > self._tol * np.abs(pi)) and
+        while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
@@ -754,10 +752,7 @@ class FrankFitter(FourierBesselFitter):
         self._ps = pi
         self._ps_cov = self._ps_covariance(fit, Tij, rho)
 
-        if self._store_iteration_diagnostics:
-            return self._sol, self._iteration_diagnostics
-        else:
-            return self._sol
+        return self._sol
 
     def _ps_covariance(self, fit, Tij, rho):
         """

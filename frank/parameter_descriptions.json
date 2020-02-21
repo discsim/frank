@@ -5,7 +5,7 @@
     "save_profile_fit" : "Whether to save fitted brightness profile",
     "save_vis_fit"     : "Whether to save fitted visibility distribution",
     "save_uvtables"    : "Whether to save fitted and residual UV tables (these are reprojected)",
-    "iteration_diag"   : "Whether to return diagnostics of the fit iteration (needed for diag_plot)"
+    "iteration_diag"   : "Whether to return diagnostics of the fit iteration (needed for diag_plot)",
     "format"           : "Output file format. Default is the same as for 'uvtable_filename', else choose from 'npz' or 'txt'"
   },
 
@@ -15,7 +15,7 @@
   },
 
   "geometry" : {
-    "geometry_type"    : "How the geometry is determined: 'known' if user-supplied, 'gaussian' if it is to be fit",
+    "type"             : "How the geometry is determined: 'known' if user-supplied, 'gaussian' if it is to be fit",
     "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
     "inc"              : "Inclination [deg]",
     "pa"               : "Position angle [deg]",
@@ -29,6 +29,7 @@
     "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
     "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
     "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
+    "iter_tol"         : "Tolerance for fit iteration stopping criterion (suggested <<1)",
     "max_iter"         : "Maximum number of fit iterations"
   },
 
@@ -39,6 +40,7 @@
     "save_figs"        : "Whether to save generated figures",
     "dist"             : "Distance to source, optionally used for plotting [AU]",
     "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
-    "bin_widths"       : "Bin widths in which to bin the observed visibilities [\\lambda]",
+    "bin_widths"       : "Bin widths in which to bin the observed visibilities [\\lambda], list of float or int",
+    "iter_plot_range"  : "Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]"
   }
 }

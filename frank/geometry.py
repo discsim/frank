@@ -22,12 +22,10 @@
    NOTE: The sign convention used here is xx.
 """
 
-import numpy as np
-from scipy.optimize import least_squares
-
 from frank.constants import rad_to_arcsec, deg_to_rad
 
-__all__ = ["SourceGeometry", "FixedGeometry", "FitGeometryGaussian"]
+import numpy as np
+from scipy.optimize import least_squares
 
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
