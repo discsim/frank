@@ -32,12 +32,28 @@ import numpy as np
 import logging
 
 import frank
-frank_path = os.path.dirname(frank.__file__)  # TODO
+frank_path = os.path.dirname(frank.__file__)
+
+
+def get_default_parameter_file():
+    """Get the path to the default parameter file"""
+    return os.path.join(frank_path, 'default_parameters.json')
+
+
+def load_default_parameters():
+    """Load the default parameters"""
+    return json.load(open(get_default_parameter_file(), 'r'))
+
+
+def get_parameter_descriptions():
+    """Get the description for paramters"""
+    with open(os.path.join(frank_path, 'parameter_descriptions.json')) as f:
+        param_descrip = json.load(f)
+    return param_descrip
 
 
 def helper():
-    with open(frank_path + '/parameter_descriptions.json') as f:
-        param_descrip = json.load(f)
+    param_descrip = get_parameter_descriptions()
 
     print("""
          Fit a 1D radial brightness profile with Frankenstein (frank) from the
@@ -77,8 +93,17 @@ def parse_parameters():
     parser.add_argument("-uv", "--uvtable_filename", default=None, type=str,
                         help="UVTable file with data to be fit. See"
                              " frank.io.load_uvtable")
+    parser.add_argument("--print_parameter_description", default=None,
+                        action="store_true",
+                        help="Print the full description of each of the fit "
+                        "parameters")
 
     args = parser.parse_args()
+
+    if args.print_parameter_description:
+        helper()
+        exit()
+
     model = json.load(open(args.parameter_filename, 'r'))
 
     if args.uvtable_filename:
@@ -96,9 +121,8 @@ def parse_parameters():
         model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
     # Add a save prefix to the json for later use.
-    model['input_output']['save_prefix'] = save_prefix = \
-        os.path.join(model['input_output']['save_dir'],
-                     os.path.splitext(os.path.basename(uv_path))[0])
+    model['input_output']['save_prefix'] = save_prefix = os.path.join(model['input_output']['save_dir'],
+                                                                      os.path.splitext(os.path.basename(uv_path))[0])
 
     log_path = save_prefix + '_frank_fit.log'
     logging.basicConfig(level=logging.INFO,
@@ -358,20 +382,18 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
 
     if quick_plot:
         logging.info('    Making quick figure')
-        quick_fig, quick_axes = \
-            make_figs.make_quick_fig(u, v, vis, weights, sol, bin_widths, dist,
-                                     force_style, save_prefix
-                                     )
+        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol, bin_widths, dist,
+                                                         force_style, save_prefix
+                                                         )
 
         figs.append(quick_fig)
         axes.append(quick_axes)
 
     if full_plot:
         logging.info('    Making full figure')
-        full_fig, full_axes = \
-            make_figs.make_full_fig(u, v, vis, weights, sol, bin_widths, dist,
-                                    force_style, save_prefix
-                                    )
+        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol, bin_widths, dist,
+                                                      force_style, save_prefix
+                                                      )
 
         figs.append(full_fig)
         axes.append(full_axes)
