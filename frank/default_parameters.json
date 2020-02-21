@@ -39,7 +39,6 @@
     "dist"             : null,
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
-    "start_iter"       : 0,
-    "stop_iter"        : 1500
+    "iter_plot_range"  : [0,1500]
   }
 }

@@ -39,7 +39,6 @@
     "dist"             : "Distance to source, optionally used for plotting [AU]",
     "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
     "bin_widths"       : "Bin widths in which to bin the observed visibilities [\\lambda]",
-    "start_iter"       : "First iteration in the range of iterations to be plotted in the diagnostic figure",
-    "stop_iter"        : "Last iteration in the range of iterations to be plotted in the diagnostic figure"
+    "iter_plot_range"  : "Range of iterations to be plotted in the diagnostic figure"
   }
 }

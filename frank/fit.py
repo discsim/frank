@@ -295,8 +295,8 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
         return [sol, ]
 
 
-def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
-                   stop_iter, bin_widths, save_dir, uvtable_filename,
+def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
+                   bin_widths, save_dir, uvtable_filename,
                    save_profile_fit, save_vis_fit, save_uvtables,
                    save_iteration_diag, full_plot, quick_plot, diag_plot,
                    force_style=True, dist=None
@@ -321,8 +321,8 @@ def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
     iteration_diag : _HankelRegressor object
           Diagnostics of the fit iteration
           (see radial_fitters.FrankFitter.fit)
-    start_iter, stop_iter : int
-          Chosen start and stop range of iterations in the fit over which to
+    iter_plot_range : list
+          Range of iterations in the fit over which to
           plot brightness profile and power spectrum reconstructions
     bin_widths : list, unit = \lambda
           Bin widths in which to bin the observed visibilities
@@ -381,21 +381,22 @@ def output_results(u, v, vis, weights, sol, iteration_diag, start_iter,
         axes.append(full_axes)
 
     if diag_plot:
-        if start_iter > iteration_diag['num_iterations']:
+        if iter_plot_range[0] > iteration_diag['num_iterations']:
             raise ValueError("    Your parameter file has"
-                             " 'start_iter' > 'max_iter'. I'll use 'max_iter'"
-                             " as 'stop_iter' instead.")
-            stop_iter = iteration_diag['num_iterations'] * 1.
+                             " 'iter_plot_range'[0] > 'max_iter'. I'll use"
+                             " 0 as 'iter_plot_range'[0] instead.")
+            iter_plot_range[0] = 0.
 
-        if stop_iter > iteration_diag['num_iterations']:
-            logging.info("    Your parameter file has 'stop_iter' > 'max_iter'."
-                         " I'll use 'max_iter' as 'stop_iter' instead.")
-            stop_iter = iteration_diag['num_iterations'] * 1.
+        if iter_plot_range[1] > iteration_diag['num_iterations']:
+            logging.info("    Your parameter file has 'iter_plot_range'[1] >"
+                         " 'max_iter'. I'll use 'max_iter' as"
+                         " 'iter_plot_range'[1] instead.")
+            iter_plot_range[1] = iteration_diag['num_iterations'] * 1.
 
         diag_fig, diag_axes = make_figs.make_diag_fig(sol.r,
                   iteration_diag['mean'], sol.q,
                   iteration_diag['power_spectrum'],
-                  iteration_diag['num_iterations'], start_iter, stop_iter,
+                  iteration_diag['num_iterations'], iter_plot_range,
                   force_style, save_prefix
                   )
 
@@ -437,8 +438,7 @@ def main():
                                              )
 
     figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
-                          model['plotting']['start_iter'],
-                          model['plotting']['stop_iter'],
+                          model['plotting']['iter_plot_range'],
                           model['plotting']['bin_widths'],
                           model['input_output']['save_dir'],
                           model['input_output']['uvtable_filename'],

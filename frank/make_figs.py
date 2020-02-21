@@ -293,8 +293,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
-                  stop_iter, force_style=True, save_prefix=None
+def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, iter_plot_range,
+                  force_style=True, save_prefix=None
                   ):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
@@ -315,9 +315,9 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
           assumed unit (for the y-label) is Jy^2
     N_iter : int
           Total number of iterations in the fit
-    start_iter, stop_iter : int
-          Chosen start and stop range of iterations in the fit over which to
-          plot profile_iter and pwr_spec_iter
+    iter_plot_range : list
+          Range of iterations in the fit over which to
+          plot brightness profile and power spectrum reconstructions
     force_style: bool, default = True
           Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -348,25 +348,22 @@ def make_diag_fig(r, profile_iter, q, pwr_spec_iter, N_iter, start_iter,
 
     axes = [ax0, ax1, ax2, ax3, ax4]
 
-    # Specify the range in iterations over which to plot
-    iter_range = [start_iter, stop_iter]
-
-    plot_profile_iterations(r, profile_iter, iter_range, ax0)
+    plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
-    iter_range_end = [N_iter - 100, N_iter - 1]
+    iter_plot_range_end = [N_iter - 100, N_iter - 1]
 
     # pylint: disable=no-member
     plot_profile_iterations(r, np.diff(profile_iter, axis=0),
-                            iter_range_end, ax1, cmap=plt.cm.cividis,
+                            iter_plot_range_end, ax1, cmap=plt.cm.cividis,
                             ylabel=r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]'
                             )
 
-    plot_pwr_spec_iterations(q, pwr_spec_iter, iter_range, ax2)
+    plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
     # Plot the difference in the power spectrum between the last 100 iterations
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
-                             iter_range_end, ax3, cmap=plt.cm.cividis,
+                             iter_plot_range_end, ax3, cmap=plt.cm.cividis,
                              ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]'
                              )
 
