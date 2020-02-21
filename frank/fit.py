@@ -120,7 +120,7 @@ def parse_parameters():
         # If not specified, use the UVTable directory as the save directory
         model['input_output']['save_dir'] = os.path.dirname(uv_path)
 
-    # Add a save prefix to the json for later use.
+    # Add a save prefix to the .json parameter file for later use
     model['input_output']['save_prefix'] = save_prefix =  \
         os.path.join(model['input_output']['save_dir'],
                      os.path.splitext(os.path.basename(uv_path))[0])
@@ -136,7 +136,7 @@ def parse_parameters():
     logging.info('\nRunning frank on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
-    # Sanity check some of json parameters
+    # Sanity check some of the .json parameters
     if model['plotting']['diag_plot']:
         plotting = model['plotting']
 
@@ -263,8 +263,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     return geom
 
 
-def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
-                return_iteration_diag, diag_plot
+def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
+                max_iter, return_iteration_diag, diag_plot
                 ):
     r"""
     Deproject the observed visibilities and fit them for the brightness profile
@@ -291,6 +291,9 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
     wsmooth : float
         Strength of smoothing applied to the power spectrum
         (suggested range 10^-4 - 10^-1)
+    iter_tol : float
+        Tolerance for fit iteration stopping criterion (suggested <<1; see
+        radial_fitters.FrankFitter)
     max_iter : int
         Maximum number of fit iterations
     return_iteration_diag : bool
@@ -319,7 +322,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, max_iter,
 
     FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
                                     alpha=alpha, weights_smooth=wsmooth,
-                                    max_iter=max_iter,
+                                    tol=iter_tol, max_iter=max_iter,
                                     store_iteration_diagnostics=need_iterations
                                     )
 
@@ -469,6 +472,7 @@ def main():
                                              model['hyperpriors']['n'],
                                              model['hyperpriors']['alpha'],
                                              model['hyperpriors']['wsmooth'],
+                                             model['hyperpriors']['iter_tol'],
                                              model['hyperpriors']['max_iter'],
                                              model['input_output']['iteration_diag'],
                                              model['plotting']['diag_plot']
@@ -477,7 +481,7 @@ def main():
     figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
                           model['plotting']['iter_plot_range'],
                           model['plotting']['bin_widths'],
-                          model['input_output']['format'],                          
+                          model['input_output']['format'],
                           model['input_output']['save_prefix'],
                           model['input_output']['save_profile_fit'],
                           model['input_output']['save_vis_fit'],

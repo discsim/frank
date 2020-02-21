@@ -6,7 +6,7 @@
     "save_vis_fit"     : true,
     "save_uvtables"    : false,
     "iteration_diag"   : true,
-    "format"           : null      
+    "format"           : null
   },
 
   "modify_data" : {
@@ -29,6 +29,7 @@
     "alpha"            : 1.05,
     "p0"               : 1e-15,
     "wsmooth"          : 1e-4,
+    "iter_tol"         : 1e-3,
     "max_iter"         : 1500
   },
 
