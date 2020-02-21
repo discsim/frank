@@ -91,7 +91,6 @@ it could indicate xx asymmetry in the disc xx that frank will average over.
 Test a fit's convergence
 ########################
 Just to be safe, it's always good to check how well a fit has converged. Using the fit from the above figure,
-here's the diagnostic plot frank produces (if `diag_plot=True` in your parameter file).
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
