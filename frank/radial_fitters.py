@@ -126,8 +126,8 @@ class _HankelRegressor(object):
         self._fit()
 
     def _fit(self):
-        """Computee the mean and variance"""
-        # Compute the inverse Prior covariance, S(p)^-1
+        """Compute the mean and variance"""
+        # Compute the inverse prior covariance, S(p)^-1
         Sinv = self._Sinv
         if Sinv is None:
             Sinv = 0
@@ -750,7 +750,8 @@ class FrankFitter(FourierBesselFitter):
 
         # Compute the power spectrum covariance at the maximum
         self._ps = pi
-        self._ps_cov = self._ps_covariance(fit, Tij, rho)
+        self._ps_cov = None
+        self._ps_cov_params = (fit, Tij, rho)
 
         return self._sol
 
@@ -922,6 +923,10 @@ class FrankFitter(FourierBesselFitter):
     @property
     def MAP_spectrum_covariance(self):
         """Covariance matrix of the maximum a posteriori power spectrum"""
+        if self._ps_cov is None:
+            self._ps_cov = self._ps_covariance(*self._ps_cov_params)
+            self._ps_cov_params = None
+
         return self._ps_cov
 
     @property

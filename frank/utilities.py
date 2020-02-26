@@ -118,7 +118,7 @@ class UVDataBinner(object):
         # Compute the variance for cells with 2 or more data points
         idx1 = bin_n == 1
         idx2 = idx & ~idx1
-        
+
         bin_vis_err[idx2].real = \
             np.sqrt(bin_vis_err[idx2].real - bin_vis[idx2].real**2)
         bin_vis_err[idx2].imag = \
@@ -134,6 +134,9 @@ class UVDataBinner(object):
         self._w = bin_wgt[idx]
         self._Verr = bin_vis_err[idx]
         self._count = bin_n[idx]
+
+        self._uv_left = bins[:-1][idx]
+        self._uv_right = bins[1:][idx]
 
     @property
     def uv(self):
@@ -160,6 +163,10 @@ class UVDataBinner(object):
         """Number of points in each bin"""
         return self._count
 
+    @property
+    def bin_edges(self):
+        """Edges of the histogram bins"""
+        return [self._uv_left, self._uv_right]
 
 def sweep_profile(r, I, axis=0):
     r"""
