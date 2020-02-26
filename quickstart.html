@@ -211,25 +211,18 @@
 be fit and a <em>.json</em> parameter file (see below) are needed. A UVTable can be extracted
 with CASA as demonstrated in <a class="reference external" href="tutorials/xx">this tutorial</a>.
 The column format should be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[m]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[m]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
-<p>If you specify <code class="code docutils literal notranslate"><span class="pre">load_dir</span></code>, <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code> and <code class="code docutils literal notranslate"><span class="pre">uvtable_filename</span></code> in the default parameter file,
-(see below for how to get a template parameter file) you can perform a fit using the default parameters with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit
-</pre></div>
-</div>
-<p>where <code class="code docutils literal notranslate"><span class="pre">-m</span></code> runs the <code class="code docutils literal notranslate"><span class="pre">frank/fit</span></code> module as a script.</p>
-<p>Alternatively you can leave any/all of the load directory, save directory and UVTable filename empty in the parameter file.
-If so, the load directory will be set to your current working directory, the save directory to your load directory,
-and you pass in the UVTable filename with the <code class="code docutils literal notranslate"><span class="pre">-uv</span></code> option.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit -uv &lt;uvtable_filename.txt&gt;
+<p>You can quickly run a fit with the default parameter file, <code class="code docutils literal notranslate"><span class="pre">default_parameters.json</span></code> (see below),
+by just passing in the filename of the UVTable to be fit with the <code class="code docutils literal notranslate"><span class="pre">-uv</span></code> option. The UVTable can be a <code class="code docutils literal notranslate"><span class="pre">.npz</span></code>, <code class="code docutils literal notranslate"><span class="pre">.txt</span></code> or <code class="code docutils literal notranslate"><span class="pre">.dat</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit -uv &lt;uvtable_filename.npz&gt;
 </pre></div>
 </div>
 <p>If you want to change the default parameters, provide a custom parameter file with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit <span class="o">[</span>-uv uvtable_filename.txt<span class="o">]</span> -p &lt;parameter_filename.json&gt;
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit <span class="o">[</span>-uv uvtable_filename.npz<span class="o">]</span> -p &lt;parameter_filename.json&gt;
 </pre></div>
 </div>
 <p>The default parameter file is <code class="docutils literal notranslate"><span class="pre">default_parameters.json</span></code>. You can get it
 <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/default_parameters.json">here</a>,
-and it looks like this:</p>
+and it looks like this,</p>
 <div class="highlight-json notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -281,7 +274,7 @@ and it looks like this:</p>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;format&quot;</span>           <span class="p">:</span> <span class="kc">null</span>
   <span class="p">},</span>
@@ -422,12 +415,14 @@ and it looks like this:</p>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
-<p>That’s it! By default frank saves (in <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code>) the parameter file you use as <code class="code docutils literal notranslate"><span class="pre">frank_used_pars.json</span></code>,
-the fitted brightness profile as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_profile_fit.txt</span></code>,
-the visibility domain fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_vis_fit.npz</span></code>, UVTables for the <strong>reprojected</strong>
-fit and its residuals as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_fit.txt</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_resid.txt</span></code>,
-and a figure showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_full.png</span></code>.
-Optionally frank can save a simpler version of this figure as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_quick.png</span></code>.</p>
+<p>That’s it! By default frank saves (in <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code>): <br>
+- the logged messages printed during the fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit.log</span></code>, <br>
+- the parameter file used in the fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_used_pars.json</span></code>, <br>
+- the fitted brightness profile as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_profile_fit.txt</span></code>, <br>
+- the visibility domain fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_vis_fit.npz</span></code>, <br>
+- the <code class="code docutils literal notranslate"><span class="pre">sol</span></code> (solution) object (see <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_sol.obj</span></code> and the <code class="code docutils literal notranslate"><span class="pre">iteration_diagnostics</span></code> object (see <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_iteration_diagnostics.obj</span></code>, <br>
+- UVTables for the <strong>reprojected</strong> fit and its residuals as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_fit.npz</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_resid.npz</span></code>, <br>
+- figures showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_quick.png</span></code>, <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_full.png</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_diag.png</span></code>.</p>
 <p>Here’s the full figure frank produces (if <code class="code docutils literal notranslate"><span class="pre">full_plot=True</span></code> in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract">Andrews et al. 2018</a>).</p>
 <div class="figure align-left" style="width: 700px">
@@ -440,14 +435,15 @@ AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/20
 <strong>e)</strong> As in (d), zooming on the longer baselines. <br>
 <strong>f)</strong> Residuals between the binned data and the fit. The residuals’ RMSE is given in the legend;
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. <br>
-<strong>g)</strong> As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale. <br>
+<strong>g)</strong> As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
+On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at <span class="math notranslate nohighlight">\(\approx 4\ {\rm M}\lambda\)</span>. <br>
 <strong>h)</strong> The fit’s reconstructed power spectrum, the prior on the fitted brightness profile.
 To see how this the fit to this dataset is sensitive to the prior, check out <a class="reference internal" href="tutorials/prior_sensitivity_and_uncertainty.html"><span class="doc">this notebook</span></a>. <br>
 <strong>i)</strong> The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
-it could indicate xx asymmetry in the disc xx that frank will average over.</p>
+it could indicate azimuthal asymmetry in the disc that frank will average over.</p>
 <div class="section" id="test-a-fit-s-convergence">
 <h3>Test a fit’s convergence<a class="headerlink" href="#test-a-fit-s-convergence" title="Permalink to this headline">¶</a></h3>
-<p>Once the fit has been performed, it’s important to check its convergence. If <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this.</p>
+<p>Once the fit has been performed, it’s important to check its convergence. If <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,</p>
 <div class="figure align-left" style="width: 700px">
 <img alt="_images/AS209_continuum_frank_fit_diag.png" src="_images/AS209_continuum_frank_fit_diag.png" />
 </div>
@@ -466,7 +462,7 @@ So in this case the oscillations remaining at the end of the fit (<span class="m
 <br>
 <strong>c)</strong> The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first <span class="math notranslate nohighlight">\(\approx 250\)</span> iterations,
-and then we continue iterating to suppress the high power placed at the data’s noise-dominated, longest baselines. <br>
+and then we continue iterating to suppress the high power placed at the data’s noisiest, longest baselines. <br>
 <strong>d)</strong> Sequential difference between the last 100 brightness profile iterations.
 Note the y-scale here is small compared to (b),
 and the largest variation is at the baseline where the fit walks off the visibilities. <br>
@@ -485,21 +481,20 @@ See <a class="reference external" href="tutorials/running_fits_in_a_loop.ipynb">
 </div>
 <div class="section" id="modify-the-fit-py-script">
 <h3>Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script<a class="headerlink" href="#modify-the-fit-py-script" title="Permalink to this headline">¶</a></h3>
-<p>We’ve run this example using <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code>; if you’d like to modify this file, you can get it <a class="reference external" href="https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py">here</a>.
+<p>We’ve run this example using <code class="code docutils literal notranslate"><span class="pre">frank/fit.py</span></code>; if you’d like to modify this file, you can get it <a class="reference external" href="https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py">here</a>.
 For an ‘under the hood’ look at what this script does, see <a class="reference internal" href="tutorials/using_frank_as_a_module.html"><span class="doc">this tutorial</span></a>.
-And if you’d like a more qualitative overview of the script (with sound), see <a class="reference external" href="https://www.youtube.com/watch?v=xMxsLKQidY4&amp;t=5">here</a>.</p>
+If you’d like a video demonstration of how to run the script (with sound), see <a class="reference external" href="https://www.youtube.com/watch?v=xMxsLKQidY4&amp;t=5">here</a>.</p>
 </div>
 </div>
 <div class="section" id="perform-a-fit-using-frank-as-a-python-module">
 <h2>Perform a fit using <code class="code docutils literal notranslate"><span class="pre">frank</span></code> as a Python module<a class="headerlink" href="#perform-a-fit-using-frank-as-a-python-module" title="Permalink to this headline">¶</a></h2>
-<p>To interface with the code more directly, you can use it as a module.</p>
-<p>Let’s first import some basic stuff from frank and load the data
-(again using the DSHARP observations of AS 209, available as a UVTable
-<a class="reference external" href="https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.txt">here</a>).
-Note that the wrapper functions in <code class="docutils literal notranslate"><span class="pre">fit.py</span></code> can do all this for us; of those,
-here we’re not using <code class="code docutils literal notranslate"><span class="pre">parse_parameters</span></code> because we’ll explicitly pass the parameters we need,
-and we’re also not using <code class="code docutils literal notranslate"><span class="pre">determine_geometry</span></code> or <code class="code docutils literal notranslate"><span class="pre">perform_fit</span></code>
+<p>To interface with the code more directly, you can use it as a module.
+The wrapper functions in <code class="docutils literal notranslate"><span class="pre">fit.py</span></code> can do everything we’ll show below for us,
+but  we’re going to mostly avoid those here,
 just to show how to directly interface with the code’s internal classes.</p>
+<p>First import some basic stuff from frank and load the data
+(again using the DSHARP observations of AS 209, available as a UVTable
+<a class="reference external" href="https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.npz">here</a>).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">frank.radial_fitters</span> <span class="kn">import</span> <span class="n">FrankFitter</span>
 <span class="kn">from</span> <span class="nn">frank.geometry</span> <span class="kn">import</span> <span class="n">FitGeometryGaussian</span>
@@ -507,7 +502,8 @@ just to show how to directly interface with the code’s internal classes.</p>
 <span class="kn">from</span> <span class="nn">frank.make_figs</span> <span class="kn">import</span> <span class="n">frank_plotting_style</span><span class="p">,</span> <span class="n">make_quick_fig</span>
 <span class="kn">from</span> <span class="nn">frank.io</span> <span class="kn">import</span> <span class="n">save_fit</span>
 
-<span class="n">uvtable_filename</span> <span class="o">=</span> <span class="s1">&#39;AS209_continuum.txt&#39;</span>
+<span class="n">save_prefix</span> <span class="o">=</span> <span class="s1">&#39;AS209_continuum&#39;</span>
+<span class="n">uvtable_filename</span> <span class="o">=</span> <span class="n">save_prefix</span> <span class="o">+</span> <span class="s1">&#39;.npz&#39;</span>
 <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">uvtable_filename</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -521,20 +517,18 @@ and fit for the brightness profile. We’ll fit out to 1.6” using 250 collocat
 <span class="n">sol</span> <span class="o">=</span> <span class="n">FF</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now we’ll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
-when running from the terminal, frank produces this figure if <code class="code docutils literal notranslate"><span class="pre">quick_plot=True</span></code> in your parameter file),</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">make_quick_fig</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">bin_widths</span><span class="o">=</span><span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p>Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+when running from the terminal, frank produces this figure if <code class="code docutils literal notranslate"><span class="pre">quick_plot=True</span></code> in your parameter file).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">make_quick_fig</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">bin_widths</span><span class="o">=</span><span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span> <span class="o">+</span> <span class="s1">&#39;_frank_fit_quick.png&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>which gives this figure,</p>
+<p>which makes this,</p>
 <div class="figure align-left" style="width: 700px">
 <img alt="_images/AS209_continuum_frank_fit_quick.png" src="_images/AS209_continuum_frank_fit_quick.png" />
 </div>
-<p>And finally we’ll save the fit results.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">save_fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
-        <span class="n">uvtable_filename</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">uvtable_filename</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-        <span class="n">save_profile_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_vis_fit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_uvtables</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+<p>Finally we’ll save the fit results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">save_fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">save_prefix</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -562,7 +556,7 @@ when running from the terminal, frank produces this figure if <code class="code 
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Feb 21 at 17:10:25 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Feb 26 at 15:32:21 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Assessing the uncertainty on a fit &mdash; frank 0.1.0 documentation</title>
+  <title>Assessing a fit’s uncertainty and sensitivity to hyperpriors &mdash; frank 0.1.0 documentation</title>
   
 
   
@@ -42,7 +42,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Frankenstein Python API" href="../py_API.html" />
-    <link rel="prev" title="Testing the profile’s sensitivity to hyperpriors: Running fits in a loop" href="running_fits_in_loop.html" /> 
+    <link rel="prev" title="Running fits in a loop" href="running_fits_in_loop.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -99,8 +99,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="using_frank_as_a_module.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l2"><a class="reference internal" href="running_fits_in_loop.html">Testing the profile’s sensitivity to hyperpriors: Running fits in a loop</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Assessing the uncertainty on a fit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="running_fits_in_loop.html">Running fits in a loop</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Assessing a fit’s uncertainty and sensitivity to hyperpriors</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#Damping-of-high-frequency-variations">Damping of high frequency variations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#A-better-uncertainty-estimate">A better uncertainty estimate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#Caution!">Caution!</a></li>
@@ -163,7 +163,7 @@
         
           <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
         
-      <li>Assessing the uncertainty on a fit</li>
+      <li>Assessing a fit’s uncertainty and sensitivity to hyperpriors</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -427,8 +427,8 @@ div.rendered_html tbody tr:hover {
 <p>This tutorial is produced by the Jupyter notebook</p>
 </div>
 <p><a class="reference external" href="https://github.com/discsim/frank/blob/master/tutorials/prior_sensitivity_and_uncertainty.ipynb">here</a>.</p>
-<div class="section" id="Assessing-the-uncertainty-on-a-fit">
-<h1>Assessing the uncertainty on a fit<a class="headerlink" href="#Assessing-the-uncertainty-on-a-fit" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Assessing-a-fit’s-uncertainty-and-sensitivity-to-hyperpriors">
+<h1>Assessing a fit’s uncertainty and sensitivity to hyperpriors<a class="headerlink" href="#Assessing-a-fit’s-uncertainty-and-sensitivity-to-hyperpriors" title="Permalink to this headline">¶</a></h1>
 <p>Here we’ll use the AS 209 dataset from the <a class="reference internal" href="using_frank_as_a_module.html"><span class="doc">first tutorial</span></a> to analyze and discuss the model’s typical underestimate of the recovered profile’s uncertainty.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -488,7 +488,7 @@ prior on the reconstructed brightness includes a sensible esimtate for the uncer
         <a href="../py_API.html" class="btn btn-neutral float-right" title="The Frankenstein Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="running_fits_in_loop.html" class="btn btn-neutral float-left" title="Testing the profile’s sensitivity to hyperpriors: Running fits in a loop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="running_fits_in_loop.html" class="btn btn-neutral float-left" title="Running fits in a loop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -499,7 +499,7 @@ prior on the reconstructed brightness includes a sensible esimtate for the uncer
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Feb 21 at 17:10:25 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Feb 26 at 15:32:21 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

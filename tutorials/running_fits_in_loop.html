@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Testing the profile’s sensitivity to hyperpriors: Running fits in a loop &mdash; frank 0.1.0 documentation</title>
+  <title>Running fits in a loop &mdash; frank 0.1.0 documentation</title>
   
 
   
@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Assessing the uncertainty on a fit" href="prior_sensitivity_and_uncertainty.html" />
+    <link rel="next" title="Assessing a fit’s uncertainty and sensitivity to hyperpriors" href="prior_sensitivity_and_uncertainty.html" />
     <link rel="prev" title="What’s fit.py doing? The fitting procedure in detail" href="using_frank_as_a_module.html" /> 
 </head>
 
@@ -99,8 +99,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="using_frank_as_a_module.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">Testing the profile’s sensitivity to hyperpriors: Running fits in a loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="prior_sensitivity_and_uncertainty.html">Assessing the uncertainty on a fit</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Running fits in a loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prior_sensitivity_and_uncertainty.html">Assessing a fit’s uncertainty and sensitivity to hyperpriors</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers that use frank</a></li>
@@ -158,7 +158,7 @@
         
           <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
         
-      <li>Testing the profile’s sensitivity to hyperpriors: Running fits in a loop</li>
+      <li>Running fits in a loop</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -422,8 +422,8 @@ div.rendered_html tbody tr:hover {
 <p>This tutorial is produced by the Jupyter notebook</p>
 </div>
 <p><a class="reference external" href="https://github.com/discsim/frank/blob/master/tutorials/running_fits_in_loop.ipynb">here</a>.</p>
-<div class="section" id="Testing-the-profile’s-sensitivity-to-hyperpriors:-Running-fits-in-a-loop">
-<h1>Testing the profile’s sensitivity to hyperpriors: Running fits in a loop<a class="headerlink" href="#Testing-the-profile’s-sensitivity-to-hyperpriors:-Running-fits-in-a-loop" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Running-fits-in-a-loop">
+<h1>Running fits in a loop<a class="headerlink" href="#Running-fits-in-a-loop" title="Permalink to this headline">¶</a></h1>
 <p>Here we’ll use the AS 209 dataset from the <a class="reference external" href="using_frank_as_library.ipynb">first tutorial</a> to examine the fitted brightness profile’s sensitivity to hyperpriors.</p>
 <p>A better way to understand the uncertainty on the reconstructed profile is to compare fits with different choices of input parameters (<span class="math notranslate nohighlight">\(\alpha\)</span>, <span class="math notranslate nohighlight">\(w_s\)</span>). Here we compare the default fit to one with <span class="math notranslate nohighlight">\(\alpha\)</span> close to 1, but a stronger smoothing of the power-spectrum.</p>
 <div class="nbinput docutils container">
@@ -671,7 +671,7 @@ Below we interpret why these choices have the effects they do.
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="prior_sensitivity_and_uncertainty.html" class="btn btn-neutral float-right" title="Assessing the uncertainty on a fit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="prior_sensitivity_and_uncertainty.html" class="btn btn-neutral float-right" title="Assessing a fit’s uncertainty and sensitivity to hyperpriors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="using_frank_as_a_module.html" class="btn btn-neutral float-left" title="What’s fit.py doing? The fitting procedure in detail" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -685,7 +685,7 @@ Below we interpret why these choices have the effects they do.
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Feb 21 at 17:10:25 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Feb 26 at 15:32:21 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
