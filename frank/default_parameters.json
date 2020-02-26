@@ -4,7 +4,7 @@
     "save_dir"         : "",
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
-    "save_uvtables"    : false,
+    "save_uvtables"    : true,
     "iteration_diag"   : true,
     "format"           : null
   },
