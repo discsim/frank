@@ -114,6 +114,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         frank_plotting_style()
 
     gs = GridSpec(3, 3, hspace=0)
+    gs1 = GridSpec(4, 3, hspace=0, top=.88)
     gs2 = GridSpec(3, 3, hspace=.35)
     fig = plt.figure(figsize=(8, 6))
 
@@ -126,10 +127,24 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax5 = fig.add_subplot(gs[7])
 
     ax6 = fig.add_subplot(gs[2])
-    ax7 = fig.add_subplot(gs[5])
-    ax8 = fig.add_subplot(gs[8])
+    ax7 = fig.add_subplot(gs1[5])
+    ax8 = fig.add_subplot(gs1[8])
+    ax9 = fig.add_subplot(gs1[11])
 
-    axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
+    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
+    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+    ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
+
+    ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
+    ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
+    ax5.text(.92, .9, 'f)', transform=ax5.transAxes)
+
+    ax6.text(.1, .65, 'g)', transform=ax6.transAxes)
+    ax7.text(.1, .5, 'h)', transform=ax7.transAxes)
+    ax8.text(.1, .7, 'i)', transform=ax8.transAxes)
+    ax9.text(.1, .2, 'j)', transform=ax9.transAxes)
+
+    axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
     plot_brightness_profile(sol.r, sol.mean, ax0)
     plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
@@ -144,6 +159,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
+    hist_cs = ['k', 'r']
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
             baselines, vis_deproj, weights, bin_widths[i])
@@ -165,13 +181,33 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                  marker2=ms[i], binwidth=bin_widths[i], yscale='log')
 
         plot_vis(binned_vis.uv, vis_im_kl,
-                 vis_err_im_kl, ax8, c=cs[i], marker=ms[i],
+                 vis_err_im_kl, ax9, c=cs[i], marker=ms[i],
                  binwidth=bin_widths[i], ylabel='Im(V) [mJy]')
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
                        sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5,
                        c=cs[i], marker=ms[i], binwidth=bin_widths[i],
                        normalize_resid=False)
+
+        if i == 1: # TODO
+            #'''
+            xs, ys = [], []
+            for l, r, y in zip(binned_vis.bin_edges[0], binned_vis.bin_edges[1],
+                               binned_vis.bin_counts):
+                xs.extend([l,r])
+                ys.extend([y,y])
+            print('min ys %s'%np.min(ys))
+            print('argmin ys %s'%np.argmin(ys))
+            print('len ys %s'%len(ys))
+            ax8.hlines(ys, xmin=xs[::2], xmax=xs[1::2], color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+            ax8.fill_between(xs, ys, color=hist_cs[i], alpha=.5)
+            #'''
+            #ax8.plot(binned_vis.uv, binned_vis.bin_counts, color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        ax8.set_xlabel(r'Baseline [$\lambda$]')
+        ax8.set_ylabel('n')
+        ax8.set_xscale('log')
+        ax8.set_yscale('log')
+        ax8.legend()
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3)
@@ -188,17 +224,20 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax6.set_xlim(xlims)
     ax7.set_xlim(xlims)
     ax8.set_xlim(xlims)
+    ax9.set_xlim(xlims)
 
     plt.setp(ax0.get_xticklabels(), visible=False)
     plt.setp(ax3.get_xticklabels(), visible=False)
     plt.setp(ax4.get_xticklabels(), visible=False)
     plt.setp(ax6.get_xticklabels(), visible=False)
     plt.setp(ax7.get_xticklabels(), visible=False)
+    plt.setp(ax8.get_xticklabels(), visible=False)
 
     plt.tight_layout()
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_full.png', dpi=600)
+        plt.close()
     else:
         plt.show()
 
@@ -291,6 +330,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+        plt.close()
     else:
         plt.show()
 
@@ -391,6 +431,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
+        plt.close()
     else:
         plt.show()
 

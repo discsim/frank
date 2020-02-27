@@ -21,7 +21,7 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
-from frank import io, make_figs
+from frank import io, geometry, make_figs, radial_fitters
 
 import os
 import sys
@@ -162,7 +162,7 @@ def parse_parameters(*args):
     return model
 
 
-def load_data(data_file):
+def load_data(data_file, norm_by_wle=False, normalization_wavelength=None):
     r"""
     Read in a UVTable with data to be fit. See frank.io.load_uvtable
 
@@ -171,6 +171,12 @@ def load_data(data_file):
     data_file : string
         UVTable with columns:
         u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
+
+    norm_by_wle : bool, default=False
+        Whether to normalize the u and v coordinates of observations by an
+        observing wavelength
+    normalization_wavelength : float, unit = m
+        Wavelength by which to normalize u and v coordinates of observations
 
     Returns
     -------
@@ -182,10 +188,69 @@ def load_data(data_file):
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     """
+
     logging.info('  Loading UVTable')
     u, v, vis, weights = io.load_uvtable(data_file)
 
+    if norm_by_wle:
+        logging.info('  Normalizing u and v by observing wavelength of'
+                     ' {} m'.format(normalization_wavelength))
+        u /= normalization_wavelength
+        v /= normalization_wavelength
+
     return u, v, vis, weights
+
+
+def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
+    r"""
+    Estimate and apply a correction factor to the data's weights by comparing
+    binnings of the real component of the visibilities under different
+    weightings. This is useful for mock datasets in which the weights are all
+    unity.
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+
+    ReV : array, unit = Jy
+        Real component of observed visibilities
+
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+
+    nbins : int, default=300
+        Number of bins used to construct the histograms
+
+    Returns
+    -------
+    wcorr_estimate : float
+        Correction factor by which to adjust the weights
+
+    weights_corrected : array, unit = Jy^-2
+        Corrected weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    """
+
+    logging.info('  Estimating, applying correction factor to the weights')
+
+    baselines = np.hypot(u, v)
+    mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
+    mu2, edges = np.histogram(np.log10(baselines), weights=ReV ** 2, bins=nbins)
+    N, edges = np.histogram(np.log10(baselines), bins=nbins)
+
+    centres = 0.5 * (edges[1:] + edges[:-1])
+
+    mu /= np.maximum(N, 1)
+    mu2 /= np.maximum(N, 1)
+
+    sigma = (mu2 - mu ** 2) ** 0.5
+    wcorr_estimate = sigma[np.where(sigma > 0)].mean()
+
+    weights_corrected = weights / wcorr_estimate ** 2
+
+    return wcorr_estimate, weights_corrected
 
 
 def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
@@ -224,8 +289,6 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry)
     """
-
-    from frank import geometry
 
     logging.info('  Determining disc geometry')
 
@@ -316,8 +379,6 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
         (see radial_fitters.FrankFitter.fit)
     """
 
-    from frank import radial_fitters
-
     logging.info('  Fitting for brightness profile')
 
     need_iterations = return_iteration_diag or diag_plot
@@ -331,7 +392,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
     t1 = time.time()
     sol = FF.fit(u, v, vis, weights)
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
-                 '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
+                 ' {:d} collocation points) {:.1f} sec'.format(len(vis), n,
                                                               time.time() - t1))
 
     if need_iterations:
@@ -464,9 +525,18 @@ def main(*args):
     *args : strings
         Simulates the command-line arguments
     """
+
     model = parse_parameters(*args)
 
-    u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
+    u, v, vis, weights = load_data(model['input_output']['uvtable_filename'],
+                                   model['modify_data']['norm_by_wle'],
+                                   model['modify_data']['wle']
+                                   )
+
+    if model['modify_data']['correct_weights']:
+        wcorr_estimate, weights = apply_correction_to_weights(u, v, vis.real,
+                                                              weights
+                                                              )
 
     geom = determine_geometry(u, v, vis, weights,
                               model['geometry']['inc'],
@@ -477,32 +547,50 @@ def main(*args):
                               model['geometry']['fit_phase_offset']
                               )
 
-    sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
-                                             model['hyperpriors']['rout'],
-                                             model['hyperpriors']['n'],
-                                             model['hyperpriors']['alpha'],
-                                             model['hyperpriors']['wsmooth'],
-                                             model['hyperpriors']['iter_tol'],
-                                             model['hyperpriors']['max_iter'],
-                                             model['input_output']['iteration_diag'],
-                                             model['plotting']['diag_plot']
-                                             )
+    if model['analysis']['bootstrap']: # TODO: temporary placement
+        profiles_bootstrap = []
+        n_bootstrap = model['analysis']['n_trials']
+        for ii in range(n_bootstrap):
+            logging.info('bootstrap {} of {}'.format(ii + 1, n_bootstrap))
+            idxs = np.random.randint(low=0, high=len(u), size=len(u))
+            u_this = u[idxs]
+            v_this = v[idxs]
+            vis_this = vis[idxs]
+            weights_this = weights[idxs]
 
-    figs = output_results(u, v, vis, weights, sol, iteration_diagnostics,
-                          model['plotting']['iter_plot_range'],
-                          model['plotting']['bin_widths'],
-                          model['input_output']['format'],
-                          model['input_output']['save_prefix'],
-                          model['input_output']['save_profile_fit'],
-                          model['input_output']['save_vis_fit'],
-                          model['input_output']['save_uvtables'],
-                          model['input_output']['iteration_diag'],
-                          model['plotting']['full_plot'],
-                          model['plotting']['quick_plot'],
-                          model['plotting']['diag_plot'],
-                          model['plotting']['force_style'],
-                          model['plotting']['dist']
-                          )
+            sol, iteration_diagnostics = perform_fit(u_this, v_this, vis_this,
+                                                     weights_this, geom,
+                                                     model['hyperpriors']['rout'],
+                                                     model['hyperpriors']['n'],
+                                                     model['hyperpriors']['alpha'],
+                                                     model['hyperpriors']['wsmooth'],
+                                                     model['hyperpriors']['iter_tol'],
+                                                     model['hyperpriors']['max_iter'],
+                                                     model['input_output']['iteration_diag'],
+                                                     model['plotting']['diag_plot']
+                                                     )
+
+            profiles_bootstrap.append(sol.mean) # TODO: temporary placement
+
+            figs, axes = output_results(u_this, v_this, vis_this, weights_this, sol,
+                                        iteration_diagnostics,
+                                        model['plotting']['iter_plot_range'],
+                                        model['plotting']['bin_widths'],
+                                        model['input_output']['format'],
+                                        model['input_output']['save_prefix'] + '_%s'%ii,
+                                        model['input_output']['save_profile_fit'],
+                                        model['input_output']['save_vis_fit'],
+                                        model['input_output']['save_uvtables'],
+                                        model['input_output']['iteration_diag'],
+                                        model['plotting']['full_plot'],
+                                        model['plotting']['quick_plot'],
+                                        model['plotting']['diag_plot'],
+                                        model['plotting']['force_style'],
+                                        model['plotting']['dist']
+                                        )
+
+        np.savetxt(model['input_output']['save_prefix'] + '_bootstrap.txt',profiles_bootstrap) # TODO: temporary placement
+        np.savetxt(model['input_output']['save_prefix'] + '_coll_pts.txt',sol.r) # TODO: temporary placement
 
     logging.info("IT'S ALIVE!!\n")
 

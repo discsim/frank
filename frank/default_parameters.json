@@ -11,7 +11,10 @@
 
   "modify_data" : {
     "cut_data"         : false,
-    "cut_baseline"     : null
+    "cut_baseline"     : null,
+    "correct_weights"  : false,
+    "norm_by_wle"      : false,
+    "wle"              : null
   },
 
   "geometry" : {
@@ -42,5 +45,10 @@
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
     "iter_plot_range"  : null
+  },
+
+  "analysis" : {
+    "bootstrap"        : false,
+    "n_trials"         : null
   }
 }

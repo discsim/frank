@@ -1,5 +1,11 @@
+[//]: # <p align="center">
+[//]: #  <img width = "800" src="https://github.com/discsim/frank/blob/master/docs/images/day_off.png?raw=true"/>
+[//]: #</p>
+
+You stumble through the vacant laboratory, candelabra in hand, and suddenly _**gasp!**_ your goblet echoes against the aged stone floor. You've discovered Frankenstein before his release! Imagine for a moment the _terror_, the _horror_, of a monster not yet complete! Please check back soon (hopefully in mid/late March), or if you haven't the time to wait, [email Jeff](mailto:jmj51@ast.cam.ac.uk) to begin using the code sooner. Thanks!
+
 <p align="center">
-  <img width = "800" src="https://github.com/discsim/frank/blob/master/docs/images/day_off.png?raw=true"/>
+  <img width = "800" src="https://4.bp.blogspot.com/-pd5FC25Qv1E/TtkaQcZ2wgI/AAAAAAAAB4k/5AMux-W14T4/s1600/34-crop-horz.jpg"/>
 </p>
 
 .. image:: https://circleci.com/xx/frank.svg?branch=master
