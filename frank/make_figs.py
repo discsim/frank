@@ -23,6 +23,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+import logging
 
 # Suppress some benign warnings
 import warnings
@@ -112,6 +113,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info('    Making full figure')
 
     if force_style:
         frank_plotting_style()
@@ -280,6 +283,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         The axes of the produced figure
     """
 
+    logging.info('    Making quick figure')
+
     if force_style:
         frank_plotting_style()
 
@@ -359,7 +364,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         The iteration_diagnositics from FrankFitter
     N_iter : int
         Total number of iterations in the fit
-    iter_range : list
+    iter_plot_range : list
         Range of iterations in the fit over which to
         plot brightness profile and power spectrum reconstructions
     force_style: bool, default = True
@@ -374,6 +379,23 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info('    Making diagnostic figure')
+
+    if iter_plot_range is None:
+        logging.info("      diag_plot is 'true' in your parameter file but"
+                     " iter_plot_range is 'null' --> Defaulting to"
+                     " plotting all iterations")
+
+        iter_plot_range = [0, iteration_diagnostics['num_iterations']]
+
+    else:
+        if iter_plot_range[0] > iteration_diagnostics['num_iterations']:
+            logging.info('      iter_plot_range[0] in your parameter file'
+                         ' exceeds the number of fit iterations -->'
+                         ' Defaulting to plotting all iterations')
+
+            iter_plot_range = [0, iteration_diagnostics['num_iterations']]
 
     if force_style:
         frank_plotting_style()
@@ -395,9 +417,6 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     profile_iter = iteration_diagnostics['mean']
     pwr_spec_iter = iteration_diagnostics['power_spectrum']
     num_iter = iteration_diagnostics['num_iterations']
-
-    if iter_plot_range is None:
-        iter_plot_range = [0, num_iter]
 
     plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
@@ -436,7 +455,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     else:
         plt.show()
 
-    return fig, axes
+    return fig, axes, iter_plot_range
 
 
 def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
@@ -465,6 +484,8 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info(' Making bootstrap summary figure') 
 
     if force_style:
         frank_plotting_style()

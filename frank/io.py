@@ -46,9 +46,10 @@ def load_uvtable(data_file):
           :math:`1 / \sigma^2`
     """
 
+    import logging # TODO
     logging.info('  Loading UVTable') # TODO: should go in load_uvtable
 
-    import os.path
+    import os.path # TODO
     extension = os.path.splitext(data_file)[1]
 
     if extension in {'.txt', '.dat'}:
@@ -143,6 +144,9 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
         File format in which to save the fit's output UVTable(s)
     """
 
+    import logging # TODO
+    logging.info('  Saving results')
+
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
 
@@ -170,7 +174,6 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
                      units={'uv': 'lambda', 'V': 'Jy'})
 
     if save_uvtables:
-        import logging
         logging.info('    Saving fit and residual UVTables. N.B.: These will'
                      ' be of comparable size to your input UVTable.')
         V_pred = sol.predict(u, v)
