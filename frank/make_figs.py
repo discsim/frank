@@ -34,7 +34,7 @@ from frank.utilities import UVDataBinner
 from frank.plot import (
     plot_brightness_profile,
     plot_confidence_interval,
-    plot_vis, plot_vis_fit, plot_vis_resid,
+    plot_vis, plot_vis_fit, plot_vis_resid, plot_vis_hist,
     plot_profile_iterations,
     plot_2dsweep,
     plot_pwr_spec,
@@ -137,18 +137,18 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax8 = fig.add_subplot(gs1[8])
     ax9 = fig.add_subplot(gs1[11])
 
-    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
-    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+    ax0.text(.9, .6, 'a)', transform=ax0.transAxes)
+    ax1.text(.9, .6, 'b)', transform=ax1.transAxes)
     ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
 
     ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
     ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
-    ax5.text(.92, .9, 'f)', transform=ax5.transAxes)
+    ax5.text(.1, .7, 'f)', transform=ax5.transAxes)
 
-    ax6.text(.1, .65, 'g)', transform=ax6.transAxes)
-    ax7.text(.1, .5, 'h)', transform=ax7.transAxes)
-    ax8.text(.1, .7, 'i)', transform=ax8.transAxes)
-    ax9.text(.1, .2, 'j)', transform=ax9.transAxes)
+    ax6.text(.9, .6, 'g)', transform=ax6.transAxes)
+    ax7.text(.9, .6, 'h)', transform=ax7.transAxes)
+    ax8.text(.9, .6, 'i)', transform=ax8.transAxes)
+    ax9.text(.9, .6, 'j)', transform=ax9.transAxes)
 
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
@@ -165,10 +165,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
-    hist_cs = ['k', 'r']
+    hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
     for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(
-            baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
@@ -195,23 +194,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        c=cs[i], marker=ms[i], binwidth=bin_widths[i],
                        normalize_resid=False)
 
-        if i == 1: # TODO
-            #'''
-            xs, ys = [], []
-            for l, r, y in zip(binned_vis.bin_edges[0], binned_vis.bin_edges[1],
-                               binned_vis.bin_counts):
-                xs.extend([l,r])
-                ys.extend([y,y])
-
-            ax8.hlines(ys, xmin=xs[::2], xmax=xs[1::2], color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-            ax8.fill_between(xs, ys, color=hist_cs[i], alpha=.5)
-            #'''
-            #ax8.plot(binned_vis.uv, binned_vis.bin_counts, color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-        ax8.set_xlabel(r'Baseline [$\lambda$]')
-        ax8.set_ylabel('n')
-        ax8.set_xscale('log')
-        ax8.set_yscale('log')
-        ax8.legend()
+        plot_vis_hist(binned_vis.bin_edges, binned_vis.bin_counts, bin_widths[i], ax8, c=hist_cs[i])
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3)
@@ -485,7 +468,7 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
         The axes of the produced figure
     """
 
-    logging.info(' Making bootstrap summary figure') 
+    logging.info(' Making bootstrap summary figure')
 
     if force_style:
         frank_plotting_style()

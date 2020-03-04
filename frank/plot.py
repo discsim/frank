@@ -294,6 +294,42 @@ def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
         ax.set_ylim(-2 * rmse, 2 * rmse)
 
 
+def plot_vis_hist(bin_edges, bin_counts, bin_width, ax, c): # TODO: just use hist
+    r"""
+    Plot a histogram of visibilities using a precomputed binning
+
+    Parameters
+    ----------
+    bin_edges : array
+        Sequential left and right edges (baselines) of each bin.
+        The assumed unit (for the x-label) is :math:`\lambda`
+    bin_counts : array
+        Number of visibilities in each bin
+    bin_width : float
+        Constant width of the bins.
+        The assumed unit (for the x-label and legend) is :math:`\lambda`
+    ax : Matplotlib axis
+        Axis on which to plot
+    c : Matplotlib color, default = 'k'
+        Color of bins
+    """
+
+    xs, ys = [], []
+    for l, r, y in zip(bin_edges[0], bin_edges[1], bin_counts):
+        xs.extend([l,r])
+        ys.extend([y,y])
+
+    ax.hlines(ys[::2], xmin=xs[::2], xmax=xs[1::2], color=c,
+              label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_width/1e3))
+    ax.fill_between(xs, ys, color=c, alpha=.5)
+
+    ax.set_xlabel(r'Baseline [$\lambda$]')
+    ax.set_ylabel('n')
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.legend()
+
+
 def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
                   xscale='log', yscale='log'
                   ):
