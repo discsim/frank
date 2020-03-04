@@ -752,10 +752,10 @@ class FrankFitter(FourierBesselFitter):
             count += 1
 
         if count < self._max_iter:
-            logging.info('\n    Convergence criterion met at iteration'
+            logging.info('    Convergence criterion met at iteration'
                          ' {}'.format(count-1))
         else:
-            logging.info('\n    Convergence criterion not met; fit stopped at'
+            logging.info('    Convergence criterion not met; fit stopped at'
                          ' max_iter specified in your parameter file,'
                          ' {}'.format(self._max_iter))
 
