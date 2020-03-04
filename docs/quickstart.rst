@@ -16,32 +16,22 @@ be fit and a *.json* parameter file (see below) are needed. A UVTable can be ext
 with CASA as demonstrated in `this tutorial <tutorials/xx>`_.
 The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
-If you specify `load_dir`, `save_dir` and `uvtable_filename` in the default parameter file,
-(see below for how to get a template parameter file) you can perform a fit using the default parameters with
+You can quickly run a fit with the default parameter file, `default_parameters.json` (see below),
+by just passing in the filename of the UVTable to be fit with the `-uv` option. The UVTable can be a `.npz`, `.txt` or `.dat`.
 
 .. code-block:: bash
 
-    python -m frank.fit
-
-where `-m` runs the `frank/fit` module as a script.
-
-Alternatively you can leave any/all of the load directory, save directory and UVTable filename empty in the parameter file.
-If so, the load directory will be set to your current working directory, the save directory to your load directory,
-and you pass in the UVTable filename with the `-uv` option.
-
-.. code-block:: bash
-
-    python -m frank.fit -uv <uvtable_filename.txt>
+    python -m frank.fit -uv <uvtable_filename.npz>
 
 If you want to change the default parameters, provide a custom parameter file with
 
 .. code-block:: bash
 
-    python -m frank.fit [-uv uvtable_filename.txt] -p <parameter_filename.json>
+    python -m frank.fit [-uv uvtable_filename.npz] -p <parameter_filename.json>
 
 The default parameter file is ``default_parameters.json``. You can get it
 `here <https://github.com/discsim/frank/blob/master/frank/default_parameters.json>`_,
-and it looks like this:
+and it looks like this,
 
 .. literalinclude:: ../frank/default_parameters.json
     :linenos:
@@ -61,12 +51,14 @@ which returns
     :linenos:
     :language: json
 
-That's it! By default frank saves (in `save_dir`) the parameter file you use as `frank_used_pars.json`,
-the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`,
-the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, UVTables for the **reprojected**
-fit and its residuals as `<uvtable_filename>_frank_uv_fit.txt` and `<uvtable_filename>_frank_uv_resid.txt`,
-and a figure showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_full.png`.
-Optionally frank can save a simpler version of this figure as `<uvtable_filename>_frank_fit_quick.png`.
+That's it! By default frank saves (in `save_dir`): |br|
+- the logged messages printed during the fit as `<uvtable_filename>_frank_fit.log`, |br|
+- the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
+- the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
+- the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
+- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and the `iteration_diagnostics` object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
+- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and `<uvtable_filename>_frank_fit_diag.png`.
 
 Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
@@ -82,15 +74,16 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 **e)** As in (d), zooming on the longer baselines. |br|
 **f)** Residuals between the binned data and the fit. The residuals' RMSE is given in the legend;
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. |br|
-**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale. |br|
+**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
+On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
 To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
 **i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
-it could indicate xx asymmetry in the disc xx that frank will average over.
+it could indicate azimuthal asymmetry in the disc that frank will average over.
 
 Test a fit's convergence
 ########################
-Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this.
+Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
@@ -111,7 +104,7 @@ So in this case the oscillations remaining at the end of the fit (:math:`\approx
 |br|
 **c)** The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 250` iterations,
-and then we continue iterating to suppress the high power placed at the data's noise-dominated, longest baselines. |br|
+and then we continue iterating to suppress the high power placed at the data's noisiest, longest baselines. |br|
 **d)** Sequential difference between the last 100 brightness profile iterations.
 Note the y-scale here is small compared to (b),
 and the largest variation is at the baseline where the fit walks off the visibilities. |br|
@@ -130,22 +123,21 @@ See `this tutorial <tutorials/running_fits_in_a_loop.ipynb>`_ for an example.
 
 Modify the `fit.py` script
 ##########################
-We've run this example using `fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py>`_.
+We've run this example using `frank/fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py>`_.
 For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_a_module.ipynb>`_.
-And if you'd like a more qualitative overview of the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
+If you'd like a video demonstration of how to run the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
 Perform a fit using `frank` as a Python module
 -----------------------------------------------
 
 To interface with the code more directly, you can use it as a module.
-
-Let's first import some basic stuff from frank and load the data
-(again using the DSHARP observations of AS 209, available as a UVTable
-`here <https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.txt>`_).
-Note that the wrapper functions in ``fit.py`` can do all this for us; of those,
-here we're not using `parse_parameters` because we'll explicitly pass the parameters we need,
-and we're also not using `determine_geometry` or `perform_fit`
+The wrapper functions in ``fit.py`` can do everything we'll show below for us,
+but  we're going to mostly avoid those here,
 just to show how to directly interface with the code's internal classes.
+
+First import some basic stuff from frank and load the data
+(again using the DSHARP observations of AS 209, available as a UVTable
+`here <https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.npz>`_).
 
 .. code-block:: python
 
@@ -156,7 +148,8 @@ just to show how to directly interface with the code's internal classes.
     from frank.make_figs import frank_plotting_style, make_quick_fig
     from frank.io import save_fit
 
-    uvtable_filename = 'AS209_continuum.txt'
+    save_prefix = 'AS209_continuum'
+    uvtable_filename = save_prefix + '.npz'
     u, v, vis, weights = load_data(uvtable_filename)
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
@@ -171,24 +164,22 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Now we'll just make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
-when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file),
+Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
 
 .. code-block:: python
 
-    make_quick_fig(u, v, vis, weights, sol, bin_widths=[1e3, 5e4], force_style=True)
+    fig, axes = make_quick_fig(u, v, vis, weights, sol, bin_widths=[1e3, 5e4], force_style=True)
+    plt.savefig(save_prefix + '_frank_fit_quick.png')
 
-which gives this figure,
+which makes this,
 
 .. figure:: plots/AS209_continuum_frank_fit_quick.png
    :align: left
    :figwidth: 700
 
-And finally we'll save the fit results.
+Finally we'll save the fit results.
 
 .. code-block:: python
 
-    save_fit(u, v, vis, weights, sol, save_dir=os.getcwd(),
-            uvtable_filename=os.path.splitext(uvtable_filename)[0],
-            save_profile_fit=True, save_vis_fit=True, save_uvtables=True
-            )
+    save_fit(u, v, vis, weights, sol, prefix=save_prefix)
