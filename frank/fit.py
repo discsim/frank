@@ -358,7 +358,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     store_iteration_diagnostics=need_iterations
                                     )
 
-    sol = FF.fit(u, v, vis, weights, verbose=True)
+    sol = FF.fit(u, v, vis, weights)
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
