@@ -21,7 +21,6 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
-from frank import io, geometry, make_figs, radial_fitters, utilities
 import os
 import sys
 import time
@@ -31,11 +30,8 @@ import numpy as np
 import logging
 
 import frank
-<<<<<<< HEAD
 from frank import io, geometry, make_figs, radial_fitters, utilities
 
-=======
->>>>>>> Added non-negative option
 frank_path = os.path.dirname(frank.__file__)
 
 
