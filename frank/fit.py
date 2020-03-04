@@ -276,7 +276,7 @@ def determine_geometry(u, v, vis, weights, model):
             geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
                                                               model['geometry']['ddec']))
 
-        geom.fit(u, v, vis, weights)
+        geom.fit(u, v, vis, weights, verbose=True)
 
     else:
         raise ValueError("geometry_type in your parameter file must be one of"
