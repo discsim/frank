@@ -11,8 +11,7 @@
   },
 
   "modify_data" : {
-    "cut_data"         : false,
-    "cut_range"        : null,
+    "baseline_range"   : null,
     "correct_weights"  : false,
     "norm_by_wle"      : false,
     "wle"              : null
@@ -49,7 +48,6 @@
   },
 
   "analysis" : {
-    "bootstrap"        : false,
-    "n_trials"         : null
+    "boostrap_ntrials" : null
   }
 }

@@ -24,8 +24,8 @@
 
 import numpy as np
 from scipy.optimize import least_squares
-import logging
-import time
+#import logging
+#import time
 
 from frank.constants import rad_to_arcsec, deg_to_rad
 
@@ -219,10 +219,10 @@ class SourceGeometry(object):
             Weights on the visibilities
         """
 
-        if all(x == 0 for x in (self._inc, self._PA, self._dRA, self._dDec)):
-            logging.info("      N.B.: All geometry parameters are 0 --> No geometry"
-                         " correction will be applied to the visibilities"
-                         )
+        #if all(x == 0 for x in (self._inc, self._PA, self._dRA, self._dDec)):
+        #    logging.info("      N.B.: All geometry parameters are 0 --> No geometry"
+        #                 " correction will be applied to the visibilities"
+        #                 )
 
         return
 
@@ -314,11 +314,11 @@ class FitGeometryGaussian(SourceGeometry):
 
         t1 = time.time()
 
-        if self._phase_centre:
-            logging.info('    Fitting Gaussian to determine geometry'
-                         ' (not fitting for phase center)')
-        else:
-            logging.info('    Fitting Gaussian to determine geometry')
+        #if self._phase_centre:
+        #    logging.info('    Fitting Gaussian to determine geometry'
+        #                 ' (not fitting for phase center)')
+        #else:
+        #    logging.info('    Fitting Gaussian to determine geometry')
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
             u, v, V, weights, phase_centre=self._phase_centre)
@@ -328,14 +328,14 @@ class FitGeometryGaussian(SourceGeometry):
         self._dRA = dRA
         self._dDec = dDec
 
-        logging.info('    Time taken for geometry %.1f sec' %
-                     (time.time() - t1))
+        #logging.info('    Time taken for geometry %.1f sec' %
+        #             (time.time() - t1))
 
-        logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
-                     '           dRA  = {:.2e} mas,\n'
-                     '           dDec = {:.2e} mas'.format(self._inc, self._PA,
-                                                           self._dRA*1e3,
-                                                           self._dDec*1e3))
+        #logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
+        #             '           dRA  = {:.2e} mas,\n'
+        #             '           dDec = {:.2e} mas'.format(self._inc, self._PA,
+        #                                                   self._dRA*1e3,
+        #                                                   self._dDec*1e3))
 
 
 def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):

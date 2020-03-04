@@ -25,8 +25,8 @@ import numpy as np
 import scipy.linalg
 import scipy.sparse
 from collections import defaultdict
-import logging
-import time
+#import logging
+#import time
 
 from frank.hankel import DiscreteHankelTransform
 from frank.constants import rad_to_arcsec, deg_to_rad
@@ -683,7 +683,7 @@ class FrankFitter(FourierBesselFitter):
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
-        logging.info('  Fitting for brightness profile')
+        #logging.info('  Fitting for brightness profile')
         t1 = time.time()
 
         # Project the data to the signal space
@@ -722,7 +722,7 @@ class FrankFitter(FourierBesselFitter):
         pi_old = 0
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
-            print('\r    Fit iteration {}'.format(count), end='', flush=True)
+            #print('\r    Fit iteration {}'.format(count), end='', flush=True)
 
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
@@ -750,13 +750,13 @@ class FrankFitter(FourierBesselFitter):
 
             count += 1
 
-        if count < self._max_iter:
-            logging.info('\n    Convergence criterion met at iteration'
-                         ' {}'.format(count-1))
-        else:
-            logging.info('\n    Convergence criterion not met; fit stopped at'
-                         ' max_iter specified in your parameter file,'
-                         ' {}'.format(self._max_iter))
+        #if count < self._max_iter:
+        #    logging.info('\n    Convergence criterion met at iteration'
+        #                 ' {}'.format(count-1))
+        #else:
+        #    logging.info('\n    Convergence criterion not met; fit stopped at'
+        #                 ' max_iter specified in your parameter file,'
+        #                 ' {}'.format(self._max_iter))
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics['num_iterations'] = count
@@ -769,11 +769,11 @@ class FrankFitter(FourierBesselFitter):
         self._ps_cov = None
         self._ps_cov_params = (fit, Tij, rho)
 
-        logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
-                     ' {:d} collocation points) {:.1f} sec'.format(len(u),
-                                                                   self.size,
-                                                                   time.time() - t1)
-                                                                   )
+        #logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
+        #             ' {:d} collocation points) {:.1f} sec'.format(len(u),
+        #                                                           self.size,
+        #                                                           time.time() - t1)
+        #                                                           )
 
         return self._sol
 

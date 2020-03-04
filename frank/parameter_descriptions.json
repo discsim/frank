@@ -11,8 +11,7 @@
   },
 
   "modify_data" : {
-    "cut_data"         : "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
-    "cut_range"        : "Baseline range outside of which visibilities are truncated [\\lambda]",
+    "baseline_range"   : "Baseline range outside of which visibilities are truncated [\\lambda]",
     "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)",
     "norm_by_wle"      : "Whether to normalize u and v by the observing wavelength",
     "wle"              : "Observing wavelength [m]"
@@ -49,7 +48,6 @@
   },
 
   "analysis" : {
-    "bootstrap"        : "Whether to perform a bootstrap analysis on the fit",
-    "n_trials"         : "Number of trials (dataset realizations) in the bootstrap analysis"
+    "boostrap_ntrials" : "Number of trials (dataset realizations) to perform in a bootstrap analysis"
   }
 }

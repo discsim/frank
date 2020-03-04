@@ -147,17 +147,16 @@ def parse_parameters(*args):
             except TypeError:
                 raise err
 
-    if model['modify_data']['cut_data']:
-        if model['modify_data']['cut_range'] is not None:
-            err = ValueError("cut_range should be 'null' (None)"
-                             " or a list specifying the low and high"
-                             " baselines [unit: \\lambda] outside of which the"
-                             " data will be truncated before fitting")
-            try:
-                if len(model['modify_data']['cut_range']) != 2:
-                    raise err
-            except TypeError:
+    if model['modify_data']['baseline_range'] is not None:
+        err = ValueError("baseline_range should be 'null' (None)"
+                         " or a list specifying the low and high"
+                         " baselines [unit: \\lambda] outside of which the"
+                         " data will be truncated before fitting")
+        try:
+            if len(model['modify_data']['baseline_range']) != 2:
                 raise err
+        except TypeError:
+            raise err
 
     if model['input_output']['format'] is None:
         model['input_output']['format'] = os.path.splitext(uv_path)[1][1:]
@@ -225,9 +224,9 @@ def alter_data(u, v, vis, weights, model):
     if model['modify_data']['norm_by_wle']:
         u, v = utilities.normalize_uv(u, v, model['modify_data']['wle'])
 
-    if model['modify_data']['cut_data']:
+    if model['modify_data']['baseline_range']:
         u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
-                                                            model['modify_data']['cut_range']
+                                                            model['modify_data']['baseline_range']
                                                             )
 
     wcorr_estimate = None
@@ -453,32 +452,29 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
     """
     profiles_bootstrap = []
 
-    for ii in range(model['analysis']['n_trials']):
-        logging.info(' Bootstrap trial {} of {}'.format(ii + 1,
-                                                 model['analysis']['n_trials']))
+    for trial in range(model['analysis']['bootstrap_ntrials']):
+        logging.info(' Bootstrap trial {} of {}'.format(trial + 1,
+                                                 model['analysis']['bootstrap_ntrials']))
 
         utilities.draw_bootstrap_sample(u, v, vis, weights)
 
         sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, model)
         profiles_bootstrap.append(sol.mean)
 
-    profiles_path = model['input_output']['save_prefix'] + \
-                        '_bootstrap_profiles.txt'
-    collocation_points_path = model['input_output']['save_prefix'] + \
-                                  '_bootstrap_collocation_pts.txt'
+    bootstrap_path = model['input_output']['save_prefix'] + \
+                        '_bootstrap.npz'
 
     logging.info(' Bootstrap complete. Saving fitted brightness profiles and'
                  ' the common set of collocation points')
 
-    np.savetxt(profiles_path, profiles_bootstrap)
-    np.savetxt(collocation_points_path, sol.r)
+    np.savez(bootstrap_path, r=sol.r, profiles=np.array(profiles_bootstrap))
 
     boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
                                                         profiles_bootstrap,
                                                         model['plotting']['dist'],
                                                         model['plotting']['force_style'],
                                                         model['input_output']['save_prefix']
-                                                        )
+                                                        ) 
 
     return boot_fig, boot_axes
 
@@ -496,13 +492,13 @@ def main(*args):
 
     u, v, vis, weights = load_data(model)
 
-    if model['modify_data']['norm_by_wle'] or model['modify_data']['cut_data'] or \
+    if model['modify_data']['norm_by_wle'] or model['modify_data']['baseline_range'] or \
     model['modify_data']['correct_weights']:
         u, v, vis, weights, wcorr_estimate = alter_data(u, v, vis, weights, model)
 
     geom = determine_geometry(u, v, vis, weights, model)
 
-    if model['analysis']['bootstrap']:
+    if model['analysis']['bootstrap_ntrials']:
         boot_fig, boot_axes = perform_bootstrap(u, v, vis, weights, geom, model)
         return boot_fig, boot_axes
 
