@@ -19,7 +19,7 @@
 __version__ = "0.1.0"
 
 
-def use_logging(log_file=None):
+def enable_logging(log_file=None):
     """Turn on internal logging for Frankenstein.
     
     Parameters

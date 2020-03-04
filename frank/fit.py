@@ -125,7 +125,7 @@ def parse_parameters(*args):
                      os.path.splitext(os.path.basename(uv_path))[0])
 
     log_path = save_prefix + '_frank_fit.log'
-    frank.use_logging(log_path)
+    frank.enable_logging(log_path)
 
     logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
@@ -159,7 +159,7 @@ def parse_parameters(*args):
     param_path = save_prefix + '_frank_used_pars.json'
 
     logging.info(
-        '  Saving parameters to be used in fit to {}'.format(param_path))
+        '  Saving parameters used to {}'.format(param_path))
     with open(param_path, 'w') as f:
         json.dump(model, f, indent=4)
 
@@ -536,8 +536,8 @@ def main(*args):
                                            iteration_diagnostics, model
                                            )
 
-        logging.info('  Updating {} with final parameters used in'
-                     ' fit'.format(param_path))
+        logging.info('  Updating {} with final parameters used'
+                     ''.format(param_path))
         with open(param_path, 'w') as f:
             json.dump(model, f, indent=4)
 
