@@ -468,6 +468,7 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
+        logging.info('    Building visibility matrices M and j')
 
         # Deproject the visibilities
         u, v, V = self._geometry.apply_correction(u, v, V)
@@ -535,6 +536,7 @@ class FourierBesselFitter(object):
         """
 
         self._geometry.fit(u, v, V, weights)
+        logging.info('  Fitting unconstrained brightness profile')
 
         self._build_matrices(u, v, V, weights)
 
@@ -694,7 +696,7 @@ class FrankFitter(FourierBesselFitter):
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
-        logging.info('  Fitting for brightness profile')
+        logging.info('  Fitting constrained brightness profile')
         t1 = time.time()
 
         # Project the data to the signal space
