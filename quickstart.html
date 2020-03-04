@@ -273,7 +273,8 @@ and it looks like this,</p>
 48
 49
 50
-51</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+51
+52</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -321,7 +322,8 @@ and it looks like this,</p>
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="kc">null</span>
+    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;bootstrap_non_negative&quot;</span> <span class="p">:</span> <span class="kc">false</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -382,7 +384,9 @@ and it looks like this,</p>
 48
 49
 50
-51</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+51
+52
+53</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u, v, Re(V), Im(V), weights)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
@@ -430,7 +434,9 @@ and it looks like this,</p>
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of trials (dataset realizations) to perform in a bootstrap analysis&quot;</span>
+    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of trials (dataset realizations) to perform in a bootstrap analysis&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;bootstrap_non_negative&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether the mean (if false) or best fit nonnegative solution in used in the bootstrap&quot;</span>
+
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -576,7 +582,7 @@ when running from the terminal, frank produces this figure if <code class="code 
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Mar 04 at 12:33:03 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Mar 04 at 13:05:18 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
