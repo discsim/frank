@@ -107,7 +107,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html"> Tutorials</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers that use frank</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers using frank</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Under the hood</span></p>
 <ul>
@@ -268,10 +268,16 @@ and it looks like this,</p>
 43
 44
 45
-46</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+46
+47
+48
+49
+50
+51</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_solution&quot;</span>    <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
@@ -280,8 +286,8 @@ and it looks like this,</p>
   <span class="p">},</span>
 
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;cut_data&quot;</span>         <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
-    <span class="nt">&quot;cut_baseline&quot;</span>     <span class="p">:</span> <span class="kc">null</span>
+    <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="kc">false</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -312,6 +318,10 @@ and it looks like this,</p>
     <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span>
     <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="kc">null</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="kc">null</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -367,10 +377,16 @@ and it looks like this,</p>
 43
 44
 45
-46</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+46
+47
+48
+49
+50
+51</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u, v, Re(V), Im(V), weights)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;save_solution&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to save `sol` object (see frank.radial_fitters.FrankFitter)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to save fitted brightness profile&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Whether to save fitted visibility distribution&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to save fitted and residual UV tables (these are reprojected)&quot;</span><span class="p">,</span>
@@ -379,8 +395,8 @@ and it looks like this,</p>
   <span class="p">},</span>
 
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;cut_data&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Whether to truncate the visibilities at a given maximum baseline prior to fitting&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;cut_baseline&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Maximum baseline at which visibilities are truncated&quot;</span>
+    <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Baseline range outside of which visibilities are truncated [\\lambda]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Whether to estimate the data&#39;s weights (as they may be unknown for mock data)&quot;</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -411,6 +427,10 @@ and it looks like this,</p>
     <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="s2">&quot;Whether to use preconfigured matplotlib rcParams in generated figures&quot;</span><span class="p">,</span>
     <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities [\\lambda], list of float or int&quot;</span><span class="p">,</span>
     <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]&quot;</span>
+  <span class="p">},</span>
+
+  <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of trials (dataset realizations) to perform in a bootstrap analysis&quot;</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -556,7 +576,7 @@ when running from the terminal, frank produces this figure if <code class="code 
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Feb 27 at 20:12:45 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Mar 04 at 11:48:13 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
