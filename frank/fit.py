@@ -30,9 +30,9 @@ import numpy as np
 import logging
 
 import frank
-frank_path = os.path.dirname(frank.__file__)
-
 from frank import io, geometry, make_figs, radial_fitters, utilities
+
+frank_path = os.path.dirname(frank.__file__)
 
 
 def get_default_parameter_file():
@@ -191,7 +191,8 @@ def load_data(model):
         :math:`1 / \sigma^2`
     """
 
-    u, v, vis, weights = io.load_uvtable(model['input_output']['uvtable_filename'])
+    u, v, vis, weights = io.load_uvtable(
+        model['input_output']['uvtable_filename'])
 
     return u, v, vis, weights
 
@@ -231,7 +232,7 @@ def alter_data(u, v, vis, weights, model):
         wcorr_estimate, weights = utilities.apply_correction_to_weights(u, v,
                                                                         vis.real,
                                                                         weights
-                                                                            )
+                                                                        )
 
     return u, v, vis, weights, wcorr_estimate
 
@@ -317,7 +318,7 @@ def perform_fit(u, v, vis, weights, geom, model):
     """
 
     need_iterations = model['input_output']['iteration_diag'] or \
-                      model['plotting']['diag_plot']
+        model['plotting']['diag_plot']
 
     FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
                                     N=model['hyperpriors']['n'],
@@ -449,15 +450,17 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     for trial in range(model['analysis']['bootstrap_ntrials']):
         logging.info(' Bootstrap trial {} of {}'.format(trial + 1,
-                                                 model['analysis']['bootstrap_ntrials']))
+                                                        model['analysis']['bootstrap_ntrials']))
 
-        utilities.draw_bootstrap_sample(u, v, vis, weights)
+        u_s, v_s, vis_s, w_s = \
+            utilities.draw_bootstrap_sample(u, v, vis, weights)
 
-        sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, model)
+        sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
+
         profiles_bootstrap.append(sol.mean)
 
     bootstrap_path = model['input_output']['save_prefix'] + \
-                        '_bootstrap.npz'
+        '_bootstrap.npz'
 
     logging.info(' Bootstrap complete. Saving fitted brightness profiles and'
                  ' the common set of collocation points')
@@ -465,11 +468,11 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
     np.savez(bootstrap_path, r=sol.r, profiles=np.array(profiles_bootstrap))
 
     boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
-                                                        profiles_bootstrap,
-                                                        model['plotting']['dist'],
-                                                        model['plotting']['force_style'],
-                                                        model['input_output']['save_prefix']
-                                                        )
+                                                       profiles_bootstrap,
+                                                       model['plotting']['dist'],
+                                                       model['plotting']['force_style'],
+                                                       model['input_output']['save_prefix']
+                                                       )
 
     return boot_fig, boot_axes
 
@@ -488,8 +491,9 @@ def main(*args):
     u, v, vis, weights = load_data(model)
 
     if model['modify_data']['baseline_range'] or \
-    model['modify_data']['correct_weights']:
-        u, v, vis, weights, wcorr_estimate = alter_data(u, v, vis, weights, model)
+            model['modify_data']['correct_weights']:
+        u, v, vis, weights, wcorr_estimate = alter_data(
+            u, v, vis, weights, model)
 
     geom = determine_geometry(u, v, vis, weights, model)
 
@@ -498,11 +502,12 @@ def main(*args):
         return boot_fig, boot_axes
 
     else:
-        sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, model)
+        sol, iteration_diagnostics = perform_fit(
+            u, v, vis, weights, geom, model)
 
         figs, axes, model = output_results(u, v, vis, weights, sol,
-                                    iteration_diagnostics, model
-                                    )
+                                           iteration_diagnostics, model
+                                           )
 
         logging.info('  Updating {} with final parameters used in'
                      ' fit'.format(param_path))
