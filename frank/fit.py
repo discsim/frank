@@ -186,8 +186,6 @@ def load_data(model):
         :math:`1 / \sigma^2`
     """
 
-    logging.info('  Loading UVTable')
-
     u, v, vis, weights = io.load_uvtable(
         model['input_output']['uvtable_filename'])
 
@@ -231,8 +229,6 @@ def alter_data(u, v, vis, weights, model):
 
     wcorr_estimate = None
     if model['modify_data']['correct_weights']:
-        logging.info('  Estimating, applying correction factor to visibility weights')
-
         wcorr_estimate, weights = utilities.apply_correction_to_weights(u, v,
                                                                         vis.real,
                                                                         weights
@@ -341,7 +337,6 @@ def perform_fit(u, v, vis, weights, geom, model):
     need_iterations = model['input_output']['iteration_diag'] or \
         model['plotting']['diag_plot']
 
-    logging.info('  Fitting for brightness profile')
     t1 = time.time()
     FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
                                     N=model['hyperpriors']['n'],
@@ -359,7 +354,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
                                                                model['hyperpriors']['n'],
                                                                time.time() - t1)
-                                                               )
+                 )
 
     if need_iterations:
         return sol, FF.iteration_diagnostics
@@ -426,17 +421,15 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
         axes.append(full_axes)
 
     if model['plotting']['diag_plot']:
-        diag_fig, diag_axes, iter_plot_range = make_figs.make_diag_fig(sol.r, sol.q,
-                                                                       iteration_diagnostics,
-                                                                       model['plotting']['iter_plot_range'],
-                                                                       model['plotting']['force_style'],
-                                                                       model['input_output']['save_prefix']
-                                                                       )
+        diag_fig, diag_axes, _ = make_figs.make_diag_fig(sol.r, sol.q,
+                                                         iteration_diagnostics,
+                                                         model['plotting']['iter_plot_range'],
+                                                         model['plotting']['force_style'],
+                                                         model['input_output']['save_prefix']
+                                                         )
 
         figs.append(diag_fig)
         axes.append(diag_axes)
-
-    logging.info('  Saving fit result datafiles')
 
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
@@ -526,7 +519,7 @@ def main(*args):
 
     if model['modify_data']['baseline_range'] or \
             model['modify_data']['correct_weights']:
-        u, v, vis, weights, wcorr_estimate = alter_data(
+        u, v, vis, weights, _ = alter_data(
             u, v, vis, weights, model)
 
     geom = determine_geometry(u, v, vis, weights, model)

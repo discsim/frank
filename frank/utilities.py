@@ -19,7 +19,7 @@
 """This module has functions that are useful for plotting and analyzing fit
 results.
 """
-
+import logging
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -258,6 +258,8 @@ def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
         Corrected weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     """
+
+    logging.info('  Estimating, applying correction factor to visibility weights')
 
     baselines = np.hypot(u, v)
     mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
