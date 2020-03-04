@@ -406,8 +406,6 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
                                                                        model['input_output']['save_prefix']
                                                                        )
 
-        model['plotting']['iter_plot_range'] = iter_plot_range
-
         figs.append(diag_fig)
         axes.append(diag_axes)
 
@@ -474,7 +472,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
                                                         model['plotting']['dist'],
                                                         model['plotting']['force_style'],
                                                         model['input_output']['save_prefix']
-                                                        ) 
+                                                        )
 
     return boot_fig, boot_axes
 
