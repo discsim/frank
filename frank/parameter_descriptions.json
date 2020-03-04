@@ -12,7 +12,7 @@
 
   "modify_data" : {
     "baseline_range"   : "Baseline range outside of which visibilities are truncated [\\lambda]",
-    "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)",
+    "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)"
   },
 
   "geometry" : {

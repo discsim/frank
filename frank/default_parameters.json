@@ -12,7 +12,7 @@
 
   "modify_data" : {
     "baseline_range"   : null,
-    "correct_weights"  : false,
+    "correct_weights"  : false
   },
 
   "geometry" : {
