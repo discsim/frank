@@ -533,8 +533,8 @@ class FourierBesselFitter(object):
         sol : _HankelRegressor
             Least-squares Fourier-Bessel series fit
         """
-        logging.info('  FourierBesselFitter: '
-                     'Fitting for brightness profile')
+        logging.info('  Fitting for brightness profile using'
+                     ' FourierBesselFitter')
 
         self._geometry.fit(u, v, V, weights)
 
@@ -689,7 +689,7 @@ class FrankFitter(FourierBesselFitter):
         MAP_sol : _HankelRegressor
             Reconstructed profile using maximum a posteriori power spectrum
         """
-        logging.info('  FrankFitter: Fitting for brightness profile')
+        logging.info('  Fitting for brightness profile using FrankFitter')
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics = defaultdict(list)

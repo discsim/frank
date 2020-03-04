@@ -20,13 +20,13 @@ __version__ = "0.1.0"
 
 
 def use_logging(log_file=None):
-    """Turn on internal logging for Frankenstein.
-    
+    """Turn on internal logging for Frankenstein
+
     Parameters
     ----------
     log_file : string, optional
-        Name of the file to write the logs to. If not provided, logs will only
-        be written to the screen.
+        Output filename to which logging messages are written.
+        If not provided, logs will only be printed to the screen
     """
     import logging
 
@@ -36,9 +36,8 @@ def use_logging(log_file=None):
                      ]
     else:
         handlers = [ logging.StreamHandler() ]
-    
+
     logging.basicConfig(level=logging.INFO,
                         format='%(message)s',
                         handlers=handlers
                         )
-

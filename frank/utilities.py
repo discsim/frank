@@ -218,6 +218,11 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
         Weights in the chosen baseline range
     """
 
+    logging.info('  Cutting data outside of the minimum and maximum baselines'
+                 ' of {} and {}'
+                 ' klambda'.format(cut_range[0] / 1e3,
+                                   cut_range[1] / 1e3))
+
     baselines = np.hypot(u, v)
     above_lo = baselines >= cut_range[0]
     below_hi = baselines <= cut_range[1]

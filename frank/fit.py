@@ -218,11 +218,6 @@ def alter_data(u, v, vis, weights, model):
     """
 
     if model['modify_data']['baseline_range']:
-        logging.info('  Cutting data outside of the minimum and maximum baselines'
-                     ' of {} and {}'
-                     ' klambda'.format(model['modify_data']['baseline_range'][0] / 1e3,
-                                       model['modify_data']['baseline_range'][1] / 1e3))
-
         u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
                                                             model['modify_data']['baseline_range']
                                                             )
