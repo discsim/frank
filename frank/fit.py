@@ -276,7 +276,7 @@ def determine_geometry(u, v, vis, weights, model):
             geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
                                                               model['geometry']['ddec']))
 
-        geom.fit(u, v, vis, weights, verbose=True)
+        geom.fit(u, v, vis, weights)
 
     else:
         raise ValueError("geometry_type in your parameter file must be one of"
@@ -329,7 +329,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     store_iteration_diagnostics=need_iterations
                                     )
 
-    sol = FF.fit(u, v, vis, weights)
+    sol = FF.fit(u, v, vis, weights, verbose=True)
 
     if need_iterations:
         return sol, FF.iteration_diagnostics
