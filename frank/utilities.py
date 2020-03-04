@@ -267,7 +267,7 @@ def apply_correction_to_weights(u, v, ReV, weights, nbins=300): # TODO: should c
         :math:`1 / \sigma^2`
     """
 
-    logging.info('  Estimating, applying correction factor to the weights') # TODO: should go in utilities.py
+    logging.info('  Estimating, applying correction factor to visibility weights') # TODO: should go in utilities.py
 
     baselines = np.hypot(u, v)
     mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
