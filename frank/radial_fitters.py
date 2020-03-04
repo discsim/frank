@@ -666,7 +666,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, weights=1, verbose=False):
+    def fit(self, u, v, V, weights=1):
         r"""
         Fit the visibilties
 
@@ -735,9 +735,9 @@ class FrankFitter(FourierBesselFitter):
         pi_old = 0
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
-            if verbose:
-                print('\r    FrankFitter iteration {}'.format(
-                    count), end='', flush=True)
+
+            print('\r    FrankFitter iteration {}'.format(count),
+                  end='', flush=True)
 
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
@@ -765,9 +765,8 @@ class FrankFitter(FourierBesselFitter):
 
             count += 1
 
-        if verbose:
-            print()
-            
+        print()
+
         if count < self._max_iter:
             logging.info('    Convergence criterion met at iteration'
                          ' {}'.format(count-1))
@@ -791,7 +790,7 @@ class FrankFitter(FourierBesselFitter):
                      ' {:d} collocation points) {:.1f} sec'.format(len(u),
                                                                    self.size,
                                                                    time.time() - t1)
-                                                                   )
+                     )
 
         return self._sol
 
