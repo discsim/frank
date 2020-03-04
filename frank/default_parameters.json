@@ -2,6 +2,7 @@
   "input_output" : {
     "uvtable_filename" : "",
     "save_dir"         : "",
+    "save_solution"    : true,
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
     "save_uvtables"    : true,
@@ -10,8 +11,8 @@
   },
 
   "modify_data" : {
-    "cut_data"         : false,
-    "cut_baseline"     : null
+    "baseline_range"   : null,
+    "correct_weights"  : false
   },
 
   "geometry" : {
@@ -42,5 +43,9 @@
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
     "iter_plot_range"  : null
+  },
+
+  "analysis" : {
+    "bootstrap_ntrials": null
   }
 }

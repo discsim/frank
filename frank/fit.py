@@ -21,8 +21,6 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
-from frank import io, make_figs
-
 import os
 import sys
 import time
@@ -33,6 +31,8 @@ import logging
 
 import frank
 frank_path = os.path.dirname(frank.__file__)
+
+from frank import io, geometry, make_figs, radial_fitters, utilities
 
 
 def get_default_parameter_file():
@@ -85,7 +85,7 @@ def parse_parameters(*args):
 
     default_param_file = os.path.join(frank_path, 'default_parameters.json')
 
-    parser = argparse.ArgumentParser("Run a Frank fit, by default using"
+    parser = argparse.ArgumentParser("Run a Frankenstein fit, by default using"
                                      " parameters in default_parameters.json")
     parser.add_argument("-p", "--parameter_filename",
                         default=default_param_file, type=str,
@@ -111,7 +111,7 @@ def parse_parameters(*args):
     if ('uvtable_filename' not in model['input_output'] or
             not model['input_output']['uvtable_filename']):
         raise ValueError("uvtable_filename isn't specified."
-                         " Set it in the parameter file or run frank with"
+                         " Set it in the parameter file or run Frankenstein with"
                          " python -m frank.fit -uv <uvtable_filename>")
 
     uv_path = model['input_output']['uvtable_filename']
@@ -132,22 +132,31 @@ def parse_parameters(*args):
                             logging.StreamHandler()]
                         )
 
-    logging.info('\nRunning frank on'
+    logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
     # Sanity check some of the .json parameters
     if model['plotting']['diag_plot']:
-        plotting = model['plotting']
-
-        if plotting['iter_plot_range'] is not None:
-            err = ValueError("iter_plot_range should be 'null' (None) "
-                             "or a list specifying the start and end "
-                             "points of the range to be plotted")
+        if model['plotting']['iter_plot_range'] is not None:
+            err = ValueError("iter_plot_range should be 'null' (None)"
+                             " or a list specifying the start and end"
+                             " points of the range to be plotted")
             try:
-                if len(plotting['iter_plot_range']) != 2:
+                if len(model['plotting']['iter_plot_range']) != 2:
                     raise err
             except TypeError:
                 raise err
+
+    if model['modify_data']['baseline_range'] is not None:
+        err = ValueError("baseline_range should be 'null' (None)"
+                         " or a list specifying the low and high"
+                         " baselines [unit: \\lambda] outside of which the"
+                         " data will be truncated before fitting")
+        try:
+            if len(model['modify_data']['baseline_range']) != 2:
+                raise err
+        except TypeError:
+            raise err
 
     if model['input_output']['format'] is None:
         model['input_output']['format'] = os.path.splitext(uv_path)[1][1:]
@@ -159,18 +168,17 @@ def parse_parameters(*args):
     with open(param_path, 'w') as f:
         json.dump(model, f, indent=4)
 
-    return model
+    return model, param_path
 
 
-def load_data(data_file):
+def load_data(model):
     r"""
     Read in a UVTable with data to be fit. See frank.io.load_uvtable
 
     Parameters
     ----------
-    data_file : string
-        UVTable with columns:
-        u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
+    model : dict
+        Dictionary containing model parameters the fit uses
 
     Returns
     -------
@@ -182,15 +190,53 @@ def load_data(data_file):
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     """
-    logging.info('  Loading UVTable')
-    u, v, vis, weights = io.load_uvtable(data_file)
+
+    u, v, vis, weights = io.load_uvtable(model['input_output']['uvtable_filename'])
 
     return u, v, vis, weights
 
 
-def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
-                       fit_phase_offset
-                       ):
+def alter_data(u, v, vis, weights, model):
+    r"""
+    Apply one or more modifications to the data as specified in the parameter file
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    model : dict
+        Dictionary containing model parameters the fit uses
+
+    Returns
+    -------
+    u, v, vis, weights : Parameters as above, with any or all altered according
+    to the modification operations specified in model
+    wcorr_estimate : None if model['modify_data']['correct_weights'] = False,
+    else the correction factor by which the weights were adjusted (see
+    frank.utilities.apply_correction_to_weights)
+    """
+
+    if model['modify_data']['baseline_range']:
+        u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
+                                                            model['modify_data']['baseline_range']
+                                                            )
+
+    wcorr_estimate = None
+    if model['modify_data']['correct_weights']:
+        wcorr_estimate, weights = utilities.apply_correction_to_weights(u, v,
+                                                                        vis.real,
+                                                                        weights
+                                                                            )
+
+    return u, v, vis, weights, wcorr_estimate
+
+
+def determine_geometry(u, v, vis, weights, model):
     r"""
     Determine the source geometry (inclination, position angle, phase offset)
 
@@ -203,21 +249,8 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    inc: float, unit = deg
-        Source inclination
-    pa : float, unit = deg
-        Source position angle
-    dra : float, unit = arcsec
-        Source right ascension offset from 0
-    ddec : float, unit = arcsec
-        Source declination offset from 0
-    geometry_type: string, from {'known', 'gaussian'}
-        Specifies how the geometry is determined. Options:
-            'known' : The user-provided geometry will be used
-            'gaussian' : Determine the geometry by fitting a Gaussian
-    fit_phase_offset: bool
-        Whether to fit for the source's right ascension offset and declination
-        offset from 0
+    model : dict
+        Dictionary containing model parameters the fit uses
 
     Returns
     -------
@@ -225,39 +258,29 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
         Fitted geometry (see frank.geometry.SourceGeometry)
     """
 
-    from frank import geometry
-
     logging.info('  Determining disc geometry')
 
-    if geometry_type == 'known':
+    if model['geometry']['type'] == 'known':
         logging.info('    Using your provided geometry for deprojection')
-        if all(x == 0 for x in (inc, pa, dra, ddec)):
-            logging.info("      N.B.: All geometry parameters are 0, so I won't"
-                         " apply any geometry correction to the visibilities")
-        geom = geometry.FixedGeometry(inc, pa, dra, ddec)
+        geom = geometry.FixedGeometry(model['geometry']['inc'],
+                                      model['geometry']['pa'],
+                                      model['geometry']['dra'],
+                                      model['geometry']['ddec']
+                                      )
 
-    elif geometry_type == 'gaussian':
-        if fit_phase_offset:
-            logging.info('    Fitting Gaussian to determine geometry')
+    elif model['geometry']['type'] == 'gaussian':
+        if model['geometry']['fit_phase_offset']:
             geom = geometry.FitGeometryGaussian()
 
         else:
-            logging.info('    Fitting Gaussian to determine geometry'
-                         ' (not fitting for phase center)')
-            geom = geometry.FitGeometryGaussian(phase_centre=(dra, ddec))
+            geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
+                                                              model['geometry']['ddec']))
 
-        t1 = time.time()
         geom.fit(u, v, vis, weights)
-        logging.info('    Time taken for geometry %.1f sec' %
-                     (time.time() - t1))
-    else:
-        raise ValueError("geometry_type must be one of 'known' or 'gaussian'")
 
-    logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
-                 '           dRA  = {:.2e} mas,\n'
-                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
-                                                       geom.dRA*1e3,
-                                                       geom.dDec*1e3))
+    else:
+        raise ValueError("geometry_type in your parameter file must be one of"
+                         " 'known' or 'gaussian'")
 
     # Store geometry
     geom = geom.clone()
@@ -265,9 +288,7 @@ def determine_geometry(u, v, vis, weights, inc, pa, dra, ddec, geometry_type,
     return geom
 
 
-def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
-                max_iter, return_iteration_diag, diag_plot
-                ):
+def perform_fit(u, v, vis, weights, geom, model):
     r"""
     Deproject the observed visibilities and fit them for the brightness profile
 
@@ -282,57 +303,33 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
         :math:`1 / \sigma^2`
     geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry)
-    rout : float, unit = arcsec
-        Maximum disc radius in the fit (best to overestimate size of source)
-    n : int
-        Number of collocation points used in the fit
-        (suggested range 100 - 300)
-    alpha : float
-        Order parameter for the power spectrum's inverse Gamma prior
-        (suggested range 1.00 - 1.50)
-    wsmooth : float
-        Strength of smoothing applied to the power spectrum
-        (suggested range 10^-4 - 10^-1)
-    iter_tol : float
-        Tolerance for fit iteration stopping criterion (suggested <<1; see
-        radial_fitters.FrankFitter)
-    max_iter : int
-        Maximum number of fit iterations
-    return_iteration_diag : bool
-        Whether to return diagnostics of the fit iteration
-        (see radial_fitters.FrankFitter.fit)
-    diag_plot : bool
-        A check for whether to return diagnostics of the fit iteration
-        (if frank.make_figs.make_diag_fig is being called,
-        return_iteration_diag must be True)
+    model : dict
+        Dictionary containing model parameters the fit uses
 
     Returns
     -------
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-    iteration_diag : _HankelRegressor object
+    iteration_diagnostics : _HankelRegressor object
         Diagnostics of the fit iteration
         (see radial_fitters.FrankFitter.fit)
     """
 
-    from frank import radial_fitters
+    need_iterations = model['input_output']['iteration_diag'] or \
+                      model['plotting']['diag_plot']
 
-    logging.info('  Fitting for brightness profile')
-
-    need_iterations = return_iteration_diag or diag_plot
-
-    FF = radial_fitters.FrankFitter(Rmax=rout, N=n, geometry=geom,
-                                    alpha=alpha, weights_smooth=wsmooth,
-                                    tol=iter_tol, max_iter=max_iter,
+    FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
+                                    N=model['hyperpriors']['n'],
+                                    geometry=geom,
+                                    alpha=model['hyperpriors']['alpha'],
+                                    weights_smooth=model['hyperpriors']['wsmooth'],
+                                    tol=model['hyperpriors']['iter_tol'],
+                                    max_iter=model['hyperpriors']['max_iter'],
                                     store_iteration_diagnostics=need_iterations
                                     )
 
-    t1 = time.time()
-    sol = FF.fit(u, v, vis, weights)
-    logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
-                 '{:d} collocation points) {:.1f} sec'.format(len(vis), n,
-                                                              time.time() - t1))
+    sol = FF.fit(u, v, vis, weights, verbose=True)
 
     if need_iterations:
         return sol, FF.iteration_diagnostics
@@ -340,13 +337,7 @@ def perform_fit(u, v, vis, weights, geom, rout, n, alpha, wsmooth, iter_tol,
         return [sol, None]
 
 
-def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
-                   bin_widths, output_format, save_prefix,
-                   save_profile_fit, save_vis_fit,
-                   save_uvtables, save_iteration_diag,
-                   full_plot, quick_plot, diag_plot,
-                   force_style=True, dist=None
-                   ):
+def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
     frank.io.save_fit, frank.make_figs.make_full_fig,
@@ -364,145 +355,159 @@ def output_results(u, v, vis, weights, sol, iteration_diag, iter_plot_range,
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-    iteration_diag : _HankelRegressor object
+    iteration_diagnostics : _HankelRegressor object
         Diagnostics of the fit iteration
         (see radial_fitters.FrankFitter.fit)
-    iter_plot_range : list or None
-        Range of iterations in the fit over which to
-        plot brightness profile and power spectrum reconstructions. If None,
-        then the full range will be plotted
-    bin_widths : list, unit = \lambda
-        Bin widths in which to bin the observed visibilities
-    save_prefix : string
-        Prefix for output filenames
-    save_profile_fit : bool
-        Whether to save fitted brightness profile
-    save_vis_fit : bool
-        Whether to save fitted visibility distribution
-    save_uvtables : bool
-        Whether to save fitted and residual UV tables.
-        NOTE: These are reprojected
-    save_iteration_diag : bool
-        Whether to save diagnostics of the fit iteration
-    full_plot : bool
-        Whether to make a figure more fully showing the fit and its
-        diagnostics
-    quick_plot : bool
-        Whether to make a figure showing the simplest plots of the fit
-    diag_plot : bool
-        Whether to make a figure showing convergence diagnostics for the fit
-    force_style: bool, default = True
-        Whether to use preconfigured matplotlib rcParams in generated figures
-    dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
+    model : dict
+        Dictionary containing model parameters the fit uses
+
+    Returns
+    -------
+    figs : Matplotlib `.Figure` instance
+        All produced figures, including the GridSpecs
+    axes : Matplotlib `~.axes.Axes` class
+        Axes for each of the produced figures
     """
 
     logging.info('  Plotting results')
 
-    figs = []
-    axes = []
+    figs, axes = [], []
 
-    if quick_plot:
-        logging.info('    Making quick figure')
-        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol, bin_widths, dist,
-                                                         force_style, save_prefix
+    if model['plotting']['quick_plot']:
+        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
+                                                         model['plotting']['bin_widths'],
+                                                         model['plotting']['dist'],
+                                                         model['plotting']['force_style'],
+                                                         model['input_output']['save_prefix']
                                                          )
 
         figs.append(quick_fig)
         axes.append(quick_axes)
 
-    if full_plot:
-        logging.info('    Making full figure')
-        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol, bin_widths, dist,
-                                                      force_style, save_prefix
+    if model['plotting']['full_plot']:
+        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
+                                                      model['plotting']['bin_widths'],
+                                                      model['plotting']['dist'],
+                                                      model['plotting']['force_style'],
+                                                      model['input_output']['save_prefix']
                                                       )
 
         figs.append(full_fig)
         axes.append(full_axes)
 
-    if diag_plot:
-        if iter_plot_range is not None:
-            if iter_plot_range[1] > iteration_diag['num_iterations']:
-                if iter_plot_range[0] < iteration_diag['num_iterations']:
-                    logging.info('    Upper limit of iteration plot range '
-                                 'exceeds number of iterations, truncating '
-                                 'to the number of iterations used')
-                    iter_plot_range = [iter_plot_range[0],
-                                       iteration_diag['num_iterations']]
-                else:
-                    logging.info('    Lower limit of iteration plot range '
-                                 'exceeds number of iterations, no iterations '
-                                 'will be plotted')
-                    iter_plot_range = [iteration_diag['num_iterations'],
-                                       iteration_diag['num_iterations']]
-
-        diag_fig, diag_axes = make_figs.make_diag_fig(sol.r, sol.q,
-                                                      iteration_diag,
-                                                      iter_plot_range,
-                                                      force_style, save_prefix
-                                                      )
+    if model['plotting']['diag_plot']:
+        diag_fig, diag_axes, iter_plot_range = make_figs.make_diag_fig(sol.r, sol.q,
+                                                                       iteration_diagnostics,
+                                                                       model['plotting']['iter_plot_range'],
+                                                                       model['plotting']['force_style'],
+                                                                       model['input_output']['save_prefix']
+                                                                       )
 
         figs.append(diag_fig)
         axes.append(diag_axes)
 
-    logging.info('  Saving results')
-
-    io.save_fit(u, v, vis, weights, sol, save_prefix,
-                save_profile_fit, save_vis_fit, save_uvtables,
-                save_iteration_diag, iteration_diag,
-                format=output_format
+    io.save_fit(u, v, vis, weights, sol,
+                model['input_output']['save_prefix'],
+                model['input_output']['save_solution'],
+                model['input_output']['save_profile_fit'],
+                model['input_output']['save_vis_fit'],
+                model['input_output']['save_uvtables'],
+                model['input_output']['iteration_diag'],
+                iteration_diagnostics,
+                model['input_output']['format']
                 )
 
-    return figs, axes
+    return figs, axes, model
+
+
+def perform_bootstrap(u, v, vis, weights, geom, model):
+    r"""
+    Perform a bootstrap analysis for the Franktenstein fit to a dataset
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    geom : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry)
+    model : dict
+        Dictionary containing model parameters the fit uses
+
+    Returns
+    -------
+    boot_fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    boot_axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+    profiles_bootstrap = []
+
+    for trial in range(model['analysis']['bootstrap_ntrials']):
+        logging.info(' Bootstrap trial {} of {}'.format(trial + 1,
+                                                 model['analysis']['bootstrap_ntrials']))
+
+        utilities.draw_bootstrap_sample(u, v, vis, weights)
+
+        sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, model)
+        profiles_bootstrap.append(sol.mean)
+
+    bootstrap_path = model['input_output']['save_prefix'] + \
+                        '_bootstrap.npz'
+
+    logging.info(' Bootstrap complete. Saving fitted brightness profiles and'
+                 ' the common set of collocation points')
+
+    np.savez(bootstrap_path, r=sol.r, profiles=np.array(profiles_bootstrap))
+
+    boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
+                                                        profiles_bootstrap,
+                                                        model['plotting']['dist'],
+                                                        model['plotting']['force_style'],
+                                                        model['input_output']['save_prefix']
+                                                        )
+
+    return boot_fig, boot_axes
 
 
 def main(*args):
-    """Run the frank pipeline
+    """Run the full Frankenstein pipeline to fit a dataset
 
     Parameters
     ----------
     *args : strings
-        Simulates the command-line arguments
+        Simulates the command line arguments
     """
-    model = parse_parameters(*args)
 
-    u, v, vis, weights = load_data(model['input_output']['uvtable_filename'])
+    model, param_path = parse_parameters(*args)
 
-    geom = determine_geometry(u, v, vis, weights,
-                              model['geometry']['inc'],
-                              model['geometry']['pa'],
-                              model['geometry']['dra'],
-                              model['geometry']['ddec'],
-                              model['geometry']['type'],
-                              model['geometry']['fit_phase_offset']
-                              )
+    u, v, vis, weights = load_data(model)
 
-    sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom,
-                                             model['hyperpriors']['rout'],
-                                             model['hyperpriors']['n'],
-                                             model['hyperpriors']['alpha'],
-                                             model['hyperpriors']['wsmooth'],
-                                             model['hyperpriors']['iter_tol'],
-                                             model['hyperpriors']['max_iter'],
-                                             model['input_output']['iteration_diag'],
-                                             model['plotting']['diag_plot']
-                                             )
+    if model['modify_data']['baseline_range'] or \
+    model['modify_data']['correct_weights']:
+        u, v, vis, weights, wcorr_estimate = alter_data(u, v, vis, weights, model)
 
-    figs, axes = output_results(u, v, vis, weights, sol, iteration_diagnostics,
-                          model['plotting']['iter_plot_range'],
-                          model['plotting']['bin_widths'],
-                          model['input_output']['format'],
-                          model['input_output']['save_prefix'],
-                          model['input_output']['save_profile_fit'],
-                          model['input_output']['save_vis_fit'],
-                          model['input_output']['save_uvtables'],
-                          model['input_output']['iteration_diag'],
-                          model['plotting']['full_plot'],
-                          model['plotting']['quick_plot'],
-                          model['plotting']['diag_plot'],
-                          model['plotting']['force_style'],
-                          model['plotting']['dist']
-                          )
+    geom = determine_geometry(u, v, vis, weights, model)
+
+    if model['analysis']['bootstrap_ntrials']:
+        boot_fig, boot_axes = perform_bootstrap(u, v, vis, weights, geom, model)
+        return boot_fig, boot_axes
+
+    else:
+        sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, model)
+
+        figs, axes, model = output_results(u, v, vis, weights, sol,
+                                    iteration_diagnostics, model
+                                    )
+
+        logging.info('  Updating {} with final parameters used in'
+                     ' fit'.format(param_path))
+        with open(param_path, 'w') as f:
+            json.dump(model, f, indent=4)
 
     logging.info("IT'S ALIVE!!\n")
 

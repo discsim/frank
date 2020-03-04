@@ -20,15 +20,21 @@
 Frankenstein fits.
 """
 
-from frank.utilities import sweep_profile
-
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Suppress some benign warnings
+import warnings
+warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+warnings.filterwarnings('ignore', '.*handles with labels found.*')
+
+from frank.utilities import sweep_profile
+
 
 def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
-                            ylolim=None
+                            ylolim=None, alpha=1., label='Frank'
                             ):
+    # TODO: take in (and move all these to) kwargs for standard plot params. do throughout script. then clean up docstrings
     """
     Plot a brightness profile as a function of disc radius, I(r)
 
@@ -49,9 +55,13 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
         Style of brightness profile line
     ylolim : float, default = None
         Lower limit of plot's y-axis. If None, it will be set by Matplotlib
+    alpha : float, default = 1.
+        Opaqueness of brightness profile line
+    label : float, default = 'Frank'
+        Label of brightness profile line in legend
     """
 
-    ax.plot(fit_r, fit_i / 1e10, c=c, ls=ls, label='Frank')
+    ax.plot(fit_r, fit_i / 1e10, c=c, ls=ls, alpha=alpha, label=label)
 
     ax.set_xlabel('r ["]')
     ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -62,6 +72,41 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
 
     if yscale == 'linear':
         ax.axhline(0, c='c', ls='--', zorder=10)
+
+
+def plot_confidence_interval(fit_r, low_bound, up_bound, ax, yscale='linear',
+                             c='r', ylolim=None, alpha=1., label=None):
+    """
+    Plot the confidence interval for a brightness profile fit
+
+    Parameters
+    ----------
+    fit_r : array
+        Radial data coordinates. The assumed unit (for the x-label) is arcsec
+    low_bound, up_bound : float
+        Lower and upper bound of confidence interval for brightness values at
+        fit_r. The assumed unit (for the y-label) is Jy / sr
+    ax : Matplotlib axis
+        Axis on which to plot the confidence interval
+    yscale : Matplotlib axis scale, default = 'linear'
+        Scale for y-axis
+    c : Matplotlib color, default = 'r'
+        Color of confidence interval region
+    ylolim : float, default = None
+        Lower limit of plot's y-axis. If None, it will be set by Matplotlib
+    alpha : float, default = 1.
+        Opaqueness of confidence interval region
+    label : float, default = None
+        Label of confidence interval in legend
+    """
+    ax.fill_between(fit_r, low_bound / 1e10, up_bound / 1e10, alpha=alpha, color=c, label=label)
+
+    ax.set_xlabel('r ["]')
+    ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax.set_yscale(yscale)
+    if ylolim:
+        ax.set_ylim(bottom=ylolim)
+    ax.legend()
 
 
 def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-',
@@ -247,6 +292,42 @@ def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
     if yscale == 'linear':
         ax.axhline(0, c='c', ls='--', zorder=10)
         ax.set_ylim(-2 * rmse, 2 * rmse)
+
+
+def plot_vis_hist(bin_edges, bin_counts, bin_width, ax, c): # TODO: just use hist
+    r"""
+    Plot a histogram of visibilities using a precomputed binning
+
+    Parameters
+    ----------
+    bin_edges : array
+        Sequential left and right edges (baselines) of each bin.
+        The assumed unit (for the x-label) is :math:`\lambda`
+    bin_counts : array
+        Number of visibilities in each bin
+    bin_width : float
+        Constant width of the bins.
+        The assumed unit (for the x-label and legend) is :math:`\lambda`
+    ax : Matplotlib axis
+        Axis on which to plot
+    c : Matplotlib color, default = 'k'
+        Color of bins
+    """
+
+    xs, ys = [], []
+    for l, r, y in zip(bin_edges[0], bin_edges[1], bin_counts):
+        xs.extend([l,r])
+        ys.extend([y,y])
+
+    ax.hlines(ys[::2], xmin=xs[::2], xmax=xs[1::2], color=c,
+              label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_width/1e3))
+    ax.fill_between(xs, ys, color=c, alpha=.5)
+
+    ax.set_xlabel(r'Baseline [$\lambda$]')
+    ax.set_ylabel('n')
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.legend()
 
 
 def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,

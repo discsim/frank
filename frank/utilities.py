@@ -23,11 +23,10 @@ results.
 import numpy as np
 from scipy.interpolate import interp1d
 
-
 def arcsec_baseline(x):
     """
     Provide x as a radial scale [arcsec] to return the corresponding baseline
-    [lambda], or vice-versa.
+    [lambda], or vice-versa
 
     Parameters
     ----------
@@ -167,6 +166,150 @@ class UVDataBinner(object):
     def bin_edges(self):
         """Edges of the histogram bins"""
         return [self._uv_left, self._uv_right]
+
+
+def normalize_uv(u, v, wle):
+    r"""
+    Normalize data u and v coordinates by the observing wavelength
+
+    Parameters
+    ----------
+    u, v : array, unit = [m]
+        u and v coordinates of observations
+    wle : float, unit = [m]
+        Observing wavelength of observations
+
+    Returns
+    -------
+    u_normed, v_normed : array, unit = :math:`\lambda`
+        u and v coordinates normalized by observing wavelength
+    """
+
+    u_normed = u / wle
+    v_normed = v / wle
+
+    return u_normed, v_normed
+
+
+def cut_data_by_baseline(u, v, vis, weights, cut_range):
+    r"""
+    Truncate the data to be within a chosen baseline range
+
+    Parameters
+    ----------
+    u, v : array, unit = [m]
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    cut_range : list of float, length = 2, unit = [\lambda]
+        Lower and upper baseline bounds outside of which visibilities are
+        truncated
+
+    Returns
+    -------
+    u_cut, v_cut : array, unit = :math:`\lambda`
+        u and v coordinates in the chosen baseline range
+    vis_cut : array, unit = Jy
+        Visibilities in the chosen baseline range
+    weights_cut : array, unit = Jy^-2
+        Weights in the chosen baseline range
+    """
+
+    baselines = np.hypot(u, v)
+    above_lo = baselines >= cut_range[0]
+    below_hi = baselines <= cut_range[1]
+    in_range = above_lo & below_hi
+    u_cut, v_cut, vis_cut, weights_cut = [x[in_range] for x in [u, v, vis, weights]]
+
+    return u_cut, v_cut, vis_cut, weights_cut
+
+
+def apply_correction_to_weights(u, v, ReV, weights, nbins=300): # TODO: should call func in utilities.py
+    r"""
+    Estimate and apply a correction factor to the data's weights by comparing
+    binnings of the real component of the visibilities under different
+    weightings. This is useful for mock datasets in which the weights are all
+    unity.
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+
+    ReV : array, unit = Jy
+        Real component of observed visibilities
+
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+
+    nbins : int, default=300
+        Number of bins used to construct the histograms
+
+    Returns
+    -------
+    wcorr_estimate : float
+        Correction factor by which to adjust the weights
+
+    weights_corrected : array, unit = Jy^-2
+        Corrected weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    """
+
+    baselines = np.hypot(u, v)
+    mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
+    mu2, edges = np.histogram(np.log10(baselines), weights=ReV ** 2, bins=nbins)
+    N, edges = np.histogram(np.log10(baselines), bins=nbins)
+
+    centres = 0.5 * (edges[1:] + edges[:-1])
+
+    mu /= np.maximum(N, 1)
+    mu2 /= np.maximum(N, 1)
+
+    sigma = (mu2 - mu ** 2) ** 0.5
+    wcorr_estimate = sigma[np.where(sigma > 0)].mean()
+
+    weights_corrected = weights / wcorr_estimate ** 2
+
+    return wcorr_estimate, weights_corrected
+
+
+def draw_bootstrap_sample(u, v, vis, weights):
+    r"""
+    Obtain the sample for a bootstrap, drawing, with replacement, N samples from
+    a length N dataset
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+          Weights on the visibilities, of the form
+          :math:`1 / \sigma^2`
+
+    Returns
+    -------
+    u_boot, v_boot : array, unit = :math:`\lambda`
+          Bootstrap sampled u and v coordinates
+    vis_boot : array, unit = Jy
+          Bootstrap sampled visibilities
+    weights_boot : array, unit = Jy^-2
+          Boostrap sampled weights on the visibilities
+    """
+    idxs = np.random.randint(low=0, high=len(u), size=len(u))
+
+    u_boot = u[idxs]
+    v_boot = v[idxs]
+    vis_boot = vis[idxs]
+    weights_boot = weights[idxs]
+
+    return u_boot, v_boot, vis_boot, weights_boot
+
 
 def sweep_profile(r, I, axis=0):
     r"""

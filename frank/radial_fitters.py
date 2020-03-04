@@ -5,6 +5,7 @@
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
+
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
@@ -20,13 +21,13 @@
    of deprojected visibities.
 """
 
-from frank.hankel import DiscreteHankelTransform
-from frank.constants import rad_to_arcsec, deg_to_rad
-
 import numpy as np
 import scipy.linalg
 import scipy.sparse
 from collections import defaultdict
+
+from frank.hankel import DiscreteHankelTransform
+from frank.constants import rad_to_arcsec, deg_to_rad
 
 
 class _HankelRegressor(object):
@@ -650,7 +651,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, weights=1):
+    def fit(self, u, v, V, weights=1, verbose=False):
         r"""
         Fit the visibilties
 
@@ -716,6 +717,9 @@ class FrankFitter(FourierBesselFitter):
         pi_old = 0
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
+            if verbose:
+                print('\r    FrankFitter iteration {}'.format(count), end='', flush=True)
+
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
             #       = (Ykm mu)**2

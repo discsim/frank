@@ -18,25 +18,29 @@
 #
 """This module generates figures for a Frankenstein fit and its diagnostics.
 """
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+import logging
+
+# Suppress some benign warnings
+import warnings
+warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+warnings.filterwarnings('ignore', '.*handles with labels found.*')
+
 from frank.utilities import UVDataBinner
 from frank.plot import (
     plot_brightness_profile,
-    plot_vis, plot_vis_fit, plot_vis_resid,
+    plot_confidence_interval,
+    plot_vis, plot_vis_fit, plot_vis_resid, plot_vis_hist,
     plot_profile_iterations,
     plot_2dsweep,
     plot_pwr_spec,
     plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
-
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
-
-# Suppress `plt.tight_layout()` warning
-import warnings
-warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
 
 # Global settings for plots
 cs = ['#a4a4a4', 'k', '#896360', 'b']
@@ -110,10 +114,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         The axes of the produced figure
     """
 
+    logging.info('    Making full figure')
+
     if force_style:
         frank_plotting_style()
 
     gs = GridSpec(3, 3, hspace=0)
+    gs1 = GridSpec(4, 3, hspace=0, top=.88)
     gs2 = GridSpec(3, 3, hspace=.35)
     fig = plt.figure(figsize=(8, 6))
 
@@ -126,22 +133,23 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax5 = fig.add_subplot(gs[7])
 
     ax6 = fig.add_subplot(gs[2])
-    ax7 = fig.add_subplot(gs[5])
-    ax8 = fig.add_subplot(gs[8])
+    ax7 = fig.add_subplot(gs1[5])
+    ax8 = fig.add_subplot(gs1[8])
+    ax9 = fig.add_subplot(gs1[11])
 
-    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
-    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+    ax0.text(.9, .6, 'a)', transform=ax0.transAxes)
+    ax1.text(.9, .6, 'b)', transform=ax1.transAxes)
     ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
 
     ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
     ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
-    ax5.text(.92, .9, 'f)', transform=ax5.transAxes)
+    ax5.text(.1, .7, 'f)', transform=ax5.transAxes)
+    ax6.text(.9, .6, 'g)', transform=ax6.transAxes)
+    ax7.text(.9, .6, 'h)', transform=ax7.transAxes)
+    ax8.text(.9, .6, 'i)', transform=ax8.transAxes)
+    ax9.text(.9, .6, 'j)', transform=ax9.transAxes)
 
-    ax6.text(.1, .65, 'g)', transform=ax6.transAxes)
-    ax7.text(.1, .5, 'h)', transform=ax7.transAxes)
-    ax8.text(.1, .7, 'i)', transform=ax8.transAxes)
-
-    axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8]
+    axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
     plot_brightness_profile(sol.r, sol.mean, ax0)
     plot_brightness_profile(sol.r, sol.mean, ax1, yscale='log', ylolim=1e-3)
@@ -156,9 +164,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
 
+    hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
     for i in range(len(bin_widths)):
-        binned_vis = UVDataBinner(
-            baselines, vis_deproj, weights, bin_widths[i])
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_im_kl = binned_vis.V.imag * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
@@ -177,13 +185,15 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                  marker2=ms[i], binwidth=bin_widths[i], yscale='log')
 
         plot_vis(binned_vis.uv, vis_im_kl,
-                 vis_err_im_kl, ax8, c=cs[i], marker=ms[i],
+                 vis_err_im_kl, ax9, c=cs[i], marker=ms[i],
                  binwidth=bin_widths[i], ylabel='Im(V) [mJy]')
 
         plot_vis_resid(binned_vis.uv, vis_re_kl,
                        sol.predict_deprojected(binned_vis.uv).real * 1e3, ax5,
                        c=cs[i], marker=ms[i], binwidth=bin_widths[i],
                        normalize_resid=False)
+
+        plot_vis_hist(binned_vis.bin_edges, binned_vis.bin_counts, bin_widths[i], ax8, c=hist_cs[i])
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3)
@@ -200,17 +210,20 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax6.set_xlim(xlims)
     ax7.set_xlim(xlims)
     ax8.set_xlim(xlims)
+    ax9.set_xlim(xlims)
 
     plt.setp(ax0.get_xticklabels(), visible=False)
     plt.setp(ax3.get_xticklabels(), visible=False)
     plt.setp(ax4.get_xticklabels(), visible=False)
     plt.setp(ax6.get_xticklabels(), visible=False)
     plt.setp(ax7.get_xticklabels(), visible=False)
+    plt.setp(ax8.get_xticklabels(), visible=False)
 
     plt.tight_layout()
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_full.png', dpi=600)
+        plt.close()
     else:
         plt.show()
 
@@ -251,6 +264,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info('    Making quick figure')
 
     if force_style:
         frank_plotting_style()
@@ -309,6 +324,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+        plt.close()
     else:
         plt.show()
 
@@ -336,7 +352,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         The iteration_diagnositics from FrankFitter
     N_iter : int
         Total number of iterations in the fit
-    iter_range : list
+    iter_plot_range : list
         Range of iterations in the fit over which to
         plot brightness profile and power spectrum reconstructions
     force_style: bool, default = True
@@ -351,6 +367,23 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info('    Making diagnostic figure')
+
+    if iter_plot_range is None:
+        logging.info("      diag_plot is 'true' in your parameter file but"
+                     " iter_plot_range is 'null' --> Defaulting to"
+                     " plotting all iterations")
+
+        iter_plot_range = [0, iteration_diagnostics['num_iterations']]
+
+    else:
+        if iter_plot_range[0] > iteration_diagnostics['num_iterations']:
+            logging.info('      iter_plot_range[0] in your parameter file'
+                         ' exceeds the number of fit iterations -->'
+                         ' Defaulting to plotting all iterations')
+
+            iter_plot_range = [0, iteration_diagnostics['num_iterations']]
 
     if force_style:
         frank_plotting_style()
@@ -380,9 +413,6 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     profile_iter = iteration_diagnostics['mean']
     pwr_spec_iter = iteration_diagnostics['power_spectrum']
     num_iter = iteration_diagnostics['num_iterations']
-
-    if iter_plot_range is None:
-        iter_plot_range = [0, num_iter]
 
     plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
 
@@ -417,6 +447,80 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
+        plt.close()
+    else:
+        plt.show()
+
+    return fig, axes, iter_plot_range
+
+
+def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
+                       save_prefix=None
+                       ):
+    r"""
+      Produce a figure showing a bootstrap analysis for a Frankenstein fit
+
+      Parameters
+      ----------
+      r : array, unit = arcsec
+        Single set of radial collocation points used in all bootstrap fits
+      profiles : array, unit = Jy / sr
+        Brightness profiles of all bootstrap fits
+      dist : float, optional, unit = AU, default = None
+        Distance to source, used to show second x-axis for brightness profile
+      force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+      save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+
+    logging.info(' Making bootstrap summary figure')
+
+    if force_style:
+        frank_plotting_style()
+
+    gs = GridSpec(2, 2, hspace=0)
+    fig = plt.figure(figsize=(8, 6))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax2 = fig.add_subplot(gs[2])
+
+    ax1 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[3])
+
+    axes = [ax0, ax1, ax2, ax3]
+
+    mean_profile = np.mean(profiles, axis=0)
+    std = np.std(profiles, axis=0)
+
+    plot_confidence_interval(r, mean_profile - std, mean_profile + std, ax2, alpha=.7, label='Stan. dev. of bootstrap trials')
+    plot_confidence_interval(r, mean_profile - std, mean_profile + std, ax3, alpha=.7)
+
+    for i in range(len(profiles)):
+      plot_brightness_profile(r, profiles[i], ax0, c='k', alpha=.2, label=None)
+      plot_brightness_profile(r, profiles[i], ax1, c='k', alpha=.2, label=None, yscale='log', ylolim=1.1e-4)
+
+    plot_brightness_profile(r, mean_profile, ax2, c='k', label='Mean of bootstrap trials')
+    plot_brightness_profile(r, mean_profile, ax3, c='k', label=None, yscale='log', ylolim=1.1e-4)
+
+    ax0.text(.6, .9, 'a) Bootstrap: {} trials'.format(len(profiles)),
+             transform=ax0.transAxes)
+    ax1.text(.9, .9, 'c)', transform=ax1.transAxes)
+    ax2.text(.9, .7, 'b)', transform=ax2.transAxes)
+    ax3.text(.9, .9, 'd)', transform=ax3.transAxes)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_bootstrap_analysis.png', dpi=600)
+        plt.close()
     else:
         plt.show()
 

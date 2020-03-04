@@ -2,6 +2,7 @@
   "input_output" : {
     "uvtable_filename" : "UVTable with data to be fit (columns: u, v, Re(V), Im(V), weights)",
     "save_dir"         : "Directory in which output datafiles and figures are saved",
+    "save_solution"    : "Whether to save `sol` object (see frank.radial_fitters.FrankFitter)",
     "save_profile_fit" : "Whether to save fitted brightness profile",
     "save_vis_fit"     : "Whether to save fitted visibility distribution",
     "save_uvtables"    : "Whether to save fitted and residual UV tables (these are reprojected)",
@@ -10,8 +11,8 @@
   },
 
   "modify_data" : {
-    "cut_data"         : "Whether to truncate the visibilities at a given maximum baseline prior to fitting",
-    "cut_baseline"     : "Maximum baseline at which visibilities are truncated"
+    "baseline_range"   : "Baseline range outside of which visibilities are truncated [\\lambda]",
+    "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)"
   },
 
   "geometry" : {
@@ -42,5 +43,9 @@
     "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
     "bin_widths"       : "Bin widths in which to bin the observed visibilities [\\lambda], list of float or int",
     "iter_plot_range"  : "Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]"
+  },
+
+  "analysis" : {
+    "bootstrap_ntrials": "Number of trials (dataset realizations) to perform in a bootstrap analysis"
   }
 }

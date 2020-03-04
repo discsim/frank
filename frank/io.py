@@ -24,7 +24,6 @@ import os
 import numpy as np
 import pickle
 
-
 def load_uvtable(data_file):
     r"""
     Read in a UVTable with data to be fit
@@ -45,7 +44,6 @@ def load_uvtable(data_file):
           Weights on the visibilities, of the form
           :math:`1 / \sigma^2`
     """
-    import os.path
     extension = os.path.splitext(data_file)[1]
 
     if extension in {'.txt', '.dat'}:
@@ -99,7 +97,7 @@ def save_uvtable(filename, u, v, vis, weights):
                         'V': 'Jy', 'weights': "Jy^-2"})
 
 
-def save_fit(u, v, vis, weights, sol, prefix,
+def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
              save_iteration_diag=True, iteration_diag=None,
              format='npz',
@@ -121,6 +119,8 @@ def save_fit(u, v, vis, weights, sol, prefix,
         (see frank.radial_fitters.FrankFitter)
     prefix : string
         Base part of the filename to which files will be saved
+    save_solution : bool
+        Whether to save `sol` object (see frank.radial_fitters.FrankFitter)
     save_profile_fit : bool
         Whether to save fitted brightness profile
     save_vis_fit : bool
@@ -138,11 +138,13 @@ def save_fit(u, v, vis, weights, sol, prefix,
         File format in which to save the fit's output UVTable(s)
     """
 
+
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")
 
-    with open(prefix + '_frank_sol.obj', 'wb') as f:
-        pickle.dump(sol, f)
+    if save_solution:
+        with open(prefix + '_frank_sol.obj', 'wb') as f:
+            pickle.dump(sol, f)
 
     if save_iteration_diag:
         with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f:
@@ -164,6 +166,7 @@ def save_fit(u, v, vis, weights, sol, prefix,
                      units={'uv': 'lambda', 'V': 'Jy'})
 
     if save_uvtables:
+
         V_pred = sol.predict(u, v)
 
         save_uvtable(prefix + '_frank_uv_fit.' + format,
