@@ -44,9 +44,6 @@ def load_uvtable(data_file):
           Weights on the visibilities, of the form
           :math:`1 / \sigma^2`
     """
-
-    logging.info('  Loading UVTable')
-
     extension = os.path.splitext(data_file)[1]
 
     if extension in {'.txt', '.dat'}:
@@ -170,8 +167,6 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
                      units={'uv': 'lambda', 'V': 'Jy'})
 
     if save_uvtables:
-        logging.info('    Saving fit and residual UVTables. N.B.: These will'
-                     ' be of comparable size to your input UVTable.')
 
         V_pred = sol.predict(u, v)
 
