@@ -22,7 +22,6 @@ results.
 
 import numpy as np
 from scipy.interpolate import interp1d
-import logging
 
 def arcsec_baseline(x):
     """
@@ -186,9 +185,6 @@ def normalize_uv(u, v, wle):
         u and v coordinates normalized by observing wavelength
     """
 
-    logging.info('  Normalizing u and v by observing wavelength of'
-                 ' {} m'.format(wle))
-
     u_normed = u / wle
     v_normed = v / wle
 
@@ -221,10 +217,6 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
     weights_cut : array, unit = Jy^-2
         Weights in the chosen baseline range
     """
-
-    logging.info('  Cutting data outside of the minmum and maximum baselines'
-                 ' of {} and {}'
-                 ' klambda'.format(cut_range[0] / 1e3, cut_range[1] / 1e3))
 
     baselines = np.hypot(u, v)
     above_lo = baselines >= cut_range[0]
@@ -266,8 +258,6 @@ def apply_correction_to_weights(u, v, ReV, weights, nbins=300): # TODO: should c
         Corrected weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     """
-
-    logging.info('  Estimating, applying correction factor to the weights') # TODO: should go in utilities.py
 
     baselines = np.hypot(u, v)
     mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
