@@ -46,8 +46,6 @@ def load_uvtable(data_file):
           :math:`1 / \sigma^2`
     """
 
-    logging.info('  Loading UVTable')
-
     extension = os.path.splitext(data_file)[1]
 
     if extension in {'.txt', '.dat'}:
@@ -141,8 +139,6 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
     format : string, default = 'npz'
         File format in which to save the fit's output UVTable(s)
     """
-
-    logging.info('  Saving results')
 
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")

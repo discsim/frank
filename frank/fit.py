@@ -191,6 +191,8 @@ def load_data(model):
         :math:`1 / \sigma^2`
     """
 
+    logging.info('  Loading UVTable')
+
     u, v, vis, weights = io.load_uvtable(
         model['input_output']['uvtable_filename'])
 
@@ -223,12 +225,19 @@ def alter_data(u, v, vis, weights, model):
     """
 
     if model['modify_data']['baseline_range']:
+        logging.info('  Cutting data outside of the minimum and maximum baselines'
+                     ' of {} and {}'
+                     ' klambda'.format(model['modify_data']['baseline_range'][0] / 1e3,
+                                       model['modify_data']['baseline_range'][1] / 1e3))
+
         u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
                                                             model['modify_data']['baseline_range']
                                                             )
 
     wcorr_estimate = None
     if model['modify_data']['correct_weights']:
+        logging.info('  Estimating, applying correction factor to visibility weights')
+
         wcorr_estimate, weights = utilities.apply_correction_to_weights(u, v,
                                                                         vis.real,
                                                                         weights
@@ -263,6 +272,12 @@ def determine_geometry(u, v, vis, weights, model):
 
     if model['geometry']['type'] == 'known':
         logging.info('    Using your provided geometry for deprojection')
+
+        if all(x == 0 for x in (model['geometry']['inc'], model['geometry']['pa'], model['geometry']['dra'], model['geometry']['ddec'])):
+            logging.info("      N.B.: All geometry parameters are 0 --> No geometry"
+                         " correction will be applied to the visibilities"
+                         )
+
         geom = geometry.FixedGeometry(model['geometry']['inc'],
                                       model['geometry']['pa'],
                                       model['geometry']['dra'],
@@ -270,6 +285,8 @@ def determine_geometry(u, v, vis, weights, model):
                                       )
 
     elif model['geometry']['type'] == 'gaussian':
+        t1 = time.time()
+
         if model['geometry']['fit_phase_offset']:
             geom = geometry.FitGeometryGaussian()
 
@@ -279,9 +296,18 @@ def determine_geometry(u, v, vis, weights, model):
 
         geom.fit(u, v, vis, weights)
 
+        logging.info('    Time taken for geometry %.1f sec' %
+                     (time.time() - t1))
+
     else:
         raise ValueError("geometry_type in your parameter file must be one of"
                          " 'known' or 'gaussian'")
+
+    logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
+                 '           dRA  = {:.2e} mas,\n'
+                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
+                                                       geom.dRA*1e3,
+                                                       geom.dDec*1e3))
 
     # Store geometry
     geom = geom.clone()
@@ -320,6 +346,8 @@ def perform_fit(u, v, vis, weights, geom, model):
     need_iterations = model['input_output']['iteration_diag'] or \
         model['plotting']['diag_plot']
 
+    logging.info('  Fitting for brightness profile')
+    t1 = time.time()
     FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
                                     N=model['hyperpriors']['n'],
                                     geometry=geom,
@@ -331,6 +359,12 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     )
 
     sol = FF.fit(u, v, vis, weights, verbose=True)
+
+    logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
+                 ' {:d} collocation points) {:.1f} sec'.format(len(u),
+                                                               model['hyperpriors']['n'],
+                                                               time.time() - t1)
+                                                               )
 
     if need_iterations:
         return sol, FF.iteration_diagnostics
@@ -406,6 +440,8 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
 
         figs.append(diag_fig)
         axes.append(diag_axes)
+
+    logging.info('  Saving fit result datafiles')
 
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],

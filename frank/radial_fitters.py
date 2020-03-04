@@ -27,7 +27,6 @@ import scipy.sparse
 import scipy.optimize
 from collections import defaultdict
 import logging
-import time
 
 from frank.hankel import DiscreteHankelTransform
 from frank.constants import rad_to_arcsec, deg_to_rad
@@ -694,9 +693,6 @@ class FrankFitter(FourierBesselFitter):
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
-        logging.info('  Fitting for brightness profile')
-        t1 = time.time()
-
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
         # Compute the smoothing matrix
@@ -765,7 +761,7 @@ class FrankFitter(FourierBesselFitter):
 
         if verbose:
             print()
-            
+
         if count < self._max_iter:
             logging.info('    Convergence criterion met at iteration'
                          ' {}'.format(count-1))
@@ -784,12 +780,6 @@ class FrankFitter(FourierBesselFitter):
         self._ps = pi
         self._ps_cov = None
         self._ps_cov_params = (fit, Tij, rho)
-
-        logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
-                     ' {:d} collocation points) {:.1f} sec'.format(len(u),
-                                                                   self.size,
-                                                                   time.time() - t1)
-                                                                   )
 
         return self._sol
 
