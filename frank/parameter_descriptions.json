@@ -46,6 +46,8 @@
   },
 
   "analysis" : {
-    "bootstrap_ntrials": "Number of trials (dataset realizations) to perform in a bootstrap analysis"
+    "bootstrap_ntrials": "Number of trials (dataset realizations) to perform in a bootstrap analysis",
+    "bootstrap_non_negative" : "Whether the mean (if false) or best fit nonnegative solution in used in the bootstrap"
+
   }
 }

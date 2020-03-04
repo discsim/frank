@@ -457,7 +457,10 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
         sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
-        profiles_bootstrap.append(sol.mean)
+        if model['analysis']['bootstrap_non_negative']:
+            profiles_bootstrap.append(sol.solve_non_negative())
+        else:
+            profiles_bootstrap.append(sol.mean)
 
     bootstrap_path = model['input_output']['save_prefix'] + \
         '_bootstrap.npz'
