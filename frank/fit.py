@@ -125,12 +125,7 @@ def parse_parameters(*args):
                      os.path.splitext(os.path.basename(uv_path))[0])
 
     log_path = save_prefix + '_frank_fit.log'
-    logging.basicConfig(level=logging.INFO,
-                        format='%(message)s',
-                        handlers=[
-                            logging.FileHandler(log_path, mode='w'),
-                            logging.StreamHandler()]
-                        )
+    frank.use_logging(log_path)
 
     logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))

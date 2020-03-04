@@ -17,3 +17,28 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
 __version__ = "0.1.0"
+
+
+def use_logging(log_file=None):
+    """Turn on internal logging for Frankenstein.
+    
+    Parameters
+    ----------
+    log_file : string, optional
+        Name of the file to write the logs to. If not provided, logs will only
+        be written to the screen.
+    """
+    import logging
+
+    if log_file is not None:
+        handlers = [ logging.FileHandler(log_file, mode='w'),
+                     logging.StreamHandler()
+                     ]
+    else:
+        handlers = [ logging.StreamHandler() ]
+    
+    logging.basicConfig(level=logging.INFO,
+                        format='%(message)s',
+                        handlers=handlers
+                        )
+
