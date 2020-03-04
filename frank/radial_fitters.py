@@ -19,7 +19,7 @@
 #
 """This module contains methods for fitting a radial brightness profile to a set
   of deprojected visibities.
-""""
+"""
 
 import numpy as np
 import scipy.linalg
