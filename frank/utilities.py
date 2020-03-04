@@ -27,7 +27,7 @@ from scipy.interpolate import interp1d
 def arcsec_baseline(x):
     """
     Provide x as a radial scale [arcsec] to return the corresponding baseline
-    [lambda], or vice-versa.
+    [lambda], or vice-versa
 
     Parameters
     ----------
@@ -167,6 +167,40 @@ class UVDataBinner(object):
     def bin_edges(self):
         """Edges of the histogram bins"""
         return [self._uv_left, self._uv_right]
+
+
+def draw_bootstrap_sample(u, v, vis, weights):
+    r"""
+    Obtain the sample for a bootstrap, drawing, with replacement, N samples from
+    a length N dataset
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+          u and v coordinates of observations
+    vis : array, unit = Jy
+          Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+          Weights on the visibilities, of the form
+          :math:`1 / \sigma^2`
+
+    Returns
+    -------
+    u_boot, v_boot : array, unit = :math:`\lambda`
+          Bootstrap sampled u and v coordinates
+    vis_boot : array, unit = Jy
+          Bootstrap sampled visibilities
+    weights_boot : array, unit = Jy^-2
+          Boostrap sampled weights on the visibilities
+    """
+    idxs = np.random.randint(low=0, high=len(u), size=len(u))
+
+    u_boot = u[idxs]
+    v_boot = v[idxs]
+    vis_boot = vis[idxs]
+    weights_boot = weights[idxs]
+
+    return u_boot, v_boot, vis_boot, weights_boot
 
 def sweep_profile(r, I, axis=0):
     r"""

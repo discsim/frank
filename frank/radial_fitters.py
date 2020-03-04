@@ -20,13 +20,13 @@
    of deprojected visibities.
 """
 
-from frank.hankel import DiscreteHankelTransform
-from frank.constants import rad_to_arcsec, deg_to_rad
-
 import numpy as np
 import scipy.linalg
 import scipy.sparse
 from collections import defaultdict
+
+from frank.hankel import DiscreteHankelTransform
+from frank.constants import rad_to_arcsec, deg_to_rad
 
 
 class _HankelRegressor(object):

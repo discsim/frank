@@ -2,16 +2,17 @@
   "input_output" : {
     "uvtable_filename" : "",
     "save_dir"         : "",
+    "save_solution"    : true,
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
-    "save_uvtables"    : false,
+    "save_uvtables"    : true,
     "iteration_diag"   : true,
     "format"           : null
   },
 
   "modify_data" : {
     "cut_data"         : false,
-    "cut_baseline"     : null,
+    "cut_range"        : null,
     "correct_weights"  : false,
     "norm_by_wle"      : false,
     "wle"              : null

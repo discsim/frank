@@ -18,9 +18,21 @@
 #
 """This module generates figures for a Frankenstein fit and its diagnostics.
 """
+
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
+
+# Suppress some benign warnings
+import warnings
+warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+warnings.filterwarnings('ignore', '.*handles with labels found.*')
+
 from frank.utilities import UVDataBinner
 from frank.plot import (
     plot_brightness_profile,
+    plot_confidence_interval,
     plot_vis, plot_vis_fit, plot_vis_resid,
     plot_profile_iterations,
     plot_2dsweep,
@@ -28,15 +40,6 @@ from frank.plot import (
     plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
-
-import os
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
-
-# Suppress `plt.tight_layout()` warning
-import warnings
-warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
 
 # Global settings for plots
 cs = ['#a4a4a4', 'k', '#896360', 'b']
@@ -196,9 +199,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                                binned_vis.bin_counts):
                 xs.extend([l,r])
                 ys.extend([y,y])
-            print('min ys %s'%np.min(ys))
-            print('argmin ys %s'%np.argmin(ys))
-            print('len ys %s'%len(ys))
+
             ax8.hlines(ys, xmin=xs[::2], xmax=xs[1::2], color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
             ax8.fill_between(xs, ys, color=hist_cs[i], alpha=.5)
             #'''
@@ -431,6 +432,77 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
+        plt.close()
+    else:
+        plt.show()
+
+    return fig, axes
+
+
+def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
+                       save_prefix=None
+                       ):
+    r"""
+      Produce a figure showing a bootstrap analysis for a Frankenstein fit
+
+      Parameters
+      ----------
+      r : array, unit = arcsec
+        Single set of radial collocation points used in all bootstrap fits
+      profiles : array, unit = Jy / sr
+        Brightness profiles of all bootstrap fits
+      dist : float, optional, unit = AU, default = None
+        Distance to source, used to show second x-axis for brightness profile
+      force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+      save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+
+    if force_style:
+        frank_plotting_style()
+
+    gs = GridSpec(2, 2, hspace=0)
+    fig = plt.figure(figsize=(8, 6))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax2 = fig.add_subplot(gs[2])
+
+    ax1 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[3])
+
+    axes = [ax0, ax1, ax2, ax3]
+
+    mean_profile = np.mean(profiles, axis=0)
+    std = np.std(profiles, axis=0)
+
+    plot_confidence_interval(r, mean_profile - std, mean_profile + std, ax2, alpha=.7, label='Stan. dev. of bootstrap trials')
+    plot_confidence_interval(r, mean_profile - std, mean_profile + std, ax3, alpha=.7)
+
+    for i in range(len(profiles)):
+      plot_brightness_profile(r, profiles[i], ax0, c='k', alpha=.2, label=None)
+      plot_brightness_profile(r, profiles[i], ax1, c='k', alpha=.2, label=None, yscale='log', ylolim=1.1e-4)
+
+    plot_brightness_profile(r, mean_profile, ax2, c='k', label='Mean of bootstrap trials')
+    plot_brightness_profile(r, mean_profile, ax3, c='k', label=None, yscale='log', ylolim=1.1e-4)
+
+    ax0.text(.6, .9, 'a) Bootstrap: {} trials'.format(len(profiles)),
+             transform=ax0.transAxes)
+    ax1.text(.9, .9, 'c)', transform=ax1.transAxes)
+    ax2.text(.9, .7, 'b)', transform=ax2.transAxes)
+    ax3.text(.9, .9, 'd)', transform=ax3.transAxes)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_bootstrap_analysis.png', dpi=600)
         plt.close()
     else:
         plt.show()

@@ -22,10 +22,10 @@
    NOTE: The sign convention used here is xx.
 """
 
-from frank.constants import rad_to_arcsec, deg_to_rad
-
 import numpy as np
 from scipy.optimize import least_squares
+
+from frank.constants import rad_to_arcsec, deg_to_rad
 
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
