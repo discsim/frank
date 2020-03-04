@@ -221,9 +221,6 @@ def alter_data(u, v, vis, weights, model):
     frank.utilities.apply_correction_to_weights)
     """
 
-    if model['modify_data']['norm_by_wle']:
-        u, v = utilities.normalize_uv(u, v, model['modify_data']['wle'])
-
     if model['modify_data']['baseline_range']:
         u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
                                                             model['modify_data']['baseline_range']
@@ -490,7 +487,7 @@ def main(*args):
 
     u, v, vis, weights = load_data(model)
 
-    if model['modify_data']['norm_by_wle'] or model['modify_data']['baseline_range'] or \
+    if model['modify_data']['baseline_range'] or \
     model['modify_data']['correct_weights']:
         u, v, vis, weights, wcorr_estimate = alter_data(u, v, vis, weights, model)
 

@@ -13,8 +13,6 @@
   "modify_data" : {
     "baseline_range"   : null,
     "correct_weights"  : false,
-    "norm_by_wle"      : false,
-    "wle"              : null
   },
 
   "geometry" : {

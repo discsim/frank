@@ -13,8 +13,6 @@
   "modify_data" : {
     "baseline_range"   : "Baseline range outside of which visibilities are truncated [\\lambda]",
     "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)",
-    "norm_by_wle"      : "Whether to normalize u and v by the observing wavelength",
-    "wle"              : "Observing wavelength [m]"
   },
 
   "geometry" : {
