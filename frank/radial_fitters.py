@@ -757,7 +757,10 @@ class FrankFitter(FourierBesselFitter):
                 self._iteration_diagnostics['mean'].append(fit.mean)
 
             count += 1
-
+            
+        if verbose:
+            print()
+            
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics['num_iterations'] = count
 
