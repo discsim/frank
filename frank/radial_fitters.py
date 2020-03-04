@@ -731,8 +731,9 @@ class FrankFitter(FourierBesselFitter):
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
 
-            print('\r    FrankFitter iteration {}'.format(count),
-                  end='', flush=True)
+            if logging.getLogger().isEnabledFor(logging.INFO):
+                print('\r    FrankFitter iteration {}'.format(count),
+                      end='', flush=True)
 
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
@@ -760,7 +761,8 @@ class FrankFitter(FourierBesselFitter):
 
             count += 1
 
-        print()
+        if logging.getLogger().isEnabledFor(logging.INFO):
+            print()
 
         if count < self._max_iter:
             logging.info('    Convergence criterion met at iteration'
