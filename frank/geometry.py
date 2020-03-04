@@ -24,6 +24,7 @@
 
 import numpy as np
 from scipy.optimize import least_squares
+import logging
 
 from frank.constants import rad_to_arcsec, deg_to_rad
 
@@ -304,6 +305,12 @@ class FitGeometryGaussian(SourceGeometry):
         weights : array of real, size=N, unit = Jy^-2
             Weights on the visibilities
         """
+
+        if self._phase_centre:
+            logging.info('    Fitting Gaussian to determine geometry'
+                         ' (not fitting for phase center)')
+        else:
+            logging.info('    Fitting Gaussian to determine geometry')
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
             u, v, V, weights, phase_centre=self._phase_centre)

@@ -125,12 +125,7 @@ def parse_parameters(*args):
                      os.path.splitext(os.path.basename(uv_path))[0])
 
     log_path = save_prefix + '_frank_fit.log'
-    logging.basicConfig(level=logging.INFO,
-                        format='%(message)s',
-                        handlers=[
-                            logging.FileHandler(log_path, mode='w'),
-                            logging.StreamHandler()]
-                        )
+    frank.enable_logging(log_path)
 
     logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
@@ -164,7 +159,7 @@ def parse_parameters(*args):
     param_path = save_prefix + '_frank_used_pars.json'
 
     logging.info(
-        '  Saving parameters to be used in fit to {}'.format(param_path))
+        '  Saving parameters used to {}'.format(param_path))
     with open(param_path, 'w') as f:
         json.dump(model, f, indent=4)
 
@@ -263,6 +258,15 @@ def determine_geometry(u, v, vis, weights, model):
 
     if model['geometry']['type'] == 'known':
         logging.info('    Using your provided geometry for deprojection')
+
+        if all(x == 0 for x in (model['geometry']['inc'],
+                                model['geometry']['pa'],
+                                model['geometry']['dra'],
+                                model['geometry']['ddec'])):
+            logging.info("      N.B.: All geometry parameters are 0 --> No geometry"
+                         " correction will be applied to the visibilities"
+                         )
+
         geom = geometry.FixedGeometry(model['geometry']['inc'],
                                       model['geometry']['pa'],
                                       model['geometry']['dra'],
@@ -270,6 +274,8 @@ def determine_geometry(u, v, vis, weights, model):
                                       )
 
     elif model['geometry']['type'] == 'gaussian':
+        t1 = time.time()
+
         if model['geometry']['fit_phase_offset']:
             geom = geometry.FitGeometryGaussian()
 
@@ -279,9 +285,18 @@ def determine_geometry(u, v, vis, weights, model):
 
         geom.fit(u, v, vis, weights)
 
+        logging.info('    Time taken for geometry %.1f sec' %
+                     (time.time() - t1))
+
     else:
         raise ValueError("geometry_type in your parameter file must be one of"
                          " 'known' or 'gaussian'")
+
+    logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
+                 '           dRA  = {:.2e} mas,\n'
+                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
+                                                       geom.dRA*1e3,
+                                                       geom.dDec*1e3))
 
     # Store geometry
     geom = geom.clone()
@@ -320,6 +335,7 @@ def perform_fit(u, v, vis, weights, geom, model):
     need_iterations = model['input_output']['iteration_diag'] or \
         model['plotting']['diag_plot']
 
+    t1 = time.time()
     FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
                                     N=model['hyperpriors']['n'],
                                     geometry=geom,
@@ -330,7 +346,13 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     store_iteration_diagnostics=need_iterations
                                     )
 
-    sol = FF.fit(u, v, vis, weights, verbose=True)
+    sol = FF.fit(u, v, vis, weights)
+
+    logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
+                 ' {:d} collocation points) {:.1f} sec'.format(len(u),
+                                                               model['hyperpriors']['n'],
+                                                               time.time() - t1)
+                 )
 
     if need_iterations:
         return sol, FF.iteration_diagnostics
@@ -397,12 +419,12 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
         axes.append(full_axes)
 
     if model['plotting']['diag_plot']:
-        diag_fig, diag_axes, iter_plot_range = make_figs.make_diag_fig(sol.r, sol.q,
-                                                                       iteration_diagnostics,
-                                                                       model['plotting']['iter_plot_range'],
-                                                                       model['plotting']['force_style'],
-                                                                       model['input_output']['save_prefix']
-                                                                       )
+        diag_fig, diag_axes, _ = make_figs.make_diag_fig(sol.r, sol.q,
+                                                         iteration_diagnostics,
+                                                         model['plotting']['iter_plot_range'],
+                                                         model['plotting']['force_style'],
+                                                         model['input_output']['save_prefix']
+                                                         )
 
         figs.append(diag_fig)
         axes.append(diag_axes)
@@ -495,7 +517,7 @@ def main(*args):
 
     if model['modify_data']['baseline_range'] or \
             model['modify_data']['correct_weights']:
-        u, v, vis, weights, wcorr_estimate = alter_data(
+        u, v, vis, weights, _ = alter_data(
             u, v, vis, weights, model)
 
     geom = determine_geometry(u, v, vis, weights, model)
@@ -512,8 +534,8 @@ def main(*args):
                                            iteration_diagnostics, model
                                            )
 
-        logging.info('  Updating {} with final parameters used in'
-                     ' fit'.format(param_path))
+        logging.info('  Updating {} with final parameters used'
+                     ''.format(param_path))
         with open(param_path, 'w') as f:
             json.dump(model, f, indent=4)
 

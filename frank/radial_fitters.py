@@ -18,7 +18,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
 """This module contains methods for fitting a radial brightness profile to a set
-   of deprojected visibities.
+  of deprojected visibities.
 """
 
 import numpy as np
@@ -26,6 +26,7 @@ import scipy.linalg
 import scipy.sparse
 import scipy.optimize
 from collections import defaultdict
+import logging
 
 from frank.hankel import DiscreteHankelTransform
 from frank.constants import rad_to_arcsec, deg_to_rad
@@ -466,6 +467,7 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
+        logging.info('    Building visibility matrices M and j')
 
         # Deproject the visibilities
         u, v, V = self._geometry.apply_correction(u, v, V)
@@ -531,6 +533,8 @@ class FourierBesselFitter(object):
         sol : _HankelRegressor
             Least-squares Fourier-Bessel series fit
         """
+        logging.info('  Fitting for brightness profile using'
+                     ' FourierBesselFitter')
 
         self._geometry.fit(u, v, V, weights)
 
@@ -662,7 +666,7 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
-    def fit(self, u, v, V, weights=1, verbose=False):
+    def fit(self, u, v, V, weights=1):
         r"""
         Fit the visibilties
 
@@ -685,6 +689,7 @@ class FrankFitter(FourierBesselFitter):
         MAP_sol : _HankelRegressor
             Reconstructed profile using maximum a posteriori power spectrum
         """
+        logging.info('  Fitting for brightness profile using FrankFitter')
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics = defaultdict(list)
@@ -728,9 +733,10 @@ class FrankFitter(FourierBesselFitter):
         pi_old = 0
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
-            if verbose:
-                print('\r    FrankFitter iteration {}'.format(
-                    count), end='', flush=True)
+
+            if logging.getLogger().isEnabledFor(logging.INFO):
+                print('\r    FrankFitter iteration {}'.format(count),
+                      end='', flush=True)
 
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
@@ -757,10 +763,18 @@ class FrankFitter(FourierBesselFitter):
                 self._iteration_diagnostics['mean'].append(fit.mean)
 
             count += 1
-            
-        if verbose:
+
+        if logging.getLogger().isEnabledFor(logging.INFO):
             print()
-            
+
+        if count < self._max_iter:
+            logging.info('    Convergence criterion met at iteration'
+                         ' {}'.format(count-1))
+        else:
+            logging.info('    Convergence criterion not met; fit stopped at'
+                         ' max_iter specified in your parameter file,'
+                         ' {}'.format(self._max_iter))
+
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics['num_iterations'] = count
 

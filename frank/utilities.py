@@ -19,7 +19,7 @@
 """This module has functions that are useful for plotting and analyzing fit
 results.
 """
-
+import logging
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -218,6 +218,11 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
         Weights in the chosen baseline range
     """
 
+    logging.info('  Cutting data outside of the minimum and maximum baselines'
+                 ' of {} and {}'
+                 ' klambda'.format(cut_range[0] / 1e3,
+                                   cut_range[1] / 1e3))
+
     baselines = np.hypot(u, v)
     above_lo = baselines >= cut_range[0]
     below_hi = baselines <= cut_range[1]
@@ -227,7 +232,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
     return u_cut, v_cut, vis_cut, weights_cut
 
 
-def apply_correction_to_weights(u, v, ReV, weights, nbins=300): # TODO: should call func in utilities.py
+def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
     r"""
     Estimate and apply a correction factor to the data's weights by comparing
     binnings of the real component of the visibilities under different
@@ -258,6 +263,8 @@ def apply_correction_to_weights(u, v, ReV, weights, nbins=300): # TODO: should c
         Corrected weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     """
+
+    logging.info('  Estimating, applying correction factor to visibility weights')
 
     baselines = np.hypot(u, v)
     mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
