@@ -259,7 +259,10 @@ def determine_geometry(u, v, vis, weights, model):
     if model['geometry']['type'] == 'known':
         logging.info('    Using your provided geometry for deprojection')
 
-        if all(x == 0 for x in (model['geometry']['inc'], model['geometry']['pa'], model['geometry']['dra'], model['geometry']['ddec'])):
+        if all(x == 0 for x in (model['geometry']['inc'],
+                                model['geometry']['pa'],
+                                model['geometry']['dra'],
+                                model['geometry']['ddec'])):
             logging.info("      N.B.: All geometry parameters are 0 --> No geometry"
                          " correction will be applied to the visibilities"
                          )
