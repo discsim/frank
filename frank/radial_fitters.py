@@ -684,7 +684,7 @@ class FrankFitter(FourierBesselFitter):
         self._geometry.fit(u, v, V, weights)
 
         #logging.info('  Fitting for brightness profile')
-        t1 = time.time()
+        #t1 = time.time()
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)

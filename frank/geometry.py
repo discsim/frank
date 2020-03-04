@@ -312,7 +312,7 @@ class FitGeometryGaussian(SourceGeometry):
             Weights on the visibilities
         """
 
-        t1 = time.time()
+        #t1 = time.time()
 
         #if self._phase_centre:
         #    logging.info('    Fitting Gaussian to determine geometry'
