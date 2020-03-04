@@ -48,6 +48,6 @@
   },
 
   "analysis" : {
-    "boostrap_ntrials" : null
+    "bootstrap_ntrials": null
   }
 }
