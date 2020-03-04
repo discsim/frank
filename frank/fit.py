@@ -21,6 +21,7 @@
    and output results. Alternatively a custom parameter file can be provided.
 """
 
+from frank import io, geometry, make_figs, radial_fitters, utilities
 import os
 import sys
 import time
@@ -30,8 +31,11 @@ import numpy as np
 import logging
 
 import frank
+<<<<<<< HEAD
 from frank import io, geometry, make_figs, radial_fitters, utilities
 
+=======
+>>>>>>> Added non-negative option
 frank_path = os.path.dirname(frank.__file__)
 
 
@@ -457,7 +461,10 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
         sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
-        profiles_bootstrap.append(sol.mean)
+        if model['analysis']['bootstrap_non_negative']:
+            profiles_bootstrap.append(sol.solve_non_negative())
+        else:
+            profiles_bootstrap.append(sol.mean)
 
     bootstrap_path = model['input_output']['save_prefix'] + \
         '_bootstrap.npz'

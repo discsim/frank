@@ -46,6 +46,7 @@
   },
 
   "analysis" : {
-    "bootstrap_ntrials": null
+    "bootstrap_ntrials": null,
+    "bootstrap_non_negative" : false
   }
 }

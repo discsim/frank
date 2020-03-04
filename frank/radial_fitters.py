@@ -24,6 +24,7 @@
 import numpy as np
 import scipy.linalg
 import scipy.sparse
+import scipy.optimize
 from collections import defaultdict
 
 from frank.hankel import DiscreteHankelTransform
@@ -246,6 +247,16 @@ class _HankelRegressor(object):
                 like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
 
         return like + self._like_noise
+
+    def solve_non_negative(self):
+        """Compute the best fit solution with non-negative intensities"""
+        Sinv = self._Sinv
+        if Sinv is None:
+            Sinv = 0
+
+        Dinv = self._M + Sinv
+        return scipy.optimize.nnls(Dinv, self._j,
+                                   maxiter=100*len(self._j))[0]
 
     def _predict(self, q, I, block_size):
         """Perform the visibility prediction"""
@@ -718,7 +729,8 @@ class FrankFitter(FourierBesselFitter):
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
             if verbose:
-                print('\r    FrankFitter iteration {}'.format(count), end='', flush=True)
+                print('\r    FrankFitter iteration {}'.format(
+                    count), end='', flush=True)
 
             # Project mu to Fourier-space
             #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
