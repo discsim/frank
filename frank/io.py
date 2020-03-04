@@ -23,7 +23,6 @@
 import os
 import numpy as np
 import pickle
-import logging
 
 def load_uvtable(data_file):
     r"""
