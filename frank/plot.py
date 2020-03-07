@@ -75,7 +75,7 @@ def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
 
 
 def plot_confidence_interval(fit_r, low_bound, up_bound, ax, yscale='linear',
-                             c='r', ylolim=None, alpha=1., label=None):
+                             c='r', ylolim=None, alpha=1., lw=0, label=None):
     """
     Plot the confidence interval for a brightness profile fit
 
@@ -99,7 +99,7 @@ def plot_confidence_interval(fit_r, low_bound, up_bound, ax, yscale='linear',
     label : float, default = None
         Label of confidence interval in legend
     """
-    ax.fill_between(fit_r, low_bound / 1e10, up_bound / 1e10, alpha=alpha, color=c, label=label)
+    ax.fill_between(fit_r, low_bound / 1e10, up_bound / 1e10, alpha=alpha, color=c, lw=lw, label=label)
 
     ax.set_xlabel('r ["]')
     ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')

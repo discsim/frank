@@ -50,34 +50,10 @@ ms = ['x', '+', '.', '1']
 
 def frank_plotting_style():
     """Apply custom alterations to the matplotlib style"""
-    import matplotlib as mpl
-    mpl.rcParams['font.size'] = 6
-    mpl.rcParams['axes.titlesize'] = 6
-    mpl.rcParams['axes.labelsize'] = 6
-    mpl.rcParams['xtick.labelsize'] = 6
-    mpl.rcParams['ytick.labelsize'] = 6
-    mpl.rcParams['legend.fontsize'] = 6
-    mpl.rcParams['lines.linewidth'] = .5
-    mpl.rcParams['lines.markersize'] = 2.
-    mpl.rcParams['lines.markeredgewidth'] = .5
-    mpl.rcParams['mathtext.default'] = 'regular'
-    mpl.rcParams['axes.formatter.min_exponent'] = 2
-    mpl.rcParams['axes.formatter.useoffset'] = False
-    mpl.rcParams['xtick.top'] = True
-    mpl.rcParams['xtick.major.size'] = 7
-    mpl.rcParams['xtick.minor.size'] = 3.5
-    mpl.rcParams['xtick.direction'] = 'inout'
-    mpl.rcParams['xtick.minor.visible'] = True
-    mpl.rcParams['ytick.right'] = True
-    mpl.rcParams['ytick.major.size'] = 7
-    mpl.rcParams['ytick.minor.size'] = 3.5
-    mpl.rcParams['ytick.direction'] = 'inout'
-    mpl.rcParams['ytick.minor.visible'] = True
-    mpl.rcParams['legend.frameon'] = False
-    mpl.rcParams['legend.handletextpad'] = 0.4
-    mpl.rcParams['figure.subplot.bottom'] = 0.07
-    mpl.rcParams['figure.subplot.top'] = 0.93
-    mpl.rcParams['errorbar.capsize'] = 5
+    import frank
+    frank_path = os.path.dirname(frank.__file__)
+    style_path = os.path.join(frank_path, 'frank.mplstyle')
+    plt.style.use(style_path)
 
 
 def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
