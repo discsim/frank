@@ -67,7 +67,7 @@ def test_hankel_gauss():
                                DHT.transform(Iq, q=r, direction='backward'),
                                atol=1e-4, rtol=0, err_msg="Generic Inverse DHT")
 
-    # Finally check the coefficients matrix works
+    # Check the coefficients matrix works
     Hf = DHT.coefficients(direction='forward')
     Hb = DHT.coefficients(direction='backward')
 
@@ -228,8 +228,7 @@ def test_uvbin():
 
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
 
-    # First job is to build a sub-set of the data that we want to load
-
+    # Build a subset of the data that we'll later load
     AS209, AS209_geometry = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
@@ -239,7 +238,7 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     uv_table = os.path.join(tmp_dir, 'small_uv.npz')
     save_uvtable(uv_table, u, v, vis, weights)
 
-    # Next build a paramterfile to work with
+    # Build a parameter file
     params = fit.load_default_parameters()
 
     params['input_output']['uvtable_filename'] = uv_table
@@ -258,12 +257,12 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     geom['dra'] = AS209_geometry.dRA
     geom['ddev'] = AS209_geometry.dDec
 
-    # Save our new parameterfile:
+    # Save the new parameter file
     param_file = os.path.join(tmp_dir, 'params.json')
     with open(param_file, 'w') as f:
         json.dump(params, f)
 
-    # Now call the pipeline to perform the fit
+    # Call the pipeline to perform the fit
     fit.main(['-p', param_file])
 
 

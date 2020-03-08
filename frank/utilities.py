@@ -105,8 +105,11 @@ class UVDataBinner(object):
                                             weights=tmp_wgt*tmp_vis.imag**2,
                                             minlength=nbins)
 
-        # Normalize
+        # Create a mask for empty bins
         idx = bin_n > 0
+        self._bin_mask = idx
+
+        # Normalize
         w = bin_wgt[idx]
         bin_vis[idx] /= w
         bin_uv[idx] /= w
@@ -126,6 +129,10 @@ class UVDataBinner(object):
         # Use a sensible error for bins with one baseline
         bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
             1 / np.sqrt(bin_wgt[idx1])
+
+        # Store all bins, including empty ones
+        self._unmasked_count = bin_n
+        self._unmasked_bins = bins
 
         # Mask the empty bins
         self._uv = bin_uv[idx]
@@ -166,6 +173,11 @@ class UVDataBinner(object):
     def bin_edges(self):
         """Edges of the histogram bins"""
         return [self._uv_left, self._uv_right]
+
+    @property
+    def unmasked_data(self):
+        """Unmasked data"""
+        return [self._unmasked_bins, self._unmasked_count, self._bin_mask]
 
 
 def normalize_uv(u, v, wle):
