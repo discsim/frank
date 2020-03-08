@@ -172,7 +172,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
+def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
                   force_style=True, save_prefix=None):
     r"""
       Produce a figure showing a Frankenstein fit and some useful diagnostics
@@ -191,6 +191,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         (see frank.radial_fitters.FrankFitter)
       bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+      hyperpriors : list, len = 2
+        Values for the :math:`\alpha` and :math:`w_{smooth}` hyperpriors
       dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis for brightness profile
       force_style: bool, default = True
@@ -213,7 +215,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     gs = GridSpec(3, 3, hspace=0)
     gs1 = GridSpec(4, 3, hspace=0, top=.88)
-    gs2 = GridSpec(3, 3, hspace=.35)
+    gs2 = GridSpec(3, 3, hspace=.35, left=.04)
     fig = plt.figure(figsize=(8, 6))
 
     ax0 = fig.add_subplot(gs[0])
@@ -255,7 +257,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ReV = sol.predict_deprojected(grid).real
     zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
-
     ax4.set_ylim(np.multiply(zoom_bounds, 1e3))
 
     hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
@@ -288,7 +289,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3,rmse))
 
-        plot_vis_hist(binned_vis.unmasked_data[0], binned_vis.unmasked_data[1], ax8, c=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        plot_vis_hist(binned_vis.unmasked_data[0], binned_vis.unmasked_data[1], ax8, color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax3, c='r', label='Frank')
@@ -296,7 +297,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     plot_vis_fit(grid, vis_fit_kl, ax6, c='r', label='Frank>0')
     plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='Frank<0')
 
-    plot_pwr_spec(sol.q, sol.power_spectrum, ax7)
+    plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(hyperpriors[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperpriors[1]))
 
     plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno')
 
@@ -306,15 +307,30 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax1.set_yscale('log')
     ax1.set_ylim(bottom=1e-3)
 
-    ax6.set_yscale('log')
-    ax6.set_ylim(bottom=1e-4)
+    ax2.set_xlabel('RA offset ["]')
+    ax2.set_ylabel('Dec offset ["]')
 
-    ax8.set_xlabel(r'Baseline [$\lambda$]')
-    ax8.set_ylabel('n')
+    ax3.set_ylabel('Re(V) [mJy]')
+    ax4.set_ylabel('Re(V) [mJy]')
+    ax5.set_ylabel('Residual [mJy]')
+    ax5.set_xlabel(r'Baseline [$\lambda$]')
+    ax3.set_xscale('log')
+    ax4.set_xscale('log')
+    ax5.set_xscale('log')
+
+    ax6.set_ylabel('Re(V) [mJy]')
+    ax7.set_ylabel(r'Power [Jy$^2$]')
+    ax8.set_ylabel('Count')
+    ax9.set_ylabel('Im(V) [mJy]')
+    ax9.set_xlabel(r'Baseline [$\lambda$]')
+    ax6.set_xscale('log')
+    ax6.set_yscale('log')
+    ax7.set_xscale('log')
+    ax7.set_yscale('log')
     ax8.set_xscale('log')
     ax8.set_yscale('log')
-
-    ax9.set_ylabel('Im(V) [mJy]')
+    ax9.set_xscale('log')
+    ax6.set_ylim(bottom=1e-4)
 
     xlims = ax3.get_xlim()
     ax4.set_xlim(xlims)
@@ -343,8 +359,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
 
 def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
-                  force_style=True, save_prefix=None
-                  ):
+                  force_style=True, save_prefix=None):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
 
@@ -422,20 +437,20 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     axes = [ax0, ax1, ax2, ax3, ax4]
 
     profile_iter = iteration_diagnostics['mean']
+    profile_iter_toplot = [x / 1e10 for x in profile_iter]
     pwr_spec_iter = iteration_diagnostics['power_spectrum']
     num_iter = iteration_diagnostics['num_iterations']
 
-    plot_profile_iterations(r, profile_iter, iter_plot_range, ax0)
+    plot_profile_iterations(r, profile_iter_toplot, iter_plot_range, ax0)
 
     # Plot the difference in the profile between the last 100 iterations
     iter_plot_range_end = [max(iter_plot_range[1] - 100, 0),
                            iter_plot_range[1] - 1]
 
-    plot_profile_iterations(r, np.diff(profile_iter, axis=0) * 1e5,
+    plot_profile_iterations(r, np.diff(profile_iter_toplot, axis=0),
                             iter_plot_range_end, ax1,
-                            cmap=plt.cm.cividis,    # pylint: disable=no-member
-                            ylabel=r'$I_i - I_{i-1}$ [$10^{5}$ Jy sr$^{-1}$]'
-                            )
+                            cmap=plt.cm.cividis)  # pylint: disable=no-member
+
 
     plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
@@ -443,10 +458,27 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
                              iter_plot_range_end, ax3,
                              cmap=plt.cm.cividis,  # pylint: disable=no-member
-                             ylabel=r'$PS_i - PS_{i-1}$ [Jy$^2$]', bbox_x=.45
-                             )
+                             bbox_x=.45)
 
-    plot_convergence_criterion(profile_iter, num_iter, ax4)
+    plot_convergence_criterion(profile_iter_toplot, num_iter, ax4, c='k')
+
+    ax0.set_ylabel(r'I [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_ylabel(r'$I_i - I_{i-1}$ [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_xlabel('r ["]')
+
+    ax2.set_ylabel(r'Power [Jy$^2$]')
+    ax3.set_ylabel(r'PS$_i$ - PS$_{i-1}$ [Jy$^2$]')
+    ax3.set_xlabel(r'Baseline [$\lambda$]')
+    ax2.set_xscale('log')
+    ax3.set_xscale('log')
+    ax2.set_yscale('log')
+    ax3.set_yscale('log')
+    ax3.set_ylim(bottom=1e-16)
+
+    ax4.set_xlabel('Fit iteration')
+    ax4.set_ylabel('Convergence criterion,\n' +
+                  r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
+    ax4.set_yscale('log')
 
     xlims = ax2.get_xlim()
     ax3.set_xlim(xlims)
@@ -466,23 +498,22 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
 
 def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
-                       save_prefix=None
-                       ):
+                       save_prefix=None):
     r"""
-      Produce a figure showing a bootstrap analysis for a Frankenstein fit
+    Produce a figure showing a bootstrap analysis for a Frankenstein fit
 
-      Parameters
-      ----------
-      r : array, unit = arcsec
-        Single set of radial collocation points used in all bootstrap fits
-      profiles : array, unit = Jy / sr
-        Brightness profiles of all bootstrap fits
-      dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
-      force_style: bool, default = True
-        Whether to use preconfigured matplotlib rcParams in generated figure
-      save_prefix : string, default = None
-        Prefix for saved figure name. If None, the figure won't be saved
+    Parameters
+    ----------
+    r : array, unit = arcsec
+    Single set of radial collocation points used in all bootstrap fits
+    profiles : array, unit = Jy / sr
+    Brightness profiles of all bootstrap fits
+    dist : float, optional, unit = AU, default = None
+    Distance to source, used to show second x-axis for brightness profile
+    force_style: bool, default = True
+    Whether to use preconfigured matplotlib rcParams in generated figure
+    save_prefix : string, default = None
+    Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
@@ -508,18 +539,17 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
 
     axes = [ax0, ax1, ax2, ax3]
 
-    ax1.set_yscale('log')
-    ax1.set_ylim(bottom=1e-4)
-
-    ax1.set_xlabel('r ["]')
-    ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
-    ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax0.text(.6, .9, 'a) Bootstrap: {} trials'.format(len(profiles)),
+             transform=ax0.transAxes)
+    ax1.text(.9, .7, 'b)', transform=ax1.transAxes)
+    ax2.text(.9, .9, 'c)', transform=ax2.transAxes)
+    ax3.text(.9, .7, 'd)', transform=ax3.transAxes)
 
     mean_profile = np.mean(profiles, axis=0)
     std = np.std(profiles, axis=0)
 
-    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) / 1e10, ax1, alpha=.7, label='Stan. dev. of bootstrap trials')
-    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) / 1e10, ax3, alpha=.7)
+    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) / 1e10, ax1, color='r', alpha=.7, label='Stan. dev. of trials')
+    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) / 1e10, ax3, color='r', alpha=.7, label='Stan. dev. of trials')
 
     for i in range(len(profiles)):
       plot_brightness_profile(r, profiles[i] / 1e10, ax0, c='k', alpha=.2)
@@ -528,11 +558,17 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
     plot_brightness_profile(r, mean_profile / 1e10, ax1, c='#35F9E1', label='Mean of trials')
     plot_brightness_profile(r, mean_profile / 1e10, ax3, c='#35F9E1', label='Mean of trials')
 
-    ax0.text(.6, .9, 'a) Bootstrap: {} trials'.format(len(profiles)),
-             transform=ax0.transAxes)
-    ax1.text(.9, .7, 'b)', transform=ax2.transAxes)
-    ax2.text(.9, .9, 'c)', transform=ax1.transAxes)
-    ax3.text(.9, .9, 'd)', transform=ax3.transAxes)
+    ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax2.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax3.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_xlabel('r ["]')
+    ax3.set_xlabel('r ["]')
+
+    ax2.set_yscale('log')
+    ax3.set_yscale('log')
+    ax2.set_ylim(bottom=1e-4)
+    ax3.set_ylim(bottom=1e-4)
 
     plt.tight_layout()
 

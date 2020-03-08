@@ -410,6 +410,8 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
     if model['plotting']['full_plot']:
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
                                                       model['plotting']['bin_widths'],
+                                                      [model['hyperpriors']['alpha'],
+                                                      model['hyperpriors']['wsmooth']],
                                                       model['plotting']['dist'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']

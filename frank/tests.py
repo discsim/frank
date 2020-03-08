@@ -227,8 +227,9 @@ def test_uvbin():
 
 
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
+    """Check the full pipeline that performs a fit and outputs results"""
 
-    # Build a subset of the data that we'll later load
+    # Build a subset of the data that we'll load during the fit
     AS209, AS209_geometry = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
@@ -255,7 +256,7 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     geom['inc'] = AS209_geometry.inc
     geom['pa'] = AS209_geometry.PA
     geom['dra'] = AS209_geometry.dRA
-    geom['ddev'] = AS209_geometry.dDec
+    geom['ddec'] = AS209_geometry.dDec
 
     # Save the new parameter file
     param_file = os.path.join(tmp_dir, 'params.json')
@@ -267,12 +268,15 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
 
 
 def test_pipeline_full_geom():
+    """Check the full fit pipeline when fitting for the disc's inc, PA, dRA, dDec"""
     _run_pipeline('gaussian', True)
 
 
 def test_pipeline_no_phase():
+    """Check the full fit pipeline when fitting for the disc's inc, PA"""
     _run_pipeline('gaussian', False)
 
 
 def test_pipeline_known_geom():
+    """Check the full fit pipeline when supplying a known disc geometry"""
     _run_pipeline('known')

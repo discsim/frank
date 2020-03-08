@@ -53,8 +53,7 @@ def plot_brightness_profile(fit_r, fit_i, ax, **kwargs):
     ax.legend()
 
 
-def plot_confidence_interval(fit_r, low_bound, up_bound, ax, yscale='linear',
-                             c='r', ylolim=None, alpha=1., lw=0, label=None):
+def plot_confidence_interval(fit_r, low_bound, up_bound, ax, **kwargs):
     """
     Plot the confidence interval for a brightness profile fit
 
@@ -69,13 +68,8 @@ def plot_confidence_interval(fit_r, low_bound, up_bound, ax, yscale='linear',
         Axis on which to plot
     """
 
-    ax.fill_between(fit_r, low_bound / 1e10, up_bound / 1e10, alpha=alpha, color=c, lw=lw, label=label)
+    ax.fill_between(fit_r, low_bound, up_bound, **kwargs)
 
-    ax.set_xlabel('r ["]')
-    ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
-    ax.set_yscale(yscale)
-    if ylolim:
-        ax.set_ylim(bottom=ylolim)
     ax.legend()
 
 
@@ -149,7 +143,7 @@ def plot_vis_resid(baselines, resid, ax, **kwargs):
     ax.axhline(0, c='c', ls='--', zorder=10)
 
 
-def plot_vis_hist(bins, counts, ax, **kwargs): # TODO: just use hist
+def plot_vis_hist(bins, counts, ax, **kwargs):
     r"""
     Plot a histogram of visibilities using a precomputed binning
 
@@ -162,16 +156,13 @@ def plot_vis_hist(bins, counts, ax, **kwargs): # TODO: just use hist
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
     """
-    print('bins',bins)
-    print('counts',counts)
-    ax.hist(bins[:-1], bins, weights=counts, alpha=.5)
+
+    ax.hist(bins[:-1], bins, weights=counts, alpha=.5, **kwargs)
 
     ax.legend()
 
 
-def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
-                  xscale='log', yscale='log'
-                  ):
+def plot_pwr_spec(baselines, pwr_spec, ax, **kwargs):
     r"""
     Plot the reconstructed power spectrum of a Frankenstein fit
 
@@ -187,20 +178,14 @@ def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
         Axis on which to plot
     """
 
-    ax.plot(baselines, pwr_spec, c=c, ls=ls)
+    ax.plot(baselines, pwr_spec, **kwargs)
 
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(r'Power [Jy$^2$]')
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
-
-    if ylolim:
-        ax.set_ylim(bottom=ylolim)
+    ax.legend()
 
 
-def plot_convergence_criterion(profile_iter, N_iter, ax):
+def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
     r"""
-    Plot a generic convergence criterion for a Frankenstein fit,
+    Plot the following convergence criterion for a Frankenstein fit,
         :math:`{\rm max}(|$I_i - I_{i-1}$|) / {\rm max}($I_i$)`,
     where $I_i$ is the brightness profile at iteration $i$
 
@@ -222,13 +207,7 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
             np.max(profile_iter[i])
         convergence_criterion.append(this_conv_cri)
 
-    ax.plot(range(0, N_iter), convergence_criterion, 'k')
-
-    ax.set_xlabel('Fit iteration')
-    ax.set_ylabel('Convergence criterion,\n' +
-                  r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
-
-    ax.set_yscale('log')
+    ax.plot(range(0, N_iter), convergence_criterion, **kwargs)
 
 
 def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
@@ -254,11 +233,9 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
     from mpl_toolkits.axes_grid1.inset_locator import inset_axes
     axins1 = inset_axes(ax, width="50%", height="5%", loc=loc,
                         bbox_to_anchor=(bbox_x, bbox_y, 1, 1),
-                        bbox_transform=ax.transAxes
-                        )
+                        bbox_transform=ax.transAxes)
     sm = plt.cm.ScalarMappable(cmap=cmap,
-                               norm=plt.Normalize(vmin=vmin, vmax=vmax)
-                               )
+                               norm=plt.Normalize(vmin=vmin, vmax=vmax))
     cbar = plt.colorbar(sm, cax=axins1, orientation="horizontal")
     cbar.set_label(label)
     axins1.xaxis.set_ticks_position("bottom")
@@ -266,9 +243,7 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
 
 def plot_profile_iterations(r, profile_iter, n_iter, ax,
                             cmap=plt.cm.cool,  # pylint: disable=no-member
-                            ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]',
-                            bbox_x=-.02, bbox_y=-.1
-                            ):
+                            bbox_x=-.02, bbox_y=-.1, **kwargs):
     r"""
     Plot a fit's brightness profile reconstruction over a chosen range of
     the fit's iterations
@@ -287,8 +262,6 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
         Axis on which to plot
     cmap : plt.cm colormap, default=plt.cm.cool
         Colormap to apply to the overplotted profiles
-    ylabel : string, default = r'I [10$^{10}$ Jy sr$^{-1}$]'
-        y-label of the plot
     bbox_x, bbox_y : float, default = -0.02 and -0.1
         x- and y-value where the colorbar is placed
     """
@@ -298,24 +271,18 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
-        ax.plot(r, profile_iter[i] / 1e10, c=cmap(i / len(iter_range)))
-    ax.plot(r, profile_iter[-1] / 1e10, ':', c='k', label='Last iteration')
+        ax.plot(r, profile_iter[i], c=cmap(i / len(iter_range)), **kwargs)
+    ax.plot(r, profile_iter[-1], ':', c='k', label='Last iteration', **kwargs)
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y
-                  )
+                  label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y)
 
-    ax.legend(loc='upper right')
-
-    ax.set_xlabel('r ["]')
-    ax.set_ylabel(ylabel)
+    ax.legend()
 
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
                              cmap=plt.cm.cool,  # pylint: disable=no-member
-                             ylabel=r'Power [Jy$^2$]',
-                             bbox_x=.05, bbox_y=.175
-                             ):
+                             bbox_x=.05, bbox_y=.175, **kwargs):
     r"""
     Plot a fit's power spectrum reconstruction over a chosen range of
     the fit's iterations
@@ -334,31 +301,22 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
         Axis on which to plot
     cmap : plt.cm colormap, default=plt.cm.cool
         Colormap to apply to the overplotted power spectra
-    ylabel : string, default = r'Power [Jy$^2$]'
-        y-label of the plot
     bbox_x, bbox_y : float, default = 0.05 and 0.175
         x- and y-value where the colorbar is placed
     """
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
-        ax.plot(q, pwr_spec_iter[i], c=cmap(i / len(iter_range)))
-    ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration')
+        ax.plot(q, pwr_spec_iter[i], c=cmap(i / len(iter_range)), **kwargs)
+    ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration', **kwargs)
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y
-                  )
+                  label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y)
 
-    ax.legend(loc='upper right')
-
-    ax.set_ylim(bottom=1.1e-16)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(ylabel)
+    ax.legend()
 
 
-def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
+def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -383,13 +341,10 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
     I2D /= 1e10
 
     ax.imshow(I2D, origin='lower', extent=[xmax, -xmax, -ymax, ymax], vmin=vmin,
-              vmax=vmax, cmap=cmap
+              vmax=vmax, cmap=cmap, **kwargs
               )
 
-    ax.set_xlabel('RA offset ["]')
-    ax.set_ylabel('Dec offset ["]')
-
-    # set a normalization and colormap for the colorbar
+    # Set a normalization and colormap for the colorbar
     import matplotlib.colors as mpl_cs
     from matplotlib import cm
     norm = mpl_cs.Normalize(vmin=I2D.min(), vmax=I2D.max())

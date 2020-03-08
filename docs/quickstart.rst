@@ -99,8 +99,7 @@ and :math:`{\rm tol}` is the tolerance (`iter_tol`) in your parameter file.
 This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.
 If this stopping condition is not met, the fit runs until `max_iter` as set in your parameter file. |br|
 **b)** Sequential difference between the last 100 brightness profile iterations.
-Note the y-scale here is :math:`10^5\ {\rm Jy\ sr}^{-1}`, as opposed to :math:`10^{10}\ {\rm Jy\ sr}^{-1}` in (a).
-So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at a part in :math:`10^6`.
+So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at parts in :math:`10^6`.
 |br|
 **c)** The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 250` iterations,
