@@ -23,6 +23,7 @@ interpreting its results, and hosts the code's API.
     Quickstart <quickstart>
     Tutorials <tutorials>
     Papers using frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
+    Code extensions being explored <code_versions>
 
 .. toctree::
    :maxdepth: 1
@@ -55,4 +56,4 @@ Contact
 #######
 Interested in collaborating to improve, extend or apply frank?
 Or just have questions about the code that don't require submitting an issue on GitHub?
-`Email Jeff! <jmj51@ast.cam.ac.uk>`_
+`Email Jeff! <jmj51@ast.cam.ac.uk>`_ 
