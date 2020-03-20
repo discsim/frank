@@ -32,7 +32,7 @@ def _check_and_warn_if_parallel():
     num_threads = int(os.environ.get('OMP_NUM_THREADS', '1'))
     if num_threads > 1:
         logging.warning("WARNING: You are running frank with "
-                        "OMP_NUM_THREADS={}.".format(num_threads) +
+                        "OMP_NUM_THREADS={}. ".format(num_threads) +
                         "The code will likely run faster on a single thread.")
 
 import numpy as np
