@@ -27,8 +27,13 @@ import time
 import json
 
 # Force frank to run on a single thread if we are using it as a library
-if __name__ == "__main__":
-    os.environ.get('OMP_NUM_THREADS', '1')
+def _check_and_warn_if_parallel():
+    """Check numpy is running in parallel"""
+    num_threads = int(os.environ.get('OMP_NUM_THREADS', '1'))
+    if num_threads > 1:
+        logging.warning("WARNING: You are running frank with "
+                        "OMP_NUM_THREADS={}.".format(num_threads) +
+                        "The code will likely run faster on a single thread.")
 
 import numpy as np
 
@@ -132,6 +137,11 @@ def parse_parameters(*args):
     log_path = save_prefix + '_frank_fit.log'
     frank.enable_logging(log_path)
 
+    # Check whether the code runs in parallel now that the logging has been
+    # initialized.
+    _check_and_warn_if_parallel()
+
+    
     logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
