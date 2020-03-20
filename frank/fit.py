@@ -33,7 +33,9 @@ def _check_and_warn_if_parallel():
     if num_threads > 1:
         logging.warning("WARNING: You are running frank with "
                         "OMP_NUM_THREADS={}.".format(num_threads) +
-                        "The code will likely run faster on a single thread.")
+                        "The code will likely run faster on a single thread.\n"
+                        "Use unset OMP_NUM_THREADS or export OMP_NUM_THREADS=1"
+                        " to disable this warning.")
 
 import numpy as np
 
