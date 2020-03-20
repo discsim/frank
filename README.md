@@ -4,7 +4,7 @@
 </p>
 -->
 
-You stumble through the vacant laboratory, candelabra in hand, and suddenly _**gasp!**_ your goblet echoes against the aged stone floor. You've discovered Frankenstein before his release! Imagine for a moment the _terror_, the _horror_, of a monster not yet complete! Please check back soon (hopefully in mid/late March), or if you haven't the time to wait, [email Jeff](mailto:jmj51@ast.cam.ac.uk) to begin using the code sooner. Thanks!
+**WARNING** Though you've found this repo, the code isn't quite released yet! v1.0 will be concurrent with the arXiv posting of the code's methods paper (we aim for April). Please [email Jeff](mailto:jmj51@ast.cam.ac.uk) if you'd like to use the code before then. Thanks!
 
 <p align="center">
   <img width = "800" src="https://4.bp.blogspot.com/-pd5FC25Qv1E/TtkaQcZ2wgI/AAAAAAAAB4k/5AMux-W14T4/s1600/34-crop-horz.jpg"/>
