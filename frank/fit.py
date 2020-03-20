@@ -28,7 +28,6 @@ import json
 
 # Force frank to run on a single thread if we are using it as a library
 if __name__ == "__main__":
-    if 'OMP_NUM_THREADS' not in os.environ:
     os.environ.get('OMP_NUM_THREADS', '1')
 
 import numpy as np
