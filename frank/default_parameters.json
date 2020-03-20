@@ -26,7 +26,7 @@
 
   "hyperpriors" : {
     "n"                : 300,
-    "rout"             : 2.0,
+    "rout"             : 3.0,
     "alpha"            : 1.05,
     "p0"               : 1e-15,
     "wsmooth"          : 1e-4,
