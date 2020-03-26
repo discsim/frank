@@ -66,44 +66,14 @@ class UVDataBinner(object):
         nbins = np.ceil(uv.max() / bin_width).astype('int')
         bins = np.arange(nbins+1, dtype='float64') * bin_width
 
-        # Initialize binned data
-        bin_n = np.zeros(nbins, dtype='int64')
-        bin_uv = np.zeros(nbins, dtype='float64')
-        bin_wgt = np.zeros(nbins, dtype='float64')
+        self._bins = bins
+        self._nbins = nbins
+        self._norm =  1 / bin_width
 
-        bin_vis = np.zeros(nbins, dtype='complex64')
-        bin_vis_err = np.zeros(nbins, dtype='complex64')
-
-        norm = 1 / bin_width
-
-        # Use blocking for speed and reduced memory usage
-        BLOCK = 65536
-        for i in range(0, len(uv), BLOCK):
-            tmp_uv = uv[i:i+BLOCK]
-            tmp_vis = V[i:i+BLOCK]
-            tmp_wgt = weights[i:i+BLOCK]
-
-            idx = np.floor(tmp_uv * norm).astype('int32')
-
-            # Only the last bin includes its edge
-            increment = (tmp_uv >= bins[idx+1]) & (idx+1 != nbins)
-            idx[increment] += 1
-
-            bin_n += np.bincount(idx, minlength=nbins)
-            bin_wgt += np.bincount(idx, weights=tmp_wgt, minlength=nbins)
-            bin_uv += np.bincount(idx, weights=tmp_wgt*tmp_uv, minlength=nbins)
-
-            bin_vis.real += np.bincount(idx, weights=tmp_wgt*tmp_vis.real,
-                                        minlength=nbins)
-            bin_vis.imag += np.bincount(idx, weights=tmp_wgt*tmp_vis.imag,
-                                        minlength=nbins)
-
-            bin_vis_err.real += np.bincount(idx,
-                                            weights=tmp_wgt*tmp_vis.real**2,
-                                            minlength=nbins)
-            bin_vis_err.imag += np.bincount(idx,
-                                            weights=tmp_wgt*tmp_vis.imag**2,
-                                            minlength=nbins)
+        bin_uv, bin_wgt, bin_vis, bin_n = \
+            self.bin_quantities(uv, weights, 
+                               uv, np.ones_like(uv), V, 
+                               bin_counts=True)
 
         # Normalize
         idx = bin_n > 0
@@ -111,19 +81,16 @@ class UVDataBinner(object):
         bin_vis[idx] /= w
         bin_uv[idx] /= w
 
-        bin_vis_err[idx] /= w
+        # Compute the uncertainty on the means:
+        w_sqd, w_sqd_V, w_sqd_V2 = \
+            self.bin_quantities(uv, weights**2, 
+                               np.ones_like(uv), V, (V.real**2 + 1j*V.imag**2))
 
-
-        # Compute the variance for cells with 2 or more data points
-        idx1 = bin_n == 1
-        idx2 = idx & ~idx1
-
-        bin_vis_err[idx2].real = \
-            np.sqrt(bin_vis_err[idx2].real - bin_vis[idx2].real**2)
-        bin_vis_err[idx2].imag = \
-            np.sqrt(bin_vis_err[idx2].imag - bin_vis[idx2].imag**2)
-
+        bin_vis_err = (w_sqd_V2 - 2*bin_vis*w_sqd_V + w_sqd*bin_vis**2)
+        bin_vis_err /= np.maximum(bin_wgt**2, 1) * (1 - 1 /np.maximum(bin_n, 2))
+        
         # Use a sensible error for bins with one baseline
+        idx1 = bin_n == 1
         bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
             1 / np.sqrt(bin_wgt[idx1])
 
@@ -136,6 +103,67 @@ class UVDataBinner(object):
 
         self._uv_left = bins[:-1][idx]
         self._uv_right = bins[1:][idx]
+
+    def bin_quantities(self, uv, w, *quantities, bin_counts=False):
+        """Bin the given quantities according the to uv points and weights.
+
+        Parameters
+        ----------
+        uv : array, unit = :math:`\lambda`
+            Baselines of the data to bin
+        weights : array, unit = Jy^-2
+            Weights on the visibility points
+        quantities : arrays,
+            Quantities evaluated at the uv points to bin.
+        bin_counts : bool, default=False
+            Determines whether to count the number of uv points per bin.
+        
+        Returns
+        -------
+        results : arrays, same type as quantities
+            Binned data
+        bin_counts : array, int64, optional
+            If bin_counts=True, then this array contains the number of uv 
+            points in each bin. Otherwise, it is not returned.
+        """
+        bins = self._bins
+        nbins = self._nbins
+        norm = self._norm
+
+        results = [np.zeros(nbins, dtype=x.dtype) for x in quantities]
+
+        if bin_counts:
+            counts = np.zeros(nbins, dtype='int64')
+
+        BLOCK = 65536
+        for i in range(0, len(uv), BLOCK):
+            tmp_uv = uv[i:i+BLOCK]
+            tmp_wgt = w[i:i+BLOCK]
+
+            idx = np.floor(tmp_uv * norm).astype('int32')
+
+            # Only the last bin includes its edge
+            increment = (tmp_uv >= bins[idx+1]) & (idx+1 != nbins)
+            idx[increment] += 1
+            
+            if bin_counts:
+                counts += np.bincount(idx, minlength=nbins)
+
+            for qty, res in zip(quantities, results):
+                tmp_qty = tmp_wgt*qty[i:i+BLOCK]
+
+                if np.iscomplexobj(qty):
+                    res.real += np.bincount(idx, weights=tmp_qty.real,
+                                            minlength=nbins)
+                    res.imag += np.bincount(idx, weights=tmp_qty.imag,
+                                            minlength=nbins)
+                else:
+                    res += np.bincount(idx, weights=tmp_qty, minlength=nbins)
+
+        if bin_counts:
+            return results + [counts]
+        return results
+
 
     @property
     def uv(self):
@@ -267,11 +295,9 @@ def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
     logging.info('  Estimating, applying correction factor to visibility weights')
 
     baselines = np.hypot(u, v)
-    mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
-    mu2, edges = np.histogram(np.log10(baselines), weights=ReV ** 2, bins=nbins)
-    N, edges = np.histogram(np.log10(baselines), bins=nbins)
-
-    centres = 0.5 * (edges[1:] + edges[:-1])
+    mu, _ = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
+    mu2, _ = np.histogram(np.log10(baselines), weights=ReV ** 2, bins=nbins)
+    N, _ = np.histogram(np.log10(baselines), bins=nbins)
 
     mu /= np.maximum(N, 1)
     mu2 /= np.maximum(N, 1)
