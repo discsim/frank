@@ -86,8 +86,16 @@ class UVDataBinner(object):
             self.bin_quantities(uv, weights**2, 
                                np.ones_like(uv), V, (V.real**2 + 1j*V.imag**2))
 
-        bin_vis_err = (w_sqd_V2 - 2*bin_vis*w_sqd_V + w_sqd*bin_vis**2)
-        bin_vis_err /= np.maximum(bin_wgt**2, 1) * (1 - 1 /np.maximum(bin_n, 2))
+        real_err = (w_sqd_V2.real - 2*bin_vis.real*w_sqd_V.imag 
+                        + w_sqd*bin_vis.real**2)
+        imag_err = (w_sqd_V2.imag - 2*bin_vis.imag*w_sqd_V.imag 
+                        + w_sqd*bin_vis.real**2)
+
+        denom = np.maximum(bin_wgt**2, 1) * (1 - 1 /np.maximum(bin_n, 2))
+        real_err /= denom
+        imag_err /= denom
+
+        bin_vis_err = np.sqrt(real_err) + 1.j * np.sqrt(imag_err)
         
         # Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
