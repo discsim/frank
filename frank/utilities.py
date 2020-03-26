@@ -89,13 +89,16 @@ class UVDataBinner(object):
         real_err = (w_sqd_V2.real - 2*bin_vis.real*w_sqd_V.imag 
                         + w_sqd*bin_vis.real**2)
         imag_err = (w_sqd_V2.imag - 2*bin_vis.imag*w_sqd_V.imag 
-                        + w_sqd*bin_vis.real**2)
+                        + w_sqd*bin_vis.imag**2)
 
         denom = np.maximum(bin_wgt**2, 1) * (1 - 1 /np.maximum(bin_n, 2))
         real_err /= denom
         imag_err /= denom
 
-        bin_vis_err = np.sqrt(real_err) + 1.j * np.sqrt(imag_err)
+        idx2 = bin_n > 2
+        bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
+        bin_vis_err[idx2] = \
+            np.sqrt(real_err[idx2]) + 1.j * np.sqrt(imag_err[idx2])
         
         # Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
