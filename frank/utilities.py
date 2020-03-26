@@ -78,17 +78,17 @@ class UVDataBinner(object):
         # Normalize
         idx = bin_n > 0
         w = bin_wgt[idx]
-        bin_vis[idx] /= w
         bin_uv[idx] /= w
+        bin_vis[idx] /= w
 
         # Compute the uncertainty on the means:
-        #   1) Get the binned mean for each vis:
         bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
 
+        #   1) Get the binned mean for each vis:
         i = np.floor(uv * self._norm).astype('int32')
         increment = (uv >= bins[i+1]) & (i+1 != nbins)
         i[increment] += 1
-        mu = bin_uv[i]
+        mu = bin_vis[i]
 
         #   2) Compute weighted error for bins with n > 1
         err = self.bin_quantities(uv, weights**2, 
