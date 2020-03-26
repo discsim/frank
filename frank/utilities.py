@@ -82,25 +82,25 @@ class UVDataBinner(object):
         bin_uv[idx] /= w
 
         # Compute the uncertainty on the means:
-        w_sqd, w_sqd_V, w_sqd_V2 = \
-            self.bin_quantities(uv, weights**2, 
-                               np.ones_like(uv), V, (V.real**2 + 1j*V.imag**2))
-
-        real_err = (w_sqd_V2.real - 2*bin_vis.real*w_sqd_V.imag 
-                        + w_sqd*bin_vis.real**2)
-        imag_err = (w_sqd_V2.imag - 2*bin_vis.imag*w_sqd_V.imag 
-                        + w_sqd*bin_vis.imag**2)
-
-        denom = bin_wgt**2 * (1 - 1 /np.maximum(bin_n, 2))
-        real_err /= denom
-        imag_err /= denom
-
-        idx2 = bin_n > 2
+        #   1) Get the binned mean for each vis:
         bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
+
+        i = np.floor(uv * self._norm).astype('int32')
+        increment = (uv >= bins[i+1]) & (i+1 != nbins)
+        i[increment] += 1
+        mu = bin_uv[i]
+
+        #   2) Compute weighted error for bins with n > 1
+        err = self.bin_quantities(uv, weights**2, 
+                                  (V-mu).real**2 + 1j * (V-mu).imag**2)
+
+        idx2 = bin_n > 1
+        err[idx2] /= (bin_wgt**2 * (1 - 1 / np.maximum(bin_n, 2)))[idx2]
+
         bin_vis_err[idx2] = \
-            np.sqrt(real_err[idx2]) + 1.j * np.sqrt(imag_err[idx2])
+            np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
         
-        # Use a sensible error for bins with one baseline
+        #   3) Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
         bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
             1 / np.sqrt(bin_wgt[idx1])
@@ -116,7 +116,7 @@ class UVDataBinner(object):
         self._uv_right = bins[1:][idx]
 
     def bin_quantities(self, uv, w, *quantities, bin_counts=False):
-        """Bin the given quantities according the to uv points and weights.
+        r"""Bin the given quantities according the to uv points and weights.
 
         Parameters
         ----------
@@ -173,6 +173,8 @@ class UVDataBinner(object):
 
         if bin_counts:
             return results + [counts]
+        if len(results) == 1:
+            return results[0]
         return results
 
 
