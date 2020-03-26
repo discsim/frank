@@ -91,7 +91,7 @@ class UVDataBinner(object):
         imag_err = (w_sqd_V2.imag - 2*bin_vis.imag*w_sqd_V.imag 
                         + w_sqd*bin_vis.imag**2)
 
-        denom = np.maximum(bin_wgt**2, 1) * (1 - 1 /np.maximum(bin_n, 2))
+        denom = bin_wgt**2 * (1 - 1 /np.maximum(bin_n, 2))
         real_err /= denom
         imag_err /= denom
 
