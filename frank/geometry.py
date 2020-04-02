@@ -104,15 +104,15 @@ def deproject(u, v, inc, PA, inverse=False):
     sin_t = np.sin(PA)
 
     if inverse:
+        sin_t *= -1
         u /= np.cos(inc)
-        up = u * cos_t + v * sin_t
-        vp = -u * sin_t + v * cos_t
-        return up, vp
 
     up = u * cos_t - v * sin_t
     vp = u * sin_t + v * cos_t
+
     #   Deproject
-    up *= np.cos(inc)
+    if not inverse:
+        up *= np.cos(inc)
 
     return up, vp
 

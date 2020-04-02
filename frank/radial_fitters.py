@@ -277,8 +277,7 @@ class _HankelRegressor(object):
 
         return np.concatenate(V)
 
-    def predict(self, u, v, I=None, geometry=None, block_size=10**5,
-                undo_deprojection=False):
+    def predict(self, u, v, I=None, geometry=None, block_size=10**5):
         r"""
         Predict the visibilities in the sky-plane
 
@@ -296,9 +295,6 @@ class _HankelRegressor(object):
             fit will be used
         block_size : int, default = 10**5
             Maximum matrix size used in the visibility calculation
-        undo_deprojection: bool, default = True
-            Whether to return u and v reprojected (at the same coordinates as
-            an input UVTable, for example)
 
         Returns
         -------
@@ -323,15 +319,8 @@ class _HankelRegressor(object):
         if geometry is not None:
             V *= np.cos(geometry.inc * deg_to_rad)
 
-        if undo_deprojection:
-            # Return reprojected u, v, and phase-centered V
-            u, v, V = geometry.undo_correction(u, v, V)
-            return u, v, V
-
-        else:
-            # Just return phase-centered V
-            _, _, V = geometry.undo_correction(u, v, V)
-            return V
+        _, _, V = geometry.undo_correction(u, v, V)
+        return V
 
     def predict_deprojected(self, q=None, I=None, geometry=None,
                             block_size=10**5):
