@@ -278,7 +278,7 @@ class _HankelRegressor(object):
         return np.concatenate(V)
 
     def predict(self, u, v, I=None, geometry=None, block_size=10**5,
-                undo_deprojection=True):
+                undo_deprojection=False):
         r"""
         Predict the visibilities in the sky-plane
 
@@ -324,12 +324,12 @@ class _HankelRegressor(object):
             V *= np.cos(geometry.inc * deg_to_rad)
 
         if undo_deprojection:
-            # Undo deprojection and phase centering
+            # Return reprojected u, v, and phase-centered V
             u, v, V = geometry.undo_correction(u, v, V)
             return u, v, V
 
         else:
-            # Just undo phase centering
+            # Just return phase-centered V
             _, _, V = geometry.undo_correction(u, v, V)
             return V
 
