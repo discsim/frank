@@ -176,7 +176,7 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
 
         V_pred = sol.predict(u, v)
 
-        save_uvtable(prefix + '_frank_uv_fit2.' + format,
+        save_uvtable(prefix + '_frank_uv_fit.' + format,
                      u, v, V_pred, weights)
-        save_uvtable(prefix + '_frank_uv_resid2.' + format,
+        save_uvtable(prefix + '_frank_uv_resid.' + format,
                      u, v, vis - V_pred, weights)
