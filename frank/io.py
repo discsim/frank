@@ -52,6 +52,9 @@ def load_uvtable(data_file):
     base, extension = os.path.splitext(data_file)
     if extension in {'.gz', '.bz2'}:
         extension = os.path.splitext(base)[1]
+        if extension not in {'.txt', '.dat'}:
+            raise ValueError("Compressed UV tables (`.gz` or `.bz2`) must be in "
+                             "one of the formats `.txt` or `.dat`.")
 
     if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
@@ -65,7 +68,7 @@ def load_uvtable(data_file):
         raise ValueError("You provided a UVTable with the extension {}."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`. Formats .txt and .dat may optionally be"
-                         " compressed (.gz, .bz2).".format(extension))
+                         " compressed (`.gz`, `.bz2`).".format(extension))
 
     return u, v, vis, weights
 
