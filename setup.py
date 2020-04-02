@@ -10,6 +10,7 @@ setup(
     name="frank",
     version=version,
     packages=find_packages(),
+    include_package_data=True,
     author="Richard Booth, Jeff Jennings, Marco Tazzari",
     author_email="jmj51@ast.cam.ac.uk",
     description="Frankenstein, the flux reconstructor",

@@ -1,5 +1,5 @@
 include README.md AUTHORS.rst LICENSE.txt
-global-include default_parameters.json parameter_descriptions.json
+global-include default_parameters.json parameter_descriptions.json frank.mplstyle
 prune docs
 prune tutorials
 prune .ci
