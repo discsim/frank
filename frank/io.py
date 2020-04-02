@@ -65,7 +65,7 @@ def load_uvtable(data_file):
         raise ValueError("You provided a UVTable with the extension {}."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`. Formats .txt and .dat may optionally be"
-                         " compressed (.gz, .bgz2).".format(extension))
+                         " compressed (.gz, .bz2).".format(extension))
 
     return u, v, vis, weights
 
