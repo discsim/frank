@@ -174,9 +174,9 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
         logging.info('    Saving fit and residual UVTables. N.B.: These will'
                      ' be of comparable size to your input UVTable')
 
-        V_pred = sol.predict(u, v)
+        u_reproj, v_reproj, V_pred = sol.predict(u, v, undo_deprojection=True)
 
         save_uvtable(prefix + '_frank_uv_fit.' + format,
-                     u, v, V_pred, weights)
+                     u_reproj, v_reproj, V_pred, weights)
         save_uvtable(prefix + '_frank_uv_resid.' + format,
-                     u, v, vis - V_pred, weights)
+                     u_reproj, v_reproj, vis - V_pred, weights)
