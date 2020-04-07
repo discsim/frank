@@ -52,7 +52,7 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     inverse : bool, default=False
         If True, the visibilities are uncentered (the phase shift undone)
         rather than centered
-        
+
     Returns
     -------
     shifted_vis : array of real, size = N, unit = Jy
@@ -105,15 +105,15 @@ def deproject(u, v, inc, PA, inverse=False):
     sin_t = np.sin(PA)
 
     if inverse:
+        sin_t *= -1
         u /= np.cos(inc)
-        up = u * cos_t + v * sin_t
-        vp = -u * sin_t + v * cos_t
-        return up, vp
 
     up = u * cos_t - v * sin_t
     vp = u * sin_t + v * cos_t
-    #   De-project
-    up *= np.cos(inc)
+
+    #   Deproject
+    if not inverse:
+        up *= np.cos(inc)
 
     return up, vp
 
@@ -418,4 +418,5 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
         dRA, dDec = phase_centre
 
     geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
+
     return geometry

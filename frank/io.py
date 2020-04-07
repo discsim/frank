@@ -48,7 +48,13 @@ def load_uvtable(data_file):
 
     logging.info('  Loading UVTable')
 
-    extension = os.path.splitext(data_file)[1]
+    # Get extension removing compressed part
+    base, extension = os.path.splitext(data_file)
+    if extension in {'.gz', '.bz2'}:
+        extension = os.path.splitext(base)[1]
+        if extension not in {'.txt', '.dat'}:
+            raise ValueError("Compressed UV tables (`.gz` or `.bz2`) must be in "
+                             "one of the formats `.txt` or `.dat`.")
 
     if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
@@ -61,7 +67,8 @@ def load_uvtable(data_file):
     else:
         raise ValueError("You provided a UVTable with the extension {}."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
-                         " `.npz`.".format(extension))
+                         " `.npz`. Formats .txt and .dat may optionally be"
+                         " compressed (`.gz`, `.bz2`).".format(extension))
 
     return u, v, vis, weights
 
@@ -161,9 +168,10 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
-        np.savetxt(prefix + '_frank_vis_fit.txt',
+        np.savetxt(prefix + '_frank_vis_fit.' + format,
                    np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
                    header='Baseline [lambda]\tProjected Re(V) [Jy]')
+
 
     if save_uvtables:
         logging.info('    Saving fit and residual UVTables. N.B.: These will'
