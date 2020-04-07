@@ -616,7 +616,7 @@ class FrankFitter(FourierBesselFitter):
     max_iter: int, default = 2000
         Maximum number of fit iterations
     check_qbounds: bool, default = True
-        Whether to confirm that the first (last) collocation point is smaller
+        Whether to check if the first (last) collocation point is smaller
         (larger) than the shortest (longest) deprojected baseline in the dataset
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
