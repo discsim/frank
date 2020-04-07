@@ -206,9 +206,9 @@
 <h2>Geometry classes<a class="headerlink" href="#geometry-classes" title="Permalink to this headline">¶</a></h2>
 <p>Given a set of visibilities, together these classes: <strong>(1)</strong> optionally fit for the source geometry and
 <strong>(2)</strong> deproject the visibilities by the given or fitted geometry.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="frank.geometry.FixedGeometry">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FixedGeometry</code><span class="sig-paren">(</span><em class="sig-param">inc</em>, <em class="sig-param">PA</em>, <em class="sig-param">dRA=0.0</em>, <em class="sig-param">dDec=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FixedGeometry" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FixedGeometry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inc</span></em>, <em class="sig-param"><span class="n">PA</span></em>, <em class="sig-param"><span class="n">dRA</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">dDec</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FixedGeometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Disc Geometry class using pre-determined parameters.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
@@ -225,9 +225,9 @@ NOTE: The sign convention is xx</p></li>
 </dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="frank.geometry.FitGeometryGaussian">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param">phase_centre=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a Gaussian in Fourier space.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
@@ -239,9 +239,9 @@ centre should be provided as a tuple</p>
 </dl>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="frank.geometry.SourceGeometry">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">SourceGeometry</code><span class="sig-paren">(</span><em class="sig-param">inc=None</em>, <em class="sig-param">PA=None</em>, <em class="sig-param">dRA=None</em>, <em class="sig-param">dDec=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">SourceGeometry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">PA</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dRA</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dDec</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for geometry corrections.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
@@ -256,9 +256,9 @@ NOTE: The sign convention is xx</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="frank.geometry.SourceGeometry.apply_correction">
-<code class="sig-name descname">apply_correction</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">apply_correction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Correct the phase centre and deproject the visibilities</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -279,15 +279,15 @@ NOTE: The sign convention is xx</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.geometry.SourceGeometry.deproject">
-<code class="sig-name descname">deproject</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">deproject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert uv-points from sky-plane to deprojected space</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.geometry.SourceGeometry.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em>, <em class="sig-param">weights</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em>, <em class="sig-param"><span class="n">weights</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine geometry using the provided uv-data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -301,15 +301,15 @@ NOTE: The sign convention is xx</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.geometry.SourceGeometry.reproject">
-<code class="sig-name descname">reproject</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">reproject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert uv-points from deprojected space to sky-plane</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.geometry.SourceGeometry.undo_correction">
-<code class="sig-name descname">undo_correction</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.undo_correction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">undo_correction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.undo_correction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Undo the phase centre correction and deprojection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -337,9 +337,9 @@ NOTE: The sign convention is xx</p></li>
 <h2>Fitting classes<a class="headerlink" href="#fitting-classes" title="Permalink to this headline">¶</a></h2>
 <p>Together these classes reconstruct the 1D radial brightness profile of a source by fitting
 the deprojected visibilities.</p>
-<dl class="class">
+<dl class="py class">
 <dt id="frank.radial_fitters.FrankFitter">
-<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param">Rmax</em>, <em class="sig-param">N</em>, <em class="sig-param">geometry</em>, <em class="sig-param">nu=0</em>, <em class="sig-param">block_data=True</em>, <em class="sig-param">block_size=100000</em>, <em class="sig-param">alpha=1.05</em>, <em class="sig-param">p_0=1e-15</em>, <em class="sig-param">weights_smooth=0.0001</em>, <em class="sig-param">tol=0.001</em>, <em class="sig-param">max_iter=1500</em>, <em class="sig-param">store_iteration_diagnostics=False</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">nu</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">block_data</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1.05</span></em>, <em class="sig-param"><span class="n">p_0</span><span class="o">=</span><span class="default_value">1e-15</span></em>, <em class="sig-param"><span class="n">weights_smooth</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">check_qbounds</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">store_iteration_diagnostics</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
 Baddour &amp; Chouinard (2015).</p>
 <p>The GP model is based upon Oppermann et al. (2013), which use a maximum
@@ -363,8 +363,10 @@ coefficients</p></li>
 coefficients</p></li>
 <li><p><strong>weights_smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-4</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
 <li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 1500</em>) – Maximum number of fit iterations</p></li>
-<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to store the power spectrum parameters and brightness profile
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 2000</em>) – Maximum number of fit iterations</p></li>
+<li><p><strong>check_qbounds</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to check if the first (last) collocation point is smaller
+(larger) than the shortest (longest) deprojected baseline in the dataset</p></li>
+<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
 for each fit iteration</p></li>
 </ul>
 </dd>
@@ -376,39 +378,39 @@ for each fit iteration</p></li>
 <dt>Oppermann et al. (2013)</dt><dd><p>DOI:  <a class="reference external" href="https://doi.org/10.1103/PhysRevE.87.032136">https://doi.org/10.1103/PhysRevE.87.032136</a></p>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.MAP_solution">
 <em class="property">property </em><code class="sig-name descname">MAP_solution</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_solution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reconstruction for the maximum a posteriori power spectrum</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.MAP_spectrum">
 <em class="property">property </em><code class="sig-name descname">MAP_spectrum</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum a posteriori power spectrum</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.MAP_spectrum_covariance">
 <em class="property">property </em><code class="sig-name descname">MAP_spectrum_covariance</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariance matrix of the maximum a posteriori power spectrum</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.Qmax">
 <em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Qmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.Rmax">
 <em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Rmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">V</em>, <em class="sig-param">weights=1</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the visibilties</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -431,25 +433,25 @@ each fit iteration, and number of iterations</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.geometry">
 <em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometry object</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.q">
 <em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.r">
 <em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.r" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.size">
 <em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
@@ -457,9 +459,9 @@ each fit iteration, and number of iterations</p></li>
 
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="frank.radial_fitters._HankelRegressor">
-<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">_HankelRegressor</code><span class="sig-paren">(</span><em class="sig-param">DHT</em>, <em class="sig-param">M</em>, <em class="sig-param">j</em>, <em class="sig-param">p=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">noise_likelihood=0</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">_HankelRegressor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">DHT</span></em>, <em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="n">p</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">noise_likelihood</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves the linear regression problem to compute the posterior,</p>
 <div class="math notranslate nohighlight">
 \[P(I|q,V,p) \propto G(I-\mu, D),\]</div>
@@ -511,33 +513,33 @@ missing constant</p>
 </ul>
 </dd>
 </dl>
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.Qmax">
 <em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Qmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.Rmax">
 <em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Rmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.covariance">
 <em class="property">property </em><code class="sig-name descname">covariance</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Posterior covariance, unit = (Jy / sr)**2</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.geometry">
 <em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometry object</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.log_likelihood">
-<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param">I=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">I</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute one of two types of likelihood.</p>
 <p>If <span class="math notranslate nohighlight">\(I\)</span> is provided, this computes</p>
 <p>Otherwise the marginalized likelihood is computed,</p>
@@ -570,21 +572,21 @@ missing constant</p>
 <p>is the noise likelihood.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.mean">
 <em class="property">property </em><code class="sig-name descname">mean</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Posterior mean, unit = Jy / sr</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.power_spectrum">
 <em class="property">property </em><code class="sig-name descname">power_spectrum</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.power_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectrum coefficients</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">I=None</em>, <em class="sig-param">geometry=None</em>, <em class="sig-param">block_size=100000</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">I</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -610,19 +612,19 @@ centre determined by the geometry object</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.q">
 <em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.r">
 <em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.r" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.size">
 <em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
@@ -634,9 +636,9 @@ centre determined by the geometry object</p>
 <div class="section" id="plotting-functions-figure-generation">
 <h2>Plotting functions: Figure generation<a class="headerlink" href="#plotting-functions-figure-generation" title="Permalink to this headline">¶</a></h2>
 <p>These functions make the figures frank will produce when <code class="code docutils literal notranslate"><span class="pre">quick_plot</span></code>, <code class="code docutils literal notranslate"><span class="pre">full_plot</span></code> and/or <code class="code docutils literal notranslate"><span class="pre">diag_plot</span></code> are <code class="code docutils literal notranslate"><span class="pre">True</span></code> in your parameter file.</p>
-<dl class="function">
+<dl class="py function">
 <dt id="frank.make_figs.make_quick_fig">
-<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_quick_fig</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">vis</em>, <em class="sig-param">weights</em>, <em class="sig-param">sol</em>, <em class="sig-param">bin_widths</em>, <em class="sig-param">dist=None</em>, <em class="sig-param">force_style=True</em>, <em class="sig-param">save_prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_quick_fig" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_quick_fig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">vis</span></em>, <em class="sig-param"><span class="n">weights</span></em>, <em class="sig-param"><span class="n">sol</span></em>, <em class="sig-param"><span class="n">bin_widths</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_style</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_quick_fig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a simple figure showing just a Frankenstein fit, not any diagnostics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -663,9 +665,9 @@ centre determined by the geometry object</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.make_figs.make_full_fig">
-<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_full_fig</code><span class="sig-paren">(</span><em class="sig-param">u</em>, <em class="sig-param">v</em>, <em class="sig-param">vis</em>, <em class="sig-param">weights</em>, <em class="sig-param">sol</em>, <em class="sig-param">bin_widths</em>, <em class="sig-param">dist=None</em>, <em class="sig-param">force_style=True</em>, <em class="sig-param">save_prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_full_fig" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_full_fig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">vis</span></em>, <em class="sig-param"><span class="n">weights</span></em>, <em class="sig-param"><span class="n">sol</span></em>, <em class="sig-param"><span class="n">bin_widths</span></em>, <em class="sig-param"><span class="n">dist</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_style</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_full_fig" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>Produce a figure showing a Frankenstein fit and some useful diagnostics</p>
 <dl>
@@ -700,9 +702,9 @@ centre determined by the geometry object</p>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.make_figs.make_diag_fig">
-<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_diag_fig</code><span class="sig-paren">(</span><em class="sig-param">r</em>, <em class="sig-param">q</em>, <em class="sig-param">iteration_diagnostics</em>, <em class="sig-param">iter_plot_range=None</em>, <em class="sig-param">force_style=True</em>, <em class="sig-param">save_prefix=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_diag_fig" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.make_figs.</code><code class="sig-name descname">make_diag_fig</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">q</span></em>, <em class="sig-param"><span class="n">iteration_diagnostics</span></em>, <em class="sig-param"><span class="n">iter_plot_range</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">force_style</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">save_prefix</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.make_figs.make_diag_fig" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce a diagnostic figure showing fit convergence metrics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -734,9 +736,9 @@ plot brightness profile and power spectrum reconstructions</p></li>
 <div class="section" id="plotting-functions-individual-plots">
 <h3>Plotting functions: Individual plots<a class="headerlink" href="#plotting-functions-individual-plots" title="Permalink to this headline">¶</a></h3>
 <p>And these are the plotting functions those figures call.</p>
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_brightness_profile">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_brightness_profile</code><span class="sig-paren">(</span><em class="sig-param">fit_r</em>, <em class="sig-param">fit_i</em>, <em class="sig-param">ax</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">c='r'</em>, <em class="sig-param">ls='-'</em>, <em class="sig-param">ylolim=None</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">label='Frank'</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_brightness_profile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_brightness_profile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fit_r</span></em>, <em class="sig-param"><span class="n">fit_i</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">yscale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">ylolim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">'Frank'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_brightness_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a brightness profile as a function of disc radius, I(r)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -756,9 +758,9 @@ Jy / sr</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_vis_fit">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis_fit</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">vis_fit</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='r'</em>, <em class="sig-param">c2='#1EFEDC'</em>, <em class="sig-param">ls='-'</em>, <em class="sig-param">ls2='None'</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">ylolim=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis_fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis_fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">baselines</span></em>, <em class="sig-param"><span class="n">vis_fit</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">'r'</span></em>, <em class="sig-param"><span class="n">c2</span><span class="o">=</span><span class="default_value">'#1EFEDC'</span></em>, <em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">ls2</span><span class="o">=</span><span class="default_value">'None'</span></em>, <em class="sig-param"><span class="n">xscale</span><span class="o">=</span><span class="default_value">'log'</span></em>, <em class="sig-param"><span class="n">yscale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">ylolim</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a visibility domain fit as a function of baseline, V(q)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -780,9 +782,9 @@ is mJy</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_vis">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">vis</em>, <em class="sig-param">vis_err</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='k'</em>, <em class="sig-param">c2='g'</em>, <em class="sig-param">marker='.'</em>, <em class="sig-param">marker2='.'</em>, <em class="sig-param">binwidth='unspecified'</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">plot_CIs=False</em>, <em class="sig-param">zoom=None</em>, <em class="sig-param">ylabel='Re(V) [mJy]'</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">baselines</span></em>, <em class="sig-param"><span class="n">vis</span></em>, <em class="sig-param"><span class="n">vis_err</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">c2</span><span class="o">=</span><span class="default_value">'g'</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">marker2</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">binwidth</span><span class="o">=</span><span class="default_value">'unspecified'</span></em>, <em class="sig-param"><span class="n">xscale</span><span class="o">=</span><span class="default_value">'log'</span></em>, <em class="sig-param"><span class="n">yscale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">plot_CIs</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">zoom</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel</span><span class="o">=</span><span class="default_value">'Re(V) [mJy]'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot visibility datapoints as a function of baseline, V(q)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -809,9 +811,9 @@ unit (for the y-label) is mJy</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_vis_resid">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis_resid</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">obs</em>, <em class="sig-param">fit</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='k'</em>, <em class="sig-param">marker='.'</em>, <em class="sig-param">ls='None'</em>, <em class="sig-param">binwidth='unspecified'</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='linear'</em>, <em class="sig-param">normalize_resid=False</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis_resid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_vis_resid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">baselines</span></em>, <em class="sig-param"><span class="n">obs</span></em>, <em class="sig-param"><span class="n">fit</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">'k'</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">'.'</span></em>, <em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">'None'</span></em>, <em class="sig-param"><span class="n">binwidth</span><span class="o">=</span><span class="default_value">'unspecified'</span></em>, <em class="sig-param"><span class="n">xscale</span><span class="o">=</span><span class="default_value">'log'</span></em>, <em class="sig-param"><span class="n">yscale</span><span class="o">=</span><span class="default_value">'linear'</span></em>, <em class="sig-param"><span class="n">normalize_resid</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_vis_resid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot residuals between visibility datapoints and a visibility domain fit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -836,9 +838,9 @@ by the data amplitude</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_pwr_spec">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_pwr_spec</code><span class="sig-paren">(</span><em class="sig-param">baselines</em>, <em class="sig-param">pwr_spec</em>, <em class="sig-param">ax</em>, <em class="sig-param">c='#B123D7'</em>, <em class="sig-param">ls='-'</em>, <em class="sig-param">ylolim=None</em>, <em class="sig-param">xscale='log'</em>, <em class="sig-param">yscale='log'</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_pwr_spec" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_pwr_spec</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">baselines</span></em>, <em class="sig-param"><span class="n">pwr_spec</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">c</span><span class="o">=</span><span class="default_value">'#B123D7'</span></em>, <em class="sig-param"><span class="n">ls</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">ylolim</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xscale</span><span class="o">=</span><span class="default_value">'log'</span></em>, <em class="sig-param"><span class="n">yscale</span><span class="o">=</span><span class="default_value">'log'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_pwr_spec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the reconstructed power spectrum of a Frankenstein fit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -858,9 +860,9 @@ unit (for the y-label) is Jy^2</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_convergence_criterion">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_convergence_criterion</code><span class="sig-paren">(</span><em class="sig-param">profile_iter</em>, <em class="sig-param">N_iter</em>, <em class="sig-param">ax</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_convergence_criterion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_convergence_criterion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">profile_iter</span></em>, <em class="sig-param"><span class="n">N_iter</span></em>, <em class="sig-param"><span class="n">ax</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_convergence_criterion" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Plot a generic convergence criterion for a Frankenstein fit,</dt><dd><p><span class="math notranslate nohighlight">\({\rm max}(|$I_i - I_{i-1}$|) / {\rm max}($I_i$)\)</span>,</p>
 </dd>
@@ -879,9 +881,9 @@ points at which the profile is defined</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.make_colorbar">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">make_colorbar</code><span class="sig-paren">(</span><em class="sig-param">ax</em>, <em class="sig-param">vmin</em>, <em class="sig-param">vmax</em>, <em class="sig-param">cmap</em>, <em class="sig-param">label</em>, <em class="sig-param">loc=3</em>, <em class="sig-param">bbox_x=0.05</em>, <em class="sig-param">bbox_y=0.175</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.make_colorbar" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">make_colorbar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">vmin</span></em>, <em class="sig-param"><span class="n">vmax</span></em>, <em class="sig-param"><span class="n">cmap</span></em>, <em class="sig-param"><span class="n">label</span></em>, <em class="sig-param"><span class="n">loc</span><span class="o">=</span><span class="default_value">3</span></em>, <em class="sig-param"><span class="n">bbox_x</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="n">bbox_y</span><span class="o">=</span><span class="default_value">0.175</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.make_colorbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom format to place a colorbar in an inset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -897,7 +899,7 @@ points at which the profile is defined</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_profile_iterations">
 <code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_profile_iterations</code><span class="sig-paren">(</span><em class="sig-param">r</em>, <em class="sig-param">profile_iter</em>, <em class="sig-param">n_iter</em>, <em class="sig-param">ax</em>, <em class="sig-param">cmap=&lt;matplotlib.colors.LinearSegmentedColormap object&gt;</em>, <em class="sig-param">ylabel='I [10$^{10}$ Jy sr$^{-1}$]'</em>, <em class="sig-param">bbox_x=-0.02</em>, <em class="sig-param">bbox_y=-0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_profile_iterations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a fit’s brightness profile reconstruction over a chosen range of
@@ -919,7 +921,7 @@ assumed unit (for the y-label) is Jy / sr</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_pwr_spec_iterations">
 <code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_pwr_spec_iterations</code><span class="sig-paren">(</span><em class="sig-param">q</em>, <em class="sig-param">pwr_spec_iter</em>, <em class="sig-param">n_iter</em>, <em class="sig-param">ax</em>, <em class="sig-param">cmap=&lt;matplotlib.colors.LinearSegmentedColormap object&gt;</em>, <em class="sig-param">ylabel='Power [Jy$^2$]'</em>, <em class="sig-param">bbox_x=0.05</em>, <em class="sig-param">bbox_y=0.175</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_pwr_spec_iterations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a fit’s power spectrum reconstruction over a chosen range of
@@ -941,9 +943,9 @@ assumed unit (for the y-label) is Jy^2</p></li>
 </dl>
 </dd></dl>
 
-<dl class="function">
+<dl class="py function">
 <dt id="frank.plot.plot_2dsweep">
-<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_2dsweep</code><span class="sig-paren">(</span><em class="sig-param">r</em>, <em class="sig-param">I</em>, <em class="sig-param">ax</em>, <em class="sig-param">cax=None</em>, <em class="sig-param">cmap='inferno'</em>, <em class="sig-param">vmin=None</em>, <em class="sig-param">vmax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_2dsweep" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.plot.</code><code class="sig-name descname">plot_2dsweep</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">I</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="n">cax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">'inferno'</span></em>, <em class="sig-param"><span class="n">vmin</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">vmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.plot.plot_2dsweep" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a radial profile swept over <span class="math notranslate nohighlight">\(2 \pi\)</span> to produce an image</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -987,7 +989,7 @@ Matplotlib</p></li>
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Apr 02 at 16:12:04 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Apr 07 at 15:28:11 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
