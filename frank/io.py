@@ -161,22 +161,17 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
-        if format in {'txt', 'dat'}:
-            np.savetxt(prefix + '_frank_vis_fit.' + format,
-                       np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
-                       header='Baseline [lambda]\tProjected Re(V) [Jy]')
-        elif format == 'npz':
-            np.savez(prefix + '_frank_vis_fit.' + format,
-                     uv=sol.q, V=sol.predict_deprojected(sol.q),
-                     units={'uv': 'lambda', 'V': 'Jy'})
+        np.savetxt(prefix + '_frank_vis_fit.txt',
+                   np.array([sol.q, sol.predict_deprojected(sol.q).real]).T,
+                   header='Baseline [lambda]\tProjected Re(V) [Jy]')
 
     if save_uvtables:
         logging.info('    Saving fit and residual UVTables. N.B.: These will'
                      ' be of comparable size to your input UVTable')
 
-        V_pred = sol.predict(u, v)
+        u_reproj, v_reproj, V_pred = sol.predict(u, v, undo_deprojection=True)
 
         save_uvtable(prefix + '_frank_uv_fit.' + format,
-                     u, v, V_pred, weights)
+                     u_reproj, v_reproj, V_pred, weights)
         save_uvtable(prefix + '_frank_uv_resid.' + format,
-                     u, v, vis - V_pred, weights)
+                     u_reproj, v_reproj, vis - V_pred, weights)

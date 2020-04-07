@@ -78,7 +78,10 @@ note this is being increased by the residuals beyond the baseline at which the f
 On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
 To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
-**i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
+**i)** Histogram of the binned real component of the visibilities.
+Note how the bin counts drop sharply beyond :math:`\approx 4.5\ {\rm M}\lambda`,
+a consequence of sparser sampling at the longest baselines. |br|
+**j)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.
 
 Test a fit's convergence

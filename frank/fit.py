@@ -217,6 +217,10 @@ def alter_data(u, v, vis, weights, model):
     frank.utilities.apply_correction_to_weights)
     """
 
+    if model['modify_data']['normalization_wle'] is not None:
+        u, v = utilities.normalize_uv(
+            u, v, model['modify_data']['normalization_wle'])
+
     if model['modify_data']['baseline_range']:
         u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
                                                             model['modify_data']['baseline_range']
@@ -411,7 +415,7 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
                                                       model['plotting']['bin_widths'],
                                                       [model['hyperpriors']['alpha'],
-                                                      model['hyperpriors']['wsmooth']],
+                                                       model['hyperpriors']['wsmooth']],
                                                       model['plotting']['dist'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']
@@ -445,6 +449,60 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
     return figs, axes, model
 
 
+def multifit_overplot(u, v, vis, weights, geom, model):
+    r"""
+    Perform and overplot multiple fits (e.g., to compare fits to a dataset under
+    different hyperprior choices)
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    geom : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry)
+    model : dict
+        Dictionary containing model parameters the fits use
+
+    Returns
+    -------
+    multifit_fig : Matplotlib `.Figure` instance
+        All produced figures, including the GridSpecs
+    multifit_axes : Matplotlib `~.axes.Axes` class
+        Axes for each of the produced figures
+    """
+    hpriors = list(model['hyperpriors'].values())
+    multis_bool = [isinstance(x, list) for i, x in enumerate(
+        hpriors)]  # True for hyperpriors with >1 value
+    multis_idx = [i for i, x in enumerate(multis_bool) if x]
+
+    for ii in range(len(multis_idx[0])):
+        this_par = list(model['hyperpriors'].keys())[multis_idx[0]]
+        logging.info(' Looping fits over hyperprior {}'.format(this_par))
+
+        this_model = model.copy()
+        this_model['hyperpriors']['{}'.format(this_par)] = multis_idx[0][ii]
+
+        sol, iteration_diagnostics = perform_fit(
+            u, v, vis, weights, geom, this_model)
+
+        # figs, axes, model = output_results(u, v, vis, weights, sol,
+        #                                   iteration_diagnostics, this_model)
+
+        multifit_fig, multifit_axes = make_figs.make_overplot_fig(u, v, vis, weights, sol,
+                                                               model['plotting']['bin_widths'],
+                                                               model['plotting']['dist'],
+                                                               model['plotting']['force_style'],
+                                                               model['input_output']['save_prefix']
+                                                               )
+
+    return multifit_fig, multifit_axes
+
+
 def perform_bootstrap(u, v, vis, weights, geom, model):
     r"""
     Perform a bootstrap analysis for the Franktenstein fit to a dataset
@@ -476,8 +534,8 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         logging.info(' Bootstrap trial {} of {}'.format(trial + 1,
                                                         model['analysis']['bootstrap_ntrials']))
 
-        u_s, v_s, vis_s, w_s = \
-            utilities.draw_bootstrap_sample(u, v, vis, weights)
+        u_s, v_s, vis_s, w_s = utilities.draw_bootstrap_sample(
+            u, v, vis, weights)
 
         sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
@@ -486,8 +544,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         else:
             profiles_bootstrap.append(sol.mean)
 
-    bootstrap_path = model['input_output']['save_prefix'] + \
-        '_bootstrap.npz'
+    bootstrap_path = model['input_output']['save_prefix'] + '_bootstrap.npz'
 
     logging.info(' Bootstrap complete. Saving fitted brightness profiles and'
                  ' the common set of collocation points')
@@ -517,16 +574,22 @@ def main(*args):
 
     u, v, vis, weights = load_data(model)
 
-    if model['modify_data']['baseline_range'] or \
-            model['modify_data']['correct_weights']:
+    if model['modify_data']['baseline_range'] or model['modify_data']['correct_weights']:
         u, v, vis, weights, _ = alter_data(
             u, v, vis, weights, model)
 
     geom = determine_geometry(u, v, vis, weights, model)
 
     if model['analysis']['bootstrap_ntrials']:
-        boot_fig, boot_axes = perform_bootstrap(u, v, vis, weights, geom, model)
+        boot_fig, boot_axes = perform_bootstrap(
+            u, v, vis, weights, geom, model)
+
         return boot_fig, boot_axes
+
+    elif any(isinstance(x, list) for x in model['hyperpriors'].values()):
+        multifit_fig, multifit_axes = multifit_overplot(model)
+
+        return multifit_fig, multifit_axes
 
     else:
         sol, iteration_diagnostics = perform_fit(

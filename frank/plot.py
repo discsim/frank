@@ -316,7 +316,8 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
     ax.legend()
 
 
-def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None, **kwargs):
+def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', norm=None, vmin=None,
+                 vmax=None, xmax=None, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -329,25 +330,40 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None, **kwa
         Brightness values at r. The assumed unit (for the colorbar) is Jy / sr
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
+    cax : Matplotlib `~.axes.Axes` class
+        Colorbar axis
     cmap : Matplotlib colormap, default = 'inferno'
         Colormap to apply to the 2D image
+    norm : Matplotlib `colors.Normalize` class
+        Colormap normalization for the image and colorbar
     vmin, vmax : float or None (default)
         Lower and upper brightness values (assumed in Jy / sr) for the 2D
         image and colorbar plot's y-axis. If None, they will be set by
         Matplotlib
+    xmax : float or None (default)
+        Radius at edge of image. If None, it will be set by max(r)
     """
 
-    I2D, xmax, ymax = sweep_profile(r, I)
+    if xmax is None:
+        I2D, xmax, ymax = sweep_profile(r, I)
+    else:
+        I2D, _, _ = sweep_profile(r, I)
+        ymax = xmax * 1
+
     I2D /= 1e10
 
+    if vmin is None and vmax is None:
+        vmin, vmax = I2D.min(), I2D.max()
+
     ax.imshow(I2D, origin='lower', extent=[xmax, -xmax, -ymax, ymax], vmin=vmin,
-              vmax=vmax, cmap=cmap, **kwargs
+              vmax=vmax, cmap=cmap, norm=norm, **kwargs
               )
 
     # Set a normalization and colormap for the colorbar
     import matplotlib.colors as mpl_cs
     from matplotlib import cm
-    norm = mpl_cs.Normalize(vmin=I2D.min(), vmax=I2D.max())
+    if norm is None:
+        norm = mpl_cs.Normalize(vmin=vmin, vmax=vmax)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     m.set_array([])
 

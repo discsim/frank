@@ -18,19 +18,15 @@
 #
 """This module generates figures for a Frankenstein fit and its diagnostics.
 """
-
 import os
 import numpy as np
+from scipy.integrate import trapz
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 import logging
 
-# Suppress some benign warnings
-import warnings
-warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
-warnings.filterwarnings('ignore', '.*handles with labels found.*')
-
 from frank.utilities import UVDataBinner
+
 from frank.plot import (
     plot_brightness_profile,
     plot_confidence_interval,
@@ -41,6 +37,12 @@ from frank.plot import (
     plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
+
+# Suppress some benign warnings
+import warnings
+warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
+warnings.filterwarnings('ignore', '.*handles with labels found.*')
+
 
 # Global settings for plots
 cs = ['#a4a4a4', 'k', '#896360', 'b']
@@ -113,8 +115,10 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     axes = [ax0, ax1, ax2, ax3]
 
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='Frank')
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='Frank')
+    profile_integral = trapz(sol.mean, sol.r)
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
+        label='frank, integral {:.2e} Jy'.format(profile_integral))
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -122,7 +126,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    cs=['k','r']
+    cs = ['k', '#a4a4a4']
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
             baselines, vis_deproj, weights, bin_widths[i])
@@ -138,10 +142,10 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                  marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         plot_vis_resid(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
-                       ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3,rmse))
+                       ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-    plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='Frank')
+    plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='frank')
 
     ax1.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -175,29 +179,29 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
                   force_style=True, save_prefix=None):
     r"""
-      Produce a figure showing a Frankenstein fit and some useful diagnostics
+    Produce a figure showing a Frankenstein fit and some useful diagnostics
 
-      Parameters
-      ----------
-      u, v : array, unit = :math:`\lambda`
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations
-      vis : array, unit = Jy
+    vis : array, unit = Jy
         Observed visibilities (complex: real + imag * 1j)
-      weights : array, unit = Jy^-2
+    weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-      sol : _HankelRegressor object
+    sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-      bin_widths : list, unit = \lambda
+    bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-      hyperpriors : list, len = 2
+    hyperpriors : list, len = 2
         Values for the :math:`\alpha` and :math:`w_{smooth}` hyperpriors
-      dist : float, optional, unit = AU, default = None
+    dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis for brightness profile
-      force_style: bool, default = True
+    force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
-      save_prefix : string, default = None
+    save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
@@ -245,8 +249,10 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
 
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='Frank')
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='Frank')
+    profile_integral = trapz(sol.mean, sol.r)
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
+        label='frank, integral {:.2e} Jy'.format(profile_integral))
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -287,17 +293,20 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
         plot_vis(binned_vis.uv, vis_im_kl, vis_err_im_kl, ax9, c=cs[i], marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3,rmse))
+        plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
+                       label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
 
-        plot_vis_hist(binned_vis.unmasked_data[0], binned_vis.unmasked_data[1], ax8, color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        plot_vis_hist(binned_vis.unmasked_data[0], binned_vis.unmasked_data[1], ax8,
+                      color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-    plot_vis_fit(grid, vis_fit_kl, ax3, c='r', label='Frank')
-    plot_vis_fit(grid, vis_fit_kl, ax4, c='r', label='Frank')
-    plot_vis_fit(grid, vis_fit_kl, ax6, c='r', label='Frank>0')
-    plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='Frank<0')
+    plot_vis_fit(grid, vis_fit_kl, ax3, c='r', label='frank')
+    plot_vis_fit(grid, vis_fit_kl, ax4, c='r', label='frank')
+    plot_vis_fit(grid, vis_fit_kl, ax6, c='r', label='frank>0')
+    plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
-    plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(hyperpriors[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperpriors[1]))
+    plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
+        hyperpriors[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperpriors[1]))
 
     plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno')
 
@@ -451,7 +460,6 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
                             iter_plot_range_end, ax1,
                             cmap=plt.cm.cividis)  # pylint: disable=no-member
 
-
     plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
     # Plot the difference in the power spectrum between the last 100 iterations
@@ -477,7 +485,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
     ax4.set_xlabel('Fit iteration')
     ax4.set_ylabel('Convergence criterion,\n' +
-                  r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
+                   r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
     ax4.set_yscale('log')
 
     xlims = ax2.get_xlim()
@@ -497,6 +505,124 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     return fig, axes, iter_plot_range
 
 
+def make_overplot_fig(u, v, vis, weights, sol, bin_widths, dist=None,
+                   force_style=True, save_prefix=None
+                   ):
+    r"""
+    Produce a simple figure showing just a Frankenstein fit, not any diagnostics
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    sol : _HankelRegressor object
+        Reconstructed profile using Maximum a posteriori power spectrum
+        (see frank.radial_fitters.FrankFitter)
+    bin_widths : list, unit = \lambda
+        Bin widths in which to bin the observed visibilities
+    dist : float, optional, unit = AU, default = None
+        Distance to source, used to show second x-axis for brightness profile
+    force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+    save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+
+    logging.info('    Making quick figure')
+
+    if force_style:
+        frank_plotting_style()
+
+    gs = GridSpec(2, 2, hspace=0)
+    fig = plt.figure(figsize=(8, 6))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax1 = fig.add_subplot(gs[2])
+
+    ax2 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[3])
+
+    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
+    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+
+    ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
+    ax3.text(.5, .9, 'd)', transform=ax3.transAxes)
+
+    axes = [ax0, ax1, ax2, ax3]
+
+    profile_integral = trapz(sol.mean, sol.r)
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
+        label='frank, integral {:.2e} Jy'.format(profile_integral))
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
+
+    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
+    baselines = (u_deproj**2 + v_deproj**2)**.5
+    grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
+                       np.log10(max(baselines.max(), sol.q[-1])),
+                       10**4)
+
+    cs = ['k', '#a4a4a4']
+    for i in range(len(bin_widths)):
+        binned_vis = UVDataBinner(
+            baselines, vis_deproj, weights, bin_widths[i])
+        vis_re_kl = binned_vis.V.real * 1e3
+        vis_err_re_kl = binned_vis.error.real * 1e3
+        vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
+
+        resid = vis_re_kl - vis_fit
+        norm_resid = resid / vis_re_kl
+        rmse = (np.mean(resid**2))**.5
+
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax2, c=cs[i],
+                 marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+
+        plot_vis_resid(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
+                       ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
+
+    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
+    plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='frank')
+
+    ax1.set_xlabel('r ["]')
+    ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_yscale('log')
+    ax1.set_ylim(bottom=1e-3)
+
+    ax3.set_xlabel(r'Baseline [$\lambda$]')
+    ax2.set_ylabel('Re(V) [mJy]')
+    ax3.set_ylabel('Residual [mJy]')
+    ax2.set_xscale('log')
+    ax3.set_xscale('log')
+
+    xlims = ax2.get_xlim()
+    ax3.set_xlim(xlims)
+
+    plt.setp(ax0.get_xticklabels(), visible=False)
+    plt.setp(ax2.get_xticklabels(), visible=False)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+        plt.close()
+    else:
+        plt.show()
+
+    return fig, axes
+
+
 def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
                        save_prefix=None):
     r"""
@@ -505,15 +631,15 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
     Parameters
     ----------
     r : array, unit = arcsec
-    Single set of radial collocation points used in all bootstrap fits
+        Single set of radial collocation points used in all bootstrap fits
     profiles : array, unit = Jy / sr
-    Brightness profiles of all bootstrap fits
+        Brightness profiles of all bootstrap fits
     dist : float, optional, unit = AU, default = None
-    Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
-    Whether to use preconfigured matplotlib rcParams in generated figure
+        Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
-    Prefix for saved figure name. If None, the figure won't be saved
+        Prefix for saved figure name. If None, the figure won't be saved
 
     Returns
     -------
@@ -548,15 +674,19 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
     mean_profile = np.mean(profiles, axis=0)
     std = np.std(profiles, axis=0)
 
-    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) / 1e10, ax1, color='r', alpha=.7, label='Stan. dev. of trials')
-    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) / 1e10, ax3, color='r', alpha=.7, label='Stan. dev. of trials')
+    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) /
+                             1e10, ax1, color='r', alpha=.7, label='Stan. dev. of trials')
+    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) /
+                             1e10, ax3, color='r', alpha=.7, label='Stan. dev. of trials')
 
     for i in range(len(profiles)):
-      plot_brightness_profile(r, profiles[i] / 1e10, ax0, c='k', alpha=.2)
-      plot_brightness_profile(r, profiles[i] / 1e10, ax2, c='k', alpha=.2)
+        plot_brightness_profile(r, profiles[i] / 1e10, ax0, c='k', alpha=.2)
+        plot_brightness_profile(r, profiles[i] / 1e10, ax2, c='k', alpha=.2)
 
-    plot_brightness_profile(r, mean_profile / 1e10, ax1, c='#35F9E1', label='Mean of trials')
-    plot_brightness_profile(r, mean_profile / 1e10, ax3, c='#35F9E1', label='Mean of trials')
+    plot_brightness_profile(r, mean_profile / 1e10, ax1,
+                            c='#35F9E1', label='Mean of trials')
+    plot_brightness_profile(r, mean_profile / 1e10, ax3,
+                            c='#35F9E1', label='Mean of trials')
 
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
     ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
