@@ -613,9 +613,9 @@ class FrankFitter(FourierBesselFitter):
         Spectral smoothness prior parameter. Zero is no smoothness prior
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration
-    max_iter: int, default = 1500
+    max_iter: int, default = 2000
         Maximum number of fit iterations
-    store_iteration_diagnostics: bool, default = True
+    store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
 
@@ -629,7 +629,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=1500, store_iteration_diagnostics=False):
+                 tol=1e-3, max_iter=2000, store_iteration_diagnostics=False):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
                                           block_size
@@ -696,6 +696,17 @@ class FrankFitter(FourierBesselFitter):
 
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
+
+        # Confirm that the last collocation point is at longer baseline than
+        # the longest deprojected baseline in the data
+        bl = np.hypot(u, v)
+        if self.q[-1] < bl[-1]:
+            raise ValueError(r"Last collocation point, {:.3e} \lambda, is at"
+                             " shorter baseline than the longest deprojected"
+                             r" baseline in the dataset, {:.3e} \lambda. Please"
+                             " increase N in FrankFitter (this is"
+                             " `hyperpriors: n` if you're using a parameter"
+                             " file).".format(self.q[-1], bl[-1]))
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
