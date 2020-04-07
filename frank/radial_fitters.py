@@ -704,7 +704,7 @@ class FrankFitter(FourierBesselFitter):
 
         bl = np.hypot(u, v)
         if self.q[0] < bl[0]:
-            logging.warning(r"WARNING: First collocation point, {:.3e} \lambda,"
+            logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
                             " is at a baseline shorter than the"
                             " shortest deprojected baseline in the dataset,"
                             r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
