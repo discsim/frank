@@ -321,7 +321,7 @@ class _HankelRegressor(object):
 
         # Undo phase centering
         _, _, V = geometry.undo_correction(u, v, V)
-
+        
         return V
 
     def predict_deprojected(self, q=None, I=None, geometry=None,

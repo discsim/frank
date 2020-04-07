@@ -49,7 +49,9 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     dDec : float, unit = arcsec
         Phase shift in declination.
         NOTE: The sign convention is xx
-
+    inverse : bool, default=False
+        If True, the visibilities are uncentered (the phase shift undone)
+        rather than centered
     Returns
     -------
     shifted_vis : array of real, size = N, unit = Jy
@@ -61,7 +63,12 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
 
     phi = u * dRA + v * dDec
 
-    return V * (np.cos(phi) + 1j * np.sin(phi))
+    if inverse:
+        shifted_vis = V / (np.cos(phi) + 1j * np.sin(phi))
+    else:
+        shifted_vis = V * (np.cos(phi) + 1j * np.sin(phi))
+
+    return shifted_vis
 
 
 def deproject(u, v, inc, PA, inverse=False):
@@ -98,14 +105,13 @@ def deproject(u, v, inc, PA, inverse=False):
 
     if inverse:
         sin_t *= -1
+        u /= np.cos(inc)
 
     up = u * cos_t - v * sin_t
     vp = u * sin_t + v * cos_t
 
-    # Deproject
-    if inverse:
-        up /= np.cos(inc)
-    else:
+    #   Deproject
+    if not inverse:
         up *= np.cos(inc)
 
     return up, vp
@@ -161,10 +167,10 @@ class SourceGeometry(object):
             Corrected complex visibilites
 
         """
-        V = apply_phase_shift(u, v, V, self._dRA, self._dDec)
-        u, v = deproject(u, v, self._inc, self._PA)
+        Vp = apply_phase_shift(u, v, V, self._dRA, self._dDec)
+        up, vp = deproject(u, v, self._inc, self._PA)
 
-        return u, v, V
+        return up, vp, Vp
 
     def undo_correction(self, u, v, V):
         r"""
@@ -188,11 +194,10 @@ class SourceGeometry(object):
         Vp : array of real, size = N, unit = Jy
             Corrected complex visibilites
         """
+        up, vp = self.reproject(u, v)
+        Vp = apply_phase_shift(up, vp, V, self._dRA, self._dDec, inverse=True)
 
-        u, v = self.reproject(u, v)
-        vis = apply_phase_shift(u, v, V, -self._dRA, -self._dDec)
-
-        return u, v, V
+        return up, vp, Vp
 
     def deproject(self, u, v):
         """Convert uv-points from sky-plane to deprojected space"""
@@ -411,4 +416,6 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    return inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
+    geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
+
+    return geometry
