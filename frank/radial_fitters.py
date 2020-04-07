@@ -321,7 +321,7 @@ class _HankelRegressor(object):
 
         # Undo phase centering
         _, _, V = geometry.undo_correction(u, v, V)
-        
+
         return V
 
     def predict_deprojected(self, q=None, I=None, geometry=None,
@@ -615,6 +615,9 @@ class FrankFitter(FourierBesselFitter):
         Tolerence for convergence of the power spectrum iteration
     max_iter: int, default = 2000
         Maximum number of fit iterations
+    check_maxq: bool, default = True
+        Whether to confirm that the last collocation point, q[-1], is larger
+        than the longest deprojected baseline in the dataset (for fit stability)
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
@@ -629,7 +632,8 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=2000, store_iteration_diagnostics=False):
+                 tol=1e-3, max_iter=2000, check_maxq=True,
+                 store_iteration_diagnostics=False):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
                                           block_size
@@ -642,6 +646,7 @@ class FrankFitter(FourierBesselFitter):
         self._tol = tol
         self._max_iter = max_iter
 
+        self._check_maxq = check_maxq
         self._store_iteration_diagnostics = store_iteration_diagnostics
 
     def _build_smoothing_matrix(self):
@@ -697,16 +702,28 @@ class FrankFitter(FourierBesselFitter):
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
+        bl = np.hypot(u, v)
+        if self.q[0] < bl[0]:
+            logging.warning(r"WARNING: First collocation point, {:.3e} \lambda,"
+                            " is at a baseline shorter than the"
+                            " shortest deprojected baseline in the dataset,"
+                            r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
+                            " the fit's total flux may be biased"
+                            " low.".format(self.q[0], bl[0]))
+
         # Confirm that the last collocation point is at longer baseline than
         # the longest deprojected baseline in the data
-        bl = np.hypot(u, v)
-        if self.q[-1] < bl[-1]:
-            raise ValueError(r"Last collocation point, {:.3e} \lambda, is at"
-                             " shorter baseline than the longest deprojected"
-                             r" baseline in the dataset, {:.3e} \lambda. Please"
-                             " increase N in FrankFitter (this is"
-                             " `hyperpriors: n` if you're using a parameter"
-                             " file).".format(self.q[-1], bl[-1]))
+        if self._check_maxq:
+            if self.q[-1] < bl[-1]:
+                raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
+                                 " a shorter baseline than the longest deprojected"
+                                 r" baseline in the dataset, {:.3e} \lambda. Please"
+                                 " increase N in FrankFitter (this is"
+                                 " `hyperpriors: n` if you're using a parameter"
+                                 " file). Or if you'd like to fit to shorter baseline,"
+                                 " cut the (u, v) distribution before fitting"
+                                 " (`modify_data: baseline_range` in the"
+                                 " parameter file).".format(self.q[-1], bl[-1]))
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
