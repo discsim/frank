@@ -458,6 +458,10 @@ class FourierBesselFitter(object):
         self._blocking = block_data
         self._block_size = block_size
 
+    def _check_uv_range(self, uv):
+        """Don't check the bounds for FourierBesselFitterr"""
+        pass
+
     def _build_matrices(self, u, v, V, weights):
         r"""
         Compute the matrices M and j from the visibility data.
@@ -473,6 +477,9 @@ class FourierBesselFitter(object):
         u, v, V = self._geometry.apply_correction(u, v, V)
         q = np.hypot(u, v)
 
+        # Check consistency of the uv points with the model
+        self._check_uv_range(q) 
+        
         # Use only the real part of V. Also correct the total flux for the
         # inclination. This is not done in apply_correction for consistency
         # with `uvplot`
@@ -671,6 +678,32 @@ class FrankFitter(FourierBesselFitter):
 
         return Tij * self._smooth
 
+    def _check_uv_range(self, uv):
+        """Check that the uv domain is properly covered"""
+
+        # Check whether the first (last) collocation point is smaller (larger)
+        # than the shortest (longest) deprojected baseline in the dataset
+        if self._check_qbounds:
+            if self.q[0] < uv[0]:
+                logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
+                                " is at a baseline shorter than the"
+                                " shortest deprojected baseline in the dataset,"
+                                r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
+                                " the fit's total flux may be biased"
+                                " low.".format(self.q[0], uv[0]))
+
+            if self.q[-1] < uv[-1]:
+                raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
+                                 " a shorter baseline than the longest deprojected"
+                                 r" baseline in the dataset, {:.3e} \lambda. Please"
+                                 " increase N in FrankFitter (this is"
+                                 " `hyperpriors: n` if you're using a parameter"
+                                 " file). Or if you'd like to fit to shorter baseline,"
+                                 " cut the (u, v) distribution before fitting"
+                                 " (`modify_data: baseline_range` in the"
+                                 " parameter file).".format(self.q[-1], uv[-1]))
+
+
     def fit(self, u, v, V, weights=1):
         r"""
         Fit the visibilties
@@ -702,29 +735,6 @@ class FrankFitter(FourierBesselFitter):
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
-        # Check whether the first (last) collocation point is smaller (larger)
-        # than the shortest (longest) deprojected baseline in the dataset
-        if self._check_qbounds:
-            bl = np.hypot(u, v)
-
-            if self.q[0] < bl[0]:
-                logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
-                                " is at a baseline shorter than the"
-                                " shortest deprojected baseline in the dataset,"
-                                r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
-                                " the fit's total flux may be biased"
-                                " low.".format(self.q[0], bl[0]))
-
-            if self.q[-1] < bl[-1]:
-                raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
-                                 " a shorter baseline than the longest deprojected"
-                                 r" baseline in the dataset, {:.3e} \lambda. Please"
-                                 " increase N in FrankFitter (this is"
-                                 " `hyperpriors: n` if you're using a parameter"
-                                 " file). Or if you'd like to fit to shorter baseline,"
-                                 " cut the (u, v) distribution before fitting"
-                                 " (`modify_data: baseline_range` in the"
-                                 " parameter file).".format(self.q[-1], bl[-1]))
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
