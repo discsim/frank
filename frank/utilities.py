@@ -128,11 +128,13 @@ class UVDataBinner(object):
     def determine_uv_bin(self, uv):
         """Determine the bin that the given uv points belong too.
         
-        Parameters:
+        Parameters
         ----------
         uv : array, unit = :math:`\lambda`
             Baselines to determine the bins of
-        Returns: array
+        
+        Returns
+        -------
         idx : array,
             Bins that the uv point belongs to. Will be -1 if the bin does not
             exist.
