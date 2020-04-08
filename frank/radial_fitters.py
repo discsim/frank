@@ -118,11 +118,12 @@ class _HankelRegressor(object):
 
         self._p = p
         if p is not None:
-            Ykm = self._DHT.coefficients()
             if np.any(p <= 0) or np.any(np.isnan(p)):
                 raise ValeuError("Bad value in power spectrum. The power"
                                  " spectrum must be postive and not contain"
                                  " any NaN values")
+            
+            Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
         else:
             self._Sinv = None
