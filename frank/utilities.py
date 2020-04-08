@@ -385,11 +385,10 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     else:
         # For bins with 1 uv point, use the average of the adjacent bins
         no_var = (uvBin.bin_counts == 1).nonzero()[0]
-        ip = no_var+1
-        im = no_var-1
-        while np.any(uvBin.bin_counts[ip] == 0):
+        ip = no_var+1 ; im = no_var-1
+        while np.any(uvBin.bin_counts[ip] == 1):
             ip[uvBin.bin_counts[ip]==0] += 1
-        while np.any(uvBin.bin_counts[im] == 0):
+        while np.any(uvBin.bin_counts[im] == 1):
             im[uvBin.bin_counts[im]==0] -= 1
         var[no_var] = 0.5*(var[im] + var[ip])
 
