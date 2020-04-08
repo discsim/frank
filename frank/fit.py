@@ -143,7 +143,7 @@ def parse_parameters(*args):
     # initialized.
     _check_and_warn_if_parallel()
 
-    
+
     logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
@@ -532,12 +532,12 @@ def main(*args):
 
     u, v, vis, weights = load_data(model)
 
+    geom = determine_geometry(u, v, vis, weights, model)
+    
     if model['modify_data']['baseline_range'] or \
             model['modify_data']['correct_weights']:
         u, v, vis, weights, _ = alter_data(
             u, v, vis, weights, model)
-
-    geom = determine_geometry(u, v, vis, weights, model)
 
     if model['analysis']['bootstrap_ntrials']:
         boot_fig, boot_axes = perform_bootstrap(u, v, vis, weights, geom, model)
