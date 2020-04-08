@@ -390,7 +390,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         while np.any(uvBin.bin_counts[ip] == 0):
             ip[uvBin.bin_counts[ip]==0] += 1
         while np.any(uvBin.bin_counts[im] == 0):
-            im[uvBin.bin_counts[im]==0] -=
+            im[uvBin.bin_counts[im]==0] -= 1
         var[no_var] = 0.5*(var[im] + var[ip])
 
 
