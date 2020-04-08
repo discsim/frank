@@ -410,56 +410,6 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
         return weights
 
-def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
-    r"""
-    Estimate and apply a correction factor to the data's weights by comparing
-    binnings of the real component of the visibilities under different
-    weightings. This is useful for mock datasets in which the weights are all
-    unity.
-
-    Parameters
-    ----------
-    u, v : array, unit = :math:`\lambda`
-        u and v coordinates of observations
-
-    ReV : array, unit = Jy
-        Real component of observed visibilities
-
-    weights : array, unit = Jy^-2
-        Weights assigned to observed visibilities, of the form
-        :math:`1 / \sigma^2`
-
-    nbins : int, default=300
-        Number of bins used to construct the histograms
-
-    Returns
-    -------
-    wcorr_estimate : float
-        Correction factor by which to adjust the weights
-
-    weights_corrected : array, unit = Jy^-2
-        Corrected weights assigned to observed visibilities, of the form
-        :math:`1 / \sigma^2`
-    """
-
-    logging.info('  Estimating, applying correction factor to visibility weights')
-
-    baselines = np.hypot(u, v)
-    mu, _ = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
-    mu2, _ = np.histogram(np.log10(baselines), weights=ReV ** 2, bins=nbins)
-    N, _ = np.histogram(np.log10(baselines), bins=nbins)
-
-    mu /= np.maximum(N, 1)
-    mu2 /= np.maximum(N, 1)
-
-    sigma = (mu2 - mu ** 2) ** 0.5
-    wcorr_estimate = sigma[np.where(sigma > 0)].mean()
-
-    weights_corrected = weights / wcorr_estimate ** 2
-
-    return wcorr_estimate, weights_corrected
-
-
 def draw_bootstrap_sample(u, v, vis, weights):
     r"""
     Obtain the sample for a bootstrap, drawing, with replacement, N samples from
