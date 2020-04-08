@@ -369,9 +369,9 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     q = np.hypot(u,v)
     if log:
         q = np.log(q)
-
-    q -= q.min()
-    bin_width = q.max() / nbins
+        q -= q.min()
+        
+    bin_width = (q.max()-q.min()) / nbins
 
     uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
 
