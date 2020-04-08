@@ -74,8 +74,8 @@ class UVDataBinner(object):
         self._norm =  1 / bin_width
 
         bin_uv, bin_wgt, bin_vis, bin_n = \
-            self.bin_quantities(uv, weights, 
-                               uv, np.ones_like(uv), V, 
+            self.bin_quantities(uv, weights,
+                               uv, np.ones_like(uv), V,
                                bin_counts=True)
 
         # Normalize
@@ -96,7 +96,7 @@ class UVDataBinner(object):
         mu = bin_vis[i]
 
         #   2) Compute weighted error for bins with n > 1
-        err = self.bin_quantities(uv, weights**2, 
+        err = self.bin_quantities(uv, weights**2,
                                   (V-mu).real**2 + 1j * (V-mu).imag**2)
 
         idx2 = bin_n > 1
@@ -104,7 +104,7 @@ class UVDataBinner(object):
 
         bin_vis_err[idx2] = \
             np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
-        
+
         #   3) Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
         bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
@@ -127,12 +127,12 @@ class UVDataBinner(object):
 
     def determine_uv_bin(self, uv):
         r"""Determine the bin that the given uv points belong too.
-        
+
         Parameters
         ----------
         uv : array, unit = :math:`\lambda`
             Baselines to determine the bins of
-        
+
         Returns
         -------
         idx : array,
@@ -141,11 +141,11 @@ class UVDataBinner(object):
         """
         bins = self._bins
         nbins = self._nbins
-        
+
         idx = np.floor(uv * self._norm).astype('int32')
         idx[uv < bins[idx]] -= 1    # Fix rounding error
         idx[uv == bins[nbins]] -= 1 # Handle point exaclty on outer boundary
-        
+
         too_high = idx >= nbins
         idx[too_high] = -1
 
@@ -156,7 +156,7 @@ class UVDataBinner(object):
 
         # Map the bin number back to the masked array
         idx[~too_high] = self._bin_number[idx_tmp]
-        
+
         return idx
 
     def bin_quantities(self, uv, w, *quantities, bin_counts=False):
@@ -172,13 +172,13 @@ class UVDataBinner(object):
             Quantities evaluated at the uv points to bin.
         bin_counts : bool, default=False
             Determines whether to count the number of uv points per bin.
-        
+
         Returns
         -------
         results : arrays, same type as quantities
             Binned data
         bin_counts : array, int64, optional
-            If bin_counts=True, then this array contains the number of uv 
+            If bin_counts=True, then this array contains the number of uv
             points in each bin. Otherwise, it is not returned.
         """
         bins = self._bins
@@ -201,11 +201,11 @@ class UVDataBinner(object):
             idx[tmp_uv < bins[idx]] -= 1
             # Move points exactly on the outer bounary inwards:
             idx[idx == nbins] -= 1
-            
+
             # Only the last bin includes its edge
             increment = (tmp_uv >= bins[idx+1]) & (idx+1 != nbins)
             idx[increment] += 1
-            
+
             if bin_counts:
                 counts += np.bincount(idx, minlength=nbins)
 
@@ -323,13 +323,14 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
 
 def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     r"""
-    Estimate the weights using the variance of the binned visibilities. 
+    Estimate the weights using the variance of the binned visibilities.
 
     The estimation is done assuming that the variation in each bin is dominated
     by the noise. This will be true if:
         1) The source is axi-symmetric,
         2) The uv-points have been deprojected,
-    Otherwise the variance may be dominated by real variations in the 
+        3) The bins are not too wide,
+    Otherwise the variance may be dominated by real variations in the
     visibilities.
 
     Parameters
@@ -347,7 +348,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         spaced bins will be used.
     use_median : bool, default=False
         If True all of the weights will be set to the median of the variance
-        estimated across the bins. Otherwise, the baseline dependent variance 
+        estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
 
     Returns
@@ -370,8 +371,8 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         q = np.log(q)
 
     q -= q.min()
-    bin_width = q.max() / nbins 
-    
+    bin_width = q.max() / nbins
+
     uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
 
     if np.iscomplex(V.dtype):
@@ -387,11 +388,11 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
         bin_id = uvBin.determine_uv_bin(q)
         assert np.all(bin_id != -1), "Error in binning" # Should never occur
-        
+
         weights = 1/var[bin_id]
 
         return weights
-    
+
 def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
     r"""
     Estimate and apply a correction factor to the data's weights by comparing
