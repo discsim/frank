@@ -383,8 +383,16 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     if use_median:
         return np.full(np.len(u), np.median(var[uvBin.bin_counts > 1]))
     else:
-        no_var = uvBin.bin_counts == 1
-        var[no_var] = np.median(var[~no_var])
+        # For bins with 1 uv point, use the average of the adjacent bins
+        no_var = (uvBin.bin_counts == 1).nonzero()[0]
+        ip = no_var+1
+        im = no_var-1
+        while np.any(uvBin.bin_counts[ip] == 0):
+            ip[uvBin.bin_counts[ip]==0] += 1
+        while np.any(uvBin.bin_counts[im] == 0):
+            im[uvBin.bin_counts[im]==0] -=
+        var[no_var] = 0.5*(var[im] + var[ip])
+
 
         bin_id = uvBin.determine_uv_bin(q)
         assert np.all(bin_id != -1), "Error in binning" # Should never occur
