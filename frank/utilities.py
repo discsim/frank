@@ -226,6 +226,8 @@ class UVDataBinner(object):
             return results[0]
         return results
 
+    def __len__(self):
+        return len(self._uv)
 
     @property
     def uv(self):
@@ -256,6 +258,8 @@ class UVDataBinner(object):
     def bin_edges(self):
         """Edges of the histogram bins"""
         return [self._uv_left, self._uv_right]
+
+
 
 
 def normalize_uv(u, v, wle):
@@ -375,6 +379,10 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
     uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
 
+    if uvBin.bin_counts.max() == 1:
+        raise ValueError("No bin contains more than one uv point, can't "
+                         " estimate the variance. Use fewer bins.")
+
     if np.iscomplex(V.dtype):
         var = 0.5*(uvBin.error.real**2 + uvBin.error.imag**2) * uvBin.bin_counts
     else:
@@ -384,14 +392,16 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         return np.full(np.len(u), np.median(var[uvBin.bin_counts > 1]))
     else:
         # For bins with 1 uv point, use the average of the adjacent bins
-        no_var = (uvBin.bin_counts == 1).nonzero()[0]
-        ip = no_var+1 ; im = no_var-1
-        while np.any(uvBin.bin_counts[ip] == 1):
-            ip[uvBin.bin_counts[ip]==0] += 1
-        while np.any(uvBin.bin_counts[im] == 1):
-            im[uvBin.bin_counts[im]==0] -= 1
-        var[no_var] = 0.5*(var[im] + var[ip])
+        no_var = np.argwhere(uvBin.bin_counts == 1)
+        if len(no_var) > 0:
+            # Find the location of the bad points in the array of good points
+            good_var = np.argwhere(uvBin.bin_counts > 1)
+            loc = np.searchsorted(good_var, no_var, side='right')
 
+            # Set the variance to the average of the two adjacent bins
+            im = good_var[np.maximum(loc-1, 0)]
+            ip = good_var[np.minimum(loc, len(good_var)-1)]
+            var[no_var] = 0.5*(var[im] + var[ip])
 
         bin_id = uvBin.determine_uv_bin(q)
         assert np.all(bin_id != -1), "Error in binning" # Should never occur
