@@ -232,9 +232,6 @@ def alter_data(u, v, vis, weights, model):
     -------
     u, v, vis, weights : Parameters as above, with any or all altered according
     to the modification operations specified in model
-    wcorr_estimate : None if model['modify_data']['correct_weights'] = False,
-    else the correction factor by which the weights were adjusted (see
-    frank.utilities.apply_correction_to_weights)
     """
 
     if model['modify_data']['baseline_range']:
