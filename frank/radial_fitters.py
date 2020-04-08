@@ -119,7 +119,7 @@ class _HankelRegressor(object):
         self._p = p
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
-                raise ValeuError("Bad value in power spectrum. The power"
+                raise ValueError("Bad value in power spectrum. The power"
                                  " spectrum must be postive and not contain"
                                  " any NaN values")
             
