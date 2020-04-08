@@ -126,7 +126,7 @@ class UVDataBinner(object):
         self._bin_number = bin_number
 
     def determine_uv_bin(self, uv):
-        """Determine the bin that the given uv points belong too.
+        r"""Determine the bin that the given uv points belong too.
         
         Parameters
         ----------
