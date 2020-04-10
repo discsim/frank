@@ -684,7 +684,7 @@ class FrankFitter(FourierBesselFitter):
         # Check whether the first (last) collocation point is smaller (larger)
         # than the shortest (longest) deprojected baseline in the dataset
         if self._check_qbounds:
-            if self.q[0] < uv[0]:
+            if self.q[0] < uv.min():
                 logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
                                 " is at a baseline shorter than the"
                                 " shortest deprojected baseline in the dataset,"
@@ -692,7 +692,7 @@ class FrankFitter(FourierBesselFitter):
                                 " the fit's total flux may be biased"
                                 " low.".format(self.q[0], uv[0]))
 
-            if self.q[-1] < uv[-1]:
+            if self.q[-1] < uv.max():
                 raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
                                  " a shorter baseline than the longest deprojected"
                                  r" baseline in the dataset, {:.3e} \lambda. Please"
