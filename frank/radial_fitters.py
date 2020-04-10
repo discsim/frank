@@ -690,7 +690,7 @@ class FrankFitter(FourierBesselFitter):
                                 " shortest deprojected baseline in the dataset,"
                                 r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
                                 " the fit's total flux may be biased"
-                                " low.".format(self.q[0], uv[0]))
+                                " low.".format(self.q[0], uv.min()))
 
             if self.q[-1] < uv.max():
                 raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
@@ -701,7 +701,7 @@ class FrankFitter(FourierBesselFitter):
                                  " file). Or if you'd like to fit to shorter baseline,"
                                  " cut the (u, v) distribution before fitting"
                                  " (`modify_data: baseline_range` in the"
-                                 " parameter file).".format(self.q[-1], uv[-1]))
+                                 " parameter file).".format(self.q[-1], uv.max()))
 
 
     def fit(self, u, v, V, weights=1):
