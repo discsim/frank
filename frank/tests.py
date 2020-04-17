@@ -99,7 +99,7 @@ def test_import_data():
 def load_AS209(uv_cut=None):
     """Load data for subsequent tests"""
     uv_AS209_DHSARP = np.load('tutorials/AS209_continuum.npz')
-    geometry = FixedGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97,
+    geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
                              PA=85.76)
 
     if uv_cut is not None:
@@ -132,7 +132,7 @@ def test_fit_geometry():
                                 1e3 * geom.dDec],
                                [1.4916013559412147 / deg_to_rad,
                                 -0.5395904796783955 / deg_to_rad,
-                                0.6431627790617276, 1.161768824369382],
+                                -0.6431627790617276, -1.161768824369382],
                                err_msg="Gaussian geometry fit")
 
 
@@ -208,7 +208,7 @@ def test_fit_geometry_inside():
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
                                [86.46568992560152, -34.5071920284988,
-                                -0.20818634201418384, 2.0988159662202714],
+                                0.20818634201418384, -2.0988159662202714],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
 def test_throw_error_on_bad_q_range():
