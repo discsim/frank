@@ -216,13 +216,14 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc inclination</p></li>
 <li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc positition angle.</p></li>
-<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension
-NOTE: The sign convention is xx</p></li>
-<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in declination
-NOTE: The sign convention is xx</p></li>
+<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension</p></li>
+<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in declination</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The phase centre offsets, dRA and dDec, refer to the distance to the source
+from the phase centre.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -237,6 +238,9 @@ phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The phase centre offsets, dRA and dDec, refer to the distance to the source
+from the phase centre.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -249,13 +253,14 @@ centre should be provided as a tuple</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Inclination of the disc</p></li>
 <li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Position angle of the disc</p></li>
-<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension.
-NOTE: The sign convention is xx</p></li>
-<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>units = arcsec</em>) – Phase centre offset in declination.
-NOTE: The sign convention is xx</p></li>
+<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension.</p></li>
+<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>units = arcsec</em>) – Phase centre offset in declination.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>The phase centre offsets, dRA and dDec, refer to the distance to the source
+from the phase centre.</p>
 <dl class="py method">
 <dt id="frank.geometry.SourceGeometry.apply_correction">
 <code class="sig-name descname">apply_correction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
@@ -989,7 +994,7 @@ Matplotlib</p></li>
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Apr 08 at 13:26:27 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Apr 17 at 16:05:22 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
