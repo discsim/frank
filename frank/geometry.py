@@ -51,7 +51,7 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
         Phase shift in declination.
         NOTE: The sign convention is xx
     inverse : bool, default=False
-        If True, then the correction is undone (equivalent to 
+        If True, the phase shift is reversed (equivalent to 
         flipping the signs of dRA and dDec). 
     Returns
     -------
