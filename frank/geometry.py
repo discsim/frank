@@ -31,9 +31,10 @@ from frank.constants import rad_to_arcsec, deg_to_rad
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     r"""
-    Shift the phase centre of the visibilties.
-
-    Correct the image centering in visibility space
+    Apply a phase shift to the visibilities.
+    
+    This is equivalent to moving the source in the image plane by the 
+    vector (dRA, dDec).
 
     Parameters
     ----------
@@ -50,8 +51,8 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
         Phase shift in declination.
         NOTE: The sign convention is xx
     inverse : bool, default=False
-        If True, the visibilities are uncentered (the phase shift undone)
-        rather than centered
+        If True, the phase shift is reversed (equivalent to 
+        flipping the signs of dRA and dDec). 
     Returns
     -------
     shifted_vis : array of real, size = N, unit = Jy
