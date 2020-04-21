@@ -9,3 +9,7 @@
 .strike {
   text-decoration: line-through;
 }
+
+.nbinput .prompt, .nboutput .prompt {
+    display: none;
+}

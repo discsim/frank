@@ -109,14 +109,16 @@ autosummary_generate = True
 autodoc_docstring_signature = True
 
 # Add a heading to notebooks
+doc_path = "https://github.com/discsim/frank/blob/{}".format(branch)
+nb_link = "`here <{0}/{1}>`_".format(doc_path, '{{ docname }}')
+
 nbsphinx_prolog = """
-{%s set docname = env.doc2path(env.docname, base=None) %s}
-.. note:: This tutorial is produced by the Jupyter notebook
-`here <https://github.com/discsim/frank/blob/%s/{{ docname }}>`_.
-""" % ("%", "%", branch,)
+{{% set docname = env.doc2path(env.docname, base=None) %}}
+.. note:: This tutorial is produced by the Jupyter notebook {}.
+
+""".format(nb_link)
 
 # nbsphinx
-nbsphinx_prompt_width = 0
 nbsphinx_timeout = 600
 napoleon_use_ivar = True
 nbsphinx_allow_errors = True # TODO: remove once notebooks final
