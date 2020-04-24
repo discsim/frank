@@ -1,5 +1,6 @@
 Installation
 ============
+``frank`` requires Python >= 3.0 and does not support compatibility with Python 2.x.
 
 With pip
 --------
