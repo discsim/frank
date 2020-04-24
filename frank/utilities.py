@@ -66,7 +66,7 @@ class UVDataBinner(object):
         nbins = np.ceil(uv.max() / bin_width).astype('int')
         #Protect against rounding
         if nbins * bin_width < uv.max():
-            bins += 1
+            nbins += 1
         bins = np.arange(nbins+1, dtype='float64') * bin_width
 
         self._bins = bins
