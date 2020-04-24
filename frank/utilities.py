@@ -88,7 +88,6 @@ class UVDataBinner(object):
         self._uv = bin_uv[idx]
         self._V = bin_vis[idx]
         self._w = bin_wgt[idx]
-        self._Verr = bin_vis_err[idx]
         self._count = bin_n[idx]
 
         self._uv_left = bins[:-1][idx]
