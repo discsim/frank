@@ -403,7 +403,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
             var[no_var] = 0.5*(var[im] + var[ip])
 
         bin_id = uvBin.determine_uv_bin(q)
-        assert np.all(bin_id != -1), "Error in binning" # Should never occur
+        assert np.all(bin_id != -1), "Error in binning"  # Should never occur
 
         weights = 1/var[bin_id]
 
