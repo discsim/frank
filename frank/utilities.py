@@ -361,11 +361,9 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
     Notes
     -----
-        - This function does not support datasets where the weights may be
-          expected to be different for different baselines, e.g. if the data
-          includes visibilities from telescopes of different sizes
-        - Bins with only one uv point will not have a variance estimate. The
-          median across all baselines is used instead.
+        - This function does not use the original weights in the estimation.
+        - Bins with only one uv point do not have a variance estimate. Thus
+          the mean of the variance in the two adjacent bins is used instead.
     """
     logging.info('  Estimating visibility weights.')
 
