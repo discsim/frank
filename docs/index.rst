@@ -35,7 +35,9 @@ interpreting its results, and hosts the code's API.
 
 Notes
 =====
-``frank`` requires Python >= 3.0 and does not support compatibility with Python 2.x. It also uses ``numpy``, ``scipy`` and ``matplotlib`` (see ``requirements.txt``).
+``frank`` requires Python >= 3.0 and does not support compatibility with Python 2.x.
+It also uses ``numpy``, ``scipy`` and ``matplotlib``
+(see the `requirements <https://github.com/discsim/frank/blob/master/requirements.txt>`_).
 
 License & attribution
 =====================
