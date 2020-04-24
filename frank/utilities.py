@@ -333,7 +333,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         1) The source is axi-symmetric,
         2) The uv-points have been deprojected,
         3) The bins are not too wide,
-    Otherwise the variance may be dominated by real variations in the
+    Otherwise the variance may be dominated by intrinsic variations in the
     visibilities.
 
     Parameters
