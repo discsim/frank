@@ -84,33 +84,7 @@ class UVDataBinner(object):
         bin_uv[idx] /= w
         bin_vis[idx] /= w
 
-        # Compute the uncertainty on the means:
-        bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
-
-        #   1) Get the binned mean for each vis:
-        i = np.floor(uv * self._norm).astype('int32')
-        i[uv < bins[i]] -= 1 # Fix rounding
-        i[i == nbins] -= 1 # Move points exacltly on the boundary in
-        increment = (uv >= bins[i+1]) & (i+1 != nbins)
-        i[increment] += 1
-        mu = bin_vis[i]
-
-        #   2) Compute weighted error for bins with n > 1
-        err = self.bin_quantities(uv, weights**2,
-                                  (V-mu).real**2 + 1j * (V-mu).imag**2)
-
-        idx2 = bin_n > 1
-        err[idx2] /= (bin_wgt**2 * (1 - 1 / np.maximum(bin_n, 2)))[idx2]
-
-        bin_vis_err[idx2] = \
-            np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
-
-        #   3) Use a sensible error for bins with one baseline
-        idx1 = bin_n == 1
-        bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
-            1 / np.sqrt(bin_wgt[idx1])
-
-        # Mask the empty bins
+        # Store the binned data, masking empty bins:
         self._uv = bin_uv[idx]
         self._V = bin_vis[idx]
         self._w = bin_wgt[idx]
@@ -124,6 +98,32 @@ class UVDataBinner(object):
         bin_number = np.cumsum(idx)-1
         bin_number[~idx] = -1
         self._bin_number = bin_number
+
+
+        # Compute the uncertainty on the means:
+        bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
+
+        #   1) Get the binned mean for each vis:
+        mu = self._V[self.determine_uv_bin(uv)]
+
+        #   2) Compute weighted error for bins with n > 1
+        err = self.bin_quantities(uv, weights**2,
+                                  (V-mu).real**2 + 1j * (V-mu).imag**2)
+
+        idx2 = bin_n > 1
+        err[idx2] /= bin_wgt[idx2]**2 * (1 - 1 / bin_n[idx2])
+
+        bin_vis_err[idx2] = \
+            np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
+
+        #   3) Use a sensible error for bins with one baseline
+        idx1 = bin_n == 1
+        bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
+            1 / np.sqrt(bin_wgt[idx1])
+
+        #   4) Store the error
+        self._Verr = bin_vis_err[idx]
+
 
     def determine_uv_bin(self, uv):
         r"""Determine the bin that the given uv points belong too.
