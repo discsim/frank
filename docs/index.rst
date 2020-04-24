@@ -33,6 +33,10 @@ interpreting its results, and hosts the code's API.
     Github <https://github.com/discsim/frank>
     Submit an issue <https://github.com/discsim/frank/issues>
 
+Notes
+=====
+``frank`` requires Python >= 3.0 and does not support compatibility with Python 2.x.
+
 License & attribution
 =====================
 
