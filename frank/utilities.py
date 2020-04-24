@@ -198,7 +198,7 @@ class UVDataBinner(object):
 
             # Fix rounding:
             idx[tmp_uv < bins[idx]] -= 1
-            # Move points exactly on the outer bounary inwards:
+            # Move points exactly on the outer boundary inwards:
             idx[idx == nbins] -= 1
 
             # Only the last bin includes its edge
