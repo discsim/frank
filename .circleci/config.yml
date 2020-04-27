@@ -9,7 +9,7 @@ jobs:
     parameters:
       python-version:
         type: string
-      numpy-version:
+      scipy-version:
         type: string
     docker:
       # specify the version you desire here
@@ -36,7 +36,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install numpy==1.<<parameters.numpy-version>>
+            pip install scipy==<<parameters.numpy-version>>
             pip install .[test]
       - save_cache:
           paths:
@@ -107,7 +107,7 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.6", "3.7", "3.8"]
-              numpy-version: ["1", "4", "8", "12", "16", "18"]       
+              scipy-version: ["0.8", "0.14", "0.16", "0.18", "1.0", "1.2", "1.4"]
       - docs-build
       - docs-deploy:
           requires:
