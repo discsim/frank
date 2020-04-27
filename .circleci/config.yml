@@ -2,13 +2,16 @@
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
-version: 2
+version: 2.1
 
 jobs:
-  test-3.6: &test-template
+  test:
+    parameters:
+      python-version:
+        type: string
     docker:
       # specify the version you desire here
-      - image: circleci/python:3.7
+      - image: circleci/python:<<parameters.python_version>
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -45,15 +48,6 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
-  test-3.7:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.7
-  test-3.8:
-    <<: *test-template
-    docker:
-      - image: circleci/python:3.8
-
 
   docs-build:
     docker:
@@ -103,18 +97,18 @@ jobs:
           command: gh-pages --dotfiles --message "[skip ci] Updates" --dist docs/_build/html
 
 workflows:
-  version: 2
+  version: 2.1
   build:
     jobs:
-      - test-3.6
-      - test-3.7
-      - test-3.8
+      - test:
+          matrix:
+            parameters:
+              python-version: [3.6, 3.7, 3.8]
+      
       - docs-build
       - docs-deploy:
           requires:
-            - test-3.6
-            - test-3.7
-            - test-3.8
+            - test
             - docs-build
           filters:
             branches:
