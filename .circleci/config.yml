@@ -5,7 +5,7 @@
 version: 2
 
 jobs:
-  test:
+  test-3.6: &test-template
     docker:
       # specify the version you desire here
       - image: circleci/python:3.7
@@ -45,6 +45,15 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+  test-3.7:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7
+  test-3.8:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8
+
 
   docs-build:
     docker:
@@ -97,11 +106,15 @@ workflows:
   version: 2
   build:
     jobs:
-      - test
+      - test-3.6
+      - test-3.7
+      - test-3.8
       - docs-build
       - docs-deploy:
           requires:
-            - test
+            - test-3.6
+	    - test-3.7
+	    - test-3.8
             - docs-build
           filters:
             branches:
