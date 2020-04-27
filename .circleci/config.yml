@@ -107,8 +107,7 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.6", "3.7", "3.8"]
-	      numpy-version: ["1", "4", "8", "12", "16", "18"] 
-      
+              numpy-version: ["1", "4", "8", "12", "16", "18"]       
       - docs-build
       - docs-deploy:
           requires:
