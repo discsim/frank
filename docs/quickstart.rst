@@ -14,7 +14,7 @@ Perform a fit from the terminal
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
 with CASA as demonstrated in `this tutorial <tutorials/xx>`_.
-The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
+The column format should be `u [\lambda]     v [\lambda]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
 You can quickly run a fit with the default parameter file, `default_parameters.json` (see below),
 by just passing in the filename of the UVTable to be fit with the `-uv` option. The UVTable can be a `.npz`, `.txt` or `.dat`.
