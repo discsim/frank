@@ -9,8 +9,6 @@ jobs:
     parameters:
       python-version:
         type: string
-      scipy-version:
-        type: string
     docker:
       # specify the version you desire here
       - image: circleci/python:<<parameters.python-version>>
@@ -26,25 +24,21 @@ jobs:
       - checkout
 
       # Download and cache dependencies
-#      - restore_cache:
-#          keys:
-#            - v1-dependencies-{{ checksum "requirements.txt" }}
-#            # fallback to using the latest cache if no exact match is found
-#            - v1-dependencies-
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run:
           name: install package
           command: |
             python3 -m venv venv
-            virtualenv --clear venv
             . venv/bin/activate    
-            sudo apt-get install gcc gfortran python-dev libopenblas-dev liblapack-dev cython
-            pip install scipy==<<parameters.scipy-version>>
-            pip install -r requirements.txt
             pip install .[test]
-#      - save_cache:
-#          paths:
-#            - ./venv
-#          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
       # run tests
       - run:
           name: run tests
@@ -110,7 +104,6 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.6", "3.7", "3.8"]
-              scipy-version: ["0.8", "0.14", "0.16", "0.18", "1.0", "1.2", "1.4"]
       - docs-build
       - docs-deploy:
           requires:
