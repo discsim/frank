@@ -11,7 +11,7 @@ jobs:
         type: string
     docker:
       # specify the version you desire here
-      - image: circleci/python:<<parameters.python_version>
+      - image: circleci/python:<<parameters.python_version>>
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
