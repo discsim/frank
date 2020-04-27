@@ -35,7 +35,7 @@ jobs:
           name: install package
           command: |
             python3 -m venv venv
-	    virtualenv --clear venv
+            virtualenv --clear venv
             . venv/bin/activate    
             sudo apt-get install gcc gfortran python-dev libopenblas-dev liblapack-dev cython
             pip install scipy==<<parameters.scipy-version>>
