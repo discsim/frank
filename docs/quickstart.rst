@@ -83,7 +83,9 @@ it could indicate azimuthal asymmetry in the disc that frank will average over.
 
 Test a fit's convergence
 ########################
-Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
+Once the fit has been performed, it's useful to check its convergence
+(a convergence test on the inferred power spectrum is performed as the fit iterates, while the below additionally examines convergence of the inferred brightness profile). 
+If `diag_plot=True` (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
