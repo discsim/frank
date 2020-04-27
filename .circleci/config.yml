@@ -26,11 +26,11 @@ jobs:
       - checkout
 
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
+#      - restore_cache:
+#          keys:
+#            - v1-dependencies-{{ checksum "requirements.txt" }}
+#            # fallback to using the latest cache if no exact match is found
+#            - v1-dependencies-
       - run:
           name: install package
           command: |
@@ -38,10 +38,10 @@ jobs:
             . venv/bin/activate
             pip install scipy==<<parameters.scipy-version>>
             pip install .[test]
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+#      - save_cache:
+#          paths:
+#            - ./venv
+#          key: v1-dependencies-{{ checksum "requirements.txt" }}
       # run tests
       - run:
           name: run tests
