@@ -9,6 +9,8 @@ jobs:
     parameters:
       python-version:
         type: string
+      numpy-version:
+        type: string
     docker:
       # specify the version you desire here
       - image: circleci/python:<<parameters.python-version>>
@@ -34,6 +36,7 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
+	    pin install numpy=<<numpy-version>>
             pip install .[test]
       - save_cache:
           paths:
@@ -104,6 +107,7 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.6", "3.7", "3.8"]
+	      numpy-version: ["1", "4", "8", "12", "16", "18"] 
       
       - docs-build
       - docs-deploy:
