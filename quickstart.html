@@ -210,7 +210,7 @@
 <p>To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a <em>.json</em> parameter file (see below) are needed. A UVTable can be extracted
 with CASA as demonstrated in <a class="reference external" href="tutorials/xx">this tutorial</a>.
-The column format should be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[m]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[m]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
+The column format should be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
 <p>You can quickly run a fit with the default parameter file, <code class="code docutils literal notranslate"><span class="pre">default_parameters.json</span></code> (see below),
 by just passing in the filename of the UVTable to be fit with the <code class="code docutils literal notranslate"><span class="pre">-uv</span></code> option. The UVTable can be a <code class="code docutils literal notranslate"><span class="pre">.npz</span></code>, <code class="code docutils literal notranslate"><span class="pre">.txt</span></code> or <code class="code docutils literal notranslate"><span class="pre">.dat</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit -uv &lt;uvtable_filename.npz&gt;
@@ -465,11 +465,16 @@ note this is being increased by the residuals beyond the baseline at which the f
 On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at <span class="math notranslate nohighlight">\(\approx 4\ {\rm M}\lambda\)</span>. <br>
 <strong>h)</strong> The fit’s reconstructed power spectrum, the prior on the fitted brightness profile.
 To see how this the fit to this dataset is sensitive to the prior, check out <a class="reference internal" href="tutorials/prior_sensitivity_and_uncertainty.html"><span class="doc">this notebook</span></a>. <br>
-<strong>i)</strong> The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
+<strong>i)</strong> Histogram of the binned real component of the visibilities.
+Note how the bin counts drop sharply beyond <span class="math notranslate nohighlight">\(\approx 4.5\ {\rm M}\lambda\)</span>,
+a consequence of sparser sampling at the longest baselines. <br>
+<strong>j)</strong> The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.</p>
 <div class="section" id="test-a-fit-s-convergence">
 <h3>Test a fit’s convergence<a class="headerlink" href="#test-a-fit-s-convergence" title="Permalink to this headline">¶</a></h3>
-<p>Once the fit has been performed, it’s important to check its convergence. If <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,</p>
+<p>Once the fit has been performed, it’s useful to check its convergence
+(a convergence test on the inferred power spectrum is performed as the fit iterates, while the below additionally examines convergence of the inferred brightness profile).
+If <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,</p>
 <div class="figure align-left" style="width: 700px">
 <img alt="_images/AS209_continuum_frank_fit_diag.png" src="_images/AS209_continuum_frank_fit_diag.png" />
 </div>
@@ -483,8 +488,7 @@ and <span class="math notranslate nohighlight">\({\rm tol}\)</span> is the toler
 This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities’ sparse sampling.
 If this stopping condition is not met, the fit runs until <code class="code docutils literal notranslate"><span class="pre">max_iter</span></code> as set in your parameter file. <br>
 <strong>b)</strong> Sequential difference between the last 100 brightness profile iterations.
-Note the y-scale here is <span class="math notranslate nohighlight">\(10^5\ {\rm Jy\ sr}^{-1}\)</span>, as opposed to <span class="math notranslate nohighlight">\(10^{10}\ {\rm Jy\ sr}^{-1}\)</span> in (a).
-So in this case the oscillations remaining at the end of the fit (<span class="math notranslate nohighlight">\(\approx 1250\)</span> iterations) are at a part in <span class="math notranslate nohighlight">\(10^6\)</span>.
+So in this case the oscillations remaining at the end of the fit (<span class="math notranslate nohighlight">\(\approx 1250\)</span> iterations) are at parts in <span class="math notranslate nohighlight">\(10^6\)</span>.
 <br>
 <strong>c)</strong> The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first <span class="math notranslate nohighlight">\(\approx 250\)</span> iterations,
@@ -582,7 +586,7 @@ when running from the terminal, frank produces this figure if <code class="code 
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
       <span class="lastupdated">
-        Last updated on 2020 Apr 28 at 10:42:49 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Apr 28 at 10:51:07 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
