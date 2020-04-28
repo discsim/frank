@@ -284,9 +284,12 @@ def normalize_uv(u, v, wle):
     return u_normed, v_normed
 
 
-def cut_data_by_baseline(u, v, vis, weights, cut_range):
+def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
     r"""
-    Truncate the data to be within a chosen baseline range
+    Truncate the data to be within a chosen baseline range. 
+
+    The cut will be done in deprojected baseline space if the geometry is
+    provided.
 
     Parameters
     ----------
@@ -296,10 +299,13 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
         Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
-        :math:`1 / \sigma^2`
+        :math:`1 / \sigma^2`eom : 
     cut_range : list of float, length = 2, unit = [\lambda]
         Lower and upper baseline bounds outside of which visibilities are
         truncated
+    geometry : SourceGeometry object, optional
+        Fitted geometry (see frank.geometry.SourceGeometry).
+
 
     Returns
     -------
@@ -310,13 +316,16 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
     weights_cut : array, unit = Jy^-2
         Weights in the chosen baseline range
     """
-
     logging.info('  Cutting data outside of the minimum and maximum baselines'
                  ' of {} and {}'
                  ' klambda'.format(cut_range[0] / 1e3,
                                    cut_range[1] / 1e3))
+    if geometry is not None:
+        up, vp = geometry.deproject(u, v)
+    else:
+        up, vp = u, v
 
-    baselines = np.hypot(u, v)
+    baselines = np.hypot(up, vp)
     above_lo = baselines >= cut_range[0]
     below_hi = baselines <= cut_range[1]
     in_range = above_lo & below_hi
