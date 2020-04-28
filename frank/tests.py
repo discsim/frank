@@ -98,26 +98,26 @@ def test_import_data():
 
 def load_AS209(uv_cut=None):
     """Load data for subsequent tests"""
-    uv_AS209_DHSARP = np.load('tutorials/AS209_continuum.npz')
+    uv_AS209_DSHARP = np.load('tutorials/AS209_continuum.npz')
     geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
                              PA=85.76)
 
     if uv_cut is not None:
-        u, v = [uv_AS209_DHSARP[x] for x in ['u', 'v']]
-                
+        u, v = [uv_AS209_DSHARP[x] for x in ['u', 'v']]
+
         q = np.hypot(*geometry.deproject(u,v))
 
         keep = q < uv_cut
 
         cut_data = {}
-        for key in  uv_AS209_DHSARP:
+        for key in  uv_AS209_DSHARP:
             if key not in { 'u', 'v', 'V', 'weights' }:
                 continue
-            cut_data[key] = uv_AS209_DHSARP[key][keep]
+            cut_data[key] = uv_AS209_DSHARP[key][keep]
 
-        uv_AS209_DHSARP = cut_data
+        uv_AS209_DSHARP = cut_data
 
-    return uv_AS209_DHSARP, geometry
+    return uv_AS209_DSHARP, geometry
 
 
 def test_fit_geometry():
@@ -212,7 +212,7 @@ def test_fit_geometry_inside():
                                err_msg="Gaussian geometry fit inside Frank fit")
 
 def test_throw_error_on_bad_q_range():
-    """Check that frank correctly raises an error when the 
+    """Check that frank correctly raises an error when the
     q range is bad."""
     AS209, geometry = load_AS209()
 
