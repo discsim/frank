@@ -23,7 +23,7 @@ setup(
         },
     license="GPLv3",
     url="https://github.com/discsim/frank",
-    keywords=["science", "astronomy", "interferometry"]
+    keywords=["science", "astronomy", "interferometry"],
     classifiers=[
          "Development Status :: 1 - Production/Stable",
          "Intended Audience :: Developers",
