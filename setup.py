@@ -23,10 +23,12 @@ setup(
         },
     license="GPLv3",
     url="https://github.com/discsim/frank",
+    keywords=["science", "astronomy", "interferometry"]
     classifiers=[
          "Development Status :: 1 - Production/Stable",
          "Intended Audience :: Developers",
          "Intended Audience :: Science/Research",
+         "Operating System :: OS Independent",      
          "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
          "Programming Language :: Python :: 3",
     ]
