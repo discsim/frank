@@ -225,7 +225,7 @@ def alter_data(u, v, vis, weights, geometry, model):
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    geometry : SourceGeometry object, optional
+    geometry : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry).
     model : dict
         Dictionary containing model parameters the fit uses
