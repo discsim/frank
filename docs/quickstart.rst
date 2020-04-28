@@ -14,7 +14,7 @@ Perform a fit from the terminal
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
 with CASA as demonstrated in `this tutorial <tutorials/xx>`_.
-The column format should be `u [m]     v [m]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
+The column format should be `u [\lambda]     v [\lambda]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
 You can quickly run a fit with the default parameter file, `default_parameters.json` (see below),
 by just passing in the filename of the UVTable to be fit with the `-uv` option. The UVTable can be a `.npz`, `.txt` or `.dat`.
@@ -78,12 +78,17 @@ note this is being increased by the residuals beyond the baseline at which the f
 On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
 To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
-**i)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
+**i)** Histogram of the binned real component of the visibilities.
+Note how the bin counts drop sharply beyond :math:`\approx 4.5\ {\rm M}\lambda`,
+a consequence of sparser sampling at the longest baselines. |br|
+**j)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.
 
 Test a fit's convergence
 ########################
-Once the fit has been performed, it's important to check its convergence. If `diag_plot=True` (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
+Once the fit has been performed, it's useful to check its convergence
+(a convergence test on the inferred power spectrum is performed as the fit iterates, while the below additionally examines convergence of the inferred brightness profile).
+If `diag_plot=True` (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
 
 .. figure:: plots/AS209_continuum_frank_fit_diag.png
    :align: left
@@ -99,8 +104,7 @@ and :math:`{\rm tol}` is the tolerance (`iter_tol`) in your parameter file.
 This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.
 If this stopping condition is not met, the fit runs until `max_iter` as set in your parameter file. |br|
 **b)** Sequential difference between the last 100 brightness profile iterations.
-Note the y-scale here is :math:`10^5\ {\rm Jy\ sr}^{-1}`, as opposed to :math:`10^{10}\ {\rm Jy\ sr}^{-1}` in (a).
-So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at a part in :math:`10^6`.
+So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at parts in :math:`10^6`.
 |br|
 **c)** The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 250` iterations,
