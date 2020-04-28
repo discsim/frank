@@ -299,7 +299,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
         Observed visibilities (complex: real + imag * 1j)
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
-        :math:`1 / \sigma^2`eom : 
+        :math:`1 / \sigma^2`
     cut_range : list of float, length = 2, unit = [\lambda]
         Lower and upper baseline bounds outside of which visibilities are
         truncated
