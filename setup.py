@@ -2,9 +2,10 @@
 # coding=utf-8
 from setuptools import setup, find_packages
 
-version = {}
-exec(open("frank/__init__.py", "r").read(), version)
-version = version['__version__']
+with open("frank/__init__.py", "r") as f:
+    for line in f:
+        if line.startswith('__version__'):
+            version = line.split('=')[1].strip()
 
 setup(
     name="frank",
