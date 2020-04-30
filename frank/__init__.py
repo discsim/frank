@@ -23,7 +23,7 @@ from frank import geometry
 from frank import hankel
 from frank import io
 from frank import radial_fitters
-from frank import tests
+from frank import utilities
 
 def enable_logging(log_file=None):
     """Turn on internal logging for Frankenstein
