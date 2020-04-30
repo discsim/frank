@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 with open("frank/__init__.py", "r") as f:
     for line in f:
         if line.startswith('__version__'):
-            version = line.split('=')[1].strip()
+            version = line.split('=')[1].strip().strip('"')
 
 setup(
     name="frank",
