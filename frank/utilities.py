@@ -60,89 +60,170 @@ class UVDataBinner(object):
         Weights on the visibility points
     bin_width : float, unit = :math:`\lambda`
         Width of the uv-bins
+
+    Notes
+    -----
+    Uses numpy masked arrays to mask bins with no uv points.
     """
 
     def __init__(self, uv, V, weights, bin_width):
         nbins = np.ceil(uv.max() / bin_width).astype('int')
+        #Protect against rounding
+        if nbins * bin_width < uv.max():
+            nbins += 1
         bins = np.arange(nbins+1, dtype='float64') * bin_width
 
-        # Initialize binned data
-        bin_n = np.zeros(nbins, dtype='int64')
-        bin_uv = np.zeros(nbins, dtype='float64')
-        bin_wgt = np.zeros(nbins, dtype='float64')
+        self._bins = bins
+        self._nbins = nbins
+        self._norm =  1 / bin_width
 
-        bin_vis = np.zeros(nbins, dtype='complex64')
-        bin_vis_err = np.zeros(nbins, dtype='complex64')
+        bin_uv, bin_wgt, bin_vis, bin_n = \
+            self.bin_quantities(uv, weights,
+                               uv, np.ones_like(uv), V,
+                               bin_counts=True)
 
-        norm = 1 / bin_width
+        # Normalize
+        idx = bin_n > 0
+        w = bin_wgt[idx]
+        bin_uv[idx] /= w
+        bin_vis[idx] /= w
 
-        # Use blocking for speed and reduced memory usage
+        # Store the binned data, masking empty bins:
+        mask = (bin_n == 0)
+        self._uv = np.ma.masked_where(mask, bin_uv)
+        self._V = np.ma.masked_where(mask, bin_vis)
+        self._w = np.ma.masked_where(mask, bin_wgt)
+        self._count = np.ma.masked_where(mask, bin_n)
+
+        self._uv_left = np.ma.masked_where(mask, bins[:-1])
+        self._uv_right = np.ma.masked_where(mask, bins[1:])
+
+        # Compute the uncertainty on the means:
+        bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
+
+        #   1) Get the binned mean for each vis:
+        mu = self._V[self.determine_uv_bin(uv)]
+
+        #   2) Compute weighted error for bins with n > 1
+        err = self.bin_quantities(uv, weights**2,
+                                  (V-mu).real**2 + 1j * (V-mu).imag**2)
+
+        idx2 = bin_n > 1
+        err[idx2] /= bin_wgt[idx2]**2 * (1 - 1 / bin_n[idx2])
+
+        bin_vis_err[idx2] = \
+            np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
+
+        #   3) Use a sensible error for bins with one baseline
+        idx1 = bin_n == 1
+        bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
+            1 / np.sqrt(bin_wgt[idx1])
+        bin_vis_err[mask] = np.nan
+
+        #   4) Store the error
+        self._Verr = np.ma.masked_where(mask, bin_vis_err)
+
+
+    def determine_uv_bin(self, uv):
+        r"""Determine the bin that the given uv points belong too.
+
+        Parameters
+        ----------
+        uv : array, unit = :math:`\lambda`
+            Baselines to determine the bins of
+
+        Returns
+        -------
+        idx : array,
+            Bins that the uv point belongs to. Will be -1 if the bin does not
+            exist.
+        """
+        bins = self._bins
+        nbins = self._nbins
+
+        idx = np.floor(uv * self._norm).astype('int32')
+        idx[uv < bins[idx]] -= 1    # Fix rounding error
+        idx[uv == bins[nbins]] -= 1 # Handle point exaclty on outer boundary
+
+        too_high = idx >= nbins
+        idx[too_high] = -1
+
+        # Increase points on the RH boundary, unless it is the outer one
+        idx_tmp = idx[~too_high]
+        increment = (uv[~too_high] >= bins[idx_tmp+1]) & (idx_tmp+1 < nbins)
+        idx_tmp[increment] += 1
+
+        return idx
+
+    def bin_quantities(self, uv, w, *quantities, bin_counts=False):
+        r"""Bin the given quantities according the to uv points and weights.
+
+        Parameters
+        ----------
+        uv : array, unit = :math:`\lambda`
+            Baselines of the data to bin
+        weights : array, unit = Jy^-2
+            Weights on the visibility points
+        quantities : arrays,
+            Quantities evaluated at the uv points to bin.
+        bin_counts : bool, default=False
+            Determines whether to count the number of uv points per bin.
+
+        Returns
+        -------
+        results : arrays, same type as quantities
+            Binned data
+        bin_counts : array, int64, optional
+            If bin_counts=True, then this array contains the number of uv
+            points in each bin. Otherwise, it is not returned.
+        """
+        bins = self._bins
+        nbins = self._nbins
+        norm = self._norm
+
+        results = [np.zeros(nbins, dtype=x.dtype) for x in quantities]
+
+        if bin_counts:
+            counts = np.zeros(nbins, dtype='int64')
+
         BLOCK = 65536
         for i in range(0, len(uv), BLOCK):
             tmp_uv = uv[i:i+BLOCK]
-            tmp_vis = V[i:i+BLOCK]
-            tmp_wgt = weights[i:i+BLOCK]
+            tmp_wgt = w[i:i+BLOCK]
 
             idx = np.floor(tmp_uv * norm).astype('int32')
+
+            # Fix rounding:
+            idx[tmp_uv < bins[idx]] -= 1
+            # Move points exactly on the outer boundary inwards:
+            idx[idx == nbins] -= 1
 
             # Only the last bin includes its edge
             increment = (tmp_uv >= bins[idx+1]) & (idx+1 != nbins)
             idx[increment] += 1
 
-            bin_n += np.bincount(idx, minlength=nbins)
-            bin_wgt += np.bincount(idx, weights=tmp_wgt, minlength=nbins)
-            bin_uv += np.bincount(idx, weights=tmp_wgt*tmp_uv, minlength=nbins)
+            if bin_counts:
+                counts += np.bincount(idx, minlength=nbins)
 
-            bin_vis.real += np.bincount(idx, weights=tmp_wgt*tmp_vis.real,
-                                        minlength=nbins)
-            bin_vis.imag += np.bincount(idx, weights=tmp_wgt*tmp_vis.imag,
-                                        minlength=nbins)
+            for qty, res in zip(quantities, results):
+                tmp_qty = tmp_wgt*qty[i:i+BLOCK]
 
-            bin_vis_err.real += np.bincount(idx,
-                                            weights=tmp_wgt*tmp_vis.real**2,
+                if np.iscomplexobj(qty):
+                    res.real += np.bincount(idx, weights=tmp_qty.real,
                                             minlength=nbins)
-            bin_vis_err.imag += np.bincount(idx,
-                                            weights=tmp_wgt*tmp_vis.imag**2,
+                    res.imag += np.bincount(idx, weights=tmp_qty.imag,
                                             minlength=nbins)
+                else:
+                    res += np.bincount(idx, weights=tmp_qty, minlength=nbins)
 
-        # Create a mask for empty bins
-        idx = bin_n > 0
-        self._bin_mask = idx
+        if bin_counts:
+            return results + [counts]
+        if len(results) == 1:
+            return results[0]
+        return results
 
-        # Normalize
-        w = bin_wgt[idx]
-        bin_vis[idx] /= w
-        bin_uv[idx] /= w
-
-        bin_vis_err[idx] /= w
-
-
-        # Compute the variance for cells with 2 or more data points
-        idx1 = bin_n == 1
-        idx2 = idx & ~idx1
-
-        bin_vis_err[idx2].real = \
-            np.sqrt(bin_vis_err[idx2].real - bin_vis[idx2].real**2)
-        bin_vis_err[idx2].imag = \
-            np.sqrt(bin_vis_err[idx2].imag - bin_vis[idx2].imag**2)
-
-        # Use a sensible error for bins with one baseline
-        bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
-            1 / np.sqrt(bin_wgt[idx1])
-
-        # Store all bins, including empty ones
-        self._unmasked_count = bin_n
-        self._unmasked_bins = bins
-
-        # Mask the empty bins
-        self._uv = bin_uv[idx]
-        self._V = bin_vis[idx]
-        self._w = bin_wgt[idx]
-        self._Verr = bin_vis_err[idx]
-        self._count = bin_n[idx]
-
-        self._uv_left = bins[:-1][idx]
-        self._uv_right = bins[1:][idx]
+    def __len__(self):
+        return len(self._uv)
 
     @property
     def uv(self):
@@ -174,11 +255,7 @@ class UVDataBinner(object):
         """Edges of the histogram bins"""
         return [self._uv_left, self._uv_right]
 
-    @property
-    def unmasked_data(self):
-        """Unmasked data"""
-        return [self._unmasked_bins, self._unmasked_count, self._bin_mask]
-
+ 
 
 def normalize_uv(u, v, wle):
     r"""
@@ -243,58 +320,88 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-
-def apply_correction_to_weights(u, v, ReV, weights, nbins=300):
+def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     r"""
-    Estimate and apply a correction factor to the data's weights by comparing
-    binnings of the real component of the visibilities under different
-    weightings. This is useful for mock datasets in which the weights are all
-    unity.
+    Estimate the weights using the variance of the binned visibilities.
+
+    The estimation is done assuming that the variation in each bin is dominated
+    by the noise. This will be true if:
+        1) The source is axi-symmetric,
+        2) The uv-points have been deprojected,
+        3) The bins are not too wide,
+    Otherwise the variance may be dominated by intrinsic variations in the
+    visibilities.
 
     Parameters
     ----------
     u, v : array, unit = :math:`\lambda`
-        u and v coordinates of observations
-
-    ReV : array, unit = Jy
-        Real component of observed visibilities
-
-    weights : array, unit = Jy^-2
-        Weights assigned to observed visibilities, of the form
-        :math:`1 / \sigma^2`
-
+        u and v coordinates of observations (deprojected).
+    V : array, unit = Jy
+        Obsersed visibility. If complex, the weights will be computed from the
+        average of the variance of the real and imaginary components, as in
+        CASA's statwt. Otherwise the variance of the real part is used.
     nbins : int, default=300
-        Number of bins used to construct the histograms
+        Number of bins used.
+    log : bool, default=True
+        If True, the uv bins will be constructed in log space, otherwise linear
+        spaced bins will be used.
+    use_median : bool, default=False
+        If True all of the weights will be set to the median of the variance
+        estimated across the bins. Otherwise, the baseline dependent variance
+        will be used.
 
     Returns
     -------
-    wcorr_estimate : float
-        Correction factor by which to adjust the weights
+    weights : array,
+        Esimtate weight for each uv point.
 
-    weights_corrected : array, unit = Jy^-2
-        Corrected weights assigned to observed visibilities, of the form
-        :math:`1 / \sigma^2`
+    Notes
+    -----
+        - This function does not use the original weights in the estimation.
+        - Bins with only one uv point do not have a variance estimate. Thus
+          the mean of the variance in the two adjacent bins is used instead.
     """
+    logging.info('  Estimating visibility weights.')
 
-    logging.info('  Estimating, applying correction factor to visibility weights')
+    q = np.hypot(u,v)
+    if log:
+        q = np.log(q)
+        q -= q.min()
+        
+    bin_width = (q.max()-q.min()) / nbins
 
-    baselines = np.hypot(u, v)
-    mu, edges = np.histogram(np.log10(baselines), weights=ReV, bins=nbins)
-    mu2, edges = np.histogram(np.log10(baselines), weights=ReV ** 2, bins=nbins)
-    N, edges = np.histogram(np.log10(baselines), bins=nbins)
+    uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
 
-    centres = 0.5 * (edges[1:] + edges[:-1])
+    if uvBin.bin_counts.max() == 1:
+        raise ValueError("No bin contains more than one uv point, can't "
+                         " estimate the variance. Use fewer bins.")
 
-    mu /= np.maximum(N, 1)
-    mu2 /= np.maximum(N, 1)
+    if np.iscomplex(V.dtype):
+        var = 0.5*(uvBin.error.real**2 + uvBin.error.imag**2) * uvBin.bin_counts
+    else:
+        var = uvBin.error.real**2 * uvBin.bin_counts
 
-    sigma = (mu2 - mu ** 2) ** 0.5
-    wcorr_estimate = sigma[np.where(sigma > 0)].mean()
+    if use_median:
+        return np.full(np.len(u), np.median(var[uvBin.bin_counts > 1]))
+    else:
+        # For bins with 1 uv point, use the average of the adjacent bins
+        no_var = np.argwhere(uvBin.bin_counts == 1)
+        if len(no_var) > 0:
+            # Find the location `loc` of the bad points in the array of good points
+            good_var = np.argwhere(uvBin.bin_counts > 1)
+            loc = np.searchsorted(good_var, no_var, side='right')
 
-    weights_corrected = weights / wcorr_estimate ** 2
+            # Set the variance to the average of the two adjacent bins
+            im = good_var[np.maximum(loc-1, 0)]
+            ip = good_var[np.minimum(loc, len(good_var)-1)]
+            var[no_var] = 0.5*(var[im] + var[ip])
 
-    return wcorr_estimate, weights_corrected
+        bin_id = uvBin.determine_uv_bin(q)
+        assert np.all(bin_id != -1), "Error in binning"  # Should never occur
 
+        weights = 1/var[bin_id]
+
+        return weights
 
 def draw_bootstrap_sample(u, v, vis, weights):
     r"""

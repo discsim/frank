@@ -31,9 +31,10 @@ from frank.constants import rad_to_arcsec, deg_to_rad
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     r"""
-    Shift the phase centre of the visibilties.
-
-    Correct the image centering in visibility space
+    Apply a phase shift to the visibilities.
+    
+    This is equivalent to moving the source in the image plane by the 
+    vector (dRA, dDec).
 
     Parameters
     ----------
@@ -50,9 +51,8 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
         Phase shift in declination.
         NOTE: The sign convention is xx
     inverse : bool, default=False
-        If True, the visibilities are uncentered (the phase shift undone)
-        rather than centered
-
+        If True, the phase shift is reversed (equivalent to 
+        flipping the signs of dRA and dDec). 
     Returns
     -------
     shifted_vis : array of real, size = N, unit = Jy
@@ -132,11 +132,13 @@ class SourceGeometry(object):
         Position angle of the disc
     dRA : float, unit = arcsec
         Phase centre offset in right ascension.
-        NOTE: The sign convention is xx
     dDec : float, units = arcsec
         Phase centre offset in declination.
-        NOTE: The sign convention is xx
 
+    Notes
+    -----
+    The phase centre offsets, dRA and dDec, refer to the distance to the source
+    from the phase centre.
     """
 
     def __init__(self, inc=None, PA=None, dRA=None, dDec=None):
@@ -168,7 +170,7 @@ class SourceGeometry(object):
             Corrected complex visibilites
 
         """
-        Vp = apply_phase_shift(u, v, V, self._dRA, self._dDec)
+        Vp = apply_phase_shift(u, v, V, self._dRA, self._dDec, inverse=True)
         up, vp = deproject(u, v, self._inc, self._PA)
 
         return up, vp, Vp
@@ -196,7 +198,7 @@ class SourceGeometry(object):
             Corrected complex visibilites
         """
         up, vp = self.reproject(u, v)
-        Vp = apply_phase_shift(up, vp, V, self._dRA, self._dDec, inverse=True)
+        Vp = apply_phase_shift(up, vp, V, self._dRA, self._dDec, inverse=False)
 
         return up, vp, Vp
 
@@ -265,11 +267,13 @@ class FixedGeometry(SourceGeometry):
         Disc positition angle.
     dRA : float, default = 0, unit = arcsec
         Phase centre offset in right ascension
-        NOTE: The sign convention is xx
     dDec : float, default = 0, unit = arcsec
         Phase centre offset in declination
-        NOTE: The sign convention is xx
 
+    Notes
+    -----
+    The phase centre offsets, dRA and dDec, refer to the distance to the source
+    from the phase centre.
     """
 
     def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
@@ -289,6 +293,10 @@ class FitGeometryGaussian(SourceGeometry):
          phase_centre = None, the phase centre is fit for. Else the phase
          centre should be provided as a tuple
 
+    Notes
+    -----
+    The phase centre offsets, dRA and dDec, refer to the distance to the source
+    from the phase centre.
     """
 
     def __init__(self, phase_centre=None):
@@ -353,6 +361,11 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     fac = 2*np.pi / rad_to_arcsec
     w = np.sqrt(weights)
 
+    if phase_centre is not None:
+        dRA, dDec = phase_centre
+        phi = dRA*fac * u + dDec*fac * v
+        V = V * (np.cos(phi) - 1j*np.sin(phi))
+
     def wrap(fun):
         return np.concatenate([fun.real, fun.imag])
 
@@ -361,7 +374,7 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
-            Vp = V * (np.cos(phi) + 1j*np.sin(phi))
+            Vp = V * (np.cos(phi) - 1j*np.sin(phi))
         else:
             Vp = V
 
@@ -382,7 +395,7 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
-            dVp = - w*V * (-np.sin(phi) + 1j*np.cos(phi)) * fac
+            dVp = - w*V * (-np.sin(phi) - 1j*np.cos(phi)) * fac
 
             jac[0] = wrap(dVp*u)
             jac[1] = wrap(dVp*v)

@@ -15,6 +15,7 @@ setup(
     author_email="jmj51@ast.cam.ac.uk",
     description="Frankenstein, the flux reconstructor",
     long_description=open('README.md').read(),
+    python_requires='>=3',
     install_requires=[line.rstrip() for line in open("requirements.txt", "r").readlines()],
     extras_require={
         'test' : ['pytest'],

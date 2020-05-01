@@ -171,7 +171,10 @@ def parse_parameters(*args):
             raise err
 
     if model['input_output']['format'] is None:
-        model['input_output']['format'] = os.path.splitext(uv_path)[1][1:]
+        path, format = os.path.splitext(uv_path)
+        if format in {'.gz', '.bz2'}:
+            format = os.path.splitext(path)[1]
+        model['input_output']['format'] = format[1:]
 
     param_path = save_prefix + '_frank_used_pars.json'
 
@@ -229,9 +232,6 @@ def alter_data(u, v, vis, weights, model):
     -------
     u, v, vis, weights : Parameters as above, with any or all altered according
     to the modification operations specified in model
-    wcorr_estimate : None if model['modify_data']['correct_weights'] = False,
-    else the correction factor by which the weights were adjusted (see
-    frank.utilities.apply_correction_to_weights)
     """
 
     if model['modify_data']['normalization_wle'] is not None:
@@ -245,12 +245,9 @@ def alter_data(u, v, vis, weights, model):
 
     wcorr_estimate = None
     if model['modify_data']['correct_weights']:
-        wcorr_estimate, weights = utilities.apply_correction_to_weights(u, v,
-                                                                        vis.real,
-                                                                        weights
-                                                                        )
+        weights = utilities.estimate_weights(u, v, vis, use_median=True)
 
-    return u, v, vis, weights, wcorr_estimate
+    return u, v, vis, weights
 
 
 def determine_geometry(u, v, vis, weights, model):
@@ -591,8 +588,9 @@ def main(*args):
 
     u, v, vis, weights = load_data(model)
 
-    if model['modify_data']['baseline_range'] or model['modify_data']['correct_weights']:
-        u, v, vis, weights, _ = alter_data(
+    if model['modify_data']['baseline_range'] or \
+            model['modify_data']['correct_weights']:
+        u, v, vis, weights = alter_data(
             u, v, vis, weights, model)
 
     geom = determine_geometry(u, v, vis, weights, model)

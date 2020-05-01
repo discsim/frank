@@ -296,7 +296,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
         plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
                        label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
 
-        plot_vis_hist(binned_vis.unmasked_data[0], binned_vis.unmasked_data[1], ax8,
+        edges = np.concatenate([binned_vis.bin_edges[0].data, binned_vis.bin_edges[1].data[-1:]])
+        plot_vis_hist(edges, binned_vis.bin_counts.data, ax8,
                       color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3

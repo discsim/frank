@@ -96,13 +96,28 @@ def test_import_data():
     load_uvtable('tutorials/test_datafile.txt')
 
 
-def load_AS209():
+def load_AS209(uv_cut=None):
     """Load data for subsequent tests"""
-    uv_AS209_DHSARP = np.load('tutorials/AS209_continuum.npz')
-    geometry = FixedGeometry(dRA=1.9e-3, dDec=-2.5e-3, inc=34.97,
+    uv_AS209_DSHARP = np.load('tutorials/AS209_continuum.npz')
+    geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
                              PA=85.76)
 
-    return uv_AS209_DHSARP, geometry
+    if uv_cut is not None:
+        u, v = [uv_AS209_DSHARP[x] for x in ['u', 'v']]
+
+        q = np.hypot(*geometry.deproject(u,v))
+
+        keep = q < uv_cut
+
+        cut_data = {}
+        for key in  uv_AS209_DSHARP:
+            if key not in { 'u', 'v', 'V', 'weights' }:
+                continue
+            cut_data[key] = uv_AS209_DSHARP[key][keep]
+
+        uv_AS209_DSHARP = cut_data
+
+    return uv_AS209_DSHARP, geometry
 
 
 def test_fit_geometry():
@@ -117,7 +132,7 @@ def test_fit_geometry():
                                 1e3 * geom.dDec],
                                [1.4916013559412147 / deg_to_rad,
                                 -0.5395904796783955 / deg_to_rad,
-                                0.6431627790617276, 1.161768824369382],
+                                -0.6431627790617276, -1.161768824369382],
                                err_msg="Gaussian geometry fit")
 
 
@@ -132,7 +147,6 @@ def test_fourier_bessel_fitter():
     FB = FourierBesselFitter(Rmax, 20, geometry=geometry)
 
     sol = FB.fit(u, v, vis, weights)
-
     expected = np.array([1.89446696e+10, 1.81772972e+10, 1.39622125e+10,
                          1.20709653e+10,
                          9.83716859e+09, 3.26308106e+09, 2.02453146e+08,
@@ -151,37 +165,27 @@ def test_fourier_bessel_fitter():
 
 def test_frank_fitter():
     """Check FrankFitter fitting routine with AS 209 dataset"""
-    AS209, geometry = load_AS209()
+    AS209, geometry = load_AS209(uv_cut=1e6)
 
     u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
 
     Rmax = 1.6
 
-    FF = FrankFitter(Rmax, 60, geometry, alpha=1.05, weights_smooth=1e-2)
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
-
-    expected = np.array([5.44587246e+10, 2.31908668e+10, -1.7711253e+09,
-                        2.14811883e+10, 2.53513658e+10, 1.85905226e+10,
-                        1.31145531e+10, 1.12516710e+10, 1.62923592e+10,
-                        1.39408888e+10, 1.10161732e+10, 1.19351519e+10,
-                        1.19989695e+10, 1.05616780e+10, 8.75939534e+09,
-                        5.84608133e+09, 3.32040643e+09, 7.24601424e+08,
-                        2.96214628e+08, 5.72116980e+08, 3.18323327e+08,
-                        2.13409061e+09, 6.61306735e+09, 6.47908965e+09,
-                        2.40043584e+09, 5.57166070e+08, 4.27126469e+08,
-                        4.07886366e+08, 2.72714271e+08, 3.37625743e+08,
-                        3.79818671e+08, 3.27017821e+08, 3.03296287e+08,
-                        1.42929667e+08, 2.60265379e+08, 1.00374479e+09,
-                        4.13295615e+09, 5.65376669e+09, 3.75722027e+09,
-                        1.87490326e+09, 1.17674174e+09, 9.41204467e+08,
-                        8.29277497e+08, 6.27249238e+08, 7.44423613e+08,
-                        5.14575245e+08, 3.75075096e+08, 3.14146875e+08,
-                        2.02629483e+08, 1.87170663e+08, 4.50540435e+07,
-                        1.00130984e+08, 9.70917813e+07, 2.65685928e+07,
-                        5.86297277e+06, 4.58455020e+07, -3.4940023e+07,
-                        3.97389252e+07, -2.5155588e+07, 5.03860746e+07
-                        ])
+    expected = np.array([
+         2.007565323969626999e+10,  1.843519801944299698e+10,
+         1.349007486432532310e+10,  1.272366226872675896e+10,
+         1.034881390038976860e+10,  2.579120285502616405e+09,
+         6.974036526280273199e+08,  4.127651298085847378e+09,
+         2.502142350921279907e+09, -2.756869487129538059e+08,
+         2.823359106868867278e+08,  8.706525814211348295e+08,
+         3.257354471853072166e+09,  3.112075096447698593e+09,
+        -5.146053743384782672e+08,  1.491212688054856777e+09,
+        -5.191258159130128026e+08,  5.100511550974740982e+08,
+        -1.922647420605963767e+08,  8.068002451905013621e+07,
+    ])
 
     np.testing.assert_allclose(sol.mean, expected,
                                err_msg="Testing Frank Fit to AS 209")
@@ -189,7 +193,7 @@ def test_frank_fitter():
 
 def test_fit_geometry_inside():
     """Check the geometry fit embedded in a call to FrankFitter"""
-    AS209, _ = load_AS209()
+    AS209, _ = load_AS209(uv_cut=1e6)
 
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
@@ -203,11 +207,27 @@ def test_fit_geometry_inside():
     geom = sol.geometry
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [1.4916013559412147 / deg_to_rad,
-                                -0.5395904796783955 / deg_to_rad,
-                                0.6431627790617276, 1.161768824369382],
+                               [86.46568992560152, -34.5071920284988,
+                                0.20818634201418384, -2.0988159662202714],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
+def test_throw_error_on_bad_q_range():
+    """Check that frank correctly raises an error when the
+    q range is bad."""
+    AS209, geometry = load_AS209()
+
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6
+
+    FF = FrankFitter(Rmax, 20, geometry,
+                     alpha=1.05, weights_smooth=1e-2)
+
+    try:
+        sol = FF.fit(u, v, vis, weights)
+        raise RuntimeError("Expected ValueError due to bad range")
+    except ValueError:
+        pass
 
 def test_uvbin():
     """Check the uv-data binning routine"""
@@ -240,7 +260,8 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     """Check the full pipeline that performs a fit and outputs results"""
 
     # Build a subset of the data that we'll load during the fit
-    AS209, AS209_geometry = load_AS209()
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
     tmp_dir = '/tmp/frank/tests'

@@ -157,7 +157,7 @@ def plot_vis_hist(bins, counts, ax, **kwargs):
         Axis on which to plot
     """
 
-    ax.hist(bins[:-1], bins, weights=counts, alpha=.5, **kwargs)
+    ax.hist(0.5*(bins[1:]+bins[:-1]), bins, weights=counts, alpha=.5, **kwargs)
 
     ax.legend()
 
