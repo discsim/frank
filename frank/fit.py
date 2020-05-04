@@ -143,7 +143,7 @@ def parse_parameters(*args):
     # initialized.
     _check_and_warn_if_parallel()
 
-    
+
     logging.info('\nRunning Frankenstein on'
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
@@ -212,7 +212,7 @@ def load_data(model):
     return u, v, vis, weights
 
 
-def alter_data(u, v, vis, weights, model):
+def alter_data(u, v, vis, weights, geometry, model):
     r"""
     Apply one or more modifications to the data as specified in the parameter file
 
@@ -225,6 +225,8 @@ def alter_data(u, v, vis, weights, model):
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
+    geometry : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry).
     model : dict
         Dictionary containing model parameters the fit uses
 
@@ -239,13 +241,15 @@ def alter_data(u, v, vis, weights, model):
             u, v, model['modify_data']['normalization_wle'])
 
     if model['modify_data']['baseline_range']:
-        u, v, vis, weights = utilities.cut_data_by_baseline(u, v, vis, weights,
-                                                            model['modify_data']['baseline_range']
-                                                            )
+        u, v, vis, weights = \
+            utilities.cut_data_by_baseline(u, v, vis, weights,
+                                           model['modify_data']['baseline_range'],
+                                           geometry)
 
     wcorr_estimate = None
     if model['modify_data']['correct_weights']:
-        weights = utilities.estimate_weights(u, v, vis, use_median=True)
+        up, vp = geometry.deproject(u,v)
+        weights = utilities.estimate_weights(up, vp, vis, use_median=True)
 
     return u, v, vis, weights
 
@@ -588,12 +592,12 @@ def main(*args):
 
     u, v, vis, weights = load_data(model)
 
+    geom = determine_geometry(u, v, vis, weights, model)
+
     if model['modify_data']['baseline_range'] or \
             model['modify_data']['correct_weights']:
         u, v, vis, weights = alter_data(
-            u, v, vis, weights, model)
-
-    geom = determine_geometry(u, v, vis, weights, model)
+            u, v, vis, weights, geom, model)
 
     if model['analysis']['bootstrap_ntrials']:
         boot_fig, boot_axes = perform_bootstrap(
