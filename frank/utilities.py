@@ -395,7 +395,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         var = uvBin.error.real**2 * uvBin.bin_counts
 
     if use_median:
-        return np.full(np.len(u), np.median(var[uvBin.bin_counts > 1]))
+        return np.full(len(u), 1/np.median(var[uvBin.bin_counts > 1]))
     else:
         # For bins with 1 uv point, use the average of the adjacent bins
         no_var = np.argwhere(uvBin.bin_counts == 1)
