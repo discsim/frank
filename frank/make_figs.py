@@ -640,7 +640,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
                             label='CLEAN')
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
     plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls=':',
-                            lw=3, label='frank, convolved')
+                            lw=2.5, label='frank, convolved')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -683,7 +683,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     ax1.set_ylabel(r'Re(V) [mJy]')
 
     ax0.set_xlim(right=sol.Rmax)
-    ax1.set_xlim(right=sol.Qmax)
+    ax1.set_xlim(.9 * baselines.min(), 1.2 * baselines.max())
     ax1.set_xscale('log')
     ax1.set_yscale('log')
     ax1.set_ylim(bottom=1e-3)
