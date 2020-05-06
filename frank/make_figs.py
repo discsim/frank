@@ -640,7 +640,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
                             label='CLEAN')
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
     plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls=':',
-                            label='frank, convolved')
+                            lw=3, label='frank, convolved')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -671,8 +671,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
 
     plot_vis_fit(grid, vis_fit_kl, ax1, c='r', label='frank>0')
     plot_vis_fit(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
-    plot_vis_fit(grid, clean_DHT_kl, ax1, c='b', label='CLEAN>0')
-    plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='CLEAN<0')
+    plot_vis_fit(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
+    plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
     ax0.legend(loc=0)
     ax1.legend(loc=0)
@@ -682,7 +682,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     ax1.set_xlabel(r'Baseline [$\lambda$]')
     ax1.set_ylabel(r'Re(V) [mJy]')
 
-    ax0.set_xlim(right=1.1 * sol.Rmax)
+    ax0.set_xlim(right=sol.Rmax)
+    ax1.set_xlim(right=sol.Qmax)
     ax1.set_xscale('log')
     ax1.set_yscale('log')
     ax1.set_ylim(bottom=1e-3)
