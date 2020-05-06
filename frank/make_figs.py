@@ -49,6 +49,7 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 # Global settings for plots
 cs = ['#a4a4a4', 'k', '#896360', 'b']
 cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
+hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
 ms = ['x', '+', '.', '1']
 
 
@@ -198,7 +199,6 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    cs = ['k', '#a4a4a4']
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
             baselines, vis_deproj, weights, bin_widths[i])
@@ -338,7 +338,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
     ax4.set_ylim(np.multiply(zoom_bounds, 1e3))
 
-    hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
@@ -647,7 +646,6 @@ def make_overplot_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                        np.log10(max(baselines.max(), sol.q[-1])),
                        10**4)
 
-    cs = ['k', '#a4a4a4']
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(
             baselines, vis_deproj, weights, bin_widths[i])
@@ -777,7 +775,7 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
     plt.tight_layout()
 
     if save_prefix:
-        plt.savefig(save_prefix + '_bootstrap.png', dpi=600)
+        plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=600)
         plt.close()
     else:
         plt.show()
