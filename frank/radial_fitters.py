@@ -122,7 +122,7 @@ class _HankelRegressor(object):
                 raise ValueError("Bad value in power spectrum. The power"
                                  " spectrum must be postive and not contain"
                                  " any NaN values")
-            
+
             Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
         else:
@@ -325,7 +325,7 @@ class _HankelRegressor(object):
 
         # Undo phase centering
         _, _, V = geometry.undo_correction(u, v, V)
-        
+
         return V
 
     def predict_deprojected(self, q=None, I=None, geometry=None,
@@ -728,7 +728,7 @@ class FrankFitter(FourierBesselFitter):
 
         Returns
         -------
-        MAP_sol : _HankelRegressor
+        MAP_solution : _HankelRegressor
             Reconstructed profile using maximum a posteriori power spectrum
         """
         logging.info('  Fitting for brightness profile using FrankFitter')
