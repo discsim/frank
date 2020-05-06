@@ -13,7 +13,7 @@ Perform a fit from the terminal
 
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
-with CASA as demonstrated in `this tutorial <tutorials/xx>`_.
+with CASA as demonstrated in `this tutorial <tutorials/extracting_a_UVTable>`_.
 The column format should be `u [\lambda]     v [\lambda]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
 You can quickly run a fit with the default parameter file, `default_parameters.json` (see below),
@@ -77,7 +77,7 @@ note this is being increased by the residuals beyond the baseline at which the f
 **g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
 On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
-To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
+To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity.ipynb>`_. |br|
 **i)** Histogram of the binned real component of the visibilities.
 Note how the bin counts drop sharply beyond :math:`\approx 4.5\ {\rm M}\lambda`,
 a consequence of sparser sampling at the longest baselines. |br|
@@ -119,17 +119,18 @@ We want to ensure this convergence metric isn't going start increasing again if 
 while by iteration :math:`\approx 1000` the trend looks good. frank's internal stopping criterion for the fit, as described above in (a), is not yet met at
 iteration 1000, as that criterion is conservative to help ensure the power spectrum (and thus the brightness profile) is no longer appreciably changing.
 
-Perform multiple fits in a loop
-###############################
-You can run multiple fits in a single call to frank (e.g., to check a fit's sensitivity to hyperpriors or run a self-consistent analysis on multiple sources)
-by setting one or more of the parameters in the parameter file as a list.
-See `this tutorial <tutorials/running_fits_in_a_loop.ipynb>`_ for an example.
+Test the fit's sensitivity by performing multiple fits in a loop
+################################################################
+It's always useful to check a fit's sensitivity to the hyperparameters :math:`\alpha` and :math:`w_{\rm smooth}`.
+You can quickly do this by running and overplotting multiple fits in a single call to frank.
+Just set one or more of the `hyperpriors` in the parameter file as a list.
+See `this tutorial <tutorials/prior_sensitivity.ipynb>`_ for an example that discusses hyperparameter sensitivity.
 
 Modify the `fit.py` script
 ##########################
 We've run this example using `frank/fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py>`_.
-For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_a_module.ipynb>`_.
-If you'd like a video demonstration of how to run the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
+For an 'under the hood' look at what this script does, see `this tutorial <tutorials/fitting_procedure.ipynb>`_.
+If you'd like a video demonstration of the same tutorial (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
 Perform a fit using `frank` as a Python module
 -----------------------------------------------
@@ -168,7 +169,7 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
 when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
 
 .. code-block:: python
