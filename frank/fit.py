@@ -511,7 +511,7 @@ def multifit_overplot(u, v, vis, weights, geom, model):
             u, v, vis, weights, geom, this_model)
 
         # figs, axes, model = output_results(u, v, vis, weights, sol,
-        #                                   iteration_diagnostics, this_model)
+        #                                   this_model, iteration_diagnostics)
 
         multifit_fig, multifit_axes = make_figs.make_overplot_fig(u, v, vis, weights, sol,
                                                                model['plotting']['bin_widths'],
@@ -616,8 +616,8 @@ def main(*args):
         sol, iteration_diagnostics = perform_fit(
             u, v, vis, weights, geom, model)
 
-        figs, axes, model = output_results(u, v, vis, weights, sol,
-                                           iteration_diagnostics, model
+        figs, axes, model = output_results(u, v, vis, weights, sol, model,
+                                           iteration_diagnostics
                                            )
 
         logging.info('  Updating {} with final parameters used'
