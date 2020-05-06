@@ -31,8 +31,56 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 from frank.utilities import sweep_profile
 
 
+def plot_deprojection_uv(u, v, up, vp, ax):
+    """
+    Overplot projected and deprojected (u, v) coordinates
+
+    Parameters
+    ----------
+    u, v : array
+        Projected (u, v) coordinates
+    up, vp : array
+        Deprojected (u, v) coordinates
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
+    """
+
+    ax.plot(u, v, '+', c='#1EC8FE', label='Projected')
+    ax.plot(up, vp, 'x', c='#D14768', label='Deprojected')
+
+    ax.legend()
+
+
+def plot_deprojection_vis(u, v, up, vp, vis, visp, ax):
+    r"""
+    Overplot projected and deprojected visibilities
+
+    Parameters
+    ----------
+    u, v : array
+        Projected (u, v) coordinates
+    up, vp : array
+        Deprojected (u, v) coordinates
+    vis : array
+        Projected visibilities (complex: real + imag * 1j)
+    visp : array
+        Deprojected visibilities (complex: real + imag * 1j)
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
+    """
+
+    # Projected baselines
+    bs = np.hypot(u, v)
+    # Deprojected baselines
+    bsp = np.hypot(up, vp)
+
+    ax.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
+    ax.plot(bsp, vis, 'x', c='#D14768', label='Deprojected')
+
+    ax.legend()
+
+
 def plot_brightness_profile(fit_r, fit_i, ax, **kwargs):
-    # TODO: take in (and move all these to) kwargs for standard plot params. do throughout script. then clean up docstrings
     """
     Plot a brightness profile as a function of disc radius, I(r)
 
