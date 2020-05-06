@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module has functions that are useful for plotting and analyzing fit
+"""This module has various functions useful for plotting and analyzing fit
 results.
 """
 import logging
@@ -166,7 +166,7 @@ class UVDataBinner(object):
             Weights on the visibility points
         quantities : arrays,
             Quantities evaluated at the uv points to bin.
-        bin_counts : bool, default=False
+        bin_counts : bool, default = False
             Determines whether to count the number of uv points per bin.
 
         Returns
@@ -255,7 +255,7 @@ class UVDataBinner(object):
         """Edges of the histogram bins"""
         return [self._uv_left, self._uv_right]
 
- 
+
 
 def normalize_uv(u, v, wle):
     r"""
@@ -282,7 +282,7 @@ def normalize_uv(u, v, wle):
 
 def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
     r"""
-    Truncate the data to be within a chosen baseline range. 
+    Truncate the data to be within a chosen baseline range.
 
     The cut will be done in deprojected baseline space if the geometry is
     provided.
@@ -349,12 +349,12 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         Obsersed visibility. If complex, the weights will be computed from the
         average of the variance of the real and imaginary components, as in
         CASA's statwt. Otherwise the variance of the real part is used.
-    nbins : int, default=300
+    nbins : int, default = 300
         Number of bins used.
-    log : bool, default=True
+    log : bool, default = True
         If True, the uv bins will be constructed in log space, otherwise linear
         spaced bins will be used.
-    use_median : bool, default=False
+    use_median : bool, default = False
         If True all of the weights will be set to the median of the variance
         estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
@@ -376,7 +376,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     if log:
         q = np.log(q)
         q -= q.min()
-        
+
     bin_width = (q.max()-q.min()) / nbins
 
     uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
@@ -484,3 +484,97 @@ def sweep_profile(r, I, axis=0):
     I2D = interp(r1D.ravel()).reshape(*im_shape)
 
     return I2D, xmax, ymax
+
+
+def convolve_profile(r, I, disc_i, disc_pa, bmaj, bmin, beam_pa,
+                    n_per_sigma=5, axis=0):
+    r"""
+    Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
+    the profile's resolution
+
+    Parameters
+    ----------
+    r : array
+        Radial coordinates at which the 1D brightness profile is defined
+    I : array
+        Brightness values at r
+    disc_i : float, unit = deg
+        Disc inclination
+    disc_pa : float, unit = deg
+        Disc position angle
+    bmaj : float, unit = arcsec
+        FWHM of beam along its major axis
+    bmin : float, unit = arcsec
+        FWHM of beam along its minor axis
+    beam_pa : float, unit = deg
+        Beam position angle
+    n_per_sigma : int, default = 5
+        Number of points per standard deviation of the Gaussian kernel (used
+        for gridding)
+    axis : int, default = 0
+          Axis over which to interpolate the 1D profile
+
+    Returns
+    -------
+    I_smooth : array, shape = (len(r), len(r))
+        Convolved brightness profile I at coordinates r
+    """
+
+    from scipy.constants import c
+    from scipy.interpolate import interp1d
+    from scipy.ndimage import gaussian_filter
+
+    # Set up the geometry for the smoothing mesh.
+    # We align the beam with the grid (major axis aligned) and rotate the
+    #  image accordingly
+
+    # Convert beam FWHM to sigma
+    bmaj = bmaj / np.sqrt(8 * np.log(2))
+    bmin = bmin / np.sqrt(8 * np.log(2))
+
+    PA = (disc_pa - beam_pa) * np.pi / 180.
+
+    cos_i = np.cos(disc_i) * np.pi/180.
+    cos_PA = np.cos(PA)
+    sin_PA = np.sin(PA)
+
+    # Pixel size in terms of bmin
+    rmax = r.max()
+    dx = bmin / n_per_sigma
+
+    xmax = rmax * (np.abs(cos_i * cos_PA) + np.abs(sin_PA))
+    ymax = rmax * (np.abs(cos_i * sin_PA) + np.abs(cos_PA))
+
+    xmax = int(xmax / dx + 1) * dx
+    ymax = int(ymax / dx + 1) * dx
+
+    x = np.arange(-xmax, xmax + dx / 2, dx)
+    y = np.arange(-ymax, ymax + dx / 2, dx)
+
+    xi, yi = np.meshgrid(x, y)
+
+    xp =  xi * cos_PA + yi * sin_PA
+    yp = -xi * sin_PA + yi * cos_PA
+    xp /= cos_i
+
+    r1D = np.hypot(xi, yi)
+
+    im_shape = r1D.shape + I.shape[1:]
+
+    # Interpolate to grid and apply smoothing
+    interp = interp1d(r, I, bounds_error=False, fill_value=0., axis=axis)
+
+    I2D = interp(r1D.ravel()).reshape(*im_shape)
+    sigma = [float(n_per_sigma), (bmaj / bmin) * n_per_sigma]
+    I2D = gaussian_filter(I2D, sigma, mode='nearest', cval=0.)
+
+    # Now convert back to a 1D profile
+    edges = np.concatenate(([r[0] * r[0] / r[1]], r, [r[-1] * r[-1] / r[-2]]))
+    edges = 0.5 * (edges[:-1] + edges[1:])
+
+    I_smooth = np.empty_like(I)
+    I_smooth = np.histogram(r1D.ravel(), weights=I2D.ravel(), bins=edges)[0]
+    counts = np.maximum(np.histogram(r1D.ravel(), bins=edges)[0], 1)
+    I_smooth /= counts
+
+    return I_smooth
