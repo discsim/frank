@@ -578,6 +578,126 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     return fig, axes, iter_plot_range
 
 
+def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
+                   i_clean, bin_widths, dist=None, force_style=True,
+                   save_prefix=None
+                   ):
+    r"""
+    Produce a figure comparing a frank fit to a CLEAN fit, in real space by
+    convolving the frank fit with the CLEAN beam, and in visibility space by
+    taking the discrete Hankel transform of the CLEAN profile
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    sol : _HankelRegressor object
+        Reconstructed profile using Maximum a posteriori power spectrum
+        (see frank.radial_fitters.FrankFitter)
+    mean_convolved : array, unit = Jy / sr
+        frank brightness profile convolved with a CLEAN beam
+        (see utilities.convolve_profile).
+        The assumed unit is for the x-label
+    r_clean : array, unit = arcsec
+        Radial coordinates at which a supplied CLEAN profile is specified.
+        The assumed unit is for the x-label
+    I_clean : array, unit = Jy / sr
+        CLEAN brightness profile values at coordinates r_clean.
+        The assumed unit is for the y-label
+    bin_widths : list, unit = \lambda
+        Bin widths in which to bin the observed visibilities
+    dist : float, optional, unit = AU, default = None
+        Distance to source, used to show second x-axis for brightness profile
+    force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+    save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+    if force_style:
+        frank_plotting_style()
+
+    gs = GridSpec(2, 1)
+    fig = plt.figure(figsize=(12, 9))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax1 = fig.add_subplot(gs[1])
+
+    axes = [ax0, ax1]
+
+    plot_brightness_profile(r_clean, i_clean / 1e10, ax0, c='b', ls='--',
+                            label='CLEAN')
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
+    plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls=':',
+                            label='frank, convolved')
+
+    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
+    baselines = (u_deproj**2 + v_deproj**2)**.5
+    grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
+                       np.log10(max(baselines.max(), sol.q[-1])), 10**4
+                       )
+
+    ReV = sol.predict_deprojected(grid).real
+
+    for i in range(len(bin_widths)):
+        binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
+        vis_re_kl = binned_vis.V.real * 1e3
+        vis_err_re_kl = binned_vis.error.real * 1e3
+        vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
+
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax1, c=cs[i], marker=ms[i], ls='None',
+                 label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax1, c=cs2[i], marker=ms[i], ls='None',
+                 label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+
+    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
+
+    # Take the discrete Hankel transform of the CLEAN profile, using the same
+    # collocation points for the DHT as those in the frank fit
+    from frank.hankel import DiscreteHankelTransform
+    DHT = DiscreteHankelTransform(sol.Rmax, sol.size)
+    clean_DHT_kl = sol.predict_deprojected(grid, I=np.interp(DHT.r, r_clean, i_clean)).real * 1e3
+
+    plot_vis_fit(grid, vis_fit_kl, ax1, c='r', label='frank>0')
+    plot_vis_fit(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
+    plot_vis_fit(grid, clean_DHT_kl, ax1, c='b', label='CLEAN>0')
+    plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='CLEAN<0')
+
+    ax0.legend(loc=0)
+    ax1.legend(loc=0)
+
+    ax0.set_xlabel('r ["]')
+    ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
+    ax1.set_xlabel(r'Baseline [$\lambda$]')
+    ax1.set_ylabel(r'Re(V) [mJy]')
+
+    ax0.set_xlim(right=1.1 * sol.Rmax)
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1.set_ylim(bottom=1e-3)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=600)
+        plt.close()
+    else:
+        plt.show()
+
+    return fig, axes
+
+
 def make_overplot_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    force_style=True, save_prefix=None
                    ):
