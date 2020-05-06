@@ -115,9 +115,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     axes = [ax0, ax1, ax2, ax3]
 
-    profile_integral = trapz(sol.mean, sol.r)
+    total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-        label='frank, integral {:.2e} Jy'.format(profile_integral))
+        label='frank, total_flux {:.2e} Jy'.format(total_flux))
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -249,9 +249,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
 
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
-    profile_integral = trapz(sol.mean, sol.r)
+    total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-        label='frank, integral {:.2e} Jy'.format(profile_integral))
+        label='frank, flux {:.2e} Jy'.format(total_flux))
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -563,9 +563,9 @@ def make_overplot_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     axes = [ax0, ax1, ax2, ax3]
 
-    profile_integral = trapz(sol.mean, sol.r)
+    total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-        label='frank, integral {:.2e} Jy'.format(profile_integral))
+        label='frank, total flux {:.2e} Jy'.format(total_flux))
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
