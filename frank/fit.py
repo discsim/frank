@@ -382,7 +382,7 @@ def perform_fit(u, v, vis, weights, geom, model):
         return [sol, None]
 
 
-def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
+def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
     frank.io.save_fit, frank.make_figs.make_full_fig,
@@ -400,11 +400,11 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-    iteration_diagnostics : _HankelRegressor object
-        Diagnostics of the fit iteration
-        (see radial_fitters.FrankFitter.fit)
     model : dict
         Dictionary containing model parameters the fit uses
+    iteration_diagnostics : _HankelRegressor object, optional, default=None
+        Diagnostics of the fit iteration
+        (see radial_fitters.FrankFitter.fit)
 
     Returns
     -------
@@ -452,6 +452,8 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
 
         figs.append(diag_fig)
         axes.append(diag_axes)
+
+    logging.info('  Saving results')
 
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
