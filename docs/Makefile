@@ -12,9 +12,9 @@ TUT_DST_DIR := tutorials
 TUT_SRC_DIR := ../tutorials
 
 NOTEBOOKS := \
-	using_frank_as_a_module.ipynb \
-	running_fits_in_loop.ipynb \
-	prior_sensitivity_and_uncertainty.ipynb \
+	fitting_procedure.ipynb \
+	prior_sensitivity.ipynb \
+	uncertainty.ipynb \
 	AS209_clean_profile.dat \
 	AS209_continuum.npz \
 
