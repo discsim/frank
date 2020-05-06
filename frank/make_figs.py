@@ -248,7 +248,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
+def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=None,
                   force_style=True, save_prefix=None):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
@@ -267,8 +267,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    hyperpriors : list, len = 2
-        Values for the :math:`\alpha` and :math:`w_{smooth}` hyperpriors
+    hyperparameters : list, len = 2
+        Values for the :math:`\alpha` and :math:`w_{smooth}` hyperparameters.
+        Used for the plot legends
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
@@ -379,7 +380,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperpriors, dist=None,
     plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
-        hyperpriors[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperpriors[1]))
+        hyperparameters[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperparameters[1]))
 
     plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno')
 
