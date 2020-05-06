@@ -28,6 +28,8 @@ import logging
 from frank.utilities import UVDataBinner
 
 from frank.plot import (
+    plot_deprojection_uv,
+    plot_deprojection_vis,
     plot_brightness_profile,
     plot_confidence_interval,
     plot_vis, plot_vis_fit, plot_vis_resid, plot_vis_hist,
@@ -56,6 +58,76 @@ def frank_plotting_style():
     frank_path = os.path.dirname(frank.__file__)
     style_path = os.path.join(frank_path, 'frank.mplstyle')
     plt.style.use(style_path)
+
+
+def make_deprojection_fig(u, v, up, vp, vis, visp, force_style=True,
+                          save_prefix=None):
+    r"""
+    Produce a simple figure showing the effect of deprojection on the (u, v)
+    coordinates and visibilities
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        Projected (u, v) coordinates
+    up, vp : array, unit = :math:`\lambda`
+        Deprojected (u, v) coordinates
+    vis : array, unit = Jy
+        Projected visibilities (complex: real + imag * 1j)
+    visp : array, unit = Jy
+        Deprojected visibilities (complex: real + imag * 1j)
+    force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+    save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
+
+    Returns
+    -------
+    fig : Matplotlib `.Figure` instance
+        The produced figure, including the GridSpec
+    axes : Matplotlib `~.axes.Axes` class
+        The axes of the produced figure
+    """
+
+    re_vis = np.real(vis)
+    re_visp = np.real(visp)
+
+    if force_style:
+        frank_plotting_style()
+
+    gs = GridSpec(2, 1)
+    fig = plt.figure(figsize=(8, 6))
+
+    ax0 = fig.add_subplot(gs[0])
+    ax1 = fig.add_subplot(gs[1])
+
+    axes = [ax0, ax1]
+
+    plot_deprojection_uv(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, ax0)
+
+    plot_deprojection_vis(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, re_vis * 1e3,
+                          re_visp * 1e3, ax1)
+
+    ax0.set_xlabel('u [M$\lambda$]')
+    ax0.set_ylabel('v [M$\lambda$]')
+    ax1.set_xlabel('Baseline [M$\lambda$]')
+    ax1.set_ylabel('Re(V) [mJy]')
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1.set_ylim(bottom=1e-3)
+
+    ax0.legend(loc=0)
+    ax1.legend(loc=0)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=600)
+        plt.close()
+    else:
+        plt.show()
+
+    return fig, axes
 
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
