@@ -358,13 +358,13 @@ def perform_fit(u, v, vis, weights, geom, model):
         model['plotting']['diag_plot']
 
     t1 = time.time()
-    FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
-                                    N=model['hyperpriors']['n'],
+    FF = radial_fitters.FrankFitter(Rmax=model['hyperparameters']['rout'],
+                                    N=model['hyperparameters']['n'],
                                     geometry=geom,
-                                    alpha=model['hyperpriors']['alpha'],
-                                    weights_smooth=model['hyperpriors']['wsmooth'],
-                                    tol=model['hyperpriors']['iter_tol'],
-                                    max_iter=model['hyperpriors']['max_iter'],
+                                    alpha=model['hyperparameters']['alpha'],
+                                    weights_smooth=model['hyperparameters']['wsmooth'],
+                                    tol=model['hyperparameters']['iter_tol'],
+                                    max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations
                                     )
 
@@ -372,7 +372,7 @@ def perform_fit(u, v, vis, weights, geom, model):
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
-                                                               model['hyperpriors']['n'],
+                                                               model['hyperparameters']['n'],
                                                                time.time() - t1)
                  )
 
@@ -432,8 +432,8 @@ def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
     if model['plotting']['full_plot']:
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
                                                       model['plotting']['bin_widths'],
-                                                      [model['hyperpriors']['alpha'],
-                                                       model['hyperpriors']['wsmooth']],
+                                                      [model['hyperparameters']['alpha'],
+                                                       model['hyperparameters']['wsmooth']],
                                                       model['plotting']['dist'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']
@@ -495,17 +495,17 @@ def multifit_overplot(u, v, vis, weights, geom, model):
     multifit_axes : Matplotlib `~.axes.Axes` class
         Axes for each of the produced figures
     """
-    hpriors = list(model['hyperpriors'].values())
+    hpriors = list(model['hyperparameters'].values())
     multis_bool = [isinstance(x, list) for i, x in enumerate(
-        hpriors)]  # True for hyperpriors with >1 value
+        hpriors)]  # True for hyperparameters with >1 value
     multis_idx = [i for i, x in enumerate(multis_bool) if x]
 
     for ii in range(len(multis_idx[0])):
-        this_par = list(model['hyperpriors'].keys())[multis_idx[0]]
+        this_par = list(model['hyperparameters'].keys())[multis_idx[0]]
         logging.info(' Looping fits over hyperprior {}'.format(this_par))
 
         this_model = model.copy()
-        this_model['hyperpriors']['{}'.format(this_par)] = multis_idx[0][ii]
+        this_model['hyperparameters']['{}'.format(this_par)] = multis_idx[0][ii]
 
         sol, iteration_diagnostics = perform_fit(
             u, v, vis, weights, geom, this_model)
@@ -607,7 +607,7 @@ def main(*args):
 
         return boot_fig, boot_axes
 
-    elif any(isinstance(x, list) for x in model['hyperpriors'].values()):
+    elif any(isinstance(x, list) for x in model['hyperparameters'].values()):
         multifit_fig, multifit_axes = multifit_overplot(model)
 
         return multifit_fig, multifit_axes
