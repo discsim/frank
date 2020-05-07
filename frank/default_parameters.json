@@ -24,7 +24,7 @@
     "ddec"             : 0.0
   },
 
-  "hyperpriors" : {
+  "hyperparameters" : {
     "n"                : 300,
     "rout"             : 2.0,
     "alpha"            : 1.05,

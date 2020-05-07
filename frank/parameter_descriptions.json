@@ -24,7 +24,7 @@
     "ddec"             : "Delta declination [arcsec]"
   },
 
-  "hyperpriors" : {
+  "hyperparameters" : {
     "n"                : "Number of collocation points used in the fit (suggested range 100 - 300)",
     "rout"             : "Maximum disc radius in the fit (best to overestimate size of source) [arcsec]",
     "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
