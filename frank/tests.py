@@ -276,10 +276,10 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     params['input_output']['uvtable_filename'] = uv_table
 
     # Set the model parameters
-    params['hyperpriors']['n'] = 20
-    params['hyperpriors']['rout'] = 1.6
-    params['hyperpriors']['alpha'] = 1.05
-    params['hyperpriors']['wmsooth'] = 1e-2
+    params['hyperparameters']['n'] = 20
+    params['hyperparameters']['rout'] = 1.6
+    params['hyperparameters']['alpha'] = 1.05
+    params['hyperparameters']['wmsooth'] = 1e-2
 
     geom = params['geometry']
     geom['type'] = geometry
