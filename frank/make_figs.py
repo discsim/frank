@@ -748,7 +748,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     return fig, axes
 
 
-def make_overplot_fig(u, v, vis, weights, sol, bin_widths, dist=None,
+def make_multifit_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    force_style=True, save_prefix=None
                    ):
     r"""
