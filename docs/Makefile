@@ -13,8 +13,9 @@ TUT_SRC_DIR := ../tutorials
 
 NOTEBOOKS := \
 	fitting_procedure.ipynb \
-	prior_sensitivity.ipynb \
-	uncertainty.ipynb \
+	prior_sensitivity.rst \
+	uncertainty.rst \
+        fit_convergence.rst \
 	AS209_clean_profile.dat \
 	AS209_continuum.npz \
 
