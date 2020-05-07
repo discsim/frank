@@ -30,7 +30,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'frank'
-authors = u'R. Booth, J. Jennings, M. Tazzari.'
+authors = u'J. Jennings, R. Booth, M. Tazzari.'
 copyright = '2019-%d, %s' % (datetime.now().year, authors)
 
 # The version info for the project you're documenting, acts as replacement for
