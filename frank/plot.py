@@ -48,7 +48,7 @@ def plot_deprojection_uv(u, v, up, vp, ax):
     ax.plot(u, v, '+', c='#1EC8FE', label='Projected')
     ax.plot(up, vp, 'x', c='#D14768', label='Deprojected')
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_deprojection_vis(u, v, up, vp, vis, visp, ax):
@@ -77,10 +77,10 @@ def plot_deprojection_vis(u, v, up, vp, vis, visp, ax):
     ax.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
     ax.plot(bsp, vis, 'x', c='#D14768', label='Deprojected')
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
-def plot_brightness_profile(fit_r, fit_i, ax, **kwargs):
+def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
     """
     Plot a brightness profile as a function of disc radius, I(r)
 
@@ -92,13 +92,24 @@ def plot_brightness_profile(fit_r, fit_i, ax, **kwargs):
         Brightness values at fit_r
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
+    dist : float, optional, default = None, unit = [AU]
+        Distance to source. If not None, a new `ax` will be created to
+        show an upper x-axis in [AU] for the plot on the current `ax`
     """
 
-    ax.plot(fit_r, fit_i, **kwargs)
+    if dist:
+        ax_new = ax.twiny()
+        ax_new.spines['top'].set_color('#1A9E46')
+        ax_new.tick_params(axis='x', which='both', colors='#1A9E46')
+        ax_new.plot(fit_r * dist, fit_i, **kwargs)
+        ax_new.set_xlabel('r [AU]', color='#1A9E46')
 
-    ax.axhline(0, c='c', ls='--', zorder=10)
+    else:
+        ax.plot(fit_r, fit_i, **kwargs)
 
-    ax.legend()
+        ax.axhline(0, c='c', ls='--', zorder=10)
+
+        ax.legend(loc='best')
 
 
 def plot_confidence_interval(fit_r, low_bound, up_bound, ax, **kwargs):
@@ -108,17 +119,17 @@ def plot_confidence_interval(fit_r, low_bound, up_bound, ax, **kwargs):
     Parameters
     ----------
     fit_r : array
-        Radial data coordinates. The assumed unit (for the x-label) is arcsec
+        Radial data coordinates
     low_bound, up_bound : float
         Lower and upper bound of confidence interval for brightness values at
-        fit_r. The assumed unit (for the y-label) is Jy / sr
+        fit_r
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
     """
 
     ax.fill_between(fit_r, low_bound, up_bound, **kwargs)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_vis_fit(baselines, vis_fit, ax, **kwargs):
@@ -139,7 +150,7 @@ def plot_vis_fit(baselines, vis_fit, ax, **kwargs):
 
     ax.axhline(0, c='c', ls='--', zorder=10)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_vis(baselines, vis, vis_err, ax, plot_CIs=False, **kwargs):
@@ -167,7 +178,7 @@ def plot_vis(baselines, vis, vis_err, ax, plot_CIs=False, **kwargs):
 
     ax.axhline(0, c='c', ls='--', zorder=10)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_vis_resid(baselines, resid, ax, **kwargs):
@@ -186,7 +197,7 @@ def plot_vis_resid(baselines, resid, ax, **kwargs):
 
     ax.plot(baselines, resid, **kwargs)
 
-    ax.legend()
+    ax.legend(loc='best')
 
     ax.axhline(0, c='c', ls='--', zorder=10)
 
@@ -207,7 +218,7 @@ def plot_vis_hist(bins, counts, ax, **kwargs):
 
     ax.hist(0.5*(bins[1:]+bins[:-1]), bins, weights=counts, alpha=.5, **kwargs)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_pwr_spec(baselines, pwr_spec, ax, **kwargs):
@@ -228,7 +239,7 @@ def plot_pwr_spec(baselines, pwr_spec, ax, **kwargs):
 
     ax.plot(baselines, pwr_spec, **kwargs)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
@@ -325,7 +336,7 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
                   label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
@@ -361,7 +372,7 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
                   label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y)
 
-    ax.legend()
+    ax.legend(loc='best')
 
 
 def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,

@@ -153,7 +153,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
     dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -192,6 +192,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
         label='frank, total flux {:.2e} Jy'.format(total_flux))
+    if dist:
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -217,7 +220,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         plot_vis_resid(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
                        ls='None',
-                       label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
+                       label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='frank')
@@ -274,7 +277,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
         Values for the :math:`\alpha` and :math:`w_{smooth}` hyperparameters.
         Used for the plot legends
     dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -318,16 +321,19 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
     ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
     ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
     ax5.text(.1, .7, 'f)', transform=ax5.transAxes)
-    ax6.text(.9, .6, 'g)', transform=ax6.transAxes)
-    ax7.text(.9, .6, 'h)', transform=ax7.transAxes)
-    ax8.text(.9, .6, 'i)', transform=ax8.transAxes)
-    ax9.text(.9, .6, 'j)', transform=ax9.transAxes)
+    ax6.text(.9, .9, 'g)', transform=ax6.transAxes)
+    ax7.text(.9, .9, 'h)', transform=ax7.transAxes)
+    ax8.text(.9, .9, 'i)', transform=ax8.transAxes)
+    ax9.text(.9, .9, 'j)', transform=ax9.transAxes)
 
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
     total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
         label='frank, total flux {:.2e} Jy'.format(total_flux))
+    if dist:
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -374,7 +380,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
-                       label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
+                       label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
         edges = np.concatenate([binned_vis.bin_edges[0].data,
                                 binned_vis.bin_edges[1].data[-1:]])
@@ -625,7 +631,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
         colormaps (see matplotlib.colors.PowerNorm).
         gamma=1 yields a linear colormap
     dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -659,6 +665,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
     plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls=':',
                             lw=2.5, label='frank, convolved')
+    if dist:
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -712,8 +720,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     plot_2dsweep(sol.r, regrid_I_clean, ax=ax4, cmap='inferno', norm=norm,
                 vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
 
-    ax0.legend(loc=0)
-    ax1.legend(loc=0)
+    ax0.legend(loc='best')
+    ax1.legend(loc='best')
 
     ax0.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -774,7 +782,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
     varied_vals : nested list of floats
         Values for the `hyperparameters` that were varied over multiple fits
     dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
+        Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -843,6 +851,9 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
     for ii in range(len(sols)):
         plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii],
             label='{} = {}, {} = {}'.format(varied_pars[0], varied_vals[0][ii], varied_pars[1], varied_vals[1][ii]))
+        if dist and ii == len(sols) - 1:
+            plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, dist=dist, c=multifit_cs[ii])
+
         plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax1, c=multifit_cs[ii])
 
         vis_fit_kl = sols[ii].predict_deprojected(grid).real * 1e3
@@ -890,7 +901,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
     return fig, axes
 
 
-def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
+def make_bootstrap_fig(r, profiles, force_style=True,
                        save_prefix=None):
     r"""
     Produce a figure showing a bootstrap analysis for a Frankenstein fit
@@ -901,8 +912,6 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
         Single set of radial collocation points used in all bootstrap fits
     profiles : array, unit = Jy / sr
         Brightness profiles of all bootstrap fits
-    dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -948,6 +957,7 @@ def make_bootstrap_fig(r, profiles, dist=None, force_style=True,
 
     for i in range(len(profiles)):
         plot_brightness_profile(r, profiles[i] / 1e10, ax0, c='k', alpha=.2)
+
         plot_brightness_profile(r, profiles[i] / 1e10, ax2, c='k', alpha=.2)
 
     plot_brightness_profile(r, mean_profile / 1e10, ax1,
