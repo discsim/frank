@@ -471,8 +471,8 @@ def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
 
 def multifit_overplot(u, v, vis, weights, geom, model):
     r"""
-    Perform and overplot multiple fits (e.g., to compare fits to a dataset under
-    different hyperprior choices)
+    Perform and overplot multiple fits (e.g., to compare fits under different
+    hyperparameter values)
 
     Parameters
     ----------

@@ -587,7 +587,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
 
 def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
-                   I_clean, bin_widths, dist=None, force_style=True,
+                   I_clean, bin_widths, gamma=1., dist=None, force_style=True,
                    save_prefix=None
                    ):
     r"""
@@ -619,6 +619,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
         The assumed unit is for the y-label
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+    gamma : float, default = 1
+        Index of power law normalization to apply to swept profile images'
+        colormaps (see matplotlib.colors.PowerNorm).
+        gamma=1 yields a linear colormap
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
@@ -691,7 +695,6 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
     from matplotlib.colors import PowerNorm
-    gamma = 1.
     vmin = 0
     vmax = max(sol.mean.max(), mean_convolved.max(), I_clean.max())
     norm = PowerNorm(gamma, 0, vmax)
@@ -730,11 +733,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     ax3.set_title('Convolved frank profile swept')
     ax4.set_title('CLEAN profile swept')
 
-    ax0.text(.5, .9, 'a)', fontsize=14, transform=ax0.transAxes)
-    ax1.text(.5, .9, 'b)', fontsize=14, transform=ax1.transAxes)
-    ax0.text(.5, .9, 'c)', fontsize=14, color='w', transform=ax2.transAxes)
-    ax1.text(.5, .9, 'd)', fontsize=14, color='w', transform=ax3.transAxes)
-    ax0.text(.5, .9, 'e)', fontsize=14, color='w', transform=ax4.transAxes)
+    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
+    ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
+    ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
+    ax3.text(.1, .9, 'd)', c='w', transform=ax3.transAxes)
+    ax4.text(.1, .9, 'e)', c='w', transform=ax4.transAxes)
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=600)
@@ -749,7 +752,7 @@ def make_overplot_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    force_style=True, save_prefix=None
                    ):
     r"""
-    Produce a simple figure showing just a Frankenstein fit, not any diagnostics
+    Produce a figure overplotting multiple fits
 
     Parameters
     ----------
