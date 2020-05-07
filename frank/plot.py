@@ -416,5 +416,5 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         m = cm.ScalarMappable(norm=norm, cmap=cmap)
         m.set_array([])
 
-        cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=1.)
+        cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=.7)
         cbar.set_label(r'I [$10^{10}$ Jy sr$^{-1}$]')
