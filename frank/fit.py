@@ -453,7 +453,7 @@ def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
         figs.append(diag_fig)
         axes.append(diag_axes)
 
-    logging.info('  Saving results')
+    logging.info('  Saving results to the directory containing the input UVTable')
 
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
