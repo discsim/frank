@@ -509,11 +509,11 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
     hpar1 = list(model['hyperparameters'].keys())[multis_idx[1]]
 
     logging.info(' Looping fits over the hyperparameters '
-                 '{}'.format(list(model['hyperparameters'].keys())[multis_idx))
+                 '{}'.format(list(model['hyperparameters'].keys())[multis_idx]))
 
     sols = []
     for ii in range(len(multis_idx[0])):
-        for jj in range(len(multis_idx[1]))
+        for jj in range(len(multis_idx[1])):
             this_model = model.copy()
             this_model['hyperparameters']['{}'.format(hpar0)] = multis_idx[0][ii]
             this_model['hyperparameters']['{}'.format(hpar1)] = multis_idx[1][jj]
