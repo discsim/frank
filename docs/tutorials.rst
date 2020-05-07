@@ -8,7 +8,8 @@ use ``frank`` and interpret the results.
    :titlesonly:
    :maxdepth: 1
 
+   tutorials/mstable_to_uvtable.rst
    tutorials/fitting_procedure.ipynb
    tutorials/prior_sensitivity.rst
-   tutorials/uncertainty.rst
    tutorials/fit_convergence.rst
+   tutorials/model_framework.rst

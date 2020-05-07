@@ -13,7 +13,7 @@ Perform a fit from the terminal
 
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
-with CASA as demonstrated in `this tutorial <tutorials/extracting_a_UVTable>`_.
+with CASA as demonstrated in `this tutorial <tutorials/mstable_to_uvtable.rst>`_.
 The column format should be `u [\lambda]     v [\lambda]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
 You can quickly run a fit with the default parameter file, `default_parameters.json` (see below),
@@ -51,14 +51,14 @@ which returns
     :linenos:
     :language: json
 
-That's it! By default frank saves (in `save_dir`): |br|
+That's it! frank saves (in `save_dir`) these fit outputs: |br|
 - the logged messages printed during the fit as `<uvtable_filename>_frank_fit.log`, |br|
 - the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
 - the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
 - the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
-- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and the `iteration_diagnostics` object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
 - UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
-- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and `<uvtable_filename>_frank_fit_diag.png`.
+- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and optionally `<uvtable_filename>_frank_fit_diag.png`.
 
 Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
@@ -92,11 +92,15 @@ You can quickly check this sensitivity by running and overplotting multiple fits
 Just set `alpha` and/or `wsmooth` in the parameter file as a list of values.
 See `this tutorial <tutorials/prior_sensitivity.rst>`_ for an example.
 
-The fit's underestimated uncertainty
-####################################
+Understand the model's limitations
+##################################
 The model yields a fitted brightness profile whose uncertainty is typically underestimated.
-For this reason we do not show the uncertainty by default.
-See `this tutorial <tutorials/uncertainty.rst>`_ for an explanation and discussion.
+For this reason we do not show the uncertainty by default (note its absence in the AS 209 fit above).
+
+Additionally the fit does not  by default prevent regions of negative brightness in the reconstructed profile
+(again note this in the above fit to AS 209)
+
+See `this tutorial <tutorials/model_framework.rst>`_ for an explanation and discussion of these limitations.
 
 Examine the fit's convergence
 #############################

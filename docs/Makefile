@@ -14,8 +14,9 @@ TUT_SRC_DIR := ../tutorials
 NOTEBOOKS := \
 	fitting_procedure.ipynb \
 	prior_sensitivity.rst \
-	uncertainty.rst \
-        fit_convergence.rst \
+	model_framework.rst \
+	mstable_to_uvtable.rst \
+  fit_convergence.rst \
 	AS209_clean_profile.dat \
 	AS209_continuum.npz \
 
