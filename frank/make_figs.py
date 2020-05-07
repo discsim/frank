@@ -211,10 +211,12 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         rmse = (np.mean(resid**2))**.5
 
         plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax2, c=cs[i],
-                 marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+                 marker=ms[i], ls='None',
+                 label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         plot_vis_resid(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
-                       ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
+                       ls='None',
+                       label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
     plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='frank')
@@ -350,25 +352,31 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
         norm_resid = resid / vis_re_kl
         rmse = (np.mean(resid**2))**.5
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax3, c=cs[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax3, c=cs[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax4, c=cs[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax4, c=cs[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax6, c=cs[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax6, c=cs[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax6, c=cs2[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax6, c=cs2[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_im_kl, vis_err_im_kl, ax9, c=cs[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, vis_im_kl, vis_err_im_kl, ax9, c=cs[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
                        label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
 
-        edges = np.concatenate([binned_vis.bin_edges[0].data, binned_vis.bin_edges[1].data[-1:]])
+        edges = np.concatenate([binned_vis.bin_edges[0].data,
+                                binned_vis.bin_edges[1].data[-1:]])
         plot_vis_hist(edges, binned_vis.bin_counts.data, ax8,
                       color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -579,7 +587,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
 
 def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
-                   i_clean, bin_widths, dist=None, force_style=True,
+                   I_clean, bin_widths, dist=None, force_style=True,
                    save_prefix=None
                    ):
     r"""
@@ -628,15 +636,20 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     if force_style:
         frank_plotting_style()
 
-    gs = GridSpec(2, 1)
-    fig = plt.figure(figsize=(12, 9))
+    gs = GridSpec(3, 1)
+    gs2 = GridSpec(3, 3)
+    fig = plt.figure(figsize=(12, 15))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[1])
 
-    axes = [ax0, ax1]
+    ax2 = fig.add_subplot(gs2[6])
+    ax3 = fig.add_subplot(gs2[7])
+    ax4 = fig.add_subplot(gs2[8])
 
-    plot_brightness_profile(r_clean, i_clean / 1e10, ax0, c='b', ls='--',
+    axes = [ax0, ax1, ax2, ax3, ax4]
+
+    plot_brightness_profile(r_clean, I_clean / 1e10, ax0, c='b', ls='--',
                             label='CLEAN')
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
     plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls=':',
@@ -656,9 +669,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
         vis_err_re_kl = binned_vis.error.real * 1e3
         vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax1, c=cs[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax1, c=cs[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax1, c=cs2[i], marker=ms[i], ls='None',
+        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax1, c=cs2[i],
+                 marker=ms[i], ls='None',
                  label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
@@ -667,12 +682,31 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     # collocation points for the DHT as those in the frank fit
     from frank.hankel import DiscreteHankelTransform
     DHT = DiscreteHankelTransform(sol.Rmax, sol.size)
-    clean_DHT_kl = sol.predict_deprojected(grid, I=np.interp(DHT.r, r_clean, i_clean)).real * 1e3
+    clean_DHT_kl = sol.predict_deprojected(grid,
+                                           I=np.interp(DHT.r, r_clean, I_clean)).real * 1e3
 
     plot_vis_fit(grid, vis_fit_kl, ax1, c='r', label='frank>0')
     plot_vis_fit(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
     plot_vis_fit(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
     plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
+
+    from matplotlib.colors import PowerNorm
+    gamma = 1.
+    vmin = 0
+    vmax = max(sol.mean.max(), mean_convolved.max(), I_clean.max())
+    norm = PowerNorm(gamma, 0, vmax)
+    plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
+                vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
+    plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
+                vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
+
+    # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
+    # swept 'image' has the same pixel resolution as the frank swept 'images'
+    from scipy.interpolate import interp1d
+    interp = interp1d(r_clean, I_clean)
+    regrid_I_clean = interp(sol.r)
+    plot_2dsweep(sol.r, regrid_I_clean, ax=ax4, cmap='inferno', norm=norm,
+                vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
 
     ax0.legend(loc=0)
     ax1.legend(loc=0)
@@ -681,6 +715,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
     ax1.set_xlabel(r'Baseline [$\lambda$]')
     ax1.set_ylabel(r'Re(V) [mJy]')
+    ax2.set_xlabel('RA offset ["]')
+    ax3.set_xlabel('RA offset ["]')
+    ax4.set_xlabel('RA offset ["]')
+    ax2.set_ylabel('Dec offset ["]')
 
     ax0.set_xlim(right=sol.Rmax)
     ax1.set_xlim(.9 * baselines.min(), 1.2 * baselines.max())
@@ -688,7 +726,15 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     ax1.set_yscale('log')
     ax1.set_ylim(bottom=1e-3)
 
-    plt.tight_layout()
+    ax2.set_title('Unconvolved frank profile swept')
+    ax3.set_title('Convolved frank profile swept')
+    ax4.set_title('CLEAN profile swept')
+
+    ax0.text(.5, .9, 'a)', fontsize=14, transform=ax0.transAxes)
+    ax1.text(.5, .9, 'b)', fontsize=14, transform=ax1.transAxes)
+    ax0.text(.5, .9, 'c)', fontsize=14, color='w', transform=ax2.transAxes)
+    ax1.text(.5, .9, 'd)', fontsize=14, color='w', transform=ax3.transAxes)
+    ax0.text(.5, .9, 'e)', fontsize=14, color='w', transform=ax4.transAxes)
 
     if save_prefix:
         plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=600)

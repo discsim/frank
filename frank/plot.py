@@ -364,8 +364,8 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
     ax.legend()
 
 
-def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', norm=None, vmin=None,
-                 vmax=None, xmax=None, **kwargs):
+def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
+                 vmax=None, xmax=None, plot_colorbar=True, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -378,8 +378,6 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', norm=None, vmin=None,
         Brightness values at r. The assumed unit (for the colorbar) is Jy / sr
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
-    cax : Matplotlib `~.axes.Axes` class
-        Colorbar axis
     cmap : Matplotlib colormap, default = 'inferno'
         Colormap to apply to the 2D image
     norm : Matplotlib `colors.Normalize` class
@@ -390,6 +388,8 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', norm=None, vmin=None,
         Matplotlib
     xmax : float or None (default)
         Radius at edge of image. If None, it will be set by max(r)
+    plot_colorbar: bool, default = True
+        Whether to plot a colorbar beside the image
     """
 
     if xmax is None:
@@ -403,17 +403,18 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', norm=None, vmin=None,
     if vmin is None and vmax is None:
         vmin, vmax = I2D.min(), I2D.max()
 
-    ax.imshow(I2D, origin='lower', extent=[xmax, -xmax, -ymax, ymax], vmin=vmin,
+    ax.imshow(I2D, origin='lower', extent=(xmax, -xmax, -ymax, ymax), vmin=vmin,
               vmax=vmax, cmap=cmap, norm=norm, **kwargs
               )
 
     # Set a normalization and colormap for the colorbar
-    import matplotlib.colors as mpl_cs
-    from matplotlib import cm
-    if norm is None:
-        norm = mpl_cs.Normalize(vmin=vmin, vmax=vmax)
-    m = cm.ScalarMappable(norm=norm, cmap=cmap)
-    m.set_array([])
+    if plot_colorbar:
+        import matplotlib.colors as mpl_cs
+        from matplotlib import cm
+        if norm is None:
+            norm = mpl_cs.Normalize(vmin=vmin, vmax=vmax)
+        m = cm.ScalarMappable(norm=norm, cmap=cmap)
+        m.set_array([])
 
-    cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=1.)
-    cbar.set_label(r'I [10$^{10}$ Jy sr$^{-1}$]')
+        cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=.5)
+        cbar.set_label(r'I [$10^{10}$ Jy sr$^{-1}$]')
