@@ -6,7 +6,7 @@
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
     "save_uvtables"    : true,
-    "iteration_diag"   : true,
+    "iteration_diag"   : false,
     "format"           : null
   },
 
@@ -37,7 +37,7 @@
   "plotting" : {
     "quick_plot"       : true,
     "full_plot"        : true,
-    "diag_plot"        : true,
+    "diag_plot"        : false,
     "save_figs"        : true,
     "dist"             : null,
     "force_style"      : true,

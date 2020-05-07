@@ -4,11 +4,10 @@
 
 Testing a fit's convergence
 ===========================
-
 If you'd like an in-depth look at how well a fit has converged,
 the fastest way is to run a fit from the terminal
-(see the `Quickstart` <quickstart.rst>`_)
-and set `diag_plot=True` (the default) in your *.json* parameter file.
+(see the `Quickstart <quickstart.rst>`_)
+and set `diag_plot=True` in your *.json* parameter file.
 This produces a diagnostic figure that, using the fit to the DSHARP observations
 of AS 209 from the Quickstart, looks like this,
 
@@ -20,7 +19,7 @@ of AS 209 from the Quickstart, looks like this,
 Note how small amplitude, fast oscillations ('ringing') that are due to unconstrained
 baselines are damped over the first :math:`\approx 300` iterations.
 The fit runs until a convergence criterion on the power spectrum is met at every collocation point,
-:math:`|(P_{\rm i} - P_{\rm i-1}| <= {\rm tol} * \pi`,
+:math:`|(P_{\rm i} - P_{\rm i-1}| \leq {\rm tol} * \pi`,
 where :math:`P_{\rm i}` is the power spectrum at iteration :math:`i`
 and :math:`{\rm tol}` is the tolerance (`iter_tol`) in your parameter file.
 This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.

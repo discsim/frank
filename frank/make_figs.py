@@ -50,6 +50,7 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 cs = ['#a4a4a4', 'k', '#896360', 'b']
 cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
 hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
+multifit_cs = ['r', 'g', 'c', 'm', 'b', '#DB34D3', '#25F86B', '#F8B225']
 ms = ['x', '+', '.', '1']
 
 
@@ -190,7 +191,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-        label='frank, total_flux {:.2e} Jy'.format(total_flux))
+        label='frank, total flux {:.2e} Jy'.format(total_flux))
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -326,7 +327,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
 
     total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-        label='frank, flux {:.2e} Jy'.format(total_flux))
+        label='frank, total flux {:.2e} Jy'.format(total_flux))
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -465,7 +466,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         Baselines at which the power spectrum is defined.
         The assumed unit (for the x-label) is :math:`\lambda`
     iteration_diagnostics : dict
-        The iteration_diagnositics from FrankFitter
+        The iteration_diagnostics from FrankFitter.
     N_iter : int
         Total number of iterations in the fit
     iter_plot_range : list
@@ -748,9 +749,9 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
     return fig, axes
 
 
-def make_multifit_fig(u, v, vis, weights, sol, bin_widths, dist=None,
-                   force_style=True, save_prefix=None
-                   ):
+def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
+                      varied_vals, dist=None, force_style=True, save_prefix=None
+                     ):
     r"""
     Produce a figure overplotting multiple fits
 
@@ -763,11 +764,15 @@ def make_multifit_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    sol : _HankelRegressor object
+    sols : list of _HankelRegressor objects
         Reconstructed profile using Maximum a posteriori power spectrum
-        (see frank.radial_fitters.FrankFitter)
+        (see frank.radial_fitters.FrankFitter), for each of multiple fits
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+    varied_pars : list of strings
+        Names of the `hyperparameters` that were varied over multiple fits
+    varied_vals : nested list of floats
+        Values for the `hyperparameters` that were varied over multiple fits
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis for brightness profile
     force_style: bool, default = True
@@ -783,37 +788,38 @@ def make_multifit_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         The axes of the produced figure
     """
 
-    logging.info('    Making quick figure')
+    logging.info('  Making multifit figure')
+    logging.info(varied_pars)
+    logging.info(varied_vals)
 
     if force_style:
         frank_plotting_style()
 
-    gs = GridSpec(2, 2, hspace=0)
-    fig = plt.figure(figsize=(8, 6))
+    gs = GridSpec(3, 2, hspace=0)
+    fig = plt.figure(figsize=(8, 8))
 
     ax0 = fig.add_subplot(gs[0])
     ax1 = fig.add_subplot(gs[2])
 
     ax2 = fig.add_subplot(gs[1])
     ax3 = fig.add_subplot(gs[3])
+    ax4 = fig.add_subplot(gs[5])
 
-    ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
+    ax0.text(.9, .4, 'a)', transform=ax0.transAxes)
     ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
 
     ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
     ax3.text(.5, .9, 'd)', transform=ax3.transAxes)
+    ax4.text(.5, .9, 'e)', transform=ax4.transAxes)
 
-    axes = [ax0, ax1, ax2, ax3]
+    axes = [ax0, ax1, ax2, ax3, ax4]
 
-    total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-        label='frank, total flux {:.2e} Jy'.format(total_flux))
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
-
-    u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
+    # Assume the fitted geometry and thus deprojected baseline distribution
+    # is the same for all fits, plotting the common dataset
+    u_deproj, v_deproj, vis_deproj = sols[0].geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
-    grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
-                       np.log10(max(baselines.max(), sol.q[-1])),
+    grid = np.logspace(np.log10(min(baselines.min(), sols[0].q[0])),
+                       np.log10(max(baselines.max(), sols[0].q[-1])),
                        10**4)
 
     for i in range(len(bin_widths)):
@@ -821,20 +827,31 @@ def make_multifit_fig(u, v, vis, weights, sol, bin_widths, dist=None,
             baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
         vis_err_re_kl = binned_vis.error.real * 1e3
-        vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
-
-        resid = vis_re_kl - vis_fit
-        norm_resid = resid / vis_re_kl
-        rmse = (np.mean(resid**2))**.5
+        vis_fit = sols[0].predict_deprojected(binned_vis.uv).real * 1e3
 
         plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax2, c=cs[i],
                  marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis_resid(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
-                       ls='None', label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(bin_widths[i]/1e3, rmse))
+        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax3, c=cs[i],
+                 marker=ms[i], ls='None',
+                 label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax3, c=cs2[i],
+                 marker=ms[i], ls='None',
+                 label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-    plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='frank')
+    # Overplot the multiple fits
+    for ii in range(len(sols)):
+        plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii],
+            label='{} = {}, {} = {}'.format(varied_pars[0], varied_vals[0][ii], varied_pars[1], varied_vals[1][ii]))
+        plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax1, c=multifit_cs[ii])
+
+        vis_fit_kl = sols[ii].predict_deprojected(grid).real * 1e3
+        plot_vis_fit(grid, vis_fit_kl, ax2, c=multifit_cs[ii])
+
+        plot_vis_fit(grid, vis_fit_kl, ax3, c=multifit_cs[ii])
+        plot_vis_fit(grid, -vis_fit_kl, ax3, c=multifit_cs[ii], ls='--')
+
+        plot_pwr_spec(sols[ii].q, sols[ii].power_spectrum, ax4, c=multifit_cs[ii])
 
     ax1.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -842,22 +859,30 @@ def make_multifit_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     ax1.set_yscale('log')
     ax1.set_ylim(bottom=1e-3)
 
-    ax3.set_xlabel(r'Baseline [$\lambda$]')
+    ax4.set_xlabel(r'Baseline [$\lambda$]')
     ax2.set_ylabel('Re(V) [mJy]')
-    ax3.set_ylabel('Residual [mJy]')
+    ax3.set_ylabel('Re(V) [mJy]')
+    ax4.set_ylabel(r'Power [Jy$^2$]')
     ax2.set_xscale('log')
     ax3.set_xscale('log')
+    ax4.set_xscale('log')
+    ax3.set_yscale('log')
+    ax4.set_yscale('log')
+    ax3.set_ylim(bottom=1e-4)
 
     xlims = ax2.get_xlim()
     ax3.set_xlim(xlims)
+    ax4.set_xlim(xlims)
 
     plt.setp(ax0.get_xticklabels(), visible=False)
     plt.setp(ax2.get_xticklabels(), visible=False)
 
-    plt.tight_layout()
+    ax0.legend()
+    ax2.legend()
+    ax3.legend()
 
     if save_prefix:
-        plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+        plt.savefig(save_prefix + '_frank_multifit.png', dpi=600)
         plt.close()
     else:
         plt.show()

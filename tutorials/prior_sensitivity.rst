@@ -43,18 +43,34 @@ This will produce a figure that overplots the fits for all combinations of your 
 
 Let's do this for the DSHARP AS 209 dataset in the Quickstart,
 using the extrema of the ranges we suggest for :math:`\alpha` and :math:`w_{\rm smooth}`.
-That is, we'll set `alpha=[1.05, 1.30]` and `wsmooth=[1e-4, 1e-1]` in our parameter file,
-and frank will thus run four fits
-(for the four combinations of these chosen values),
+That is, we'll set `alpha=[1.05, 1.30]` and `wsmooth=[1e-4, 1e-1]` in our parameter file.
+This will run four fits (for the four combinations of these chosen values),
 generating this figure,
 
-.. figure:: ../plots/AS209_continuum_frank_hyperparameter_sensitivity.png
+.. figure:: ../plots/AS209_continuum_frank_hyperprior_sensitivity.png
    :align: left
    :figwidth: 700
 
-So this is good, the frank brightness profile for this dataset is negligibly sensitive to our choices for :math:`\alpha` and :math:`w_{\rm smooth}`.
-Though as we note in the Quickstart, a fit's sensitivity to :math:`\alpha` and :math:`w_{\rm smooth}` can be nontrivial
+**a)** The fitted frank brightness profile for each combination of hyperparameter values.
+The frank brightness profile for this dataset is evidently only weakly sensitive to our choices for :math:`\alpha` and :math:`w_{\rm smooth}`.
+|br|
+**b)** As in (a), on a log scale.
+|br|
+**c)** The visibility domain fits, and the data in 1 and 50 :math:`kλ` bins.
+|br|
+**d)** As in (c), on a log scale, which shows the relatively small variation in how the fits
+handle the data as they become noise-dominated.
+|br|
+**e)** The reconstructed power spectrum - which is the prior on the brightness profile - for each fit.
+Despite the appreciable difference in the power spectrum substructure between the :math:`\alpha = 1.05` and :math:`1.30` fits,
+the visibility domain fits in (d) and brightness profiles in (a) are quite similar,
+demonstrating the effect of the power spectrum as a prior is weak in this case.
+
+Always check a fit's sensitivity to :math:`\alpha` and :math:`w_{\rm smooth}`
+-----------------------------------------------------------------------------
+While these sensitivities are weak for datasets such as that shown here,
+a fit's sensitivity to :math:`\alpha` and :math:`w_{\rm smooth}` can be nontrivial
 for lower resolution or particularly noisy datasets.
 In these cases, the location and amplitude of substructure in the
-brightness profile can be sensitive to :math:`\alpha` and :math:`w_{\rm smooth}`,
+brightness profile can vary with :math:`\alpha` and :math:`w_{\rm smooth}`,
 so it's **always** worth checking how the fit changes in the ranges `alpha=[1.05, 1.30]` and `wsmooth=[1e-4, 1e-1]`.

@@ -103,7 +103,7 @@ Examine the fit's convergence
 Once a fit has been performed, it can be useful to check its convergence.
 A convergence test on the inferred power spectrum is performed as the fit iterates,
 but you can additionally examine convergence of the inferred brightness profile by setting
-`diag_plot=True` (this is the default) in the parameter file.
+`diag_plot=True` in your parameter file.
 frank will then produce a diagnostic figure to assess the fit's convergence.
 See `this tutorial <tutorials/fit_convergence.rst>`_ for an example.
 

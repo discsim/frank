@@ -453,8 +453,6 @@ def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
         figs.append(diag_fig)
         axes.append(diag_axes)
 
-    logging.info('  Saving results to the directory containing the input UVTable')
-
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
                 model['input_output']['save_solution'],
@@ -503,35 +501,43 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
     if len(multis_idx) != 2:
         raise ValueError("run_multiple_fits supports varying only two"
                          " hyperparameters; please reduce the number of"
-                         " lists in your parameter file --> `hyperparameters`")
+                         " lists in `hyperparameters` in your parameter file")
 
-    hpar0 = list(model['hyperparameters'].keys())[multis_idx[0]]
-    hpar1 = list(model['hyperparameters'].keys())[multis_idx[1]]
+    multis_hpar0 = list(model['hyperparameters'].keys())[multis_idx[0]]
+    multis_hpar1 = list(model['hyperparameters'].keys())[multis_idx[1]]
+    multis_vals0 = hpars[multis_idx[0]]
+    multis_vals1 = hpars[multis_idx[1]]
 
-    logging.info(' Looping fits over the hyperparameters '
-                 '{}'.format(list(model['hyperparameters'].keys())[multis_idx]))
+    logging.info(' Looping fits over the hyperparameters {} and {}'.format(multis_hpar0, multis_hpar1))
 
     sols = []
-    for ii in range(len(multis_idx[0])):
-        for jj in range(len(multis_idx[1])):
-            this_model = model.copy()
-            this_model['hyperparameters']['{}'.format(hpar0)] = multis_idx[0][ii]
-            this_model['hyperparameters']['{}'.format(hpar1)] = multis_idx[1][jj]
-            this_model['input_output']['save_prefix'].append('_{}{}_{}{}'.format(hpar0, multis_idx[0][ii], hpar1, multis_idx[1][jj]))
+    used_vals0 = []
+    used_vals1 = []
+    import copy
+    for ii in range(len(multis_vals0)):
+        for jj in range(len(multis_vals1)):
+            this_model = copy.deepcopy(model)
+            this_model['hyperparameters']['{}'.format(multis_hpar0)] = multis_vals0[ii]
+            this_model['hyperparameters']['{}'.format(multis_hpar1)] = multis_vals1[jj]
+            this_model['input_output']['save_prefix'] = model['input_output']['save_prefix'] + '_{}{}_{}{}'.format(multis_hpar0, multis_vals0[ii], multis_hpar1, multis_vals1[jj])
+            used_vals0.append(multis_vals0[ii])
+            used_vals1.append(multis_vals1[jj])
 
-            logging.info('   Running fit for {} = {}, {} = {}'.format(hpar0, multis_idx[0][ii], hpar1, multis_idx[1][jj]))
+            logging.info('  Running fit for {} = {}, {} = {}'.format(multis_hpar0, multis_vals0[ii], multis_hpar1, multis_vals1[jj]))
 
-            sol, _ = perform_fit(u, v, vis, weights, geom, this_model)
+            sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, this_model)
             sols.append(sol)
 
             # Save the fit for the current choice of hyperparameter values
             output_results(u, v, vis, weights, sol, this_model)
 
-    multifit_fig, multifit_axes = make_figs.make_overplot_fig(u, v, vis, weights, sols,
+    multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
                                                            model['plotting']['bin_widths'],
+                                                           [multis_hpar0, multis_hpar1],
+                                                           [used_vals0, used_vals1],
                                                            model['plotting']['dist'],
                                                            model['plotting']['force_style'],
-                                                           model['input_output']['save_prefix']
+                                                           model['input_output']['save_prefix'],
                                                            )
 
     return multifit_fig, multifit_axes
@@ -622,7 +628,8 @@ def main(*args):
         return boot_fig, boot_axes
 
     elif any(isinstance(x, list) for x in model['hyperparameters'].values()):
-        multifit_fig, multifit_axes = run_multiple_fits(model)
+        multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
+                                                        geom, model)
 
         return multifit_fig, multifit_axes
 
