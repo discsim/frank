@@ -371,8 +371,10 @@ def perform_fit(u, v, vis, weights, geom, model):
     sol = FF.fit(u, v, vis, weights)
 
     if model['hyperparameters']['nonnegative']:
-        # Replace the mean solution with the best fit non-negative
-        sol.mean = sol.solve_non_negative()
+        # Replace the mean solution with the best fit nonnegative one
+        logging.info('  `nonnegative` is `true` in your parameter file --> Replacing `sol.mean` with the best fit nonnegative profile')
+        setattr(sol, '_mu', sol.solve_non_negative())
+        model['input_output']['save_prefix'] += '_nonnegative'
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
