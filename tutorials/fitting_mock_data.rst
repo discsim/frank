@@ -8,5 +8,5 @@ ALMA observations, you may not have an estimate of the weights on your individua
 In this case you can set ``correct_weights=True`` in your parameter file.
 This will instruct frank to use the variance of the binned visibilities to
 *coarsely* estimate the pointwise weights
-(see the `estimate_weights <https://github.com/discsim/frankenstein/blob/master/docs/_build/html/py_API.html#frank.utilities.estimate_weights>`_ function).
+(see the `estimate_weights <https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.utilities.estimate_weights>`_ function).
 This is done after deprojecting the visibilities and before fitting for the brightness profile.

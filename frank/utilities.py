@@ -346,7 +346,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations (deprojected).
     V : array, unit = Jy
-        Obsersed visibility. If complex, the weights will be computed from the
+        Observed visibility. If complex, the weights will be computed from the
         average of the variance of the real and imaginary components, as in
         CASA's statwt. Otherwise the variance of the real part is used.
     nbins : int, default = 300

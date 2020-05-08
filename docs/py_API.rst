@@ -61,3 +61,18 @@ And these are the plotting functions those figures call.
 .. autofunction:: frank.plot.plot_pwr_spec_iterations
 
 .. autofunction:: frank.plot.plot_2dsweep
+
+Utility functions
+-----------------
+
+These are some useful functions for various aspects of fitting and analysis.
+
+.. autofunction:: frank.utilities.estimate_weights
+
+.. autofunction:: frank.utilities.cut_data_by_baseline
+
+.. autofunction:: frank.utilities.draw_bootstrap_sample
+
+.. autofunction:: frank.utilities.sweep_profile
+
+.. autofunction:: frank.utilities.convolve_profile
