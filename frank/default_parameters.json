@@ -31,7 +31,8 @@
     "p0"               : 1e-15,
     "wsmooth"          : 1e-4,
     "iter_tol"         : 1e-3,
-    "max_iter"         : 2000
+    "max_iter"         : 2000,
+    "nonnegative"      : false
   },
 
   "plotting" : {
