@@ -95,6 +95,12 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
     dist : float, optional, default = None, unit = [AU]
         Distance to source. If not None, a new `ax` will be created to
         show an upper x-axis in [AU] for the plot on the current `ax`
+
+    Returns
+    -------
+    ax_new : Matplotlib `~.axes.Axes` class
+        Only if dist is not None, the second x-axis, ax_new will be returned
+
     """
 
     if dist:
@@ -103,6 +109,8 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
         ax_new.tick_params(axis='x', which='both', colors='#1A9E46')
         ax_new.plot(fit_r * dist, fit_i, **kwargs)
         ax_new.set_xlabel('r [AU]', color='#1A9E46')
+
+        return ax_new
 
     else:
         ax.plot(fit_r, fit_i, **kwargs)
