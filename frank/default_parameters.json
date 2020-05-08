@@ -39,15 +39,18 @@
     "quick_plot"       : true,
     "full_plot"        : true,
     "diag_plot"        : false,
+    "deprojec_plot"    : false,
     "save_figs"        : true,
     "dist"             : null,
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
+    "gamma"            : 1.0,
     "iter_plot_range"  : null
   },
 
   "analysis" : {
-    "bootstrap_ntrials": null,
-    "bootstrap_non_negative" : false
+    "compare_profile"  : null,
+    "clean_beam"       : null,
+    "bootstrap_ntrials": null
   }
 }
