@@ -37,6 +37,7 @@ def arcsec_baseline(x):
     -------
     converted : float
         Baseline [lambda] or radial scale [arcsec]
+
     """
 
     converted = 1 / (x / 60 / 60 * np.pi / 180)
@@ -64,6 +65,7 @@ class UVDataBinner(object):
     Notes
     -----
     Uses numpy masked arrays to mask bins with no uv points.
+
     """
 
     def __init__(self, uv, V, weights, bin_width):
@@ -137,7 +139,9 @@ class UVDataBinner(object):
         idx : array,
             Bins that the uv point belongs to. Will be -1 if the bin does not
             exist.
+
         """
+
         bins = self._bins
         nbins = self._nbins
 
@@ -176,7 +180,9 @@ class UVDataBinner(object):
         bin_counts : array, int64, optional
             If bin_counts=True, then this array contains the number of uv
             points in each bin. Otherwise, it is not returned.
+
         """
+
         bins = self._bins
         nbins = self._nbins
         norm = self._norm
@@ -272,6 +278,7 @@ def normalize_uv(u, v, wle):
     -------
     u_normed, v_normed : array, unit = :math:`\lambda`
         u and v coordinates normalized by observing wavelength
+
     """
 
     u_normed = u / wle
@@ -311,7 +318,9 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
         Visibilities in the chosen baseline range
     weights_cut : array, unit = Jy^-2
         Weights in the chosen baseline range
+
     """
+    
     logging.info('  Cutting data outside of the minimum and maximum baselines'
                  ' of {} and {}'
                  ' klambda'.format(cut_range[0] / 1e3,
@@ -437,6 +446,7 @@ def draw_bootstrap_sample(u, v, vis, weights):
           Bootstrap sampled visibilities
     weights_boot : array, unit = Jy^-2
           Boostrap sampled weights on the visibilities
+
     """
     idxs = np.random.randint(low=0, high=len(u), size=len(u))
 
@@ -470,6 +480,7 @@ def sweep_profile(r, I, axis=0):
         Maximum x-value of the 2D grid
     ymax : float
         Maximum y-value of the 2D grid
+
     """
 
     xmax = ymax = r.max()
@@ -520,6 +531,7 @@ def convolve_profile(r, I, disc_i, disc_pa, bmaj, bmin, beam_pa,
     -------
     I_smooth : array, shape = (len(r), len(r))
         Convolved brightness profile I at coordinates r
+
     """
 
     from scipy.constants import c
