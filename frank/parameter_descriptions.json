@@ -50,7 +50,7 @@
 
   "analysis" : {
     "compare_profile"  : "Path of file with comparison profile to be overplotted with frank fit (.txt or .dat; columns: r [arcsec], I [Jy / sr])",
-    "clean_beam"       : "B_major [arcsec], B_minor [arcsec], position angle [deg] of beam to convolve frank profile (list of len 3)"
+    "clean_beam"       : "B_major [arcsec], B_minor [arcsec], position angle [deg] of beam to convolve frank profile (list of len 3)",
     "bootstrap_ntrials": "Number of trials (dataset realizations) to perform in a bootstrap analysis",
 
   }
