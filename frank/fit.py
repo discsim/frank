@@ -471,6 +471,31 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         figs.append(diag_fig)
         axes.append(diag_axes)
 
+    if model['analysis']['compare_profile']:
+        r_compare, I_compare = np.genfromtxt(model['analysis']['compare_profile'])
+
+        mean_convolved = None
+        if model['analysis']['clean_beam']:
+            bmaj, bmin, beam_pa = model['analysis']['clean_beam']
+            mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
+                                                        geom.inc, geom.PA,
+                                                        bmaj, bmin, beam_pa)
+
+        clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u, v, vis,
+                                                                    weights, sol,
+                                                                    r_compare,
+                                                                    I_compare,
+                                                                    model['plotting']['bin_widths'],
+                                                                    model['plotting']['gamma'],
+                                                                    mean_convolved,
+                                                                    model['plotting']['dist'],
+                                                                    model['plotting']['force_style'],
+                                                                    model['input_output']['save_prefix']
+                                                                    )
+
+        figs.append(clean_fig)
+        axes.append(clean_axes)
+
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
                 model['input_output']['save_solution'],

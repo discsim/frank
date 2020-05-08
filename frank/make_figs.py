@@ -625,10 +625,6 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-    mean_convolved : array, unit = Jy / sr
-        frank brightness profile convolved with a CLEAN beam
-        (see utilities.convolve_profile).
-        The assumed unit is for the x-label
     r_clean : array, unit = arcsec
         Radial coordinates at which a supplied CLEAN profile is specified.
         The assumed unit is for the x-label
@@ -637,10 +633,14 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
         The assumed unit is for the y-label
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    gamma : float, default = 1
+    gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile images'
         colormaps (see matplotlib.colors.PowerNorm).
-        gamma=1 yields a linear colormap
+        gamma=1.0 yields a linear colormap
+    mean_convolved : None (default) or array, unit = Jy / sr
+        frank brightness profile convolved with a CLEAN beam
+        (see utilities.convolve_profile).
+        The assumed unit is for the x-label
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
@@ -660,6 +660,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
 
     gs = GridSpec(3, 1)
     gs2 = GridSpec(3, 3)
+    #fig = plt.figure(figsize=(8, 8))
     fig = plt.figure(figsize=(12, 15))
 
     ax0 = fig.add_subplot(gs[0])
@@ -673,11 +674,12 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
 
     plot_brightness_profile(r_clean, I_clean / 1e10, ax0, c='b', ls='--',
                             label='CLEAN')
-    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
-    plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls=':',
-                            lw=2.5, label='frank, convolved')
+    plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', ls=':', label='frank')
+    if mean_convolved is not None:
+        plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls='-',
+                                label='frank, convolved')
     if dist:
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+        ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r', ls=':')
 
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -714,14 +716,18 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     plot_vis_fit(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
     plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
-    from matplotlib.colors import PowerNorm
     vmin = 0
-    vmax = max(sol.mean.max(), mean_convolved.max(), I_clean.max())
+    if mean_convolved is not None:
+        vmax = max(sol.mean.max(), mean_convolved.max(), I_clean.max())
+    else:
+        vmax = max(sol.mean.max(), I_clean.max())
     norm = PowerNorm(gamma, 0, vmax)
+
     plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
                 vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
-    plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
-                vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
+    if mean_convolved is not None:
+        plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
+                    vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
 
     # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
     # swept 'image' has the same pixel resolution as the frank swept 'images'
@@ -744,6 +750,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     ax2.set_ylabel('Dec offset ["]')
 
     ax0.set_xlim(right=sol.Rmax)
+    if dist:
+        xlims = ax0.get_xlim()
+        ax0_5.set_xlim(np.multiply(xlims, dist))
+
     ax1.set_xlim(.9 * baselines.min(), 1.2 * baselines.max())
     ax1.set_xscale('log')
     ax1.set_yscale('log')
