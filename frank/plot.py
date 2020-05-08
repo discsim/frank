@@ -245,8 +245,8 @@ def plot_pwr_spec(baselines, pwr_spec, ax, **kwargs):
 def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
     r"""
     Plot the following convergence criterion for a Frankenstein fit,
-        :math:`{\rm max}(|$I_i - I_{i-1}$|) / {\rm max}($I_i$)`,
-    where $I_i$ is the brightness profile at iteration $i$
+        :math:`{\rm max}(|I_i - I_{i-1}|) / {\rm max}(I_i)`,
+    where :math:`I_i` is the brightness profile at iteration :math:`i`
 
     Parameters
     ----------
@@ -258,7 +258,7 @@ def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
         Total number of iterations in the fit
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
-        
+
     """
 
     convergence_criterion = []

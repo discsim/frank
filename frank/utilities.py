@@ -361,8 +361,8 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
     Returns
     -------
-    weights : array,
-        Esimtate weight for each uv point.
+    weights : array
+        Estimate of the weight for each uv point.
 
     Notes
     -----
@@ -371,7 +371,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
           the mean of the variance in the two adjacent bins is used instead.
 
     """
-    
+
     logging.info('  Estimating visibility weights.')
 
     q = np.hypot(u,v)
@@ -384,7 +384,7 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
 
     if uvBin.bin_counts.max() == 1:
-        raise ValueError("No bin contains more than one uv point, can't "
+        raise ValueError("No bin contains more than one uv point, can't"
                          " estimate the variance. Use fewer bins.")
 
     if np.iscomplex(V.dtype):
