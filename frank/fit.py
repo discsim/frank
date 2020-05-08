@@ -425,6 +425,16 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
     figs, axes = [], []
 
+    if model['plotting']['deprojec_plot']:
+        up, vp, visp = geom.apply_correction(u, v, vis)
+        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, up, vp, vis, visp,
+                                                         model['plotting']['force_style'],
+                                                         model['input_output']['save_prefix']
+                                                         )
+
+        figs.append(deproj_fig)
+        axes.append(deproj_axes)
+
     if model['plotting']['quick_plot']:
         quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
                                                          model['plotting']['bin_widths'],
@@ -441,6 +451,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                       model['plotting']['bin_widths'],
                                                       [model['hyperparameters']['alpha'],
                                                        model['hyperparameters']['wsmooth']],
+                                                      model['plotting']['gamma'],
                                                       model['plotting']['dist'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']
