@@ -17,7 +17,7 @@ NOTEBOOKS := \
 	model_framework.rst \
 	mstable_to_uvtable.rst \
   fit_convergence.rst \
-	AS209_clean_profile.dat \
+	AS209_clean_profile.txt \
 	AS209_continuum.npz \
 
 
