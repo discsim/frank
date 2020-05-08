@@ -258,6 +258,7 @@ def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
         Total number of iterations in the fit
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
+        
     """
 
     convergence_criterion = []

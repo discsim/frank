@@ -369,7 +369,9 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         - This function does not use the original weights in the estimation.
         - Bins with only one uv point do not have a variance estimate. Thus
           the mean of the variance in the two adjacent bins is used instead.
+
     """
+    
     logging.info('  Estimating visibility weights.')
 
     q = np.hypot(u,v)
