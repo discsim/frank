@@ -56,7 +56,7 @@ That's it! frank saves (in `save_dir`) these fit outputs: |br|
 - the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
 - the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
 - the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
-- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
 - UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
 - figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and optionally `<uvtable_filename>_frank_fit_diag.png`.
 
@@ -144,7 +144,7 @@ First import some basic stuff from frank and load the data
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
-`FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ will then deproject the visibilities
+`FrankFitter` will then deproject the visibilities
 and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation points and the code's default ``alpha`` and ``weights_smooth`` hyperparameter values.
 
 .. code-block:: python
