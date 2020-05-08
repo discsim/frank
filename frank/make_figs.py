@@ -23,6 +23,7 @@ import numpy as np
 from scipy.integrate import trapz
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+from matplotlib.colors import PowerNorm
 import logging
 
 from frank.utilities import UVDataBinner
@@ -254,8 +255,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=None,
-                  force_style=True, save_prefix=None):
+def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters,
+                  gamma=1.0, dist=None, force_style=True, save_prefix=None):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
 
@@ -276,6 +277,10 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
     hyperparameters : list, len = 2
         Values for the :math:`\alpha` and :math:`w_{smooth}` hyperparameters.
         Used for the plot legends
+    gamma : float, default = 1.0
+        Index of power law normalization to apply to swept profile image's
+        colormap (see matplotlib.colors.PowerNorm).
+        gamma=1.0 yields a linear colormap
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
@@ -396,7 +401,12 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters, dist=Non
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
         hyperparameters[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperparameters[1]))
 
-    plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno')
+    if gamma != 1.0:
+        vmax = sol.mean.max()
+        norm = PowerNorm(gamma, 0, vmax)
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
+    else:
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno')
 
     ax1.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -593,10 +603,10 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     return fig, axes, iter_plot_range
 
 
-def make_clean_comparison_fig(u, v, vis, weights, sol, mean_convolved, r_clean,
-                   I_clean, bin_widths, gamma=1., dist=None, force_style=True,
-                   save_prefix=None
-                   ):
+def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
+                              bin_widths, gamma=1.0, mean_convolved=None,
+                              dist=None, force_style=True, save_prefix=None
+                             ):
     r"""
     Produce a figure comparing a frank fit to a CLEAN fit, in real space by
     convolving the frank fit with the CLEAN beam, and in visibility space by
