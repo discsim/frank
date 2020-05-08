@@ -212,7 +212,7 @@ def load_data(model):
     return u, v, vis, weights
 
 
-def alter_data(u, v, vis, weights, geometry, model):
+def alter_data(u, v, vis, weights, geom, model):
     r"""
     Apply one or more modifications to the data as specified in the parameter file
 
@@ -225,7 +225,7 @@ def alter_data(u, v, vis, weights, geometry, model):
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    geometry : SourceGeometry object
+    geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry).
     model : dict
         Dictionary containing model parameters the fit uses
@@ -244,11 +244,11 @@ def alter_data(u, v, vis, weights, geometry, model):
         u, v, vis, weights = \
             utilities.cut_data_by_baseline(u, v, vis, weights,
                                            model['modify_data']['baseline_range'],
-                                           geometry)
+                                           geom)
 
     wcorr_estimate = None
     if model['modify_data']['correct_weights']:
-        up, vp = geometry.deproject(u,v)
+        up, vp = geom.deproject(u,v)
         weights = utilities.estimate_weights(up, vp, vis, use_median=True)
 
     return u, v, vis, weights
@@ -386,11 +386,10 @@ def perform_fit(u, v, vis, weights, geom, model):
         return [sol, None]
 
 
-def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
+def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=None):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
-    frank.io.save_fit, frank.make_figs.make_full_fig,
-    frank.make_figs.make_quick_fig, frank.make_figs.make_diag_fig)
+    frank.io.save_fit, frank.make_figs)
 
     Parameters
     ----------
@@ -404,6 +403,8 @@ def output_results(u, v, vis, weights, sol, model, iteration_diagnostics=None):
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
+    geom : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry)
     model : dict
         Dictionary containing model parameters the fit uses
     iteration_diagnostics : _HankelRegressor object, optional, default=None
@@ -638,7 +639,7 @@ def main(*args):
         sol, iteration_diagnostics = perform_fit(
             u, v, vis, weights, geom, model)
 
-        figs, axes, model = output_results(u, v, vis, weights, sol, model,
+        figs, axes, model = output_results(u, v, vis, weights, sol, geom, model,
                                            iteration_diagnostics
                                            )
 
