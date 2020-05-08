@@ -111,9 +111,9 @@ def make_deprojection_fig(u, v, up, vp, vis, visp, force_style=True,
     plot_deprojection_vis(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, re_vis * 1e3,
                           re_visp * 1e3, ax1)
 
-    ax0.set_xlabel('u [M$\lambda$]')
-    ax0.set_ylabel('v [M$\lambda$]')
-    ax1.set_xlabel('Baseline [M$\lambda$]')
+    ax0.set_xlabel(r'u [M$\lambda$]')
+    ax0.set_ylabel(r'v [M$\lambda$]')
+    ax1.set_xlabel(r'Baseline [M$\lambda$]')
     ax1.set_ylabel('Re(V) [mJy]')
     ax1.set_xscale('log')
     ax1.set_yscale('log')
@@ -194,7 +194,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
         label='frank, total flux {:.2e} Jy'.format(total_flux))
     if dist:
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+        ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+        xlims = ax0.get_xlim()
+        ax0_5.set_xlim(np.multiply(xlims, dist))
 
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
@@ -337,7 +339,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters,
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
         label='frank, total flux {:.2e} Jy'.format(total_flux))
     if dist:
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+        ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+        xlims = ax0.get_xlim()
+        ax0_5.set_xlim(np.multiply(xlims, dist))
 
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
@@ -401,12 +405,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters,
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
         hyperparameters[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperparameters[1]))
 
-    if gamma != 1.0:
-        vmax = sol.mean.max()
-        norm = PowerNorm(gamma, 0, vmax)
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
-    else:
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno')
+    vmax = sol.mean.max()
+    norm = PowerNorm(gamma, 0, vmax)
+    plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
 
     ax1.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -862,7 +863,9 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii],
             label='{} = {}, {} = {}'.format(varied_pars[0], varied_vals[0][ii], varied_pars[1], varied_vals[1][ii]))
         if dist and ii == len(sols) - 1:
-            plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, dist=dist, c=multifit_cs[ii])
+            ax0_5 = plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, dist=dist, c=multifit_cs[ii])
+            xlims = ax0.get_xlim()
+            ax0_5.set_xlim(np.multiply(xlims, dist))
 
         plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax1, c=multifit_cs[ii])
 

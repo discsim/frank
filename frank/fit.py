@@ -506,9 +506,9 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
         hpars)]
     multis_idx = [i for i, x in enumerate(multis_bool) if x]
     if len(multis_idx) != 2:
-        raise ValueError("run_multiple_fits supports varying only two"
-                         " hyperparameters; please reduce the number of"
-                         " lists in `hyperparameters` in your parameter file")
+        raise ValueError("run_multiple_fits supports varying exactly two"
+                         " hyperparameters; please ensure you have two lists"
+                         " in your parameter file's `hyperparameters`")
 
     multis_hpar0 = list(model['hyperparameters'].keys())[multis_idx[0]]
     multis_hpar1 = list(model['hyperparameters'].keys())[multis_idx[1]]
@@ -526,7 +526,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
             this_model = copy.deepcopy(model)
             this_model['hyperparameters']['{}'.format(multis_hpar0)] = multis_vals0[ii]
             this_model['hyperparameters']['{}'.format(multis_hpar1)] = multis_vals1[jj]
-            this_model['input_output']['save_prefix'] = model['input_output']['save_prefix'] + '_{}{}_{}{}'.format(multis_hpar0, multis_vals0[ii], multis_hpar1, multis_vals1[jj])
+            this_model['input_output']['save_prefix'] += '_{}{}_{}{}'.format(multis_hpar0, multis_vals0[ii], multis_hpar1, multis_vals1[jj])
             used_vals0.append(multis_vals0[ii])
             used_vals1.append(multis_vals1[jj])
 
@@ -536,7 +536,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
             sols.append(sol)
 
             # Save the fit for the current choice of hyperparameter values
-            output_results(u, v, vis, weights, sol, this_model)
+            output_results(u, v, vis, weights, sol, geom, this_model)
 
     multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
                                                            model['plotting']['bin_widths'],
