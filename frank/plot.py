@@ -146,21 +146,23 @@ def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
     ax.legend(loc='best')
 
 
-def plot_vis_hist(bins, counts, ax, **kwargs):
+def plot_vis_hist(binned_vis, ax, **kwargs):
     r"""
     Plot a histogram of visibilities using a precomputed binning
 
     Parameters
     ----------
-    bins : array
-        Bin edges
-    bin_counts : array
-        Number of visibilities in each bin
+    binned_vis : UVDataBinner object
+        Pre-binned visibilities (see utilities.UVDataBinner)
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
     """
 
-    ax.hist(0.5*(bins[1:]+bins[:-1]), bins, weights=counts, alpha=.5, **kwargs)
+    edges = np.concatenate([binned_vis.bin_edges[0].data,
+                            binned_vis.bin_edges[1].data[-1:]])
+    counts = binned_vis.bin_counts.data
+    
+    ax.hist(0.5 * (edges[1:] + edges[:-1]), edges, weights=counts, alpha=.5, **kwargs)
 
     ax.legend(loc='best')
 

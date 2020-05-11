@@ -407,10 +407,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a histogram of the observed visibilties to examine how the
         # visibility count varies with baseline
-        edges = np.concatenate([binned_vis.bin_edges[0].data,
-                                binned_vis.bin_edges[1].data[-1:]])
-        plot_vis_hist(edges, binned_vis.bin_counts.data, ax8,
-                      color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        plot_vis_hist(binned_vis, ax8, color=hist_cs[i],
+                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     # Plot the visibility domain frank fit in log-y
     plot_vis_quantity(grid, vis_fit_kl, ax3, c='r', label='frank')
