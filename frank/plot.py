@@ -69,9 +69,11 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
     ax2.legend(loc='best')
 
 
-def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
+def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
+                            high_uncer=None, **kwargs):
     """
-    Plot a brightness profile as a function of disc radius, I(r)
+    Plot a brightness profile (and optionally a confidence inverval) as a
+    function of disc radius, I(r)
 
     Parameters
     ----------
@@ -84,6 +86,8 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
     dist : float, optional, default = None, unit = [AU]
         Distance to source. If not None, a new `ax` will be created to
         show an upper x-axis in [AU] for the plot on the current `ax`
+    low_uncer : Negative (i.e., below mean) uncertainty on fit_i
+    high_uncer : Positive (i.e., above mean) uncertainty on fit_i
 
     Returns
     -------
@@ -102,31 +106,16 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
         return ax_new
 
     else:
+        if low_uncer is not None:
+            if high_uncer is None:
+                high_uncer = low_uncer * 1.
+            ax.fill_between(fit_r, fit_i - low_uncer, fit_i + high_uncer, **kwargs)
+
         ax.plot(fit_r, fit_i, **kwargs)
 
         ax.axhline(0, c='c', ls='--', zorder=10)
 
         ax.legend(loc='best')
-
-
-def plot_confidence_interval(fit_r, low_bound, up_bound, ax, **kwargs):
-    """
-    Plot the confidence interval for a brightness profile fit
-
-    Parameters
-    ----------
-    fit_r : array
-        Radial data coordinates
-    low_bound, up_bound : float
-        Lower and upper bound of confidence interval for brightness values at
-        fit_r
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
-    """
-
-    ax.fill_between(fit_r, low_bound, up_bound, **kwargs)
-
-    ax.legend(loc='best')
 
 
 def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,

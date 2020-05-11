@@ -31,7 +31,6 @@ from frank.utilities import UVDataBinner
 from frank.plot import (
     plot_deprojection_effect,
     plot_brightness_profile,
-    plot_confidence_interval,
     plot_vis_quantity,
     plot_vis_hist,
     plot_profile_iterations,
@@ -983,10 +982,10 @@ def make_bootstrap_fig(r, profiles, force_style=True,
     mean_profile = np.mean(profiles, axis=0)
     std = np.std(profiles, axis=0)
 
-    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) /
-                             1e10, ax1, color='r', alpha=.7, label='Stan. dev. of trials')
-    plot_confidence_interval(r, (mean_profile - std) / 1e10, (mean_profile + std) /
-                             1e10, ax3, color='r', alpha=.7, label='Stan. dev. of trials')
+    plot_brightness_profile(r, mean_profile / 1e10, ax1, low_uncer=std / 1e10,
+                             color='r', alpha=.7, label='Stan. dev. of trials')
+    plot_brightness_profile(r, mean_profile / 1e10, ax3, low_uncer=std / 1e10,
+                             color='r', alpha=.7, label='Stan. dev. of trials')
 
     for i in range(len(profiles)):
         plot_brightness_profile(r, profiles[i] / 1e10, ax0, c='k', alpha=.2)
