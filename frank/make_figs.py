@@ -131,8 +131,6 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_deprojection.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes
 
@@ -255,8 +253,6 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes
 
@@ -487,8 +483,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_full.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes
 
@@ -625,8 +619,6 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes, iter_plot_range
 
@@ -797,8 +789,6 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes
 
@@ -943,8 +933,6 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_multifit.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes
 
@@ -1030,7 +1018,5 @@ def make_bootstrap_fig(r, profiles, force_style=True,
     if save_prefix:
         plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=600)
         plt.close()
-    else:
-        plt.show()
 
     return fig, axes
