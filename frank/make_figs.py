@@ -29,8 +29,7 @@ import logging
 from frank.utilities import UVDataBinner
 
 from frank.plot import (
-    plot_deprojection_uv,
-    plot_deprojection_vis,
+    plot_deprojection_effect,
     plot_brightness_profile,
     plot_confidence_interval,
     plot_vis_quantity,
