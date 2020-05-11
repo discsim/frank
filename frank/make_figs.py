@@ -78,7 +78,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
     vis : array, unit = Jy
         Projected visibilities (complex: real + imag * 1j)
     geom : SourceGeometry object
-        Fitted geometry (see frank.geometry.SourceGeometry)        
+        Fitted geometry (see frank.geometry.SourceGeometry)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -342,7 +342,10 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
     axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
+    # Calculate the fit's total flux (2D, by sweeping the 1D profile over 2\pi)
     total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
+
+    # Plot the fitted brightness profile in linear- and log-y
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
         label='frank, total flux {:.2e} Jy'.format(total_flux))
     if dist:
@@ -352,17 +355,26 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
 
+    # Apply deprojection to the provided (u, v) coordinates
+    # and visibility amplitudes
     u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
     baselines = (u_deproj**2 + v_deproj**2)**.5
+    # Set a grid of baselines on which to plot the visibility domain frank fit
     grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
                        np.log10(max(baselines.max(), sol.q[-1])), 10**4
                        )
+    # Map the frank visibility fit to `grid`, considering only the real component
+    # that frank fits
+    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
 
-    ReV = sol.predict_deprojected(grid).real
-    zoom_ylim_guess = abs(ReV[np.int(.5 * len(ReV)):]).max()
+    # Make a guess of good y-bounds for zooming in on the visibility fit
+    # in linear-y
+    zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
-    ax4.set_ylim(np.multiply(zoom_bounds, 1e3))
+    ax4.set_ylim(zoom_bounds, 1e3)
 
+    # Bin the observed (real and imaginary components of the) visibilities
+    # for plotting
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
         vis_re_kl = binned_vis.V.real * 1e3
@@ -371,10 +383,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         vis_err_im_kl = binned_vis.error.imag * 1e3
         vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
+        # Determine the visiblity domain frank fit residuals (and RMS error)
+        # for Real(V)
         resid = vis_re_kl - vis_fit
         norm_resid = resid / vis_re_kl
         rmse = (np.mean(resid**2))**.5
 
+        # Plot the observed, binned visibilities and the residuals
         plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax3, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
@@ -398,20 +413,25 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
                        label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
+        # Plot a histogram of the observed visibilties to examine how the
+        # visibility count varies with baseline
         edges = np.concatenate([binned_vis.bin_edges[0].data,
                                 binned_vis.bin_edges[1].data[-1:]])
         plot_vis_hist(edges, binned_vis.bin_counts.data, ax8,
                       color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-    vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
+    # Plot the visibility domain frank fit in log-y
     plot_vis_fit(grid, vis_fit_kl, ax3, c='r', label='frank')
     plot_vis_fit(grid, vis_fit_kl, ax4, c='r', label='frank')
     plot_vis_fit(grid, vis_fit_kl, ax6, c='r', label='frank>0')
     plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
+    # Plot the frank inferred power spectrum
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
         alpha) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(wsmooth))
 
+    # Plot a sweep over 2\pi of the frank 1D fit
+    # (analogous to a model image of the source)
     vmax = sol.mean.max()
     norm = PowerNorm(gamma, 0, vmax)
     plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
@@ -693,8 +713,6 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
                        np.log10(max(baselines.max(), sol.q[-1])), 10**4
                        )
-
-    ReV = sol.predict_deprojected(grid).real
 
     for i in range(len(bin_widths)):
         binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
