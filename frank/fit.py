@@ -426,8 +426,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     figs, axes = [], []
 
     if model['plotting']['deprojec_plot']:
-        up, vp, visp = geom.apply_correction(u, v, vis)
-        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, up, vp, vis, visp,
+        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, vis, geom,
                                                          model['plotting']['force_style'],
                                                          model['input_output']['save_prefix']
                                                          )

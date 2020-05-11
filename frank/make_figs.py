@@ -65,7 +65,7 @@ def frank_plotting_style():
     plt.style.use(style_path)
 
 
-def make_deprojection_fig(u, v, up, vp, vis, visp, force_style=True,
+def make_deprojection_fig(u, v, vis, geom, force_style=True,
                           save_prefix=None):
     r"""
     Produce a simple figure showing the effect of deprojection on the (u, v)
@@ -75,12 +75,10 @@ def make_deprojection_fig(u, v, up, vp, vis, visp, force_style=True,
     ----------
     u, v : array, unit = :math:`\lambda`
         Projected (u, v) coordinates
-    up, vp : array, unit = :math:`\lambda`
-        Deprojected (u, v) coordinates
     vis : array, unit = Jy
         Projected visibilities (complex: real + imag * 1j)
-    visp : array, unit = Jy
-        Deprojected visibilities (complex: real + imag * 1j)
+    geom : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry)        
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -93,6 +91,10 @@ def make_deprojection_fig(u, v, up, vp, vis, visp, force_style=True,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    # Apply the deprojection to the provided (u, v) coordinates
+    # and visibility amplitudes
+    up, vp, visp = geom.apply_correction(u, v, vis)
 
     re_vis = np.real(vis)
     re_visp = np.real(visp)
