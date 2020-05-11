@@ -470,7 +470,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         axes.append(diag_axes)
 
     if model['analysis']['compare_profile']:
-        r_compare, I_compare = np.genfromtxt(model['analysis']['compare_profile'])
+        r_compare, I_compare = np.genfromtxt(model['analysis']['compare_profile']).T
 
         mean_convolved = None
         if model['analysis']['clean_beam']:
