@@ -41,7 +41,7 @@
     "diag_plot"        : false,
     "deprojec_plot"    : false,
     "save_figs"        : true,
-    "dist"             : null,
+    "distance"         : null,
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
     "gamma"            : 1.0,

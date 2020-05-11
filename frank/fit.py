@@ -438,7 +438,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     if model['plotting']['quick_plot']:
         quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
                                                          model['plotting']['bin_widths'],
-                                                         model['plotting']['dist'],
+                                                         model['plotting']['distance'],
                                                          model['plotting']['force_style'],
                                                          model['input_output']['save_prefix']
                                                          )
@@ -452,7 +452,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                       model['hyperparameters']['alpha'],
                                                       model['hyperparameters']['wsmooth'],
                                                       model['plotting']['gamma'],
-                                                      model['plotting']['dist'],
+                                                      model['plotting']['distance'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']
                                                       )
@@ -488,7 +488,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                                     model['plotting']['bin_widths'],
                                                                     model['plotting']['gamma'],
                                                                     mean_convolved,
-                                                                    model['plotting']['dist'],
+                                                                    model['plotting']['distance'],
                                                                     model['plotting']['force_style'],
                                                                     model['input_output']['save_prefix']
                                                                     )
@@ -578,7 +578,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
                                                            model['plotting']['bin_widths'],
                                                            [multis_hpar0, multis_hpar1],
                                                            [used_vals0, used_vals1],
-                                                           model['plotting']['dist'],
+                                                           model['plotting']['distance'],
                                                            model['plotting']['force_style'],
                                                            model['input_output']['save_prefix'],
                                                            )
@@ -633,7 +633,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
                                                        profiles_bootstrap,
-                                                       model['plotting']['dist'],
+                                                       model['plotting']['distance'],
                                                        model['plotting']['force_style'],
                                                        model['input_output']['save_prefix']
                                                        )
