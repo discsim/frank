@@ -140,74 +140,32 @@ def plot_confidence_interval(fit_r, low_bound, up_bound, ax, **kwargs):
     ax.legend(loc='best')
 
 
-def plot_vis_fit(baselines, vis_fit, ax, **kwargs):
+def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
+                      **kwargs):
     r"""
-    Plot a visibility domain fit as a function of baseline, V(q)
+    Plot a visibility domain quantity (e.g., observed visibilities, a frank fit,
+    residual visibilities, a power spectrum) as a function of baseline
 
     Parameters
     ----------
     baselines : array
-        Baseline data coordinates
-    vis_fit : array
-        Visibility amplitude at baselines
+        Baseline data coordinates `b`
+    vis_quantity : array
+        A generic quantity `Q` to plot as a function of baselines `b`, Q(b)
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
+    vis_quantity_err : array, optional, default = None
+        Uncertainty on vis_quantity values
     """
 
-    ax.plot(baselines, vis_fit, **kwargs)
-
-    ax.axhline(0, c='c', ls='--', zorder=10)
-
-    ax.legend(loc='best')
-
-
-def plot_vis(baselines, vis, vis_err, ax, plot_CIs=False, **kwargs):
-    r"""
-    Plot visibility datapoints as a function of baseline, V(q)
-
-    Parameters
-    ----------
-    baselines : array
-        Baseline data coordinates
-    vis : array
-        Visibility amplitude at baselines
-    vis_err : array
-        Uncertainty on the visibility amplitudes at baselines
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
-    plot_CIs : bool, default = False
-        Whether to show confidence intervals on the visibilities
-    """
-
-    if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, **kwargs)
+    if vis_quantity_err is not None:
+        ax.errorbar(baselines, vis_quantity, yerr=vis_quantity_err, **kwargs)
     else:
-        ax.plot(baselines, vis, **kwargs)
+        ax.plot(baselines, vis_quantity, **kwargs)
 
     ax.axhline(0, c='c', ls='--', zorder=10)
 
     ax.legend(loc='best')
-
-
-def plot_vis_resid(baselines, resid, ax, **kwargs):
-    r"""
-    Plot residuals between visibility datapoints and a visibility domain fit
-
-    Parameters
-    ----------
-    baselines : array
-        Baseline data coordinates
-    resid : array
-        (Observed - fitted) visibility amplitudes at baselines
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
-    """
-
-    ax.plot(baselines, resid, **kwargs)
-
-    ax.legend(loc='best')
-
-    ax.axhline(0, c='c', ls='--', zorder=10)
 
 
 def plot_vis_hist(bins, counts, ax, **kwargs):
@@ -225,27 +183,6 @@ def plot_vis_hist(bins, counts, ax, **kwargs):
     """
 
     ax.hist(0.5*(bins[1:]+bins[:-1]), bins, weights=counts, alpha=.5, **kwargs)
-
-    ax.legend(loc='best')
-
-
-def plot_pwr_spec(baselines, pwr_spec, ax, **kwargs):
-    r"""
-    Plot the reconstructed power spectrum of a Frankenstein fit
-
-    Parameters
-    ----------
-    baselines : array
-        Baseline coordinates. The assumed unit (for the x-label) is
-        :math:`\lambda`
-    pwr_spec : array
-        Reconstructed power spectral mode amplitudes at baselines. The assumed
-        unit (for the y-label) is Jy^2
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
-    """
-
-    ax.plot(baselines, pwr_spec, **kwargs)
 
     ax.legend(loc='best')
 

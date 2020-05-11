@@ -33,10 +33,10 @@ from frank.plot import (
     plot_deprojection_vis,
     plot_brightness_profile,
     plot_confidence_interval,
-    plot_vis, plot_vis_fit, plot_vis_resid, plot_vis_hist,
+    plot_vis_quantity,
+    plot_vis_hist,
     plot_profile_iterations,
     plot_2dsweep,
-    plot_pwr_spec,
     plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
@@ -219,16 +219,16 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         norm_resid = resid / vis_re_kl
         rmse = (np.mean(resid**2))**.5
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax2, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis_resid(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
+        plot_vis_quantity(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
                        ls='None',
                        label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
     vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-    plot_vis_fit(grid, vis_fit_kl, ax2, c='r', label='frank')
+    plot_vis_quantity(grid, vis_fit_kl, ax2, c='r', label='frank')
 
     ax1.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -385,28 +385,28 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         norm_resid = resid / vis_re_kl
         rmse = (np.mean(resid**2))**.5
 
-        # Plot the observed, binned visibilities and the residuals
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax3, c=cs[i],
+        # Plot the observed, binned visibilities (with errorbars) and the residuals
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax4, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax4, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax6, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax6, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax6, c=cs2[i],
+        plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax6, -vis_err_re_kl, c=cs2[i],
                  marker=ms[i], ls='None',
                  label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_im_kl, vis_err_im_kl, ax9, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_im_kl, ax9, vis_err_im_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis_resid(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
+        plot_vis_quantity(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
                        label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
         # Plot a histogram of the observed visibilties to examine how the
@@ -417,13 +417,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
                       color=hist_cs[i], label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     # Plot the visibility domain frank fit in log-y
-    plot_vis_fit(grid, vis_fit_kl, ax3, c='r', label='frank')
-    plot_vis_fit(grid, vis_fit_kl, ax4, c='r', label='frank')
-    plot_vis_fit(grid, vis_fit_kl, ax6, c='r', label='frank>0')
-    plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
+    plot_vis_quantity(grid, vis_fit_kl, ax3, c='r', label='frank')
+    plot_vis_quantity(grid, vis_fit_kl, ax4, c='r', label='frank')
+    plot_vis_quantity(grid, vis_fit_kl, ax6, c='r', label='frank>0')
+    plot_vis_quantity(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
     # Plot the frank inferred power spectrum
-    plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
+    plot_vis_quantity(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
         alpha) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(wsmooth))
 
     # Plot a sweep over 2\pi of the frank 1D fit
@@ -712,10 +712,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
         vis_err_re_kl = binned_vis.error.real * 1e3
         vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax1, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax1, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax1, c=cs2[i],
+        plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax1, -vis_err_re_kl, c=cs2[i],
                  marker=ms[i], ls='None',
                  label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -728,10 +728,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     clean_DHT_kl = sol.predict_deprojected(grid,
                                            I=np.interp(DHT.r, r_clean, I_clean)).real * 1e3
 
-    plot_vis_fit(grid, vis_fit_kl, ax1, c='r', label='frank>0')
-    plot_vis_fit(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
-    plot_vis_fit(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
-    plot_vis_fit(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
+    plot_vis_quantity(grid, vis_fit_kl, ax1, c='r', label='frank>0')
+    plot_vis_quantity(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
+    plot_vis_quantity(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
+    plot_vis_quantity(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
     vmin = 0
     if mean_convolved is not None:
@@ -873,13 +873,13 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         vis_err_re_kl = binned_vis.error.real * 1e3
         vis_fit = sols[0].predict_deprojected(binned_vis.uv).real * 1e3
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax2, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plot_vis(binned_vis.uv, vis_re_kl, vis_err_re_kl, ax3, c=cs[i],
+        plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, vis_err_re_kl, c=cs[i],
                  marker=ms[i], ls='None',
                  label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-        plot_vis(binned_vis.uv, -vis_re_kl, -vis_err_re_kl, ax3, c=cs2[i],
+        plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax3, -vis_err_re_kl, c=cs2[i],
                  marker=ms[i], ls='None',
                  label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -895,12 +895,12 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax1, c=multifit_cs[ii])
 
         vis_fit_kl = sols[ii].predict_deprojected(grid).real * 1e3
-        plot_vis_fit(grid, vis_fit_kl, ax2, c=multifit_cs[ii])
+        plot_vis_quantity(grid, vis_fit_kl, ax2, c=multifit_cs[ii])
 
-        plot_vis_fit(grid, vis_fit_kl, ax3, c=multifit_cs[ii])
-        plot_vis_fit(grid, -vis_fit_kl, ax3, c=multifit_cs[ii], ls='--')
+        plot_vis_quantity(grid, vis_fit_kl, ax3, c=multifit_cs[ii])
+        plot_vis_quantity(grid, -vis_fit_kl, ax3, c=multifit_cs[ii], ls='--')
 
-        plot_pwr_spec(sols[ii].q, sols[ii].power_spectrum, ax4, c=multifit_cs[ii])
+        plot_vis_quantity(sols[ii].q, sols[ii].power_spectrum, ax4, c=multifit_cs[ii])
 
     ax1.set_xlabel('r ["]')
     ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
