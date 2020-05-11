@@ -110,10 +110,8 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
     axes = [ax0, ax1]
 
-    plot_deprojection_uv(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, ax0)
-
-    plot_deprojection_vis(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, re_vis * 1e3,
-                          re_visp * 1e3, ax1)
+    plot_deprojection_effect(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, re_vis * 1e3,
+                             re_visp * 1e3, ax0, ax1)
 
     ax0.set_xlabel(r'u [M$\lambda$]')
     ax0.set_ylabel(r'v [M$\lambda$]')

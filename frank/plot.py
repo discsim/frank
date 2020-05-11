@@ -31,29 +31,12 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 from frank.utilities import sweep_profile
 
 
-def plot_deprojection_uv(u, v, up, vp, ax):
+def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
     """
-    Overplot projected and deprojected (u, v) coordinates
-
-    Parameters
-    ----------
-    u, v : array
-        Projected (u, v) coordinates
-    up, vp : array
-        Deprojected (u, v) coordinates
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
-    """
-
-    ax.plot(u, v, '+', c='#1EC8FE', label='Projected')
-    ax.plot(up, vp, 'x', c='#D14768', label='Deprojected')
-
-    ax.legend(loc='best')
-
-
-def plot_deprojection_vis(u, v, up, vp, vis, visp, ax):
-    r"""
-    Overplot projected and deprojected visibilities
+    Overplot projected and deprojected (u, v) coordinates;
+    projected and deprojected visibility amplitudes
+    (here 'projection' refers to correcting collectively for the source
+    inclination, position angle and phase offset)
 
     Parameters
     ----------
@@ -62,22 +45,28 @@ def plot_deprojection_vis(u, v, up, vp, vis, visp, ax):
     up, vp : array
         Deprojected (u, v) coordinates
     vis : array
-        Projected visibilities (complex: real + imag * 1j)
+        Projected visibilities (either the real or imaginary component)
     visp : array
-        Deprojected visibilities (complex: real + imag * 1j)
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
+        Deprojected visibilities (either the real or imaginary component)
+    ax1 : Matplotlib `~.axes.Axes` class
+        Axis on which to plot effect of deprojection on the (u, v) coordinates
+    ax2 : Matplotlib `~.axes.Axes` class
+        Axis on which to plot effect of deprojection on the visibility amplitudes
     """
+
+    ax1.plot(u, v, '+', c='#1EC8FE', label='Projected')
+    ax1.plot(up, vp, 'x', c='#D14768', label='Deprojected')
 
     # Projected baselines
     bs = np.hypot(u, v)
     # Deprojected baselines
     bsp = np.hypot(up, vp)
 
-    ax.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
-    ax.plot(bsp, vis, 'x', c='#D14768', label='Deprojected')
+    ax2.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
+    ax2.plot(bsp, vis, 'x', c='#D14768', label='Deprojected')
 
-    ax.legend(loc='best')
+    ax1.legend(loc='best')
+    ax2.legend(loc='best')
 
 
 def plot_brightness_profile(fit_r, fit_i, ax, dist=None, **kwargs):
