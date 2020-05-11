@@ -320,7 +320,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
         Weights in the chosen baseline range
 
     """
-    
+
     logging.info('  Cutting data outside of the minimum and maximum baselines'
                  ' of {} and {}'
                  ' klambda'.format(cut_range[0] / 1e3,
@@ -499,7 +499,7 @@ def sweep_profile(r, I, axis=0):
     return I2D, xmax, ymax
 
 
-def convolve_profile(r, I, disc_i, disc_pa, bmaj, bmin, beam_pa,
+def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
                     n_per_sigma=5, axis=0):
     r"""
     Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
@@ -515,12 +515,10 @@ def convolve_profile(r, I, disc_i, disc_pa, bmaj, bmin, beam_pa,
         Disc inclination
     disc_pa : float, unit = deg
         Disc position angle
-    bmaj : float, unit = arcsec
-        FWHM of beam along its major axis
-    bmin : float, unit = arcsec
-        FWHM of beam along its minor axis
-    beam_pa : float, unit = deg
-        Beam position angle
+    clean_beam : dict
+        Dictionary with beam `bmaj` (FWHM of beam along its major axis) [arcsec],
+        `bmin` (FWHM of beam along its minor axis) [arcsec],
+        `pa` (beam position angle) [deg]
     n_per_sigma : int, default = 5
         Number of points per standard deviation of the Gaussian kernel (used
         for gridding)
@@ -543,10 +541,10 @@ def convolve_profile(r, I, disc_i, disc_pa, bmaj, bmin, beam_pa,
     #  image accordingly
 
     # Convert beam FWHM to sigma
-    bmaj = bmaj / np.sqrt(8 * np.log(2))
-    bmin = bmin / np.sqrt(8 * np.log(2))
+    bmaj = clean_beam['bmaj'] / np.sqrt(8 * np.log(2))
+    bmin = clean_beam['bmin'] / np.sqrt(8 * np.log(2))
 
-    PA = (disc_pa - beam_pa) * np.pi / 180.
+    PA = (disc_pa - clean_beamp['beam_pa']) * np.pi / 180.
 
     cos_i = np.cos(disc_i) * np.pi/180.
     cos_PA = np.cos(PA)

@@ -470,19 +470,33 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         axes.append(diag_axes)
 
     if model['analysis']['compare_profile']:
-        r_compare, I_compare = np.genfromtxt(model['analysis']['compare_profile']).T
+        if len(comparison_profile) not in [2,3,4]:
+                    raise ValueError("The file in your .json's `analysis` --> "
+                                     "`compare_profile` must have 2, 3 or 4 "
+                                     "columns.")
+        dat = np.genfromtxt(model['analysis']['compare_profile']).T
+        r_clean, I_clean = dat[0], dat[1]
+        if len(dat) == 3:
+            lo_err_clean, hi_err_clean = dat[2], dat[2]
+        elif len(dat) == 4:
+            lo_err_clean, hi_err_clean = dat[2], dat[3]
+        else:
+            lo_err_clean, hi_err_clean = None, None
+        clean_profile = {'r': r_clean, 'I': I_clean, 'lo_err': lo_err_clean,
+                         'hi_err': hi_err_clean}
 
         mean_convolved = None
         if model['analysis']['clean_beam']:
-            bmaj, bmin, beam_pa = model['analysis']['clean_beam']
+            clean_beam = {'bmaj': model['analysis']['clean_beam'][0],
+                          'bmin': model['analysis']['clean_beam'][1],
+                          'beam_pa': model['analysis']['clean_beam'][2]}
             mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
                                                         geom.inc, geom.PA,
-                                                        bmaj, bmin, beam_pa)
+                                                        clean_beam)
 
         clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u, v, vis,
                                                                     weights, sol,
-                                                                    r_compare,
-                                                                    I_compare,
+                                                                    clean_profile,
                                                                     model['plotting']['bin_widths'],
                                                                     model['plotting']['gamma'],
                                                                     mean_convolved,

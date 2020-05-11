@@ -619,7 +619,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     return fig, axes, iter_plot_range
 
 
-def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
+def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                               bin_widths, gamma=1.0, mean_convolved=None,
                               dist=None, force_style=True, save_prefix=None
                              ):
@@ -640,12 +640,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-    r_clean : array, unit = arcsec
-        Radial coordinates at which a supplied CLEAN profile is specified.
-        The assumed unit is for the x-label
-    I_clean : array, unit = Jy / sr
-        CLEAN brightness profile values at coordinates r_clean.
-        The assumed unit is for the y-label
+    clean_profile : dict
+        Dictionary with entries for radial points [arcsec],
+        brightness [Jy / sr], and optionally the negative and positive
+        brightness uncertainties [Jy / sr]. If only the negative uncertainty is
+        provided, the positive uncertainty is assumed equal to it
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
     gamma : float, default = 1.0
@@ -687,12 +686,17 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
 
     axes = [ax0, ax1, ax2, ax3, ax4]
 
-    plot_brightness_profile(r_clean, I_clean / 1e10, ax0, c='b', ls='--',
+    plot_brightness_profile(clean_profile['r'], clean_profile['I'] / 1e10, ax0,
+                            low_uncer=clean_profile['lo_err'],
+                            high_uncer=clean_profile['hi_err'], c='b', ls='--',
                             label='CLEAN')
+
     plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', ls=':', label='frank')
+
     if mean_convolved is not None:
         plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls='-',
                                 label='frank, convolved')
+
     if dist:
         ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r', ls=':')
 
@@ -722,7 +726,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     from frank.hankel import DiscreteHankelTransform
     DHT = DiscreteHankelTransform(sol.Rmax, sol.size)
     clean_DHT_kl = sol.predict_deprojected(grid,
-                                           I=np.interp(DHT.r, r_clean, I_clean)).real * 1e3
+                                           I=np.interp(DHT.r, clean_profile['r'], clean_profile['I'])).real * 1e3
 
     plot_vis_quantity(grid, vis_fit_kl, ax1, c='r', label='frank>0')
     plot_vis_quantity(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
@@ -745,7 +749,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, r_clean, I_clean,
     # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
     # swept 'image' has the same pixel resolution as the frank swept 'images'
     from scipy.interpolate import interp1d
-    interp = interp1d(r_clean, I_clean)
+    interp = interp1d(clean_profile['r'], clean_profile['I'])
     regrid_I_clean = interp(sol.r)
     plot_2dsweep(sol.r, regrid_I_clean, ax=ax4, cmap='inferno', norm=norm,
                 vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
