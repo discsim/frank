@@ -367,7 +367,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     # in linear-y
     zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
     zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
-    ax4.set_ylim(zoom_bounds, 1e3)
+    ax4.set_ylim(zoom_bounds)
 
     # Bin the observed (real and imaginary components of the) visibilities
     # for plotting
