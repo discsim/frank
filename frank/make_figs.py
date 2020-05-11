@@ -48,10 +48,12 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 
 
 # Global settings for plots
-cs = ['#a4a4a4', 'k', '#896360', 'b']
-cs2 = ['#3498DB', 'm', '#F9B817', '#ED6EFF']
-hist_cs = ['k', 'r', 'g', 'c', 'm', 'b']
-multifit_cs = ['r', 'g', 'c', 'm', 'b', '#DB34D3', '#25F86B', '#F8B225']
+cs = ['#a4a4a4', 'k', '#e41a1c', '#377eb8']
+cs2 = ['#e41a1c', '#3498DB', '#984ea3', '#4daf4a']
+hist_cs = ['#e41a1c', '#999999', '#377eb8', '#ff7f00', '#4daf4a', '#f781bf',
+           '#984ea3', '#dede00']
+multifit_cs = ['#e41a1c', '#999999', '#377eb8', '#ff7f00', '#4daf4a', '#f781bf',
+               '#984ea3', '#dede00']
 ms = ['x', '+', '.', '1']
 
 
