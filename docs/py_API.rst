@@ -33,17 +33,16 @@ These are some useful functions and classes for various aspects of fitting and a
 
 .. autofunction:: frank.utilities.arcsec_baseline
 
-
-.. autofunction:: frank.utilities.normalize_uv
+.. autofunction:: frank.utilities.convolve_profile
 
 .. autofunction:: frank.utilities.cut_data_by_baseline
 
-.. autofunction:: frank.utilities.estimate_weights
-
 .. autofunction:: frank.utilities.draw_bootstrap_sample
 
-.. autofunction:: frank.utilities.sweep_profile
+.. autofunction:: frank.utilities.estimate_weights
 
-.. autofunction:: frank.utilities.convolve_profile
+.. autofunction:: frank.utilities.normalize_uv
+
+.. autofunction:: frank.utilities.sweep_profile
 
 .. autoclass:: frank.utilities.UVDataBinner
