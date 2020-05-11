@@ -449,8 +449,8 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     if model['plotting']['full_plot']:
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
                                                       model['plotting']['bin_widths'],
-                                                      [model['hyperparameters']['alpha'],
-                                                       model['hyperparameters']['wsmooth']],
+                                                      model['hyperparameters']['alpha'],
+                                                      model['hyperparameters']['wsmooth'],
                                                       model['plotting']['gamma'],
                                                       model['plotting']['dist'],
                                                       model['plotting']['force_style'],

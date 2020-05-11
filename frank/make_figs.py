@@ -257,7 +257,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters,
+def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
                   gamma=1.0, dist=None, force_style=True, save_prefix=None):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
@@ -276,8 +276,11 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    hyperparameters : list, len = 2
-        Values for the :math:`\alpha` and :math:`w_{smooth}` hyperparameters.
+    alpha : float
+        Value for the :math:`\alpha` hyperparameter.
+        Used for the plot legends
+    wsmooth : float
+        Value for the :math:`w_{smooth}` hyperparameter.
         Used for the plot legends
     gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile image's
@@ -403,7 +406,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, hyperparameters,
     plot_vis_fit(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
     plot_pwr_spec(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
-        hyperparameters[0]) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(hyperparameters[1]))
+        alpha) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(wsmooth))
 
     vmax = sol.mean.max()
     norm = PowerNorm(gamma, 0, vmax)
