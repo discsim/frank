@@ -371,10 +371,9 @@ def perform_fit(u, v, vis, weights, geom, model):
     sol = FF.fit(u, v, vis, weights)
 
     if model['hyperparameters']['nonnegative']:
-        # Replace the mean solution with the best fit nonnegative one
-        logging.info('  `nonnegative` is `true` in your parameter file --> Replacing `sol.mean` with the best fit nonnegative profile')
-        setattr(sol, '_mu', sol.solve_non_negative())
-        model['input_output']['save_prefix'] += '_nonnegative'
+        # Add the best fit nonnegative solution to the fit's `sol` object
+        logging.info('  `nonnegative` is `true` in your parameter file --> Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
+        setattr(sol, '_nonneg', sol.solve_non_negative())
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
@@ -610,7 +609,14 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
     boot_axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
     profiles_bootstrap = []
+
+    if model['hyperparameters']['nonnegative']:
+        logging.info('  `nonnegative` is `true` in your parameter file --> '
+                     'The best fit nonnegative profile (rather than the mean '
+                     'profile) will be saved and used to generate the bootstrap '
+                     'figure')
 
     for trial in range(model['analysis']['bootstrap_ntrials']):
         logging.info(' Bootstrap trial {} of {}'.format(trial + 1,
@@ -621,7 +627,8 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
         sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
-        profiles_bootstrap.append(sol.mean)
+        if model['hyperparameters']['nonnegative']:
+            profiles_bootstrap.append(sol._nonneg)
 
     bootstrap_path = model['input_output']['save_prefix'] + '_bootstrap.npz'
 
