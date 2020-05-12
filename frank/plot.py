@@ -63,7 +63,7 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
     bsp = np.hypot(up, vp)
 
     ax2.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
-    ax2.plot(bsp, vis, 'x', c='#D14768', label='Deprojected')
+    ax2.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
     ax1.legend(loc='best')
     ax2.legend(loc='best')
@@ -161,7 +161,7 @@ def plot_vis_hist(binned_vis, ax, **kwargs):
     edges = np.concatenate([binned_vis.bin_edges[0].data,
                             binned_vis.bin_edges[1].data[-1:]])
     counts = binned_vis.bin_counts.data
-    
+
     ax.hist(0.5 * (edges[1:] + edges[:-1]), edges, weights=counts, alpha=.5, **kwargs)
 
     ax.legend(loc='best')
