@@ -701,8 +701,8 @@ class FrankFitter(FourierBesselFitter):
                                  " a shorter baseline than the longest deprojected"
                                  r" baseline in the dataset, {:.3e} \lambda. Please"
                                  " increase N in FrankFitter (this is"
-                                 " `hyperpriors: n` if you're using a parameter"
-                                 " file). Or if you'd like to fit to shorter baseline,"
+                                 " `hyperparameters: n` if you're using a parameter"
+                                 " file). Or if you'd like to fit to shorter maximum baseline,"
                                  " cut the (u, v) distribution before fitting"
                                  " (`modify_data: baseline_range` in the"
                                  " parameter file).".format(self.q[-1], uv.max()))
