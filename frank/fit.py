@@ -246,7 +246,6 @@ def alter_data(u, v, vis, weights, geom, model):
                                            model['modify_data']['baseline_range'],
                                            geom)
 
-    wcorr_estimate = None
     if model['modify_data']['correct_weights']:
         up, vp = geom.deproject(u,v)
         weights = utilities.estimate_weights(up, vp, vis, use_median=True)
@@ -429,7 +428,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
 
             logging.info('  Running fit for alpha = {}, wsmooth = {}'.format(alphas[ii], ws[jj]))
 
-            sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, this_model)
+            sol, _ = perform_fit(u, v, vis, weights, geom, this_model)
             sols.append(sol)
 
             # Save the fit for the current choice of hyperparameter values
