@@ -50,7 +50,10 @@
 
   "analysis" : {
     "compare_profile"  : null,
-    "clean_beam"       : null,
+    "clean_beam"       : {"bmaj"    : null,
+                          "bmin"    : null,
+                          "beam_pa" : null
+                         },
     "bootstrap_ntrials": null
   }
 }

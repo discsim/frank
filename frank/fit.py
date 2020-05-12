@@ -551,13 +551,10 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                          'hi_err': hi_err_clean}
 
         mean_convolved = None
-        if model['analysis']['clean_beam']:
-            clean_beam = {'bmaj': model['analysis']['clean_beam'][0],
-                          'bmin': model['analysis']['clean_beam'][1],
-                          'beam_pa': model['analysis']['clean_beam'][2]}
+        if model['analysis']['clean_beam']['bmaj'] is not None:
             mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
                                                         geom.inc, geom.PA,
-                                                        clean_beam)
+                                                        model['analysis']['clean_beam'])
 
         clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u, v, vis,
                                                                     weights, sol,
