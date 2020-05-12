@@ -639,7 +639,6 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
                                                        profiles_bootstrap,
-                                                       model['plotting']['distance'],
                                                        model['plotting']['force_style'],
                                                        model['input_output']['save_prefix']
                                                        )
