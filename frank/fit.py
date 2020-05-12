@@ -529,11 +529,17 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         axes.append(diag_axes)
 
     if model['analysis']['compare_profile']:
-        if len(comparison_profile) not in [2,3,4]:
-                    raise ValueError("The file in your .json's `analysis` --> "
-                                     "`compare_profile` must have 2, 3 or 4 "
-                                     "columns.")
         dat = np.genfromtxt(model['analysis']['compare_profile']).T
+
+        if len(dat) not in [2,3,4]:
+            raise ValueError("The file in your .json's `analysis` --> "
+                             "`compare_profile` must have 2, 3 or 4 "
+                             "columns: r [arcsec], I [Jy / sr], "
+                             "negative uncertainty [Jy / sr] (optional), "
+                             "positive uncertainty [Jy / sr] (optional, "
+                             "assumed equal to negative uncertainty if not "
+                             "provided).")
+
         r_clean, I_clean = dat[0], dat[1]
         if len(dat) == 3:
             lo_err_clean, hi_err_clean = dat[2], dat[2]
