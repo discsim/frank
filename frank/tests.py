@@ -93,12 +93,12 @@ def test_hankel_gauss():
 
 def test_import_data():
     """Check the UVTable import function works for a .txt"""
-    load_uvtable('tutorials/test_datafile.txt')
+    load_uvtable('docs/tutorials/test_datafile.txt')
 
 
 def load_AS209(uv_cut=None):
     """Load data for subsequent tests"""
-    uv_AS209_DSHARP = np.load('tutorials/AS209_continuum.npz')
+    uv_AS209_DSHARP = np.load('docs/tutorials/AS209_continuum.npz')
     geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
                              PA=85.76)
 
