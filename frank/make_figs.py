@@ -753,9 +753,9 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
         vmin = 0
         if mean_convolved is not None:
-            vmax = max(sol.mean.max(), mean_convolved.max(), I_clean.max())
+            vmax = max(sol.mean.max(), mean_convolved.max(), clean_profile['I'].max())
         else:
-            vmax = max(sol.mean.max(), I_clean.max())
+            vmax = max(sol.mean.max(), clean_profile['I'].max())
         norm = PowerNorm(gamma, vmin, vmax)
 
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
