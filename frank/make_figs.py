@@ -224,7 +224,6 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
             resid = vis_re_kl - vis_fit
-            norm_resid = resid / vis_re_kl
             rmse = (np.mean(resid**2))**.5
 
             plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
@@ -388,7 +387,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             # Determine the visiblity domain frank fit residuals (and RMS error)
             # for Real(V)
             resid = vis_re_kl - vis_fit
-            norm_resid = resid / vis_re_kl
             rmse = (np.mean(resid**2))**.5
 
             # Plot the observed, binned visibilities (with errorbars) and the residuals
@@ -714,7 +712,6 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             binned_vis = UVDataBinner(baselines, vis_deproj, weights, bin_widths[i])
             vis_re_kl = binned_vis.V.real * 1e3
             vis_err_re_kl = binned_vis.error.real * 1e3
-            vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
             plot_vis_quantity(binned_vis.uv, vis_re_kl, ax1, vis_err_re_kl, c=cs[i],
                      marker=ms[i], ls='None',
@@ -727,10 +724,9 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
         # Take the discrete Hankel transform of the CLEAN profile, using the same
         # collocation points for the DHT as those in the frank fit
-        from frank.hankel import DiscreteHankelTransform
-        DHT = DiscreteHankelTransform(sol.Rmax, sol.size)
-        clean_DHT_kl = sol.predict_deprojected(grid,
-                                               I=np.interp(DHT.r, clean_profile['r'], clean_profile['I'])).real * 1e3
+        Inu_interp = np.interp(
+            sol.r, clean_profile['r'], clean_profile['I'].real) * 1e3
+        clean_DHT_kl = sol.predict_deprojected(grid, I=Inu_interp)
 
         plot_vis_quantity(grid, vis_fit_kl, ax1, c='r', label='frank>0')
         plot_vis_quantity(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
@@ -742,7 +738,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             vmax = max(sol.mean.max(), mean_convolved.max(), I_clean.max())
         else:
             vmax = max(sol.mean.max(), I_clean.max())
-        norm = PowerNorm(gamma, 0, vmax)
+        norm = PowerNorm(gamma, vmin, vmax)
 
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
                     vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
@@ -873,7 +869,6 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
                 baselines, vis_deproj, weights, bin_widths[i])
             vis_re_kl = binned_vis.V.real * 1e3
             vis_err_re_kl = binned_vis.error.real * 1e3
-            vis_fit = sols[0].predict_deprojected(binned_vis.uv).real * 1e3
 
             plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
                      marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
