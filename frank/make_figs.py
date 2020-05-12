@@ -146,7 +146,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
-                   force_style=True, save_prefix=None
+                   force_style=True, save_prefix=None, norm_residuals=False
                    ):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
@@ -171,6 +171,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    norm_residuals : bool, default = False
+        Whether to normalize the residual visibilities by the data's
+        visibility amplitudes
 
     Returns
     -------
@@ -224,6 +227,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
             resid = vis_re_kl - vis_fit
+            if norm_resid:
+                 resid /= vis_re_kl
             rmse = (np.mean(resid**2))**.5
 
             plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
@@ -245,7 +250,10 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         ax3.set_xlabel(r'Baseline [$\lambda$]')
         ax2.set_ylabel('Re(V) [mJy]')
-        ax3.set_ylabel('Residual [mJy]')
+        if norm_residuals:
+            ax3.set_ylabel('Norm. residual [mJy]')
+        else:
+            ax3.set_ylabel('Residual [mJy]')
         ax2.set_xscale('log')
         ax3.set_xscale('log')
 
@@ -265,7 +273,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
 
 def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
-                  gamma=1.0, dist=None, force_style=True, save_prefix=None):
+                  gamma=1.0, dist=None, force_style=True, save_prefix=None,
+                  norm_residuals=False):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
 
@@ -299,6 +308,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    norm_residuals : bool, default = False
+        Whether to normalize the residual visibilities by the data's
+        visibility amplitudes
 
     Returns
     -------
@@ -387,6 +399,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             # Determine the visiblity domain frank fit residuals (and RMS error)
             # for Real(V)
             resid = vis_re_kl - vis_fit
+            if norm_residuals:
+                resid /= vis_re_kl
             rmse = (np.mean(resid**2))**.5
 
             # Plot the observed, binned visibilities (with errorbars) and the residuals
@@ -430,8 +444,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
+        vmin = 0
         vmax = sol.mean.max()
-        norm = PowerNorm(gamma, 0, vmax)
+        norm = PowerNorm(gamma, vmin, vmax)        
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
 
         ax1.set_xlabel('r ["]')
@@ -445,7 +460,10 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         ax3.set_ylabel('Re(V) [mJy]')
         ax4.set_ylabel('Re(V) [mJy]')
-        ax5.set_ylabel('Residual [mJy]')
+        if norm_residuals:
+            ax5.set_ylabel('Norm. residual [mJy]')
+        else:
+            ax5.set_ylabel('Residual [mJy]')
         ax5.set_xlabel(r'Baseline [$\lambda$]')
         ax3.set_xscale('log')
         ax4.set_xscale('log')
