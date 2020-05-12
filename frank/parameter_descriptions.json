@@ -27,9 +27,9 @@
   "hyperparameters" : {
     "n"                : "Number of collocation points used in the fit (suggested range 100 - 300)",
     "rout"             : "Maximum disc radius in the fit (best to overestimate size of source), unit=[arcsec]",
-    "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
+    "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50). If a list, multiple fits will be performed and overplotted.",
     "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
-    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
+    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1). If a list, multiple fits will be performed and overplotted.",
     "iter_tol"         : "Tolerance for fit iteration stopping criterion (suggested <<1)",
     "max_iter"         : "Maximum number of fit iterations",
     "nonnegative"      : "Whether frank provides the mean (if false) or best fit nonnegative solution"

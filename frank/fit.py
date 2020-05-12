@@ -671,13 +671,13 @@ def main(*args):
 
         return boot_fig, boot_axes
 
-    if (len(model['hyperparameters']['alpha']) or \
-    len(model['hyperparameters']['wsmooth'])) == 2:
+    if (type(model['hyperparameters']['alpha']) or \
+    type(model['hyperparameters']['wsmooth'])) is list:
         multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
                                                         geom, model)
 
         return multifit_fig, multifit_axes
-        
+
     sol, iteration_diagnostics = perform_fit(
         u, v, vis, weights, geom, model)
 
