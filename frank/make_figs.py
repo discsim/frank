@@ -227,7 +227,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
             resid = vis_re_kl - vis_fit
-            if norm_resid:
+            if norm_residuals:
                  resid /= vis_re_kl
             rmse = (np.mean(resid**2))**.5
 
@@ -446,7 +446,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         # (analogous to a model image of the source)
         vmin = 0
         vmax = sol.mean.max()
-        norm = PowerNorm(gamma, vmin, vmax)        
+        norm = PowerNorm(gamma, vmin, vmax)
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
 
         ax1.set_xlabel('r ["]')
