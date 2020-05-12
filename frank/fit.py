@@ -673,28 +673,29 @@ def main(*args):
 
         return boot_fig, boot_axes
 
-    if (type(model['hyperparameters']['alpha']) or \
+    elif (type(model['hyperparameters']['alpha']) or \
     type(model['hyperparameters']['wsmooth'])) is list:
         multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
                                                         geom, model)
 
         return multifit_fig, multifit_axes
 
-    sol, iteration_diagnostics = perform_fit(
-        u, v, vis, weights, geom, model)
+    else:
+        sol, iteration_diagnostics = perform_fit(
+            u, v, vis, weights, geom, model)
 
-    figs, axes, model = output_results(u, v, vis, weights, sol, geom, model,
-                                       iteration_diagnostics
-                                       )
+        figs, axes, model = output_results(u, v, vis, weights, sol, geom, model,
+                                           iteration_diagnostics
+                                           )
 
-    logging.info('  Updating {} with final parameters used'
-                 ''.format(param_path))
-    with open(param_path, 'w') as f:
-        json.dump(model, f, indent=4)
+        logging.info('  Updating {} with final parameters used'
+                     ''.format(param_path))
+        with open(param_path, 'w') as f:
+            json.dump(model, f, indent=4)
 
-    logging.info("IT'S ALIVE!!\n")
+        logging.info("IT'S ALIVE!!\n")
 
-    return figs, axes
+        return figs, axes
 
 
 if __name__ == "__main__":
