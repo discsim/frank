@@ -109,7 +109,7 @@ autosummary_generate = True
 autodoc_docstring_signature = True
 
 # Add a heading to notebooks
-doc_path = "https://github.com/discsim/frank/blob/{}".format(branch)
+doc_path = "https://github.com/discsim/frank/blob/{}/docs".format(branch)
 nb_link = "`here <{0}/{1}>`_".format(doc_path, '{{ docname }}')
 
 nbsphinx_prolog = """

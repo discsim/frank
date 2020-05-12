@@ -9,7 +9,7 @@ SOURCEDIR     = .
 BUILDDIR      = _build
 
 TUT_DST_DIR := tutorials
-TUT_SRC_DIR := ../tutorials
+#TUT_SRC_DIR := ../tutorials
 
 NOTEBOOKS := \
 	fitting_procedure.ipynb \
@@ -26,7 +26,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
-	rm -rf $(TUT_DST_DIR)
+	#rm -rf $(TUT_DST_DIR)
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile $(NOTEBOOK_TARGETS)
@@ -34,8 +34,8 @@ clean:
 NOTEBOOK_TARGETS := $(patsubst %, $(TUT_DST_DIR)/%, $(NOTEBOOKS))
 
 
-$(TUT_DST_DIR)/%: $(TUT_SRC_DIR)/% $(TUT_DST_DIR)
-	cp $< $@
+#$(TUT_DST_DIR)/%: $(TUT_SRC_DIR)/% $(TUT_DST_DIR)
+#cp $< $@
 
 .PHONY: help Makefile
 
