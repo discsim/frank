@@ -251,7 +251,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         ax3.set_xlabel(r'Baseline [$\lambda$]')
         ax2.set_ylabel('Re(V) [mJy]')
         if norm_residuals:
-            ax3.set_ylabel('Norm. residual [mJy]')
+            ax3.set_ylabel('Norm. residual')
         else:
             ax3.set_ylabel('Residual [mJy]')
         ax2.set_xscale('log')
@@ -461,7 +461,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         ax3.set_ylabel('Re(V) [mJy]')
         ax4.set_ylabel('Re(V) [mJy]')
         if norm_residuals:
-            ax5.set_ylabel('Norm. residual [mJy]')
+            ax5.set_ylabel('Norm. residual')
         else:
             ax5.set_ylabel('Residual [mJy]')
         ax5.set_xlabel(r'Baseline [$\lambda$]')
