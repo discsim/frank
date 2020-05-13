@@ -418,6 +418,14 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
     ws = model['hyperparameters']['wsmooth']
     sols = []
 
+    def float_to_list(x):
+        if type(x) is float:
+            return [x]
+        return x
+
+    alphas = float_to_list(alphas)
+    ws = float_to_list(ws)
+
     import copy
     for ii in range(len(alphas)):
         for jj in range(len(ws)):

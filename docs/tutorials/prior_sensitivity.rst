@@ -39,7 +39,7 @@ The fastest way to assess the fit's sensitivity to :math:`\alpha` and :math:`w_{
 run a fit from the terminal (see the `Quickstart <../quickstart.rst>`_),
 and set `alpha` and/or `wsmooth` as a list of values in your *.json* parameter file.
 This will produce a figure that overplots the fits for all combinations of your supplied
-`alpha` and/or `wsmooth`.
+`alpha` and `wsmooth`.
 
 Let's do this for the DSHARP AS 209 dataset in the Quickstart,
 using the extrema of the ranges we suggest for :math:`\alpha` and :math:`w_{\rm smooth}`.
