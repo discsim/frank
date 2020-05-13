@@ -77,8 +77,8 @@ jobs:
             coverage run --source=frank -m pytest frank/tests.py
             coverage report
             mkdir -p docs/_build/html/coverage
-            coverage html -d docs/_build/coverage
-            coverage-badge -f -o docs/_build/coverage/badge.svg
+            coverage html -d docs/_build/html/coverage
+            coverage-badge -f -o docs/_build/html/coverage/badge.svg
 
       - persist_to_workspace:
           root: docs/_build
