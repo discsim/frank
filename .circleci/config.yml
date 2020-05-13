@@ -72,12 +72,12 @@ jobs:
             cd docs/ && make html
       - run:
           name: Coverage
-	  command: |
+          command: |
             . venv/bin/activate
             coverage run --source=frank -m pytest frank/tests.py
             coverage report
             mkdir -p docs/_build/html/coverage
-	    coverage html -d docs/_build/coverage
+            coverage html -d docs/_build/coverage
             coverage-badge -f -o docs/_build/coverage/badge.svg
 
       - persist_to_workspace:
