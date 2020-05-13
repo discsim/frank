@@ -146,7 +146,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
-                   force_style=True, save_prefix=None, norm_residuals=False
+                   force_style=True, save_prefix=None, norm_residuals=False,
                    ):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
@@ -231,7 +231,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                  resid /= vis_re_kl
             rmse = (np.mean(resid**2))**.5
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -404,23 +404,23 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             rmse = (np.mean(resid**2))**.5
 
             # Plot the observed, binned visibilities (with errorbars) and the residuals
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax4, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax4, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax6, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax6, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax6, -vis_err_re_kl, c=cs2[i],
+            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax6, c=cs2[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax9, vis_err_im_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax9, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -695,7 +695,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         gs = GridSpec(3, 1)
         gs2 = GridSpec(3, 3)
 
-        fig = plt.figure(figsize=(12, 15))
+        fig = plt.figure(figsize=(8, 10))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[1])
@@ -731,10 +731,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             vis_re_kl = binned_vis.V.real * 1e3
             vis_err_re_kl = binned_vis.error.real * 1e3
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax1, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax1, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax1, -vis_err_re_kl, c=cs2[i],
+            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax1, c=cs2[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -886,13 +886,13 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
             vis_re_kl = binned_vis.V.real * 1e3
             vis_err_re_kl = binned_vis.error.real * 1e3
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, c=cs[i],
                      marker=ms[i], ls='None', label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, vis_err_re_kl, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax3, -vis_err_re_kl, c=cs2[i],
+            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax3, c=cs2[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
