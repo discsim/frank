@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://circleci.com/gh/discsim/frank">
-      <img src="https://circleci.com/gh/discsim/frank.svg?branch=master">
+      <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
   </a>    
 
   <a href="https://pypi.python.org/pypi/frank">
