@@ -144,6 +144,7 @@ def test_fit_geometry():
                                1e3 * geom.dDec],
                               [85.26142233422196, 33.819364762203364,
                                0.5611211784189547, -1.170097994325657],
+                               rtol=1e-5,
                               err_msg="FourierBessel geometry fit")
     
 def test_fourier_bessel_fitter():
