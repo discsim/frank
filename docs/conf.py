@@ -121,4 +121,4 @@ nbsphinx_prolog = """
 # nbsphinx
 nbsphinx_timeout = 600
 napoleon_use_ivar = True
-nbsphinx_allow_errors = True
+nbsphinx_allow_errors = False
