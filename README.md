@@ -18,6 +18,10 @@
   <a href="https://circleci.com/gh/discsim/frank">
       <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
   </a>    
+  
+  <a href="https://discsim.github.io/frank/coverage/index.html">
+      <img src="https://discsim.github.io/frank/coverage/badge.svg">
+  </a>   
 
   <br/>
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
