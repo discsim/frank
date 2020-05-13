@@ -5,18 +5,18 @@
 -->
 
 <p align="center">
-  <a href="https://circleci.com/gh/discsim/frank">
-      <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
-  </a>    
+  <a href="https://github.com/discsim/frank/releases">
+      <img src="https://img.shields.io/github/release/discsim/frank/all.svg">
+  </a>
 
   <a href="https://pypi.python.org/pypi/frank">
       <img src="https://img.shields.io/pypi/v/frank.svg">
   </a>
 
-  <a href="https://github.com/discsim/frank/releases">
-      <img src="https://img.shields.io/github/release/discsim/frank/all.svg">
-  </a>
-
+  <a href="https://circleci.com/gh/discsim/frank">
+      <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
+  </a>    
+  
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
       <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
       [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">
