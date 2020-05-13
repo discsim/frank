@@ -27,6 +27,7 @@ from scipy.optimize import least_squares
 import logging
 
 from frank.constants import rad_to_arcsec, deg_to_rad
+from frank.radial_fitters import FourierBesselFitter
 
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
@@ -433,3 +434,101 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
 
     return geometry
+
+
+class FitGeometryFourierBessel(SourceGeometry):
+    """
+    Determine the disc geometry by fitting a non-parametric brightness 
+    profile in visibility space. 
+
+    The best fit is obtained by finding the geometry that minimizes
+    the weighted Chi^2 squared of the visibility fit.
+
+    The brightness profile is modelled using the FourierBesselFitter,
+    which is equivalent to a FrankFitter fit without the Gaussian
+    Process prior. For this reason, a small number of bins is 
+    recommended. 
+    
+
+    Parameters
+    ----------
+    Rmax : float, unit = arcsec
+        Radius of support for the functions to transform, i.e.,
+            f(r) = 0 for R >= Rmax
+    N : int
+        Number of collocation points
+    phase_centre : tuple = (dRA, dDec) or None (default), unit = arcsec
+        Determine whether to fit for the source's phase centre. If
+        phase_centre = None, the phase centre is fit for. Else the phase
+        centre should be provided as a tuple
+    verbose : bool, default=False
+        Determines whether to print the iteration progress.
+    """
+    def __init__(self, Rmax, N,phase_centre=None, verbose=False):
+        self._N = N
+        self._R = Rmax
+        self._phase_centre = phase_centre
+        
+        self._verbose = verbose
+        
+    def _residual(self, params, uvdata=None):
+        inc, pa, dRA, dDec = params
+        if self._phase_centre is not None:
+            dRA, dDec = self._phase_centre
+        
+        geom = FixedGeometry(inc, pa, dRA, dDec)
+        
+        
+        FBF = FourierBesselFitter(self._R, self._N, geom)
+        
+        u,v,vis, w_half = uvdata
+        
+        sol = FBF.fit(u,v,vis, w_half*w_half)
+        
+        error = w_half*(sol.predict(u,v) - vis)
+        
+        if self._verbose:
+            Chi2 = 0.5 * np.sum(error.real**2 + error.imag**2) / len(w_half)
+            print('\rChi^2={:.8f}, inc={:.3f} PA={:.3f} dRA={:.5f} dDec={:.5f}'
+                  ''.format(Chi2, inc, pa, dRA, dDec),
+                  end='', flush=True)
+        
+        return np.concatenate([error.real, error.imag])
+    
+    def fit(self, u,v,vis, w):
+        r"""
+        Determine geometry using the provided uv-data
+
+        Parameters
+        ----------
+        u : array of real, size = N, unit = :math:`\lambda`
+            u-points of the visibilities
+        v : array of real, size = N, unit = :math:`\lambda`
+            v-points of the visibilities
+        V : array of complex, size = N, unit = Jy
+            Complex visibilites
+        weights : array of real, size = N, unit = Jy
+            Weights on the visibilities
+        """
+        uvdata= [u,v,vis, w**0.5]
+
+        guess = [10., 10., 0., 0.]
+        result = least_squares(self._residual, guess, kwargs={'uvdata':uvdata},
+                               method='lm')
+        if self._verbose:
+            print()
+        
+        if not result.success:
+            raise RuntimeError("FitGeometryFourierBessel failed to converge")
+            
+        inc, pa, dRA, dDec = result.x
+        if self._phase_centre:
+            dRA, dDec = self._phase_centre
+            
+        
+        self._inc = inc
+        self._PA = pa
+        self._dRA = dRA
+        self._dDec = dDec
+            
+        
