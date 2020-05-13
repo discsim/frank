@@ -24,4 +24,4 @@ legend.frameon : False
 legend.handletextpad : 0.4
 figure.subplot.bottom : 0.07
 figure.subplot.top : 0.93
-errorbar.capsize : 5
+errorbar.capsize : 0

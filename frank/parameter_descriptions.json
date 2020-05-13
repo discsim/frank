@@ -1,53 +1,56 @@
 {
   "input_output" : {
-    "uvtable_filename" : "UVTable with data to be fit (columns: u, v, Re(V), Im(V), weights)",
+    "uvtable_filename" : "UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])",
     "save_dir"         : "Directory in which output datafiles and figures are saved",
     "save_solution"    : "Whether to save `sol` object (see frank.radial_fitters.FrankFitter)",
     "save_profile_fit" : "Whether to save fitted brightness profile",
     "save_vis_fit"     : "Whether to save fitted visibility distribution",
     "save_uvtables"    : "Whether to save fitted and residual UV tables (these are reprojected)",
-    "iteration_diag"   : "Whether to return diagnostics of the fit iteration (needed for diag_plot)",
+    "iteration_diag"   : "Whether to return and save diagnostics of the fit iteration (needed for diag_plot)",
     "format"           : "Output file format. Default is the same as for 'uvtable_filename', else choose from 'npz' or 'txt'"
   },
 
   "modify_data" : {
-    "baseline_range"   : "(Deprojected) baseline range outside of which visibilities are truncated [\\lambda]",
+    "baseline_range"   : "(Deprojected) baseline range outside of which visibilities are truncated, unit=[\\lambda]",
     "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)"
   },
 
   "geometry" : {
     "type"             : "How the geometry is determined: 'known' if user-supplied, 'gaussian' if it is to be fit",
     "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
-    "inc"              : "Inclination [deg]",
-    "pa"               : "Position angle [deg]",
-    "dra"              : "Delta (offset from 0) right ascension [arcsec]",
-    "ddec"             : "Delta declination [arcsec]"
+    "inc"              : "Inclination, unit=[deg]",
+    "pa"               : "Position angle, unit=[deg]",
+    "dra"              : "Delta (offset from 0) right ascension, unit=[arcsec]",
+    "ddec"             : "Delta declination, unit=[arcsec]"
   },
 
-  "hyperpriors" : {
+  "hyperparameters" : {
     "n"                : "Number of collocation points used in the fit (suggested range 100 - 300)",
-    "rout"             : "Maximum disc radius in the fit (best to overestimate size of source) [arcsec]",
-    "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50)",
+    "rout"             : "Maximum disc radius in the fit (best to overestimate size of source), unit=[arcsec]",
+    "alpha"            : "Order parameter for the power spectrum's inverse Gamma prior (suggested range 1.00 - 1.50). If a list, multiple fits will be performed and overplotted.",
     "p0"               : "Scale parameter for the power spectrum's inverse Gamma prior (suggested >0, <<1)",
-    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)",
+    "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1). If a list, multiple fits will be performed and overplotted.",
     "iter_tol"         : "Tolerance for fit iteration stopping criterion (suggested <<1)",
-    "max_iter"         : "Maximum number of fit iterations"
+    "max_iter"         : "Maximum number of fit iterations",
+    "nonnegative"      : "Whether frank provides the mean (if false) or best fit nonnegative solution"
   },
 
   "plotting" : {
     "quick_plot"       : "Whether to make a figure showing the simplest plots of the fit",
     "full_plot"        : "Whether to make a figure more fully showing the fit and its diagnostics",
     "diag_plot"        : "Whether to make a diagnostic figure showing fit convergence metrics",
-    "save_figs"        : "Whether to save generated figures",
-    "dist"             : "Distance to source, optionally used for plotting [AU]",
+    "deprojec_plot"    : "Whether to make a figure showing the effect of deprojection on the (u, v) points and visibilities",
+    "distance"         : "Distance to source, optionally used for plotting, unit=[pc]",
     "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
-    "bin_widths"       : "Bin widths in which to bin the observed visibilities [\\lambda], list of float or int",
-    "iter_plot_range"  : "Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]"
+    "bin_widths"       : "Bin widths in which to bin the observed visibilities, list of float or int, unit=[\\lambda]",
+    "gamma"            : "Index of power law normalization to apply to swept profile image colormaps (1.0 = linear scaling)",
+    "iter_plot_range"  : "Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]",
   },
 
   "analysis" : {
+    "compare_profile"  : "Path of file with comparison profile to be overplotted with frank fit (.txt or .dat; columns: r [arcsec], I [Jy / sr])",
+    "clean_beam"       : "Dictionary of B_major [arcsec], B_minor [arcsec], position angle [deg] of beam to convolve frank profile",
     "bootstrap_ntrials": "Number of trials (dataset realizations) to perform in a bootstrap analysis",
-    "bootstrap_non_negative" : "Whether the mean (if false) or best fit nonnegative solution in used in the bootstrap"
 
   }
 }

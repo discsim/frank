@@ -1,5 +1,5 @@
 Tutorials
-====================
+=========
 
 These tutorials demonstrate in more depth than the :doc:`Quickstart <quickstart>` how to
 use ``frank`` and interpret the results.
@@ -8,6 +8,9 @@ use ``frank`` and interpret the results.
    :titlesonly:
    :maxdepth: 1
 
-   tutorials/using_frank_as_a_module.ipynb
-   tutorials/running_fits_in_loop.ipynb
-   tutorials/prior_sensitivity_and_uncertainty.ipynb
+   tutorials/mstable_to_uvtable.rst
+   tutorials/fitting_procedure.ipynb
+   tutorials/prior_sensitivity.rst
+   tutorials/fit_convergence.rst
+   tutorials/fitting_mock_data.rst
+   tutorials/model_limitations.rst

@@ -31,349 +31,148 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 from frank.utilities import sweep_profile
 
 
-def plot_brightness_profile(fit_r, fit_i, ax, yscale='linear', c='r', ls='-',
-                            ylolim=None, alpha=1., label='Frank'
-                            ):
-    # TODO: take in (and move all these to) kwargs for standard plot params. do throughout script. then clean up docstrings
+def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
     """
-    Plot a brightness profile as a function of disc radius, I(r)
+    Overplot projected and deprojected (u, v) coordinates;
+    projected and deprojected visibility amplitudes
+    (here 'projection' refers to correcting collectively for the source
+    inclination, position angle and phase offset)
+
+    Parameters
+    ----------
+    u, v : array
+        Projected (u, v) coordinates
+    up, vp : array
+        Deprojected (u, v) coordinates
+    vis : array
+        Projected visibilities (either the real or imaginary component)
+    visp : array
+        Deprojected visibilities (either the real or imaginary component)
+    ax0 : Matplotlib `~.axes.Axes` class
+        Axis on which to plot effect of deprojection on the (u, v) coordinates
+    ax1 : Matplotlib `~.axes.Axes` class
+        Axis on which to plot effect of deprojection on the visibility amplitudes
+    """
+
+    ax0.plot(u, v, '+', c='#1EC8FE', label='Projected')
+    ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
+
+    # Projected baselines
+    bs = np.hypot(u, v)
+    # Deprojected baselines
+    bsp = np.hypot(up, vp)
+
+    ax1.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
+    ax1.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
+
+    ax0.legend(loc='best')
+    ax1.legend(loc='best')
+
+
+def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
+                            high_uncer=None, **kwargs):
+    """
+    Plot a brightness profile (and optionally a confidence inverval) as a
+    function of disc radius, I(r)
 
     Parameters
     ----------
     fit_r : array
-        Radial data coordinates. The assumed unit (for the x-label) is arcsec
+        Radial data coordinates
     fit_i : array
-        Brightness values at fit_r. The assumed unit (for the y-label) is
-        Jy / sr
-    ax : Matplotlib axis
-        Axis on which to plot the brightness profile
-    yscale : Matplotlib axis scale, default = 'linear'
-        Scale for y-axis
-    c : Matplotlib color, default = 'r'
-        Color of brightness profile line
-    ls : Matplotlib line style, default = '-'
-        Style of brightness profile line
-    ylolim : float, default = None
-        Lower limit of plot's y-axis. If None, it will be set by Matplotlib
-    alpha : float, default = 1.
-        Opaqueness of brightness profile line
-    label : float, default = 'Frank'
-        Label of brightness profile line in legend
+        Brightness values at fit_r
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
+    dist : float, optional, default = None, unit = [AU]
+        Distance to source. If not None, a new `ax` will be created to
+        show an upper x-axis in [AU] for the plot on the current `ax`
+    low_uncer : Negative (i.e., below mean) uncertainty on fit_i
+    high_uncer : Positive (i.e., above mean) uncertainty on fit_i
+
+    Returns
+    -------
+    ax_new : Matplotlib `~.axes.Axes` class
+        Only if dist is not None, the second x-axis, ax_new will be returned
+
     """
 
-    ax.plot(fit_r, fit_i / 1e10, c=c, ls=ls, alpha=alpha, label=label)
+    if dist:
+        ax_new = ax.twiny()
+        ax_new.spines['top'].set_color('#1A9E46')
+        ax_new.tick_params(axis='x', which='both', colors='#1A9E46')
+        ax_new.plot(fit_r * dist, fit_i, **kwargs)
+        ax_new.set_xlabel('r [AU]', color='#1A9E46')
 
-    ax.set_xlabel('r ["]')
-    ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
-    ax.set_yscale(yscale)
-    if ylolim:
-        ax.set_ylim(bottom=ylolim)
-    ax.legend()
+        return ax_new
 
-    if yscale == 'linear':
-        ax.axhline(0, c='c', ls='--', zorder=10)
-
-
-def plot_confidence_interval(fit_r, low_bound, up_bound, ax, yscale='linear',
-                             c='r', ylolim=None, alpha=1., label=None):
-    """
-    Plot the confidence interval for a brightness profile fit
-
-    Parameters
-    ----------
-    fit_r : array
-        Radial data coordinates. The assumed unit (for the x-label) is arcsec
-    low_bound, up_bound : float
-        Lower and upper bound of confidence interval for brightness values at
-        fit_r. The assumed unit (for the y-label) is Jy / sr
-    ax : Matplotlib axis
-        Axis on which to plot the confidence interval
-    yscale : Matplotlib axis scale, default = 'linear'
-        Scale for y-axis
-    c : Matplotlib color, default = 'r'
-        Color of confidence interval region
-    ylolim : float, default = None
-        Lower limit of plot's y-axis. If None, it will be set by Matplotlib
-    alpha : float, default = 1.
-        Opaqueness of confidence interval region
-    label : float, default = None
-        Label of confidence interval in legend
-    """
-    ax.fill_between(fit_r, low_bound / 1e10, up_bound / 1e10, alpha=alpha, color=c, label=label)
-
-    ax.set_xlabel('r ["]')
-    ax.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
-    ax.set_yscale(yscale)
-    if ylolim:
-        ax.set_ylim(bottom=ylolim)
-    ax.legend()
-
-
-def plot_vis_fit(baselines, vis_fit, ax, c='r', c2='#1EFEDC', ls='-',
-                 ls2='None', xscale='log', yscale='linear', ylolim=None
-                 ):
-    r"""
-    Plot a visibility domain fit as a function of baseline, V(q)
-
-    Parameters
-    ----------
-    baselines : array
-        Baseline data coordinates. The assumed unit (for the x-label) is
-        :math:`\lambda`
-    vis_fit : array
-        Visibility amplitude at baselines. The assumed unit (for the y-label)
-        is mJy
-    ax : Matplotlib axis
-        Axis on which to plot the visibility fit
-    c : Matplotlib color, default = 'r'
-        Color of visibility fit line
-    c2 : Matplotlib color, default = '#1EFEDC'
-        Color of negative regions of visibility fit line for log-y plots
-    ls : Matplotlib line style, default = '-'
-        Style of visibility fit line
-    ls2 : Matplotlib line style, default = '-'
-        Style of negative regions of visibility fit line for log-y plots
-    xscale : Matplotlib axis scale, default = 'log'
-        Scale for x-axis
-    yscale : Matplotlib axis scale, default = 'linear'
-        Scale for y-axis
-    ylolim : float, default = None
-        Lower limit of plot's y-axis. If None, it will be set by Matplotlib
-    """
-
-    if yscale == 'linear':
-        ax.plot(baselines, vis_fit, c=c, ls=ls, label='Frank')
-        ax.axhline(0, c='c', ls='--', zorder=10)
-
-    if yscale == 'log':
-        ax.plot(baselines, vis_fit, c=c, ls=ls, label='Frank>0')
-        ax.plot(baselines, -vis_fit, c=c2, ls=ls2, label='Frank<0')
-
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel('Re(V) [mJy]')
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
-    ax.legend()
-
-    if ylolim:
-        ax.set_ylim(bottom=ylolim)
-
-
-def plot_vis(baselines, vis, vis_err, ax, c='k', c2='g', marker='.',
-             marker2='.', binwidth='unspecified', xscale='log', yscale='linear',
-             plot_CIs=False, zoom=None, ylabel='Re(V) [mJy]'
-             ):
-    r"""
-    Plot visibility datapoints as a function of baseline, V(q)
-
-    Parameters
-    ----------
-    baselines : array
-        Baseline data coordinates. The assumed unit (for the x-label) is
-        :math:`\lambda`
-    vis : array
-        Visibility amplitude at baselines. The assumed unit (for the y-label)
-        is mJy
-    vis_err : array
-        Uncertainty on the visibility amplitudes at baselines. The assumed
-        unit (for the y-label) is mJy
-    ax : Matplotlib axis
-        Axis on which to plot the visibilities
-    c : Matplotlib color, default = 'k'
-        Color of visibility points
-    c2 : Matplotlib color, default = 'g'
-        Color of negative values of visibility points for log-y plots
-    marker : Matplotlib line style, default = '.'
-        Marker style of visibility points
-    marker2 : Matplotlib line style, default = '.'
-        Marker style of negative values of visibility points for log-y plots
-    binwidth : int, float or string, default = 'unspecified'
-        Width of bins in which data is binned (for legend labels)
-    xscale : Matplotlib axis scale, default = 'log'
-        Scale for x-axis
-    yscale : Matplotlib axis scale, default = 'linear'
-        Scale for y-axis
-    plot_CIs : bool, default = False
-        Whether to show errorbars on the plotted visibilities
-    zoom : list = [lower bound, upper bound] or None (default)
-        Lower and upper y-bounds for making a zoomed-in plot
-    ylabel : string, default = 'Re(V) [mJy]'
-        y-label of the plot
-    """
-
-    if plot_CIs:
-        ax.errorbar(baselines, vis, yerr=vis_err, color=c, marker=marker,
-                    ls='None', ecolor='#A4A4A4',
-                    label=r'Obs., {:.0f} k$\lambda$ bins'.format(binwidth/1e3)
-                    )
     else:
-        if yscale == 'linear':
-            ax.plot(baselines, vis, c=c, marker=marker, ls='None',
-                    label=r'Obs., {:.0f} k$\lambda$ bins'.format(binwidth/1e3)
-                    )
-            ax.axhline(0, c='c', ls='--', zorder=10)
+        if low_uncer is not None:
+            if high_uncer is None:
+                high_uncer = low_uncer * 1.
+            ax.fill_between(fit_r, fit_i - low_uncer, fit_i + high_uncer, **kwargs)
 
-        if yscale == 'log':
-            ax.plot(baselines, vis, c=c, marker=marker, ls='None',
-                    label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(
-                        binwidth/1e3)
-                    )
-            ax.plot(baselines, -vis, c=c2, marker=marker2, ls='None',
-                    label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(
-                        binwidth/1e3)
-                    )
+        else:
+            ax.plot(fit_r, fit_i, **kwargs)
 
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(ylabel)
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
-    ax.legend()
+        ax.axhline(0, c='c', ls='--', zorder=10)
 
-    if zoom is not None:
-        ax.set_ylim(zoom)
+        ax.legend(loc='best')
 
 
-def plot_vis_resid(baselines, obs, fit, ax, c='k', marker='.', ls='None',
-                   binwidth='unspecified', xscale='log', yscale='linear',
-                   normalize_resid=False
-                   ):
+def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
+                      **kwargs):
     r"""
-    Plot residuals between visibility datapoints and a visibility domain fit
+    Plot a visibility domain quantity (e.g., observed visibilities, a frank fit,
+    residual visibilities, a power spectrum) as a function of baseline
 
     Parameters
     ----------
     baselines : array
-        Baseline data coordinates. The assumed unit (for the x-label) is
-        :math:`\lambda`
-    obs : array
-        Observed visibility amplitude at baselines.
-        The assumed unit (for the y-label) is mJy
-    vis : array
-        Fitted visibility amplitude at baselines.
-        The assumed unit (for the y-label) is mJy
-    ax : Matplotlib axis
-        Axis on which to plot the residuals
-    c : Matplotlib color, default = 'k'
-        Color of residual points
-    marker : Matplotlib line style, default = '.'
-        Marker style of residual points
-    ls : Matplotlib line style, default = 'None'
-        Style of residual line
-    binwidth : int, float or string, default = 'unspecified'
-        Width of bins in which data is binned (for legend labels)
-    xscale : Matplotlib axis scale, default = 'log'
-        Scale for x-axis
-    yscale : Matplotlib axis scale, default = 'linear'
-        Scale for y-axis
-    normalize_resid : bool, default = False
-        Whether to plot the residuals normalized pointwise (i.e., locally)
-        by the data amplitude
+        Baseline data coordinates `b`
+    vis_quantity : array
+        A generic quantity `Q` to plot as a function of baselines `b`, Q(b)
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
+    vis_quantity_err : array, optional, default = None
+        Uncertainty on vis_quantity values
     """
 
-    resid = obs - fit
-    if normalize_resid:
-        resid /= obs
-    rmse = (np.mean(resid**2))**.5
-
-    ax.plot(baselines, resid, c=c, marker=marker, ls=ls,
-            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f}'.format(binwidth/1e3,
-                                                                rmse)
-            )
-
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    if normalize_resid:
-        ax.set_ylabel('Normalized\nresidual')
+    if vis_quantity_err is not None:
+        ax.errorbar(baselines, vis_quantity, yerr=vis_quantity_err, **kwargs)
     else:
-        ax.set_ylabel('Residual [mJy]')
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
-    ax.legend()
+        ax.plot(baselines, vis_quantity, **kwargs)
 
-    if yscale == 'linear':
-        ax.axhline(0, c='c', ls='--', zorder=10)
-        ax.set_ylim(-2 * rmse, 2 * rmse)
+    ax.axhline(0, c='c', ls='--', zorder=10)
+
+    ax.legend(loc='best')
 
 
-def plot_vis_hist(bin_edges, bin_counts, bin_width, ax, c): # TODO: just use hist
+def plot_vis_hist(binned_vis, ax, **kwargs):
     r"""
     Plot a histogram of visibilities using a precomputed binning
 
     Parameters
     ----------
-    bin_edges : array
-        Sequential left and right edges (baselines) of each bin.
-        The assumed unit (for the x-label) is :math:`\lambda`
-    bin_counts : array
-        Number of visibilities in each bin
-    bin_width : float
-        Constant width of the bins.
-        The assumed unit (for the x-label and legend) is :math:`\lambda`
-    ax : Matplotlib axis
+    binned_vis : UVDataBinner object
+        Pre-binned visibilities (see utilities.UVDataBinner)
+    ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
-    c : Matplotlib color, default = 'k'
-        Color of bins
     """
 
-    xs, ys = [], []
-    for l, r, y in zip(bin_edges[0], bin_edges[1], bin_counts):
-        xs.extend([l,r])
-        ys.extend([y,y])
+    edges = np.concatenate([binned_vis.bin_edges[0].data,
+                            binned_vis.bin_edges[1].data[-1:]])
+    counts = binned_vis.bin_counts.data
 
-    ax.hlines(ys[::2], xmin=xs[::2], xmax=xs[1::2], color=c,
-              label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_width/1e3))
-    ax.fill_between(xs, ys, color=c, alpha=.5)
+    ax.hist(0.5 * (edges[1:] + edges[:-1]), edges, weights=counts, alpha=.5, **kwargs)
 
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel('n')
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.legend()
+    ax.legend(loc='best')
 
 
-def plot_pwr_spec(baselines, pwr_spec, ax, c='#B123D7', ls='-', ylolim=None,
-                  xscale='log', yscale='log'
-                  ):
+def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
     r"""
-    Plot the reconstructed power spectrum of a Frankenstein fit
-
-    Parameters
-    ----------
-    baselines : array
-        Baseline coordinates. The assumed unit (for the x-label) is
-        :math:`\lambda`
-    pwr_spec : array
-        Reconstructed power spectral mode amplitudes at baselines. The assumed
-        unit (for the y-label) is Jy^2
-    ax : Matplotlib axis
-        Axis on which to plot the power spectrum
-    c : Matplotlib color, default = '#B123D7'
-        Color of power spectrum line
-    ls : Matplotlib line style, default = '-'
-        Style of power spectrum line
-    ylolim : float, default = None
-        Lower limit of plot's y-axis. If None, it will be set by Matplotlib
-    xscale : Matplotlib axis scale, default = 'log'
-        Scale for x-axis
-    yscale : Matplotlib axis scale, default = 'log'
-        Scale for y-axis
-    """
-
-    ax.plot(baselines, pwr_spec, c=c, ls=ls)
-
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(r'Power [Jy$^2$]')
-    ax.set_xscale(xscale)
-    ax.set_yscale(yscale)
-
-    if ylolim:
-        ax.set_ylim(bottom=ylolim)
-
-
-def plot_convergence_criterion(profile_iter, N_iter, ax):
-    r"""
-    Plot a generic convergence criterion for a Frankenstein fit,
-        :math:`{\rm max}(|$I_i - I_{i-1}$|) / {\rm max}($I_i$)`,
-    where $I_i$ is the brightness profile at iteration $i$
+    Plot the following convergence criterion for a Frankenstein fit,
+        :math:`{\rm max}(|I_i - I_{i-1}|) / {\rm max}(I_i)`,
+    where :math:`I_i` is the brightness profile at iteration :math:`i`
 
     Parameters
     ----------
@@ -383,8 +182,9 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
         points at which the profile is defined
     N_iter : int
         Total number of iterations in the fit
-    ax : Matplotlib axis
-        Axis on which to plot the convergence criterion
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
+
     """
 
     convergence_criterion = []
@@ -393,13 +193,7 @@ def plot_convergence_criterion(profile_iter, N_iter, ax):
             np.max(profile_iter[i])
         convergence_criterion.append(this_conv_cri)
 
-    ax.plot(range(0, N_iter), convergence_criterion, 'k')
-
-    ax.set_xlabel('Fit iteration')
-    ax.set_ylabel('Convergence criterion,\n' +
-                  r'max(|$I_i - I_{i-1}$|) / max($I_i$)')
-
-    ax.set_yscale('log')
+    ax.plot(range(0, N_iter), convergence_criterion, **kwargs)
 
 
 def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
@@ -408,7 +202,7 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
 
     Parameters
     ----------
-    ax : Matplotlib axis
+    ax : Matplotlib `~.axes.Axes` class
         Axis in which to inset the colorbar
     vmin, vmax : int
         Lower and upper bounds of colorbar scale
@@ -417,7 +211,7 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
     label : string
         Label for colorbar
     loc : int, one of [1, 2, 3, 4], default = 3
-        Quadrant position of colorbar in ax
+        Quadrant of colorbar in ax
     bbox_x, bbox_y : float, default = 0.05 and 0.175
         x- and y-value where the colorbar is placed
     """
@@ -425,11 +219,9 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
     from mpl_toolkits.axes_grid1.inset_locator import inset_axes
     axins1 = inset_axes(ax, width="50%", height="5%", loc=loc,
                         bbox_to_anchor=(bbox_x, bbox_y, 1, 1),
-                        bbox_transform=ax.transAxes
-                        )
+                        bbox_transform=ax.transAxes)
     sm = plt.cm.ScalarMappable(cmap=cmap,
-                               norm=plt.Normalize(vmin=vmin, vmax=vmax)
-                               )
+                               norm=plt.Normalize(vmin=vmin, vmax=vmax))
     cbar = plt.colorbar(sm, cax=axins1, orientation="horizontal")
     cbar.set_label(label)
     axins1.xaxis.set_ticks_position("bottom")
@@ -437,9 +229,7 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
 
 def plot_profile_iterations(r, profile_iter, n_iter, ax,
                             cmap=plt.cm.cool,  # pylint: disable=no-member
-                            ylabel=r'I [10$^{10}$ Jy sr$^{-1}$]',
-                            bbox_x=-.02, bbox_y=-.1
-                            ):
+                            bbox_x=-.02, bbox_y=-.1, **kwargs):
     r"""
     Plot a fit's brightness profile reconstruction over a chosen range of
     the fit's iterations
@@ -454,12 +244,10 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
         assumed unit (for the y-label) is Jy / sr
     n_iter : list, of the form [start_iteration, stop_iteration]
         Chosen range of iterations in the fit over which to plot profile_iter
-    ax : Matplotlib axis
-        Axis on which to plot the profile iterations
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
     cmap : plt.cm colormap, default=plt.cm.cool
         Colormap to apply to the overplotted profiles
-    ylabel : string, default = r'I [10$^{10}$ Jy sr$^{-1}$]'
-        y-label of the plot
     bbox_x, bbox_y : float, default = -0.02 and -0.1
         x- and y-value where the colorbar is placed
     """
@@ -469,24 +257,18 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
-        ax.plot(r, profile_iter[i] / 1e10, c=cmap(i / len(iter_range)))
-    ax.plot(r, profile_iter[-1] / 1e10, ':', c='k', label='Last iteration')
+        ax.plot(r, profile_iter[i], c=cmap(i / len(iter_range)), **kwargs)
+    ax.plot(r, profile_iter[-1], ':', c='k', label='Last iteration', **kwargs)
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y
-                  )
+                  label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y)
 
-    ax.legend(loc='upper right')
-
-    ax.set_xlabel('r ["]')
-    ax.set_ylabel(ylabel)
+    ax.legend(loc='best')
 
 
 def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
                              cmap=plt.cm.cool,  # pylint: disable=no-member
-                             ylabel=r'Power [Jy$^2$]',
-                             bbox_x=.05, bbox_y=.175
-                             ):
+                             bbox_x=.05, bbox_y=.175, **kwargs):
     r"""
     Plot a fit's power spectrum reconstruction over a chosen range of
     the fit's iterations
@@ -501,35 +283,27 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
         assumed unit (for the y-label) is Jy^2
     n_iter : list, of the form [start_iteration, stop_iteration]
         Chosen range of iterations in the fit over which to plot pwr_spec_iter
-    ax : Matplotlib axis
-        Axis on which to plot the power spectrum iterations
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
     cmap : plt.cm colormap, default=plt.cm.cool
         Colormap to apply to the overplotted power spectra
-    ylabel : string, default = r'Power [Jy$^2$]'
-        y-label of the plot
     bbox_x, bbox_y : float, default = 0.05 and 0.175
         x- and y-value where the colorbar is placed
     """
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
-        ax.plot(q, pwr_spec_iter[i], c=cmap(i / len(iter_range)))
-    ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration')
+        ax.plot(q, pwr_spec_iter[i], c=cmap(i / len(iter_range)), **kwargs)
+    ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration', **kwargs)
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y
-                  )
+                  label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y)
 
-    ax.legend(loc='upper right')
-
-    ax.set_ylim(bottom=1.1e-16)
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.set_xlabel(r'Baseline [$\lambda$]')
-    ax.set_ylabel(ylabel)
+    ax.legend(loc='best')
 
 
-def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
+def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
+                 vmax=None, xmax=None, plot_colorbar=True, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -540,32 +314,45 @@ def plot_2dsweep(r, I, ax, cax=None, cmap='inferno', vmin=None, vmax=None):
         The assumed unit (for the x- and y-label) is arcsec
     I : array
         Brightness values at r. The assumed unit (for the colorbar) is Jy / sr
-    ax : Matplotlib axis
-        Axis on which to plot the 2D image
+    ax : Matplotlib `~.axes.Axes` class
+        Axis on which to plot
     cmap : Matplotlib colormap, default = 'inferno'
         Colormap to apply to the 2D image
+    norm : Matplotlib `colors.Normalize` class
+        Colormap normalization for the image and colorbar
     vmin, vmax : float or None (default)
         Lower and upper brightness values (assumed in Jy / sr) for the 2D
         image and colorbar plot's y-axis. If None, they will be set by
         Matplotlib
+    xmax : float or None (default)
+        Radius at edge of image. If None, it will be set by max(r)
+    plot_colorbar: bool, default = True
+        Whether to plot a colorbar beside the image
     """
 
-    I2D, xmax, ymax = sweep_profile(r, I)
+    if xmax is None:
+        I2D, xmax, ymax = sweep_profile(r, I)
+    else:
+        I2D, _, _ = sweep_profile(r, I)
+        ymax = xmax * 1
+
     I2D /= 1e10
 
-    ax.imshow(I2D, origin='lower', extent=[xmax, -xmax, -ymax, ymax], vmin=vmin,
-              vmax=vmax, cmap=cmap
+    if vmin is None and vmax is None:
+        vmin, vmax = I2D.min(), I2D.max()
+
+    ax.imshow(I2D, origin='lower', extent=(xmax, -xmax, -ymax, ymax), vmin=vmin,
+              vmax=vmax, cmap=cmap, norm=norm, **kwargs
               )
 
-    ax.set_xlabel('RA offset ["]')
-    ax.set_ylabel('Dec offset ["]')
+    # Set a normalization and colormap for the colorbar
+    if plot_colorbar:
+        import matplotlib.colors as mpl_cs
+        from matplotlib import cm
+        if norm is None:
+            norm = mpl_cs.Normalize(vmin=vmin, vmax=vmax)
+        m = cm.ScalarMappable(norm=norm, cmap=cmap)
+        m.set_array([])
 
-    # set a normalization and colormap for the colorbar
-    import matplotlib.colors as mpl_cs
-    from matplotlib import cm
-    norm = mpl_cs.Normalize(vmin=I2D.min(), vmax=I2D.max())
-    m = cm.ScalarMappable(norm=norm, cmap=cmap)
-    m.set_array([])
-
-    cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=1.)
-    cbar.set_label(r'I [10$^{10}$ Jy sr$^{-1}$]')
+        cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=.7)
+        cbar.set_label(r'I [$10^{10}$ Jy sr$^{-1}$]')

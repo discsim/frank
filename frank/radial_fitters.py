@@ -122,7 +122,7 @@ class _HankelRegressor(object):
                 raise ValueError("Bad value in power spectrum. The power"
                                  " spectrum must be postive and not contain"
                                  " any NaN values")
-            
+
             Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
         else:
@@ -482,8 +482,8 @@ class FourierBesselFitter(object):
         q = np.hypot(u, v)
 
         # Check consistency of the uv points with the model
-        self._check_uv_range(q) 
-        
+        self._check_uv_range(q)
+
         # Use only the real part of V. Also correct the total flux for the
         # inclination. This is not done in apply_correction for consistency
         # with `uvplot`
@@ -701,8 +701,8 @@ class FrankFitter(FourierBesselFitter):
                                  " a shorter baseline than the longest deprojected"
                                  r" baseline in the dataset, {:.3e} \lambda. Please"
                                  " increase N in FrankFitter (this is"
-                                 " `hyperpriors: n` if you're using a parameter"
-                                 " file). Or if you'd like to fit to shorter baseline,"
+                                 " `hyperparameters: n` if you're using a parameter"
+                                 " file). Or if you'd like to fit to shorter maximum baseline,"
                                  " cut the (u, v) distribution before fitting"
                                  " (`modify_data: baseline_range` in the"
                                  " parameter file).".format(self.q[-1], uv.max()))
@@ -728,7 +728,7 @@ class FrankFitter(FourierBesselFitter):
 
         Returns
         -------
-        MAP_sol : _HankelRegressor
+        MAP_solution : _HankelRegressor
             Reconstructed profile using maximum a posteriori power spectrum
         """
         logging.info('  Fitting for brightness profile using FrankFitter')

@@ -9,13 +9,14 @@ SOURCEDIR     = .
 BUILDDIR      = _build
 
 TUT_DST_DIR := tutorials
-TUT_SRC_DIR := ../tutorials
 
 NOTEBOOKS := \
-	using_frank_as_a_module.ipynb \
-	running_fits_in_loop.ipynb \
-	prior_sensitivity_and_uncertainty.ipynb \
-	AS209_clean_profile.dat \
+	fitting_procedure.ipynb \
+	prior_sensitivity.rst \
+	model_limitations.rst \
+	mstable_to_uvtable.rst \
+	fit_convergence.rst \
+	AS209_clean_profile.txt \
 	AS209_continuum.npz \
 
 
@@ -24,7 +25,6 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
-	rm -rf $(TUT_DST_DIR)
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile $(NOTEBOOK_TARGETS)
@@ -32,8 +32,6 @@ clean:
 NOTEBOOK_TARGETS := $(patsubst %, $(TUT_DST_DIR)/%, $(NOTEBOOKS))
 
 
-$(TUT_DST_DIR)/%: $(TUT_SRC_DIR)/% $(TUT_DST_DIR)
-	cp $< $@
 
 .PHONY: help Makefile
 
