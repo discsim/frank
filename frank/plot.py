@@ -48,25 +48,25 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
         Projected visibilities (either the real or imaginary component)
     visp : array
         Deprojected visibilities (either the real or imaginary component)
-    ax1 : Matplotlib `~.axes.Axes` class
+    ax0 : Matplotlib `~.axes.Axes` class
         Axis on which to plot effect of deprojection on the (u, v) coordinates
-    ax2 : Matplotlib `~.axes.Axes` class
+    ax1 : Matplotlib `~.axes.Axes` class
         Axis on which to plot effect of deprojection on the visibility amplitudes
     """
 
-    ax1.plot(u, v, '+', c='#1EC8FE', label='Projected')
-    ax1.plot(up, vp, 'x', c='#D14768', label='Deprojected')
+    ax0.plot(u, v, '+', c='#1EC8FE', label='Projected')
+    ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
 
     # Projected baselines
     bs = np.hypot(u, v)
     # Deprojected baselines
     bsp = np.hypot(up, vp)
 
-    ax2.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
-    ax2.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
+    ax1.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
+    ax1.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
+    ax0.legend(loc='best')
     ax1.legend(loc='best')
-    ax2.legend(loc='best')
 
 
 def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
