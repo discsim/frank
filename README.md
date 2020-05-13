@@ -4,8 +4,8 @@
 </p>
 -->
 
-.. image:: https://circleci.com/xx/frank.svg?branch=master
-    :target: https://circleci.com/xx/frank
+.. image:: https://circleci.com/gh/discsim/frank.svg?branch=master
+    :target: https://circleci.com/gh/discsim/frank
 
 .. image:: https://img.shields.io/pypi/v/frank.svg
     :target: https://pypi.python.org/pypi/frank
