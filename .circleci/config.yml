@@ -47,6 +47,7 @@ jobs:
             coverage run --source=frank -m pytest -rXs frank/tests.py
             coverage report
             coverage html
+            coverage-badge -f -o htmlcov/badge.svg
       - store_artifacts:
           path: test-reports
           destination: test-reports
