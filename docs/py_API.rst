@@ -26,38 +26,23 @@ the deprojected visibilities.
 .. autoclass:: frank.radial_fitters._HankelRegressor
   :members: mean, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, log_likelihood
 
-Plotting functions: Figure generation
--------------------------------------
+Utility functions and classes
+-----------------------------
 
-These functions make the figures frank will produce when `quick_plot`, `full_plot` and/or `diag_plot` are `True` in your parameter file.
+These are some useful functions and classes for various aspects of fitting and analysis.
 
-.. autofunction:: frank.make_figs.make_quick_fig
+.. autofunction:: frank.utilities.arcsec_baseline
 
-.. autofunction:: frank.make_figs.make_full_fig
+.. autofunction:: frank.utilities.convolve_profile
 
-.. autofunction:: frank.make_figs.make_diag_fig
+.. autofunction:: frank.utilities.cut_data_by_baseline
 
-Plotting functions: Individual plots
-####################################
+.. autofunction:: frank.utilities.draw_bootstrap_sample
 
-And these are the plotting functions those figures call.
+.. autofunction:: frank.utilities.estimate_weights
 
-.. autofunction:: frank.plot.plot_brightness_profile
+.. autofunction:: frank.utilities.normalize_uv
 
-.. autofunction:: frank.plot.plot_vis_fit
+.. autofunction:: frank.utilities.sweep_profile
 
-.. autofunction:: frank.plot.plot_vis
-
-.. autofunction:: frank.plot.plot_vis_resid
-
-.. autofunction:: frank.plot.plot_pwr_spec
-
-.. autofunction:: frank.plot.plot_convergence_criterion
-
-.. autofunction:: frank.plot.make_colorbar
-
-.. autofunction:: frank.plot.plot_profile_iterations
-
-.. autofunction:: frank.plot.plot_pwr_spec_iterations
-
-.. autofunction:: frank.plot.plot_2dsweep
+.. autoclass:: frank.utilities.UVDataBinner

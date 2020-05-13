@@ -6,7 +6,7 @@
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
     "save_uvtables"    : true,
-    "iteration_diag"   : true,
+    "iteration_diag"   : false,
     "format"           : null
   },
 
@@ -24,29 +24,35 @@
     "ddec"             : 0.0
   },
 
-  "hyperpriors" : {
+  "hyperparameters" : {
     "n"                : 300,
     "rout"             : 2.0,
     "alpha"            : 1.05,
     "p0"               : 1e-15,
     "wsmooth"          : 1e-4,
     "iter_tol"         : 1e-3,
-    "max_iter"         : 2000
+    "max_iter"         : 2000,
+    "nonnegative"      : false
   },
 
   "plotting" : {
     "quick_plot"       : true,
     "full_plot"        : true,
-    "diag_plot"        : true,
-    "save_figs"        : true,
-    "dist"             : null,
+    "diag_plot"        : false,
+    "deprojec_plot"    : false,
+    "distance"         : null,
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
+    "gamma"            : 1.0,
     "iter_plot_range"  : null
   },
 
   "analysis" : {
-    "bootstrap_ntrials": null,
-    "bootstrap_non_negative" : false
+    "compare_profile"  : null,
+    "clean_beam"       : {"bmaj"    : null,
+                          "bmin"    : null,
+                          "beam_pa" : null
+                         },
+    "bootstrap_ntrials": null
   }
 }

@@ -212,7 +212,7 @@ def load_data(model):
     return u, v, vis, weights
 
 
-def alter_data(u, v, vis, weights, geometry, model):
+def alter_data(u, v, vis, weights, geom, model):
     r"""
     Apply one or more modifications to the data as specified in the parameter file
 
@@ -225,7 +225,7 @@ def alter_data(u, v, vis, weights, geometry, model):
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    geometry : SourceGeometry object
+    geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry).
     model : dict
         Dictionary containing model parameters the fit uses
@@ -236,15 +236,18 @@ def alter_data(u, v, vis, weights, geometry, model):
     to the modification operations specified in model
     """
 
+    if model['modify_data']['normalization_wle'] is not None:
+        u, v = utilities.normalize_uv(
+            u, v, model['modify_data']['normalization_wle'])
+
     if model['modify_data']['baseline_range']:
         u, v, vis, weights = \
             utilities.cut_data_by_baseline(u, v, vis, weights,
                                            model['modify_data']['baseline_range'],
-                                           geometry)
+                                           geom)
 
-    wcorr_estimate = None
     if model['modify_data']['correct_weights']:
-        up, vp = geometry.deproject(u,v)
+        up, vp = geom.deproject(u,v)
         weights = utilities.estimate_weights(up, vp, vis, use_median=True)
 
     return u, v, vis, weights
@@ -354,21 +357,26 @@ def perform_fit(u, v, vis, weights, geom, model):
         model['plotting']['diag_plot']
 
     t1 = time.time()
-    FF = radial_fitters.FrankFitter(Rmax=model['hyperpriors']['rout'],
-                                    N=model['hyperpriors']['n'],
+    FF = radial_fitters.FrankFitter(Rmax=model['hyperparameters']['rout'],
+                                    N=model['hyperparameters']['n'],
                                     geometry=geom,
-                                    alpha=model['hyperpriors']['alpha'],
-                                    weights_smooth=model['hyperpriors']['wsmooth'],
-                                    tol=model['hyperpriors']['iter_tol'],
-                                    max_iter=model['hyperpriors']['max_iter'],
+                                    alpha=model['hyperparameters']['alpha'],
+                                    weights_smooth=model['hyperparameters']['wsmooth'],
+                                    tol=model['hyperparameters']['iter_tol'],
+                                    max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations
                                     )
 
     sol = FF.fit(u, v, vis, weights)
 
+    if model['hyperparameters']['nonnegative']:
+        # Add the best fit nonnegative solution to the fit's `sol` object
+        logging.info('  `nonnegative` is `true` in your parameter file --> Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
+        setattr(sol, '_nonneg', sol.solve_non_negative())
+
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
-                                                               model['hyperpriors']['n'],
+                                                               model['hyperparameters']['n'],
                                                                time.time() - t1)
                  )
 
@@ -378,11 +386,78 @@ def perform_fit(u, v, vis, weights, geom, model):
         return [sol, None]
 
 
-def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
+def run_multiple_fits(u, v, vis, weights, geom, model):
+    r"""
+    Perform and overplot multiple fits to a dataset by varying two of the
+    model hyperparameters
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    vis : array, unit = Jy
+        Observed visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    geom : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry)
+    model : dict
+        Dictionary containing model parameters the fits use
+
+    Returns
+    -------
+    multifit_fig : Matplotlib `.Figure` instance
+        All produced figures, including the GridSpecs
+    multifit_axes : Matplotlib `~.axes.Axes` class
+        Axes for each of the produced figures
+    """
+
+    logging.info(' Looping fits over the hyperparameters `alpha` and `wsmooth`')
+    alphas = model['hyperparameters']['alpha']
+    ws = model['hyperparameters']['wsmooth']
+    sols = []
+
+    def number_to_list(x):
+        if np.isscalar(x):
+            return [x]
+        return x
+
+    alphas = number_to_list(alphas)
+    ws = number_to_list(ws)
+
+    import copy
+    for ii in range(len(alphas)):
+        for jj in range(len(ws)):
+            this_model = copy.deepcopy(model)
+            this_model['hyperparameters']['alpha'] = alphas[ii]
+            this_model['hyperparameters']['wsmooth'] = ws[jj]
+            this_model['input_output']['save_prefix'] += '_alpha{}_wsmooth{}'.format(alphas[ii], ws[jj])
+
+            logging.info('  Running fit for alpha = {}, wsmooth = {}'.format(alphas[ii], ws[jj]))
+
+            sol, _ = perform_fit(u, v, vis, weights, geom, this_model)
+            sols.append(sol)
+
+            # Save the fit for the current choice of hyperparameter values
+            output_results(u, v, vis, weights, sol, geom, this_model)
+
+    multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
+                                                           model['plotting']['bin_widths'],
+                                                           ['alpha', 'wsmooth'],
+                                                           [alphas, ws],
+                                                           model['plotting']['distance'],
+                                                           model['plotting']['force_style'],
+                                                           model['input_output']['save_prefix'],
+                                                           )
+
+    return multifit_fig, multifit_axes
+
+
+def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=None):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
-    frank.io.save_fit, frank.make_figs.make_full_fig,
-    frank.make_figs.make_quick_fig, frank.make_figs.make_diag_fig)
+    frank.io.save_fit, frank.make_figs)
 
     Parameters
     ----------
@@ -396,11 +471,13 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
-    iteration_diagnostics : _HankelRegressor object
-        Diagnostics of the fit iteration
-        (see radial_fitters.FrankFitter.fit)
+    geom : SourceGeometry object
+        Fitted geometry (see frank.geometry.SourceGeometry)
     model : dict
         Dictionary containing model parameters the fit uses
+    iteration_diagnostics : _HankelRegressor object, optional, default=None
+        Diagnostics of the fit iteration
+        (see radial_fitters.FrankFitter.fit)
 
     Returns
     -------
@@ -414,10 +491,19 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
 
     figs, axes = [], []
 
+    if model['plotting']['deprojec_plot']:
+        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, vis, geom,
+                                                         model['plotting']['force_style'],
+                                                         model['input_output']['save_prefix']
+                                                         )
+
+        figs.append(deproj_fig)
+        axes.append(deproj_axes)
+
     if model['plotting']['quick_plot']:
         quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
                                                          model['plotting']['bin_widths'],
-                                                         model['plotting']['dist'],
+                                                         model['plotting']['distance'],
                                                          model['plotting']['force_style'],
                                                          model['input_output']['save_prefix']
                                                          )
@@ -428,7 +514,10 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
     if model['plotting']['full_plot']:
         full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
                                                       model['plotting']['bin_widths'],
-                                                      model['plotting']['dist'],
+                                                      model['hyperparameters']['alpha'],
+                                                      model['hyperparameters']['wsmooth'],
+                                                      model['plotting']['gamma'],
+                                                      model['plotting']['distance'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']
                                                       )
@@ -446,6 +535,48 @@ def output_results(u, v, vis, weights, sol, iteration_diagnostics, model):
 
         figs.append(diag_fig)
         axes.append(diag_axes)
+
+    if model['analysis']['compare_profile']:
+        dat = np.genfromtxt(model['analysis']['compare_profile']).T
+
+        if len(dat) not in [2,3,4]:
+            raise ValueError("The file in your .json's `analysis` --> "
+                             "`compare_profile` must have 2, 3 or 4 "
+                             "columns: r [arcsec], I [Jy / sr], "
+                             "negative uncertainty [Jy / sr] (optional), "
+                             "positive uncertainty [Jy / sr] (optional, "
+                             "assumed equal to negative uncertainty if not "
+                             "provided).")
+
+        r_clean, I_clean = dat[0], dat[1]
+        if len(dat) == 3:
+            lo_err_clean, hi_err_clean = dat[2], dat[2]
+        elif len(dat) == 4:
+            lo_err_clean, hi_err_clean = dat[2], dat[3]
+        else:
+            lo_err_clean, hi_err_clean = None, None
+        clean_profile = {'r': r_clean, 'I': I_clean, 'lo_err': lo_err_clean,
+                         'hi_err': hi_err_clean}
+
+        mean_convolved = None
+        if model['analysis']['clean_beam']['bmaj'] is not None:
+            mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
+                                                        geom.inc, geom.PA,
+                                                        model['analysis']['clean_beam'])
+
+        clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u, v, vis,
+                                                                    weights, sol,
+                                                                    clean_profile,
+                                                                    model['plotting']['bin_widths'],
+                                                                    model['plotting']['gamma'],
+                                                                    mean_convolved,
+                                                                    model['plotting']['distance'],
+                                                                    model['plotting']['force_style'],
+                                                                    model['input_output']['save_prefix']
+                                                                    )
+
+        figs.append(clean_fig)
+        axes.append(clean_axes)
 
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
@@ -486,24 +617,35 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
     boot_axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    if (type(model['hyperparameters']['alpha']) or \
+    type(model['hyperparameters']['wsmooth'])) is list:
+        raise ValueError("For the bootstrap, both `alpha` and `wsmooth` in your "
+                         "parameter file must be a float, not a list.")
+
     profiles_bootstrap = []
+
+    if model['hyperparameters']['nonnegative']:
+        logging.info('  `nonnegative` is `true` in your parameter file --> '
+                     'The best fit nonnegative profile (rather than the mean '
+                     'profile) will be saved and used to generate the bootstrap '
+                     'figure')
 
     for trial in range(model['analysis']['bootstrap_ntrials']):
         logging.info(' Bootstrap trial {} of {}'.format(trial + 1,
                                                         model['analysis']['bootstrap_ntrials']))
 
-        u_s, v_s, vis_s, w_s = \
-            utilities.draw_bootstrap_sample(u, v, vis, weights)
+        u_s, v_s, vis_s, w_s = utilities.draw_bootstrap_sample(
+            u, v, vis, weights)
 
         sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
-        if model['analysis']['bootstrap_non_negative']:
-            profiles_bootstrap.append(sol.solve_non_negative())
+        if model['hyperparameters']['nonnegative']:
+            profiles_bootstrap.append(sol._nonneg)
         else:
             profiles_bootstrap.append(sol.mean)
 
-    bootstrap_path = model['input_output']['save_prefix'] + \
-        '_bootstrap.npz'
+    bootstrap_path = model['input_output']['save_prefix'] + '_bootstrap.npz'
 
     logging.info(' Bootstrap complete. Saving fitted brightness profiles and'
                  ' the common set of collocation points')
@@ -512,7 +654,6 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
                                                        profiles_bootstrap,
-                                                       model['plotting']['dist'],
                                                        model['plotting']['force_style'],
                                                        model['input_output']['save_prefix']
                                                        )
@@ -541,15 +682,24 @@ def main(*args):
             u, v, vis, weights, geom, model)
 
     if model['analysis']['bootstrap_ntrials']:
-        boot_fig, boot_axes = perform_bootstrap(u, v, vis, weights, geom, model)
+        boot_fig, boot_axes = perform_bootstrap(
+            u, v, vis, weights, geom, model)
+
         return boot_fig, boot_axes
+
+    elif (type(model['hyperparameters']['alpha']) or \
+    type(model['hyperparameters']['wsmooth'])) is list:
+        multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
+                                                        geom, model)
+
+        return multifit_fig, multifit_axes
 
     else:
         sol, iteration_diagnostics = perform_fit(
             u, v, vis, weights, geom, model)
 
-        figs, axes, model = output_results(u, v, vis, weights, sol,
-                                           iteration_diagnostics, model
+        figs, axes, model = output_results(u, v, vis, weights, sol, geom, model,
+                                           iteration_diagnostics
                                            )
 
         logging.info('  Updating {} with final parameters used'
@@ -557,9 +707,9 @@ def main(*args):
         with open(param_path, 'w') as f:
             json.dump(model, f, indent=4)
 
-    logging.info("IT'S ALIVE!!\n")
+        logging.info("IT'S ALIVE!!\n")
 
-    return figs, axes
+        return figs, axes
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'frank'
-authors = u'R. Booth, J. Jennings, M. Tazzari.'
+authors = u'R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).'
 copyright = '2019-%d, %s' % (datetime.now().year, authors)
 
 # The version info for the project you're documenting, acts as replacement for
@@ -109,7 +109,7 @@ autosummary_generate = True
 autodoc_docstring_signature = True
 
 # Add a heading to notebooks
-doc_path = "https://github.com/discsim/frank/blob/{}".format(branch)
+doc_path = "https://github.com/discsim/frank/blob/{}/docs".format(branch)
 nb_link = "`here <{0}/{1}>`_".format(doc_path, '{{ docname }}')
 
 nbsphinx_prolog = """
@@ -121,4 +121,4 @@ nbsphinx_prolog = """
 # nbsphinx
 nbsphinx_timeout = 600
 napoleon_use_ivar = True
-nbsphinx_allow_errors = True # TODO: remove once notebooks final
+nbsphinx_allow_errors = False
