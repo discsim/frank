@@ -43,7 +43,9 @@ The [docs](https://discsim.github.io/frank/) have it all.
 
 Attribution
 -----------
-If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020) MNRAS **xx** xx [[MNRAS]](xx) [[arXiv]](xx) [[ADS]](xx):
+If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020) [[arXiv]](https://arxiv.org/xx)
+<!--MNRAS **xx** xx [[MNRAS]](xx) [[arXiv]](xx) [[ADS]](xx):
+-->
 ```
 xx
 ```
