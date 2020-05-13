@@ -19,9 +19,12 @@ is useful to assess and potentially suppress this behavior.
 Allowed regions of negative brightness
 --------------------------------------
 The fitted brightness profile can have negative regions corresponding to spatial scales un- or underconstrained by the visibilities.
-You can perform a fit in which the solution is forced to be positive (given the maximum a posteori powerspectrum) by using the `solve_non_negative` method provided by the solution returned by `FrankFitter` (if running frank from the terminal, set `hyperparameters : nonnegative` to `true` in your parameter file).
+You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the `solve_non_negative` method provided by the solution returned by `FrankFitter` (if running frank from the terminal, set `hyperparameters : nonnegative` to `true` in your parameter file).
 In tests we've seen the effect on the recovered brightness profile to typically be localized to the regions of negative flux,
-with otherwise minor differences. Since enforcing the profile to be non-negative requires some extrapolation beyond the data's longest baseline the non-negative fit can be more strongly affected by the hyperprior parameter choices (particularly :math:`w_{\rm smooth}` because it affects how steeply the fit drops off at long baselines). Therefore, it is always best to compare it to the standard fit (that allows negative brightness) and check that your hyperprior parameters are reasonable.
+with otherwise minor differences.
+Since enforcing the profile to be non-negative requires some extrapolation beyond the data's longest baseline,
+the non-negative fit can be more strongly affected by the hyperparameter choices (particularly :math:`w_{\rm smooth}` because it affects how steeply the fit drops off at long baselines).
+Therefore it's always best to compare the non-negative fit to the standard fit and check the sensitivity of both to the hyperparameter values.
 
 An underestimated brightness profile uncertainty
 ------------------------------------------------
