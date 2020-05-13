@@ -45,7 +45,7 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir -p test-reports
-	    py.test --junitxml=test-reports/junit.xml frank/tests.py
+            py.test --junitxml=test-reports/junit.xml frank/tests.py
       - store_test_results:
           path: test-reports
           destination: test-reports
