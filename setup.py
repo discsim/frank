@@ -20,7 +20,7 @@ setup(
     python_requires='>=3',
     install_requires=[line.rstrip() for line in open("requirements.txt", "r").readlines()],
     extras_require={
-        'test' : ['pytest', 'coverage', 'coverage-badge'],
+        'test' : ['pytest'],
         'docs-build' : ['sphinx', 'sphinxcontrib-fulltoc', 'sphinx_rtd_theme', 'nbsphinx'],
         },
     license="GPLv3",

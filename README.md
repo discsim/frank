@@ -20,10 +20,6 @@
   </a>    
 
   <br/>
-  <a href="https://circleci.com/api/v1.1/project/github/discsim/frank/latest/artifacts/0/htmlcov/index.html?circle-token=:bae3a8a1152be46c79a61902f815a0848f1c0503">
-     <img src="https://circleci.com/api/v1.1/project/github/discsim/frank/latest/artifacts/0/htmlcov/badge.svg?circle-token=:bae3a8a1152be46c79a61902f815a0848f1c0503">
-
-  <br/>
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
       <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
       [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">
