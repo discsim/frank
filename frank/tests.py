@@ -256,7 +256,8 @@ def test_uvbin():
     np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
 
 
-def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
+def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False, 
+                   multifit=False, bootstrap=False):
     """Check the full pipeline that performs a fit and outputs results"""
 
     # Build a subset of the data that we'll load during the fit
@@ -289,6 +290,33 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     geom['dra'] = AS209_geometry.dRA
     geom['ddec'] = AS209_geometry.dDec
 
+    if make_figs:
+        params['plotting']['quick_plot'] = True
+        params['plotting']['full_plot'] = True
+        params['plotting']['diag_plot'] = True
+        params['plotting']['deprojec_plot'] = True
+        params['plotting']['save_figs'] = True
+        params['plotting']['distance'] = 121.
+        params['plotting']['bin_widths'] = [1e5]
+        params['plotting']['iter_plot_range'] = [0, 5]
+        params['analysis']['compare_profile'] = 'docs/tutorials/AS209_clean_profile.txt'
+        params['analysis']['clean_beam'] = {'bmaj'    : 0.03883,
+                                            'bmin'    : 0.03818,
+                                            'beam_pa' : 85.82243
+                                            }
+
+    else:
+        params['plotting']['quick_plot'] = False
+        params['plotting']['full_plot'] = False
+        params['plotting']['diag_plot'] = False
+        params['plotting']['deprojec_plot'] = False
+    
+    if multifit: 
+        params['hyperparameters']['alpha'] = [1.05, 1.30]        
+        
+    if bootstrap:
+        params['analysis']['bootstrap_ntrials'] = 2
+    
     # Save the new parameter file
     param_file = os.path.join(tmp_dir, 'params.json')
     with open(param_file, 'w') as f:
@@ -311,3 +339,18 @@ def test_pipeline_no_phase():
 def test_pipeline_known_geom():
     """Check the full fit pipeline when supplying a known disc geometry"""
     _run_pipeline('known')
+
+
+def test_pipeline_figure_generation():
+    """Check the full fit pipeline when producing all figures"""
+    _run_pipeline('known', make_figs=True)
+    
+    
+def test_pipeline_multifit():
+    """Check the full fit pipeline when producing all figures"""
+    _run_pipeline('known', multifit=True)    
+    
+    
+def test_pipeline_bootstrap():
+    """Check the full fit pipeline when producing all figures"""
+    _run_pipeline('known', bootstrap=True)        
