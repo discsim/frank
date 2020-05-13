@@ -32,8 +32,6 @@ clean:
 NOTEBOOK_TARGETS := $(patsubst %, $(TUT_DST_DIR)/%, $(NOTEBOOKS))
 
 
-#$(TUT_DST_DIR)/%: $(TUT_SRC_DIR)/% $(TUT_DST_DIR)
-#cp $< $@
 
 .PHONY: help Makefile
 
