@@ -40,7 +40,6 @@
     "full_plot"        : true,
     "diag_plot"        : false,
     "deprojec_plot"    : false,
-    "save_figs"        : true,
     "distance"         : null,
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],

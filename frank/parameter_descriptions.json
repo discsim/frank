@@ -40,7 +40,6 @@
     "full_plot"        : "Whether to make a figure more fully showing the fit and its diagnostics",
     "diag_plot"        : "Whether to make a diagnostic figure showing fit convergence metrics",
     "deprojec_plot"    : "Whether to make a figure showing the effect of deprojection on the (u, v) points and visibilities",
-    "save_figs"        : "Whether to save generated figures",
     "distance"         : "Distance to source, optionally used for plotting, unit=[pc]",
     "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
     "bin_widths"       : "Bin widths in which to bin the observed visibilities, list of float or int, unit=[\\lambda]",
