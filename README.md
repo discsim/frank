@@ -4,17 +4,24 @@
 </p>
 -->
 
-.. image:: https://circleci.com/gh/discsim/frank.svg?branch=master
-    :target: https://circleci.com/gh/discsim/frank
+<p align="center">
+  <a href="https://circleci.com/gh/discsim/frank">
+      <img src="https://circleci.com/gh/discsim/frank.svg?branch=master">
+  </a>    
 
-.. image:: https://img.shields.io/pypi/v/frank.svg
-    :target: https://pypi.python.org/pypi/frank
+  <a href="https://pypi.python.org/pypi/frank">
+      <img src="https://img.shields.io/pypi/v/frank.svg">
+  </a>
 
-.. image:: https://img.shields.io/github/release/discsim/frank/all.svg
-    :target: https://github.com/discsim/frank/releases
+  <a href="https://github.com/discsim/frank/releases">
+      <img src="https://img.shields.io/github/release/discsim/frank/all.svg">
+  </a>
 
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![DOI]()]()
+  <a href="https://www.gnu.org/licenses/lgpl-3.0">
+      <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
+      [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">
+  </a>      
+</p>
 
 Frankenstein (**frank**) is a library that fits the 1D radial brightness profile of an interferometric source given a set of visibilities. It uses a Gaussian process that performs the fit in <1 minute for a typical protoplanetary disc continuum dataset.
 
