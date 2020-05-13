@@ -13,10 +13,16 @@
       <img src="https://img.shields.io/pypi/v/frank.svg">
   </a>
 
+  <a href="https://discsim.github.io/frank/">
+    <img src="https://img.shields.io/badge/docs-Read%20em!-blue.svg?style=flat"/>
+
+  <br/>
   <a href="https://circleci.com/gh/discsim/frank">
       <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
   </a>    
-  
+
+
+  <br/>
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
       <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
       [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">
