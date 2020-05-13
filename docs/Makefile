@@ -9,7 +9,6 @@ SOURCEDIR     = .
 BUILDDIR      = _build
 
 TUT_DST_DIR := tutorials
-#TUT_SRC_DIR := ../tutorials
 
 NOTEBOOKS := \
 	fitting_procedure.ipynb \
