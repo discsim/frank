@@ -49,7 +49,7 @@ jobs:
             coverage report
             coverage html
             coverage-badge -f -o htmlcov/badge.svg
-      - store_artifacts:
+      - store_test_results:
           path: test-reports
           destination: test-reports
       - store_artifacts:
