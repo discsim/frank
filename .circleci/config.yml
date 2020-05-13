@@ -44,7 +44,7 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-	    mkdir test-reports
+            mkdir -p test-reports
             coverage run --source=frank -m pytest --junit=test-reports/junit.xml frank/tests.py
             coverage report
             coverage html
