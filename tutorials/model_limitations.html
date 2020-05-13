@@ -1,0 +1,311 @@
+
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Examining the model’s limitations &mdash; frank 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The Frankenstein Python API" href="../py_API.html" />
+    <link rel="prev" title="Fitting mock data" href="fitting_mock_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> frank
+          
+
+          
+            
+            <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the code</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Examining the model’s limitations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#noisy-oscillations-imprinted-on-brightness-profile">Noisy oscillations imprinted on brightness profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#allowed-regions-of-negative-brightness">Allowed regions of negative brightness</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#an-underestimated-brightness-profile-uncertainty">An underestimated brightness profile uncertainty</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers using frank</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Under the hood</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank"> Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">frank</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+        
+      <li>Examining the model’s limitations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="examining-the-model-s-limitations">
+<h1>Examining the model’s limitations<a class="headerlink" href="#examining-the-model-s-limitations" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="noisy-oscillations-imprinted-on-brightness-profile">
+<h2>Noisy oscillations imprinted on brightness profile<a class="headerlink" href="#noisy-oscillations-imprinted-on-brightness-profile" title="Permalink to this headline">¶</a></h2>
+<p>Regions in the visibilities with sparse and/or sufficiently noisy sampling can cause a lack of constraint on the local spatial frequency scale,
+inducing oscillations in the reconstructed brightness profile on the corresponding spatial scale.
+This can potentially mimic real structure.
+frank typically prevents this by damping power on scales with low SNR,
+but when it does occur the oscillations in the brightness profile can be diagnosed by their frequency,
+which corresponds to the unconstrained spatial frequency scale.
+Varying the hyperparameter values for a fit as detailed in <a class="reference internal" href="prior_sensitivity.html"><span class="doc">this tutorial</span></a>
+is useful to assess and potentially suppress this behavior.</p>
+</div>
+<div class="section" id="allowed-regions-of-negative-brightness">
+<h2>Allowed regions of negative brightness<a class="headerlink" href="#allowed-regions-of-negative-brightness" title="Permalink to this headline">¶</a></h2>
+<p>The fitted brightness profile can have negative regions corresponding to spatial scales un- or underconstrained by the visibilities.
+You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the <code class="code docutils literal notranslate"><span class="pre">solve_non_negative</span></code> method provided by the solution returned by <code class="code docutils literal notranslate"><span class="pre">FrankFitter</span></code> (if running frank from the terminal, set <code class="code docutils literal notranslate"><span class="pre">hyperparameters</span> <span class="pre">:</span> <span class="pre">nonnegative</span></code> to <code class="code docutils literal notranslate"><span class="pre">true</span></code> in your parameter file).
+In tests we’ve seen the effect on the recovered brightness profile to typically be localized to the regions of negative flux,
+with otherwise minor differences.
+Since enforcing the profile to be non-negative requires some extrapolation beyond the data’s longest baseline,
+the non-negative fit can be more strongly affected by the hyperparameter choices (particularly <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> because it affects how steeply the fit drops off at long baselines).
+Therefore it’s always best to compare the non-negative fit to the standard fit and check the sensitivity of both to the hyperparameter values.</p>
+</div>
+<div class="section" id="an-underestimated-brightness-profile-uncertainty">
+<h2>An underestimated brightness profile uncertainty<a class="headerlink" href="#an-underestimated-brightness-profile-uncertainty" title="Permalink to this headline">¶</a></h2>
+<p>The uncertainty on the fitted brightness profile is typically underestimated.
+For this reason we do not show the uncertainty on the reconstructed brightness profile by default.
+The model framework produces an estimate of the uncertainty on the brightness profile,
+but this is not reliable because reconstructing the brightness from Fourier data is an ill-posed problem.
+The model’s confidence interval does not typically capture a fit’s ill-defined systematic uncertainty,
+i.e., that due to sparse sampling in the (u,v) plane.</p>
+<p>For example if the visibility amplitude were to spike at any point beyond the data’s maximum baseline,
+this would imprint high amplitude variations in the brightness profile on small spatial scales.
+Unless we know a priori (which is not generally the case) that the visibilities are decreasing sufficiently rapidly with increasing baseline,
+the uncertainty is therefore formally infinite.
+While it is reasonable to assume that for real disc brightness profiles the visibilities do decrease rapidly at long baseline,
+it is not straightforward to generically extrapolate the slope of this decline beyond a dataset’s longest baseline;
+a robust error estimate is thus difficult to obtain.</p>
+<p>Two effective ways to (at least coarsely) assess a brightness profile’s uncertainty are: <br>
+- Vary the model hyperparameters (see <a class="reference internal" href="prior_sensitivity.html"><span class="doc">this tutorial</span></a>)
+and examine the variation in the brightness across these different fits. <br>
+- Perform the fit for a given dataset by first truncating the data at increasingly shorter maximum baseline
+(say, in steps of <span class="math notranslate nohighlight">\(100\ {\rm k}\lambda\)</span>).
+The variation in a given feature in the brightness profile as the maximum baseline in the dataset <em>increases</em>
+can give a sense of how well resolved this feature is.
+If it is highly resolved, the local brightness uncertainty can be expected to be small.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../py_API.html" class="btn btn-neutral float-right" title="The Frankenstein Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fitting_mock_data.html" class="btn btn-neutral float-left" title="Fitting mock data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
+      <span class="lastupdated">
+        Last updated on 2020 May 13 at 13:44:44 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

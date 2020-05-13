@@ -98,8 +98,9 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html"> Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#perform-a-fit-from-the-terminal">Perform a fit from the terminal</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#test-a-fit-s-convergence">Test a fit’s convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#perform-multiple-fits-in-a-loop">Perform multiple fits in a loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#test-the-fit-s-sensitivity-to-the-hyperparameters">Test the fit’s sensitivity to the hyperparameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#understand-the-model-s-limitations">Understand the model’s limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#examine-the-fit-s-convergence">Examine the fit’s convergence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#modify-the-fit-py-script">Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script</a></li>
 </ul>
 </li>
@@ -209,7 +210,7 @@
 <h2>Perform a fit from the terminal<a class="headerlink" href="#perform-a-fit-from-the-terminal" title="Permalink to this headline">¶</a></h2>
 <p>To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a <em>.json</em> parameter file (see below) are needed. A UVTable can be extracted
-with CASA as demonstrated in <a class="reference external" href="tutorials/xx">this tutorial</a>.
+with CASA as demonstrated in <a class="reference internal" href="tutorials/mstable_to_uvtable.html"><span class="doc">this tutorial</span></a>.
 The column format should be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
 <p>You can quickly run a fit with the default parameter file, <code class="code docutils literal notranslate"><span class="pre">default_parameters.json</span></code> (see below),
 by just passing in the filename of the UVTable to be fit with the <code class="code docutils literal notranslate"><span class="pre">-uv</span></code> option. The UVTable can be a <code class="code docutils literal notranslate"><span class="pre">.npz</span></code>, <code class="code docutils literal notranslate"><span class="pre">.txt</span></code> or <code class="code docutils literal notranslate"><span class="pre">.dat</span></code>.</p>
@@ -274,7 +275,13 @@ and it looks like this,</p>
 49
 50
 51
-52</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+52
+53
+54
+55
+56
+57
+58</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -282,7 +289,7 @@ and it looks like this,</p>
     <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;format&quot;</span>           <span class="p">:</span> <span class="kc">null</span>
   <span class="p">},</span>
 
@@ -300,30 +307,36 @@ and it looks like this,</p>
     <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="mf">0.0</span>
   <span class="p">},</span>
 
-  <span class="nt">&quot;hyperpriors&quot;</span> <span class="p">:</span> <span class="p">{</span>
+  <span class="nt">&quot;hyperparameters&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;n&quot;</span>                <span class="p">:</span> <span class="mi">300</span><span class="p">,</span>
     <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
     <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="mf">1.05</span><span class="p">,</span>
     <span class="nt">&quot;p0&quot;</span>               <span class="p">:</span> <span class="mf">1e-15</span><span class="p">,</span>
     <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="mf">1e-4</span><span class="p">,</span>
     <span class="nt">&quot;iter_tol&quot;</span>         <span class="p">:</span> <span class="mf">1e-3</span><span class="p">,</span>
-    <span class="nt">&quot;max_iter&quot;</span>         <span class="p">:</span> <span class="mi">2000</span>
+    <span class="nt">&quot;max_iter&quot;</span>         <span class="p">:</span> <span class="mi">2000</span><span class="p">,</span>
+    <span class="nt">&quot;nonnegative&quot;</span>      <span class="p">:</span> <span class="kc">false</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;plotting&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;quick_plot&quot;</span>       <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;full_plot&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;diag_plot&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;save_figs&quot;</span>        <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-    <span class="nt">&quot;dist&quot;</span>             <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;diag_plot&quot;</span>        <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;deprojec_plot&quot;</span>    <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;distance&quot;</span>         <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
     <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span>
+    <span class="nt">&quot;gamma&quot;</span>            <span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
     <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="kc">null</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;bootstrap_non_negative&quot;</span> <span class="p">:</span> <span class="kc">false</span>
+    <span class="nt">&quot;compare_profile&quot;</span>  <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;clean_beam&quot;</span>       <span class="p">:</span> <span class="p">{</span><span class="nt">&quot;bmaj&quot;</span>    <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                          <span class="nt">&quot;bmin&quot;</span>    <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+                          <span class="nt">&quot;beam_pa&quot;</span> <span class="p">:</span> <span class="kc">null</span>
+                         <span class="p">},</span>
+    <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="kc">null</span>
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -386,69 +399,75 @@ and it looks like this,</p>
 50
 51
 52
-53</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+53
+54
+55
+56</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u, v, Re(V), Im(V), weights)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_solution&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to save `sol` object (see frank.radial_fitters.FrankFitter)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_profile_fit&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to save fitted brightness profile&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_vis_fit&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Whether to save fitted visibility distribution&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_uvtables&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to save fitted and residual UV tables (these are reprojected)&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Whether to return diagnostics of the fit iteration (needed for diag_plot)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;iteration_diag&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Whether to return and save diagnostics of the fit iteration (needed for diag_plot)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;format&quot;</span>           <span class="p">:</span> <span class="s2">&quot;Output file format. Default is the same as for &#39;uvtable_filename&#39;, else choose from &#39;npz&#39; or &#39;txt&#39;&quot;</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="s2">&quot;(Deprojected) baseline range outside of which visibilities are truncated [\\lambda]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="s2">&quot;(Deprojected) baseline range outside of which visibilities are truncated, unit=[\\lambda]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Whether to estimate the data&#39;s weights (as they may be unknown for mock data)&quot;</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;How the geometry is determined: &#39;known&#39; if user-supplied, &#39;gaussian&#39; if it is to be fit&quot;</span><span class="p">,</span>
     <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center or just the inclination and position angle&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination [deg]&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle [deg]&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension [arcsec]&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Delta declination [arcsec]&quot;</span>
+    <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination, unit=[deg]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle, unit=[deg]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension, unit=[arcsec]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;ddec&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Delta declination, unit=[arcsec]&quot;</span>
   <span class="p">},</span>
 
-  <span class="nt">&quot;hyperpriors&quot;</span> <span class="p">:</span> <span class="p">{</span>
+  <span class="nt">&quot;hyperparameters&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;n&quot;</span>                <span class="p">:</span> <span class="s2">&quot;Number of collocation points used in the fit (suggested range 100 - 300)&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Maximum disc radius in the fit (best to overestimate size of source) [arcsec]&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="s2">&quot;Order parameter for the power spectrum&#39;s inverse Gamma prior (suggested range 1.00 - 1.50)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;rout&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Maximum disc radius in the fit (best to overestimate size of source), unit=[arcsec]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;alpha&quot;</span>            <span class="p">:</span> <span class="s2">&quot;Order parameter for the power spectrum&#39;s inverse Gamma prior (suggested range 1.00 - 1.50). If a list, multiple fits will be performed and overplotted.&quot;</span><span class="p">,</span>
     <span class="nt">&quot;p0&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Scale parameter for the power spectrum&#39;s inverse Gamma prior (suggested &gt;0, &lt;&lt;1)&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="s2">&quot;Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;wsmooth&quot;</span>          <span class="p">:</span> <span class="s2">&quot;Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1). If a list, multiple fits will be performed and overplotted.&quot;</span><span class="p">,</span>
     <span class="nt">&quot;iter_tol&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Tolerance for fit iteration stopping criterion (suggested &lt;&lt;1)&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;max_iter&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Maximum number of fit iterations&quot;</span>
+    <span class="nt">&quot;max_iter&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Maximum number of fit iterations&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;nonnegative&quot;</span>      <span class="p">:</span> <span class="s2">&quot;Whether frank provides the mean (if false) or best fit nonnegative solution&quot;</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;plotting&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;quick_plot&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Whether to make a figure showing the simplest plots of the fit&quot;</span><span class="p">,</span>
     <span class="nt">&quot;full_plot&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to make a figure more fully showing the fit and its diagnostics&quot;</span><span class="p">,</span>
     <span class="nt">&quot;diag_plot&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to make a diagnostic figure showing fit convergence metrics&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;save_figs&quot;</span>        <span class="p">:</span> <span class="s2">&quot;Whether to save generated figures&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;dist&quot;</span>             <span class="p">:</span> <span class="s2">&quot;Distance to source, optionally used for plotting [AU]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;deprojec_plot&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to make a figure showing the effect of deprojection on the (u, v) points and visibilities&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;distance&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Distance to source, optionally used for plotting, unit=[pc]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="s2">&quot;Whether to use preconfigured matplotlib rcParams in generated figures&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities [\\lambda], list of float or int&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]&quot;</span>
+    <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities, list of float or int, unit=[\\lambda]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;gamma&quot;</span>            <span class="p">:</span> <span class="s2">&quot;Index of power law normalization to apply to swept profile image colormaps (1.0 = linear scaling)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]&quot;</span><span class="p">,</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&quot;compare_profile&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Path of file with comparison profile to be overplotted with frank fit (.txt or .dat; columns: r [arcsec], I [Jy / sr])&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;clean_beam&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Dictionary of B_major [arcsec], B_minor [arcsec], position angle [deg] of beam to convolve frank profile&quot;</span><span class="p">,</span>
     <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of trials (dataset realizations) to perform in a bootstrap analysis&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;bootstrap_non_negative&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether the mean (if false) or best fit nonnegative solution in used in the bootstrap&quot;</span>
 
   <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
-<p>That’s it! By default frank saves (in <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code>): <br>
+<p>That’s it! frank saves (in <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code>) these fit outputs: <br>
 - the logged messages printed during the fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit.log</span></code>, <br>
 - the parameter file used in the fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_used_pars.json</span></code>, <br>
 - the fitted brightness profile as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_profile_fit.txt</span></code>, <br>
 - the visibility domain fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_vis_fit.npz</span></code>, <br>
-- the <code class="code docutils literal notranslate"><span class="pre">sol</span></code> (solution) object (see <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_sol.obj</span></code> and the <code class="code docutils literal notranslate"><span class="pre">iteration_diagnostics</span></code> object (see <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_iteration_diagnostics.obj</span></code>, <br>
+- the <code class="code docutils literal notranslate"><span class="pre">sol</span></code> (solution) object (see <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_sol.obj</span></code> and optionally the <code class="code docutils literal notranslate"><span class="pre">iteration_diagnostics</span></code> object as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_iteration_diagnostics.obj</span></code>, <br>
 - UVTables for the <strong>reprojected</strong> fit and its residuals as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_fit.npz</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_resid.npz</span></code>, <br>
-- figures showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_quick.png</span></code>, <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_full.png</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_diag.png</span></code>.</p>
+- figures showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_quick.png</span></code>, <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_full.png</span></code> and optionally <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_diag.png</span></code>.</p>
 <p>Here’s the full figure frank produces (if <code class="code docutils literal notranslate"><span class="pre">full_plot=True</span></code> in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract">Andrews et al. 2018</a>).</p>
 <div class="figure align-left" style="width: 700px">
@@ -463,57 +482,46 @@ AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/20
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. <br>
 <strong>g)</strong> As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
 On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at <span class="math notranslate nohighlight">\(\approx 4\ {\rm M}\lambda\)</span>. <br>
-<strong>h)</strong> The fit’s reconstructed power spectrum, the prior on the fitted brightness profile.
-To see how this the fit to this dataset is sensitive to the prior, check out <a class="reference internal" href="tutorials/prior_sensitivity_and_uncertainty.html"><span class="doc">this notebook</span></a>. <br>
+<strong>h)</strong> The fit’s reconstructed power spectrum, the prior on the fitted brightness profile. <br>
 <strong>i)</strong> Histogram of the binned real component of the visibilities.
 Note how the bin counts drop sharply beyond <span class="math notranslate nohighlight">\(\approx 4.5\ {\rm M}\lambda\)</span>,
 a consequence of sparser sampling at the longest baselines. <br>
 <strong>j)</strong> The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.</p>
-<div class="section" id="test-a-fit-s-convergence">
-<h3>Test a fit’s convergence<a class="headerlink" href="#test-a-fit-s-convergence" title="Permalink to this headline">¶</a></h3>
-<p>Once the fit has been performed, it’s useful to check its convergence
-(a convergence test on the inferred power spectrum is performed as the fit iterates, while the below additionally examines convergence of the inferred brightness profile).
-If <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,</p>
-<div class="figure align-left" style="width: 700px">
-<img alt="_images/AS209_continuum_frank_fit_diag.png" src="_images/AS209_continuum_frank_fit_diag.png" />
+<div class="section" id="test-the-fit-s-sensitivity-to-the-hyperparameters">
+<h3>Test the fit’s sensitivity to the hyperparameters<a class="headerlink" href="#test-the-fit-s-sensitivity-to-the-hyperparameters" title="Permalink to this headline">¶</a></h3>
+<p>It’s <strong>always</strong> important to check a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
+Often the sensitivity is quite weak, but for lower resolution or particularly noisy datasets,
+the location and amplitude of substructure in the brightness profile can be sensitive to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
+You can quickly check this sensitivity by running and overplotting multiple fits in a single call to frank.
+Just set <code class="code docutils literal notranslate"><span class="pre">alpha</span></code> and/or <code class="code docutils literal notranslate"><span class="pre">wsmooth</span></code> in the parameter file as a list of values.
+See <a class="reference internal" href="tutorials/prior_sensitivity.html"><span class="doc">this tutorial</span></a> for an example.</p>
 </div>
-<p><strong>a)</strong> The fitted frank brightness profile over all fit iterations.
-Note how small amplitude, fast oscillations (‘ringing’) that are due to unconstrained
-baselines are damped over the first <span class="math notranslate nohighlight">\(\approx 300\)</span> iterations.
-The fit runs until a convergence criterion on the power spectrum is met at every collocation point,
-<span class="math notranslate nohighlight">\(|(P_{\rm i} - P_{\rm i-1}| &lt;= {\rm tol} * \pi\)</span>,
-where <span class="math notranslate nohighlight">\(P_{\rm i}\)</span> is the power spectrum at iteration <span class="math notranslate nohighlight">\(i\)</span>
-and <span class="math notranslate nohighlight">\({\rm tol}\)</span> is the tolerance (<code class="code docutils literal notranslate"><span class="pre">iter_tol</span></code>) in your parameter file.
-This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities’ sparse sampling.
-If this stopping condition is not met, the fit runs until <code class="code docutils literal notranslate"><span class="pre">max_iter</span></code> as set in your parameter file. <br>
-<strong>b)</strong> Sequential difference between the last 100 brightness profile iterations.
-So in this case the oscillations remaining at the end of the fit (<span class="math notranslate nohighlight">\(\approx 1250\)</span> iterations) are at parts in <span class="math notranslate nohighlight">\(10^6\)</span>.
-<br>
-<strong>c)</strong> The reconstructed power spectrum over all fit iterations.
-Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first <span class="math notranslate nohighlight">\(\approx 250\)</span> iterations,
-and then we continue iterating to suppress the high power placed at the data’s noisiest, longest baselines. <br>
-<strong>d)</strong> Sequential difference between the last 100 brightness profile iterations.
-Note the y-scale here is small compared to (b),
-and the largest variation is at the baseline where the fit walks off the visibilities. <br>
-<strong>e)</strong> A simple metric for the brightness profile’s convergence, <span class="math notranslate nohighlight">\({\rm max}(|(I_{\rm i} - I_{\rm i-1}|)\ /\ {\rm max}(I_i)\)</span>,
-where <span class="math notranslate nohighlight">\(I_i\)</span> is the brightness profile at iteration <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\({\rm max}\)</span> entails the largest value across all collocation points.
-In this case the largest variation across all collocation points at the last iteration is thus at a part in <span class="math notranslate nohighlight">\(10^6\)</span> of the profile’s peak brightness, consistent with (b).
-We want to ensure this convergence metric isn’t going start increasing again if we iterate for longer, so we wouldn’t have wanted to stop at iteration <span class="math notranslate nohighlight">\(\approx 750\)</span>,
-while by iteration <span class="math notranslate nohighlight">\(\approx 1000\)</span> the trend looks good. frank’s internal stopping criterion for the fit, as described above in (a), is not yet met at
-iteration 1000, as that criterion is conservative to help ensure the power spectrum (and thus the brightness profile) is no longer appreciably changing.</p>
+<div class="section" id="understand-the-model-s-limitations">
+<h3>Understand the model’s limitations<a class="headerlink" href="#understand-the-model-s-limitations" title="Permalink to this headline">¶</a></h3>
+<p>See <a class="reference internal" href="tutorials/model_limitations.html"><span class="doc">this tutorial</span></a> for an explanation and discussion of the model’s limitations,
+briefly summarized here: <br>
+- Noise in the visibilities can imprint noise on the reconstructed brightness profile
+(in the above fit to AS 209, this is limited to the regions of flux <span class="math notranslate nohighlight">\(\lesssim 10^9\)</span> Jy sr:math:<code class="code docutils literal notranslate"><span class="pre">^{-1}</span></code>.). <br>
+- The fit does not  by default prevent regions of negative brightness in the reconstructed profile
+(seen in the AS 209 fit’s innermost gap). <br>
+- The model yields a fitted brightness profile whose uncertainty is typically underestimated.
+For this reason we do not show the uncertainty by default (note its absence in the above AS 209 fit).</p>
 </div>
-<div class="section" id="perform-multiple-fits-in-a-loop">
-<h3>Perform multiple fits in a loop<a class="headerlink" href="#perform-multiple-fits-in-a-loop" title="Permalink to this headline">¶</a></h3>
-<p>You can run multiple fits in a single call to frank (e.g., to check a fit’s sensitivity to hyperpriors or run a self-consistent analysis on multiple sources)
-by setting one or more of the parameters in the parameter file as a list.
-See <a class="reference external" href="tutorials/running_fits_in_a_loop.ipynb">this tutorial</a> for an example.</p>
+<div class="section" id="examine-the-fit-s-convergence">
+<h3>Examine the fit’s convergence<a class="headerlink" href="#examine-the-fit-s-convergence" title="Permalink to this headline">¶</a></h3>
+<p>Once a fit has been performed, it can be useful to check its convergence.
+A convergence test on the inferred power spectrum is performed as the fit iterates,
+but you can additionally examine convergence of the inferred brightness profile by setting
+<code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> in your parameter file.
+frank will then produce a diagnostic figure to assess the fit’s convergence.
+See <a class="reference internal" href="tutorials/fit_convergence.html"><span class="doc">this tutorial</span></a> for an example.</p>
 </div>
 <div class="section" id="modify-the-fit-py-script">
 <h3>Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script<a class="headerlink" href="#modify-the-fit-py-script" title="Permalink to this headline">¶</a></h3>
 <p>We’ve run this example using <code class="code docutils literal notranslate"><span class="pre">frank/fit.py</span></code>; if you’d like to modify this file, you can get it <a class="reference external" href="https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py">here</a>.
-For an ‘under the hood’ look at what this script does, see <a class="reference internal" href="tutorials/using_frank_as_a_module.html"><span class="doc">this tutorial</span></a>.
-If you’d like a video demonstration of how to run the script (with sound), see <a class="reference external" href="https://www.youtube.com/watch?v=xMxsLKQidY4&amp;t=5">here</a>.</p>
+For an ‘under the hood’ look at what this script does, see <a class="reference internal" href="tutorials/fitting_procedure.html"><span class="doc">this tutorial</span></a>.
+If you’d like a video demonstration of the same tutorial (with sound), see <a class="reference external" href="https://www.youtube.com/watch?v=xMxsLKQidY4&amp;t=5">here</a>.</p>
 </div>
 </div>
 <div class="section" id="perform-a-fit-using-frank-as-a-python-module">
@@ -539,15 +547,15 @@ just to show how to directly interface with the code’s internal classes.</p>
 </div>
 <p>Now run the fit using the <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a> class.
 In this example we’ll ask frank to fit for the disc’s geometry using the <a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian">FitGeometryGaussian</a> class.
-<a class="reference external" href="https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter">FrankFitter</a> will then deproject the visibilities
-and fit for the brightness profile. We’ll fit out to 1.6” using 250 collocation points and the code’s default <code class="docutils literal notranslate"><span class="pre">alpha</span></code> and <code class="docutils literal notranslate"><span class="pre">weights_smooth</span></code> hyperprior values.</p>
+<code class="code docutils literal notranslate"><span class="pre">FrankFitter</span></code> will then deproject the visibilities
+and fit for the brightness profile. We’ll fit out to 1.6” using 250 collocation points and the code’s default <code class="docutils literal notranslate"><span class="pre">alpha</span></code> and <code class="docutils literal notranslate"><span class="pre">weights_smooth</span></code> hyperparameter values.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FF</span> <span class="o">=</span> <span class="n">FrankFitter</span><span class="p">(</span><span class="n">Rmax</span><span class="o">=</span><span class="mf">1.6</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">FitGeometryGaussian</span><span class="p">(),</span>
                  <span class="n">alpha</span><span class="o">=</span><span class="mf">1.05</span><span class="p">,</span> <span class="n">weights_smooth</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
 
 <span class="n">sol</span> <span class="o">=</span> <span class="n">FF</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+<p>Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
 when running from the terminal, frank produces this figure if <code class="code docutils literal notranslate"><span class="pre">quick_plot=True</span></code> in your parameter file).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">make_quick_fig</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">bin_widths</span><span class="o">=</span><span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span> <span class="o">+</span> <span class="s1">&#39;_frank_fit_quick.png&#39;</span><span class="p">)</span>
@@ -584,9 +592,9 @@ when running from the terminal, frank produces this figure if <code class="code 
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 11 at 13:34:39 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 13 at 13:44:44 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

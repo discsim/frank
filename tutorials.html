@@ -41,7 +41,7 @@
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="What’s fit.py doing? The fitting procedure in detail" href="tutorials/using_frank_as_a_module.html" />
+    <link rel="next" title="Generating a UVTable from an MSTable for input to frank" href="tutorials/mstable_to_uvtable.html" />
     <link rel="prev" title="Performing a fit" href="quickstart.html" /> 
 </head>
 
@@ -98,9 +98,12 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html"> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> Tutorials</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/using_frank_as_a_module.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/running_fits_in_loop.html">Running fits in a loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorials/prior_sensitivity_and_uncertainty.html">Assessing a fit’s uncertainty and sensitivity to hyperpriors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers using frank</a></li>
@@ -203,9 +206,12 @@
 use <code class="docutils literal notranslate"><span class="pre">frank</span></code> and interpret the results.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/using_frank_as_a_module.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/running_fits_in_loop.html">Running fits in a loop</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/prior_sensitivity_and_uncertainty.html">Assessing a fit’s uncertainty and sensitivity to hyperpriors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </div>
 </div>
@@ -218,7 +224,7 @@ use <code class="docutils literal notranslate"><span class="pre">frank</span></c
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="tutorials/using_frank_as_a_module.html" class="btn btn-neutral float-right" title="What’s fit.py doing? The fitting procedure in detail" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="tutorials/mstable_to_uvtable.html" class="btn btn-neutral float-right" title="Generating a UVTable from an MSTable for input to frank" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="quickstart.html" class="btn btn-neutral float-left" title="Performing a fit" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -230,9 +236,9 @@ use <code class="docutils literal notranslate"><span class="pre">frank</span></c
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari.
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 11 at 13:34:39 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 13 at 13:44:44 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

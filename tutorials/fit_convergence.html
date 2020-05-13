@@ -1,0 +1,294 @@
+
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing a fit’s convergence &mdash; frank 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Fitting mock data" href="fitting_mock_data.html" />
+    <link rel="prev" title="Testing a fit’s sensitivity to the hyperparameters \(\alpha\) and \(w_{\rm smooth}\)" href="prior_sensitivity.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> frank
+          
+
+          
+            
+            <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the code</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers using frank</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Under the hood</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank"> Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">frank</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+        
+      <li>Testing a fit’s convergence</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="testing-a-fit-s-convergence">
+<h1>Testing a fit’s convergence<a class="headerlink" href="#testing-a-fit-s-convergence" title="Permalink to this headline">¶</a></h1>
+<p>If you’d like an in-depth look at how well a fit has converged,
+the fastest way is to run a fit from the terminal
+(see the <a class="reference external" href="quickstart.rst">Quickstart</a>)
+and set <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> in your <em>.json</em> parameter file.
+This produces a diagnostic figure that, using the fit to the DSHARP observations
+of AS 209 from the Quickstart, looks like this,</p>
+<div class="figure align-left" style="width: 700px">
+<img alt="../_images/AS209_continuum_frank_fit_diag.png" src="../_images/AS209_continuum_frank_fit_diag.png" />
+</div>
+<p><strong>a)</strong> The fitted frank brightness profile over all fit iterations.
+Note how small amplitude, fast oscillations (‘ringing’) that are due to unconstrained
+baselines are damped over the first <span class="math notranslate nohighlight">\(\approx 300\)</span> iterations.
+The fit runs until a convergence criterion on the power spectrum is met at every collocation point,
+<span class="math notranslate nohighlight">\(|(P_{\rm i} - P_{\rm i-1}| \leq {\rm tol} * \pi\)</span>,
+where <span class="math notranslate nohighlight">\(P_{\rm i}\)</span> is the power spectrum at iteration <span class="math notranslate nohighlight">\(i\)</span>
+and <span class="math notranslate nohighlight">\({\rm tol}\)</span> is the tolerance (<code class="code docutils literal notranslate"><span class="pre">iter_tol</span></code>) in your parameter file.
+This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities’ sparse sampling.
+If this stopping condition is not met, the fit runs until <code class="code docutils literal notranslate"><span class="pre">max_iter</span></code> as set in your parameter file. <br>
+<strong>b)</strong> Sequential difference between the last 100 brightness profile iterations.
+So in this case the oscillations remaining at the end of the fit (<span class="math notranslate nohighlight">\(\approx 1250\)</span> iterations) are at parts in <span class="math notranslate nohighlight">\(10^6\)</span>.
+<br>
+<strong>c)</strong> The reconstructed power spectrum over all fit iterations.
+Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first <span class="math notranslate nohighlight">\(\approx 250\)</span> iterations,
+and then we continue iterating to suppress the high power placed at the data’s noisiest, longest baselines. <br>
+<strong>d)</strong> Sequential difference between the last 100 brightness profile iterations.
+Note the y-scale here is small compared to (b),
+and the largest variation is at the baseline where the fit walks off the visibilities. <br>
+<strong>e)</strong> A simple metric for the brightness profile’s convergence, <span class="math notranslate nohighlight">\({\rm max}(|(I_{\rm i} - I_{\rm i-1}|)\ /\ {\rm max}(I_i)\)</span>,
+where <span class="math notranslate nohighlight">\(I_i\)</span> is the brightness profile at iteration <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\({\rm max}\)</span> entails the largest value across all collocation points.
+In this case the largest variation across all collocation points at the last iteration is thus at a part in <span class="math notranslate nohighlight">\(10^6\)</span> of the profile’s peak brightness, consistent with (b).
+We want to ensure this convergence metric isn’t going start increasing again if we iterate for longer, so we wouldn’t have wanted to stop at iteration <span class="math notranslate nohighlight">\(\approx 750\)</span>,
+while by iteration <span class="math notranslate nohighlight">\(\approx 1000\)</span> the trend looks good. frank’s internal stopping criterion for the fit, as described above in (a), is not yet met at
+iteration 1000, as that criterion is conservative to help ensure the power spectrum (and thus the brightness profile) is no longer appreciably changing.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fitting_mock_data.html" class="btn btn-neutral float-right" title="Fitting mock data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prior_sensitivity.html" class="btn btn-neutral float-left" title="Testing a fit’s sensitivity to the hyperparameters \(\alpha\) and \(w_{\rm smooth}\)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
+      <span class="lastupdated">
+        Last updated on 2020 May 13 at 13:44:44 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

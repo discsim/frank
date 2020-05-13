@@ -1,0 +1,327 @@
+
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Testing a fit’s sensitivity to the hyperparameters \(\alpha\) and \(w_{\rm smooth}\) &mdash; frank 0.1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Testing a fit’s convergence" href="fit_convergence.html" />
+    <link rel="prev" title="What’s fit.py doing? The fitting procedure in detail" href="fitting_procedure.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> frank
+          
+
+          
+            
+            <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Using the code</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#context-interpreting-the-model-s-hyperparameters">Context: Interpreting the model’s hyperparameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/xx"> Papers using frank</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Under the hood</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank"> Github</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">frank</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
+        
+      <li>Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth">
+<h1>Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="context-interpreting-the-model-s-hyperparameters">
+<h2>Context: Interpreting the model’s hyperparameters<a class="headerlink" href="#context-interpreting-the-model-s-hyperparameters" title="Permalink to this headline">¶</a></h2>
+<p>The hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> affect the fit’s power spectrum estimate
+(which is itself a prior on the fitted brightness profile).
+In short, <span class="math notranslate nohighlight">\(\alpha\)</span> acts as a signal-to-noise (SNR) threshold for the maximum baseline out to which frank attempts to fit the visibilities,
+with a higher value imposing a more strict SNR threshold (thus fitting less of the noisiest data).
+<span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> sets the strength of smoothing applied to the power spectrum estimate,
+with a higher value more strongly smoothing the power spectrum.</p>
+<p>Note that the model’s other three hyperparameters, <span class="math notranslate nohighlight">\(R_{\rm max}\)</span>, <span class="math notranslate nohighlight">\(N\)</span> and <span class="math notranslate nohighlight">\(p_0\)</span>, have a negligible effect on the fit so long as: <br>
+- <span class="math notranslate nohighlight">\(R_{\max}\)</span> is larger than the disc’s outer edge (a good choice is <span class="math notranslate nohighlight">\(R_{\rm max} \gtrsim 1.5 \times\)</span> the outer edge). <br>
+- <span class="math notranslate nohighlight">\(N\)</span> is large enough to yield a grid of spatial frequency collocation points that extend beyond the longest baseline in the dataset
+(this also ensures the nominal fit resolution in real space is sufficiently sub-beam).
+Typical values are <span class="math notranslate nohighlight">\(N = 100 - 300\)</span>. <br>
+- <span class="math notranslate nohighlight">\(p_0\)</span> is small (<span class="math notranslate nohighlight">\(0 &lt; p_0 \ll 1\)</span>; the default is <span class="math notranslate nohighlight">\(10^{-15}\)</span>).</p>
+<p>See the frank methods paper for an extended discussion of the model’s hyperparameters.</p>
+</div>
+<div class="section" id="performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">
+<h2>Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h2>
+<p>The default value of <span class="math notranslate nohighlight">\(\alpha\)</span> is <span class="math notranslate nohighlight">\(1.05\)</span>, and  we suggest varying it between <span class="math notranslate nohighlight">\(1.00 - 1.30\)</span>.
+(Though note that choosing <span class="math notranslate nohighlight">\(\alpha = 1.00\)</span> will cause frank to fit a dataset’s entire visibility distribution.
+For many real datasets, the binned visibilities become noise-dominated at the longest baselines,
+and fitting these baselines will imprint oscillatory artifacts on the reconstructed brightness profile.)</p>
+<p>The default value of <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> is <span class="math notranslate nohighlight">\(10^{-4}\)</span>,
+and we suggest varying it between <span class="math notranslate nohighlight">\(10^{-4} - 10^{-1}\)</span>.</p>
+<p>The fastest way to assess the fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> in practice is to
+run a fit from the terminal (see the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>),
+and set <code class="code docutils literal notranslate"><span class="pre">alpha</span></code> and/or <code class="code docutils literal notranslate"><span class="pre">wsmooth</span></code> as a list of values in your <em>.json</em> parameter file.
+This will produce a figure that overplots the fits for all combinations of your supplied
+<code class="code docutils literal notranslate"><span class="pre">alpha</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth</span></code>.</p>
+<p>Let’s do this for the DSHARP AS 209 dataset in the Quickstart,
+using the extrema of the ranges we suggest for <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
+That is, we’ll set <code class="code docutils literal notranslate"><span class="pre">alpha=[1.05,</span> <span class="pre">1.30]</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth=[1e-4,</span> <span class="pre">1e-1]</span></code> in our parameter file.
+This will run four fits (for the four combinations of these chosen values),
+generating this figure,</p>
+<div class="figure align-left" style="width: 700px">
+<img alt="../_images/AS209_continuum_frank_hyperprior_sensitivity.png" src="../_images/AS209_continuum_frank_hyperprior_sensitivity.png" />
+</div>
+<p><strong>a)</strong> The fitted frank brightness profile for each combination of hyperparameter values.
+The frank brightness profile for this dataset is evidently only weakly sensitive to our choices for <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
+<br>
+<strong>b)</strong> As in (a), on a log scale.
+<br>
+<strong>c)</strong> The visibility domain fits, and the data in 1 and 50 <span class="math notranslate nohighlight">\(kλ\)</span> bins.
+<br>
+<strong>d)</strong> As in (c), on a log scale, which shows the relatively small variation in how the fits
+handle the data as they become noise-dominated.
+<br>
+<strong>e)</strong> The reconstructed power spectrum - which is the prior on the brightness profile - for each fit.
+Despite the appreciable difference in the power spectrum substructure between the <span class="math notranslate nohighlight">\(\alpha = 1.05\)</span> and <span class="math notranslate nohighlight">\(1.30\)</span> fits,
+the visibility domain fits in (d) and brightness profiles in (a) are quite similar,
+demonstrating the effect of the power spectrum as a prior is weak in this case.</p>
+</div>
+<div class="section" id="always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">
+<h2>Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h2>
+<p>While these sensitivities are weak for datasets such as that shown here,
+a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> can be nontrivial
+for lower resolution or particularly noisy datasets.
+In these cases, the location and amplitude of substructure in the
+brightness profile can vary with <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>,
+so it’s <strong>always</strong> worth checking how the fit changes in the ranges <code class="code docutils literal notranslate"><span class="pre">alpha=[1.05,</span> <span class="pre">1.30]</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth=[1e-4,</span> <span class="pre">1e-1]</span></code>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="fit_convergence.html" class="btn btn-neutral float-right" title="Testing a fit’s convergence" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="fitting_procedure.html" class="btn btn-neutral float-left" title="What’s fit.py doing? The fitting procedure in detail" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
+      <span class="lastupdated">
+        Last updated on 2020 May 13 at 13:44:44 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
