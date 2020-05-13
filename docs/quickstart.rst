@@ -94,13 +94,18 @@ See `this tutorial <tutorials/prior_sensitivity.rst>`_ for an example.
 
 Understand the model's limitations
 ##################################
-The model yields a fitted brightness profile whose uncertainty is typically underestimated.
-For this reason we do not show the uncertainty by default (note its absence in the AS 209 fit above).
+See `this tutorial <tutorials/model_limitations.rst>`_ for an explanation and discussion of the model's limitations,
+briefly summarized here:
 
-Additionally the fit does not  by default prevent regions of negative brightness in the reconstructed profile
-(again note this in the above fit to AS 209)
+- Noise in the visibilities can imprint noise on the reconstructed brightness profile
+(in the above fit to AS 209, this is limited to the regions of flux :math:`\lesssim 10^9` Jy sr:math:`^{-1}`.).
 
-See `this tutorial <tutorials/model_framework.rst>`_ for an explanation and discussion of these limitations.
+- The fit does not  by default prevent regions of negative brightness in the reconstructed profile
+(seen in the AS 209 fit's innermost gap).
+
+- The model yields a fitted brightness profile whose uncertainty is typically underestimated.
+For this reason we do not show the uncertainty by default (note its absence in the above AS 209 fit).
+
 
 Examine the fit's convergence
 #############################

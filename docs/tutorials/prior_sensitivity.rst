@@ -22,7 +22,8 @@ Note that the model's other three hyperparameters, :math:`R_{\rm max}`, :math:`N
 Typical values are :math:`N = 100 - 300`. |br|
 - :math:`p_0` is small (:math:`0 < p_0 \ll 1`; the default is :math:`10^{-15}`).
 
-See `this tutorial <./model_framework.rst>`_ for an extended discussion of the model's hyperparameters.
+.. See `this tutorial <./model_framework.rst>`_ for an extended discussion of the model's hyperparameters.
+See the frank methods paper for an extended discussion of the model's hyperparameters.
 
 Performing multiple fits to vary :math:`\alpha` and :math:`w_{\rm smooth}`
 --------------------------------------------------------------------------

@@ -13,7 +13,7 @@ TUT_DST_DIR := tutorials
 NOTEBOOKS := \
 	fitting_procedure.ipynb \
 	prior_sensitivity.rst \
-	model_framework.rst \
+	model_limitations.rst \
 	mstable_to_uvtable.rst \
 	fit_convergence.rst \
 	AS209_clean_profile.txt \
