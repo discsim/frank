@@ -46,8 +46,8 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 
 
 # Global settings for plots
-cs = ['#a4a4a4', 'k', '#e41a1c', '#377eb8']
-cs2 = ['#e41a1c', '#3498DB', '#984ea3', '#4daf4a']
+cs = ['#a4a4a4', 'k', '#f781bf', '#dede00']
+cs2 = ['#3498DB', '#984ea3', '#4daf4a', '#ff7f00']
 hist_cs = ['#e41a1c', '#999999', '#377eb8', '#ff7f00', '#4daf4a', '#f781bf',
            '#984ea3', '#dede00']
 multifit_cs = ['#e41a1c', '#999999', '#377eb8', '#ff7f00', '#4daf4a', '#f781bf',
