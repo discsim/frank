@@ -4,12 +4,6 @@
 </p>
 -->
 
-**WARNING** Though you've found this repo, the code isn't quite released yet! v1.0 will be concurrent with the arXiv posting of the code's methods paper (we aim for April). Please [email Jeff](mailto:jmj51@ast.cam.ac.uk) if you'd like to use the code before then. Thanks!
-
-<p align="center">
-  <img width = "800" src="https://4.bp.blogspot.com/-pd5FC25Qv1E/TtkaQcZ2wgI/AAAAAAAAB4k/5AMux-W14T4/s1600/34-crop-horz.jpg"/>
-</p>
-
 .. image:: https://circleci.com/xx/frank.svg?branch=master
     :target: https://circleci.com/xx/frank
 
