@@ -618,6 +618,11 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         The axes of the produced figure
     """
 
+    if (type(model['hyperparameters']['alpha']) or \
+    type(model['hyperparameters']['wsmooth'])) is list:
+        raise ValueError("For the bootstrap, both `alpha` and `wsmooth` in your "
+                         "parameter file must be a float, not a list.")
+
     profiles_bootstrap = []
 
     if model['hyperparameters']['nonnegative']:
@@ -637,6 +642,8 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
         if model['hyperparameters']['nonnegative']:
             profiles_bootstrap.append(sol._nonneg)
+        else:
+            profiles_bootstrap.append(sol.mean)
 
     bootstrap_path = model['input_output']['save_prefix'] + '_bootstrap.npz'
 
