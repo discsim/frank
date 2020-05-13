@@ -13,7 +13,7 @@ Perform a fit from the terminal
 
 To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a *.json* parameter file (see below) are needed. A UVTable can be extracted
-with CASA as demonstrated in `this tutorial <tutorials/xx>`_.
+with CASA as demonstrated in `this tutorial <tutorials/mstable_to_uvtable.rst>`_.
 The column format should be `u [\lambda]     v [\lambda]      Re(V) [Jy]     Im(V) [Jy]     Weight [Jy^-2]`.
 
 You can quickly run a fit with the default parameter file, `default_parameters.json` (see below),
@@ -51,14 +51,14 @@ which returns
     :linenos:
     :language: json
 
-That's it! By default frank saves (in `save_dir`): |br|
+That's it! frank saves (in `save_dir`) these fit outputs: |br|
 - the logged messages printed during the fit as `<uvtable_filename>_frank_fit.log`, |br|
 - the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
 - the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
 - the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
-- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and the `iteration_diagnostics` object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
 - UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
-- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and `<uvtable_filename>_frank_fit_diag.png`.
+- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and optionally `<uvtable_filename>_frank_fit_diag.png`.
 
 Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
@@ -76,60 +76,47 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. |br|
 **g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
 On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
-**h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile.
-To see how this the fit to this dataset is sensitive to the prior, check out `this notebook <tutorials/prior_sensitivity_and_uncertainty.ipynb>`_. |br|
+**h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile. |br|
 **i)** Histogram of the binned real component of the visibilities.
 Note how the bin counts drop sharply beyond :math:`\approx 4.5\ {\rm M}\lambda`,
 a consequence of sparser sampling at the longest baselines. |br|
 **j)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.
 
-Test a fit's convergence
-########################
-Once the fit has been performed, it's useful to check its convergence
-(a convergence test on the inferred power spectrum is performed as the fit iterates, while the below additionally examines convergence of the inferred brightness profile).
-If `diag_plot=True` (the default) in the parameter file, frank produces a diagnostic figure to assess this.  Using the fit from the above figure, the diagnostic plot looks like this,
+Test the fit's sensitivity to the hyperparameters
+#################################################
+It's **always** important to check a fit's sensitivity to the hyperparameters :math:`\alpha` and :math:`w_{\rm smooth}`.
+Often the sensitivity is quite weak, but for lower resolution or particularly noisy datasets,
+the location and amplitude of substructure in the brightness profile can be sensitive to :math:`\alpha` and :math:`w_{\rm smooth}`.
+You can quickly check this sensitivity by running and overplotting multiple fits in a single call to frank.
+Just set `alpha` and/or `wsmooth` in the parameter file as a list of values.
+See `this tutorial <tutorials/prior_sensitivity.rst>`_ for an example.
 
-.. figure:: plots/AS209_continuum_frank_fit_diag.png
-   :align: left
-   :figwidth: 700
+Understand the model's limitations
+##################################
+See `this tutorial <tutorials/model_limitations.rst>`_ for an explanation and discussion of the model's limitations,
+briefly summarized here: |br|
+- Noise in the visibilities can imprint noise on the reconstructed brightness profile
+(in the above fit to AS 209, this is limited to the regions of flux :math:`\lesssim 10^9` Jy sr:math:`^{-1}`.). |br|
+- The fit does not  by default prevent regions of negative brightness in the reconstructed profile
+(seen in the AS 209 fit's innermost gap). |br|
+- The model yields a fitted brightness profile whose uncertainty is typically underestimated.
+For this reason we do not show the uncertainty by default (note its absence in the above AS 209 fit).
 
-**a)** The fitted frank brightness profile over all fit iterations.
-Note how small amplitude, fast oscillations ('ringing') that are due to unconstrained
-baselines are damped over the first :math:`\approx 300` iterations.
-The fit runs until a convergence criterion on the power spectrum is met at every collocation point,
-:math:`|(P_{\rm i} - P_{\rm i-1}| <= {\rm tol} * \pi`,
-where :math:`P_{\rm i}` is the power spectrum at iteration :math:`i`
-and :math:`{\rm tol}` is the tolerance (`iter_tol`) in your parameter file.
-This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities' sparse sampling.
-If this stopping condition is not met, the fit runs until `max_iter` as set in your parameter file. |br|
-**b)** Sequential difference between the last 100 brightness profile iterations.
-So in this case the oscillations remaining at the end of the fit (:math:`\approx 1250` iterations) are at parts in :math:`10^6`.
-|br|
-**c)** The reconstructed power spectrum over all fit iterations.
-Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 250` iterations,
-and then we continue iterating to suppress the high power placed at the data's noisiest, longest baselines. |br|
-**d)** Sequential difference between the last 100 brightness profile iterations.
-Note the y-scale here is small compared to (b),
-and the largest variation is at the baseline where the fit walks off the visibilities. |br|
-**e)** A simple metric for the brightness profile's convergence, :math:`{\rm max}(|(I_{\rm i} - I_{\rm i-1}|)\ /\ {\rm max}(I_i)`,
-where :math:`I_i` is the brightness profile at iteration :math:`i` and :math:`{\rm max}` entails the largest value across all collocation points.
-In this case the largest variation across all collocation points at the last iteration is thus at a part in :math:`10^6` of the profile's peak brightness, consistent with (b).
-We want to ensure this convergence metric isn't going start increasing again if we iterate for longer, so we wouldn't have wanted to stop at iteration :math:`\approx 750`,
-while by iteration :math:`\approx 1000` the trend looks good. frank's internal stopping criterion for the fit, as described above in (a), is not yet met at
-iteration 1000, as that criterion is conservative to help ensure the power spectrum (and thus the brightness profile) is no longer appreciably changing.
-
-Perform multiple fits in a loop
-###############################
-You can run multiple fits in a single call to frank (e.g., to check a fit's sensitivity to hyperpriors or run a self-consistent analysis on multiple sources)
-by setting one or more of the parameters in the parameter file as a list.
-See `this tutorial <tutorials/running_fits_in_a_loop.ipynb>`_ for an example.
+Examine the fit's convergence
+#############################
+Once a fit has been performed, it can be useful to check its convergence.
+A convergence test on the inferred power spectrum is performed as the fit iterates,
+but you can additionally examine convergence of the inferred brightness profile by setting
+`diag_plot=True` in your parameter file.
+frank will then produce a diagnostic figure to assess the fit's convergence.
+See `this tutorial <tutorials/fit_convergence.rst>`_ for an example.
 
 Modify the `fit.py` script
 ##########################
 We've run this example using `frank/fit.py`; if you'd like to modify this file, you can get it `here <https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py>`_.
-For an 'under the hood' look at what this script does, see `this tutorial <tutorials/using_frank_as_a_module.ipynb>`_.
-If you'd like a video demonstration of how to run the script (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
+For an 'under the hood' look at what this script does, see `this tutorial <tutorials/fitting_procedure.ipynb>`_.
+If you'd like a video demonstration of the same tutorial (with sound), see `here <https://www.youtube.com/watch?v=xMxsLKQidY4&t=5>`_.
 
 Perform a fit using `frank` as a Python module
 -----------------------------------------------
@@ -158,8 +145,8 @@ First import some basic stuff from frank and load the data
 
 Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
-`FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ will then deproject the visibilities
-and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation points and the code's default ``alpha`` and ``weights_smooth`` hyperprior values.
+`FrankFitter` will then deproject the visibilities
+and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation points and the code's default ``alpha`` and ``weights_smooth`` hyperparameter values.
 
 .. code-block:: python
 
@@ -168,7 +155,7 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the figure above;
+Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
 when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
 
 .. code-block:: python

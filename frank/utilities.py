@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-"""This module has functions that are useful for plotting and analyzing fit
+"""This module has various functions useful for plotting and analyzing fit
 results.
 """
 import logging
@@ -37,6 +37,7 @@ def arcsec_baseline(x):
     -------
     converted : float
         Baseline [lambda] or radial scale [arcsec]
+
     """
 
     converted = 1 / (x / 60 / 60 * np.pi / 180)
@@ -60,6 +61,11 @@ class UVDataBinner(object):
         Weights on the visibility points
     bin_width : float, unit = :math:`\lambda`
         Width of the uv-bins
+
+    Notes
+    -----
+    Uses numpy masked arrays to mask bins with no uv points.
+
     """
 
     def __init__(self, uv, V, weights, bin_width):
@@ -85,19 +91,14 @@ class UVDataBinner(object):
         bin_vis[idx] /= w
 
         # Store the binned data, masking empty bins:
-        self._uv = bin_uv[idx]
-        self._V = bin_vis[idx]
-        self._w = bin_wgt[idx]
-        self._count = bin_n[idx]
+        mask = (bin_n == 0)
+        self._uv = np.ma.masked_where(mask, bin_uv)
+        self._V = np.ma.masked_where(mask, bin_vis)
+        self._w = np.ma.masked_where(mask, bin_wgt)
+        self._count = np.ma.masked_where(mask, bin_n)
 
-        self._uv_left = bins[:-1][idx]
-        self._uv_right = bins[1:][idx]
-
-        # Create a mapping from the complete set of bins to the masked ones
-        bin_number = np.cumsum(idx)-1
-        bin_number[~idx] = -1
-        self._bin_number = bin_number
-
+        self._uv_left = np.ma.masked_where(mask, bins[:-1])
+        self._uv_right = np.ma.masked_where(mask, bins[1:])
 
         # Compute the uncertainty on the means:
         bin_vis_err = np.full(nbins, np.nan, dtype=V.dtype)
@@ -119,9 +120,10 @@ class UVDataBinner(object):
         idx1 = bin_n == 1
         bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
             1 / np.sqrt(bin_wgt[idx1])
+        bin_vis_err[mask] = np.nan
 
         #   4) Store the error
-        self._Verr = bin_vis_err[idx]
+        self._Verr = np.ma.masked_where(mask, bin_vis_err)
 
 
     def determine_uv_bin(self, uv):
@@ -137,7 +139,9 @@ class UVDataBinner(object):
         idx : array,
             Bins that the uv point belongs to. Will be -1 if the bin does not
             exist.
+
         """
+
         bins = self._bins
         nbins = self._nbins
 
@@ -153,9 +157,6 @@ class UVDataBinner(object):
         increment = (uv[~too_high] >= bins[idx_tmp+1]) & (idx_tmp+1 < nbins)
         idx_tmp[increment] += 1
 
-        # Map the bin number back to the masked array
-        idx[~too_high] = self._bin_number[idx_tmp]
-
         return idx
 
     def bin_quantities(self, uv, w, *quantities, bin_counts=False):
@@ -169,7 +170,7 @@ class UVDataBinner(object):
             Weights on the visibility points
         quantities : arrays,
             Quantities evaluated at the uv points to bin.
-        bin_counts : bool, default=False
+        bin_counts : bool, default = False
             Determines whether to count the number of uv points per bin.
 
         Returns
@@ -179,7 +180,9 @@ class UVDataBinner(object):
         bin_counts : array, int64, optional
             If bin_counts=True, then this array contains the number of uv
             points in each bin. Otherwise, it is not returned.
+
         """
+
         bins = self._bins
         nbins = self._nbins
         norm = self._norm
@@ -260,7 +263,6 @@ class UVDataBinner(object):
 
 
 
-
 def normalize_uv(u, v, wle):
     r"""
     Normalize data u and v coordinates by the observing wavelength
@@ -276,6 +278,7 @@ def normalize_uv(u, v, wle):
     -------
     u_normed, v_normed : array, unit = :math:`\lambda`
         u and v coordinates normalized by observing wavelength
+
     """
 
     u_normed = u / wle
@@ -286,7 +289,7 @@ def normalize_uv(u, v, wle):
 
 def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
     r"""
-    Truncate the data to be within a chosen baseline range. 
+    Truncate the data to be within a chosen baseline range.
 
     The cut will be done in deprojected baseline space if the geometry is
     provided.
@@ -315,7 +318,9 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
         Visibilities in the chosen baseline range
     weights_cut : array, unit = Jy^-2
         Weights in the chosen baseline range
+
     """
+
     logging.info('  Cutting data outside of the minimum and maximum baselines'
                  ' of {} and {}'
                  ' klambda'.format(cut_range[0] / 1e3,
@@ -350,43 +355,45 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations (deprojected).
     V : array, unit = Jy
-        Obsersed visibility. If complex, the weights will be computed from the
+        Observed visibility. If complex, the weights will be computed from the
         average of the variance of the real and imaginary components, as in
         CASA's statwt. Otherwise the variance of the real part is used.
-    nbins : int, default=300
+    nbins : int, default = 300
         Number of bins used.
-    log : bool, default=True
+    log : bool, default = True
         If True, the uv bins will be constructed in log space, otherwise linear
         spaced bins will be used.
-    use_median : bool, default=False
+    use_median : bool, default = False
         If True all of the weights will be set to the median of the variance
         estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
 
     Returns
     -------
-    weights : array,
-        Esimtate weight for each uv point.
+    weights : array
+        Estimate of the weight for each uv point.
 
     Notes
     -----
         - This function does not use the original weights in the estimation.
         - Bins with only one uv point do not have a variance estimate. Thus
           the mean of the variance in the two adjacent bins is used instead.
+
     """
+
     logging.info('  Estimating visibility weights.')
 
     q = np.hypot(u,v)
     if log:
         q = np.log(q)
         q -= q.min()
-        
+
     bin_width = (q.max()-q.min()) / nbins
 
     uvBin = UVDataBinner(q, V, np.ones_like(q), bin_width)
 
     if uvBin.bin_counts.max() == 1:
-        raise ValueError("No bin contains more than one uv point, can't "
+        raise ValueError("No bin contains more than one uv point, can't"
                          " estimate the variance. Use fewer bins.")
 
     if np.iscomplex(V.dtype):
@@ -439,6 +446,7 @@ def draw_bootstrap_sample(u, v, vis, weights):
           Bootstrap sampled visibilities
     weights_boot : array, unit = Jy^-2
           Boostrap sampled weights on the visibilities
+
     """
     idxs = np.random.randint(low=0, high=len(u), size=len(u))
 
@@ -472,6 +480,7 @@ def sweep_profile(r, I, axis=0):
         Maximum x-value of the 2D grid
     ymax : float
         Maximum y-value of the 2D grid
+
     """
 
     xmax = ymax = r.max()
@@ -488,3 +497,96 @@ def sweep_profile(r, I, axis=0):
     I2D = interp(r1D.ravel()).reshape(*im_shape)
 
     return I2D, xmax, ymax
+
+
+def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
+                    n_per_sigma=5, axis=0):
+    r"""
+    Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
+    the profile's resolution
+
+    Parameters
+    ----------
+    r : array
+        Radial coordinates at which the 1D brightness profile is defined
+    I : array
+        Brightness values at r
+    disc_i : float, unit = deg
+        Disc inclination
+    disc_pa : float, unit = deg
+        Disc position angle
+    clean_beam : dict
+        Dictionary with beam `bmaj` (FWHM of beam along its major axis) [arcsec],
+        `bmin` (FWHM of beam along its minor axis) [arcsec],
+        `pa` (beam position angle) [deg]
+    n_per_sigma : int, default = 5
+        Number of points per standard deviation of the Gaussian kernel (used
+        for gridding)
+    axis : int, default = 0
+          Axis over which to interpolate the 1D profile
+
+    Returns
+    -------
+    I_smooth : array, shape = (len(r), len(r))
+        Convolved brightness profile I at coordinates r
+
+    """
+
+    from scipy.constants import c
+    from scipy.interpolate import interp1d
+    from scipy.ndimage import gaussian_filter
+
+    # Set up the geometry for the smoothing mesh.
+    # We align the beam with the grid (major axis aligned) and rotate the
+    #  image accordingly
+
+    # Convert beam FWHM to sigma
+    bmaj = clean_beam['bmaj'] / np.sqrt(8 * np.log(2))
+    bmin = clean_beam['bmin'] / np.sqrt(8 * np.log(2))
+
+    PA = (disc_pa - clean_beam['beam_pa']) * np.pi / 180.
+
+    cos_i = np.cos(disc_i) * np.pi/180.
+    cos_PA = np.cos(PA)
+    sin_PA = np.sin(PA)
+
+    # Pixel size in terms of bmin
+    rmax = r.max()
+    dx = bmin / n_per_sigma
+
+    xmax = rmax * (np.abs(cos_i * cos_PA) + np.abs(sin_PA))
+    ymax = rmax * (np.abs(cos_i * sin_PA) + np.abs(cos_PA))
+
+    xmax = int(xmax / dx + 1) * dx
+    ymax = int(ymax / dx + 1) * dx
+
+    x = np.arange(-xmax, xmax + dx / 2, dx)
+    y = np.arange(-ymax, ymax + dx / 2, dx)
+
+    xi, yi = np.meshgrid(x, y)
+
+    xp =  xi * cos_PA + yi * sin_PA
+    yp = -xi * sin_PA + yi * cos_PA
+    xp /= cos_i
+
+    r1D = np.hypot(xi, yi)
+
+    im_shape = r1D.shape + I.shape[1:]
+
+    # Interpolate to grid and apply smoothing
+    interp = interp1d(r, I, bounds_error=False, fill_value=0., axis=axis)
+
+    I2D = interp(r1D.ravel()).reshape(*im_shape)
+    sigma = [float(n_per_sigma), (bmaj / bmin) * n_per_sigma]
+    I2D = gaussian_filter(I2D, sigma, mode='nearest', cval=0.)
+
+    # Now convert back to a 1D profile
+    edges = np.concatenate(([r[0] * r[0] / r[1]], r, [r[-1] * r[-1] / r[-2]]))
+    edges = 0.5 * (edges[:-1] + edges[1:])
+
+    I_smooth = np.empty_like(I)
+    I_smooth = np.histogram(r1D.ravel(), weights=I2D.ravel(), bins=edges)[0]
+    counts = np.maximum(np.histogram(r1D.ravel(), bins=edges)[0], 1)
+    I_smooth /= counts
+
+    return I_smooth

@@ -110,7 +110,7 @@ def save_uvtable(filename, u, v, vis, weights):
 
 def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
-             save_iteration_diag=True, iteration_diag=None,
+             save_iteration_diag=False, iteration_diag=None,
              format='npz',
              ):
     r"""
@@ -149,7 +149,8 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
         File format in which to save the fit's output UVTable(s)
     """
 
-    logging.info('  Saving fit result datafiles')
+    logging.info('  Saving fit results to {}*'.format(prefix))
+
 
     if not format in {'txt', 'dat', 'npz'}:
         raise ValueError("'format' must be 'npz', 'txt', or 'dat'.")

@@ -69,7 +69,7 @@ def test_hankel_gauss():
                                DHT.transform(Iq, q=r, direction='backward'),
                                atol=1e-4, rtol=0, err_msg="Generic Inverse DHT")
 
-    # Finally check the coefficients matrix works
+    # Check the coefficients matrix works
     Hf = DHT.coefficients(direction='forward')
     Hb = DHT.coefficients(direction='backward')
 
@@ -95,12 +95,12 @@ def test_hankel_gauss():
 
 def test_import_data():
     """Check the UVTable import function works for a .txt"""
-    load_uvtable('tutorials/test_datafile.txt')
+    load_uvtable('docs/tutorials/test_datafile.txt')
 
 
 def load_AS209(uv_cut=None):
     """Load data for subsequent tests"""
-    uv_AS209_DSHARP = np.load('tutorials/AS209_continuum.npz')
+    uv_AS209_DSHARP = np.load('docs/tutorials/AS209_continuum.npz')
     geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
                              PA=85.76)
 
@@ -267,11 +267,13 @@ def test_uvbin():
     np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
 
 
-def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
+def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False, 
+                   multifit=False, bootstrap=False):
+    """Check the full pipeline that performs a fit and outputs results"""
 
-    # First job is to build a sub-set of the data that we want to load
-
+    # Build a subset of the data that we'll load during the fit
     AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
     tmp_dir = '/tmp/frank/tests'
@@ -280,16 +282,16 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     uv_table = os.path.join(tmp_dir, 'small_uv.npz')
     save_uvtable(uv_table, u, v, vis, weights)
 
-    # Next build a paramterfile to work with
+    # Build a parameter file
     params = fit.load_default_parameters()
 
     params['input_output']['uvtable_filename'] = uv_table
 
     # Set the model parameters
-    params['hyperpriors']['n'] = 20
-    params['hyperpriors']['rout'] = 1.6
-    params['hyperpriors']['alpha'] = 1.05
-    params['hyperpriors']['wmsooth'] = 1e-2
+    params['hyperparameters']['n'] = 20
+    params['hyperparameters']['rout'] = 1.6
+    params['hyperparameters']['alpha'] = 1.05
+    params['hyperparameters']['wmsooth'] = 1e-2
 
     geom = params['geometry']
     geom['type'] = geometry
@@ -297,24 +299,69 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True):
     geom['inc'] = AS209_geometry.inc
     geom['pa'] = AS209_geometry.PA
     geom['dra'] = AS209_geometry.dRA
-    geom['ddev'] = AS209_geometry.dDec
+    geom['ddec'] = AS209_geometry.dDec
 
-    # Save our new parameterfile:
+    if make_figs:
+        params['plotting']['quick_plot'] = True
+        params['plotting']['full_plot'] = True
+        params['plotting']['diag_plot'] = True
+        params['plotting']['deprojec_plot'] = True
+        params['plotting']['save_figs'] = True
+        params['plotting']['distance'] = 121.
+        params['plotting']['bin_widths'] = [1e5]
+        params['plotting']['iter_plot_range'] = [0, 5]
+        params['analysis']['compare_profile'] = 'docs/tutorials/AS209_clean_profile.txt'
+        params['analysis']['clean_beam'] = {'bmaj'    : 0.03883,
+                                            'bmin'    : 0.03818,
+                                            'beam_pa' : 85.82243
+                                            }
+
+    else:
+        params['plotting']['quick_plot'] = False
+        params['plotting']['full_plot'] = False
+        params['plotting']['diag_plot'] = False
+        params['plotting']['deprojec_plot'] = False
+    
+    if multifit: 
+        params['hyperparameters']['alpha'] = [1.05, 1.30]        
+        
+    if bootstrap:
+        params['analysis']['bootstrap_ntrials'] = 2
+    
+    # Save the new parameter file
     param_file = os.path.join(tmp_dir, 'params.json')
     with open(param_file, 'w') as f:
         json.dump(params, f)
 
-    # Now call the pipeline to perform the fit
+    # Call the pipeline to perform the fit
     fit.main(['-p', param_file])
 
 
 def test_pipeline_full_geom():
+    """Check the full fit pipeline when fitting for the disc's inc, PA, dRA, dDec"""
     _run_pipeline('gaussian', True)
 
 
 def test_pipeline_no_phase():
+    """Check the full fit pipeline when fitting for the disc's inc, PA"""
     _run_pipeline('gaussian', False)
 
 
 def test_pipeline_known_geom():
+    """Check the full fit pipeline when supplying a known disc geometry"""
     _run_pipeline('known')
+
+
+def test_pipeline_figure_generation():
+    """Check the full fit pipeline when producing all figures"""
+    _run_pipeline('known', make_figs=True)
+    
+    
+def test_pipeline_multifit():
+    """Check the full fit pipeline when producing all figures"""
+    _run_pipeline('known', multifit=True)    
+    
+    
+def test_pipeline_bootstrap():
+    """Check the full fit pipeline when producing all figures"""
+    _run_pipeline('known', bootstrap=True)        
