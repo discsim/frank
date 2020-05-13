@@ -1,3 +1,7 @@
+.. |br| raw:: html
+
+    <br>
+
 Examining the model's limitations
 =================================
 
@@ -28,7 +32,7 @@ For this reason we do not show the uncertainty on the reconstructed brightness p
 The model framework produces an estimate of the uncertainty on the brightness profile,
 but this is not reliable because reconstructing the brightness from Fourier data is an ill-posed problem.
 The model's confidence interval does not typically capture a fit's ill-defined systematic uncertainty,
-i.e., that due to sparse sampling in the $(u,v)$ plane.
+i.e., that due to sparse sampling in the (u,v) plane.
 
 For example if the visibility amplitude were to spike at any point beyond the data's maximum baseline,
 this would imprint high amplitude variations in the brightness profile on small spatial scales.
@@ -38,9 +42,9 @@ While it is reasonable to assume that for real disc brightness profiles the visi
 it is not straightforward to generically extrapolate the slope of this decline beyond a dataset's longest baseline;
 a robust error estimate is thus difficult to obtain.
 
-Two effective ways to (at least coarsely) assess a brightness profile's uncertainty are:
-- vary the model hyperparameters (see `this tutorial <./prior_sensitivity.rst>`_)
-and examine the variation in the brightness across these different fits,
+Two effective ways to (at least coarsely) assess a brightness profile's uncertainty are: |br|
+- Vary the model hyperparameters (see `this tutorial <./prior_sensitivity.rst>`_)
+and examine the variation in the brightness across these different fits. |br|
 - Perform the fit for a given dataset by first truncating the data at increasingly shorter maximum baseline
 (say, in steps of :math:`100\ {\rm k}\lambda`).
 The variation in a given feature in the brightness profile as the maximum baseline in the dataset *increases*
