@@ -14,6 +14,15 @@
   <a href="https://discsim.github.io/frank/">
     <img src="https://img.shields.io/badge/docs-Read%20em!-blue.svg?style=flat"/>
 
+  <!--<br/>
+  <a href="https://www.gnu.org/licenses/lgpl-3.0">
+      <img src="https://img.shields.io/badge/paper-arXiv-blue.svg">
+  </a>
+
+  <a xx zenodo-generated DOI badge xx>
+  </a>
+  -->  
+
   <br/>
   <a href="https://circleci.com/gh/discsim/frank">
       <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
