@@ -39,10 +39,14 @@ License & attribution
 Frankenstein is free software licensed under the GPLv3 License.
 For more details see the `LICENSE <https://github.com/discsim/frank/blob/master/LICENSE.txt>`_.
 
-If you use frank for your research, please cite Jennings, Booth, Tazzari et al. (2020) MNRAS **xx** xx [`MNRAS <xx>`_] [`arXiv <xx>`_] [`ADS <xx>`_].
-The `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_ is  ::
+If you use frank for your research, please cite Jennings, Booth, Tazzari et al. (2020) MNRAS (accepted).
+arXiv, ADS, MNRAS, Zenodo links coming soon!
 
-    @misc{}xx update ADS bibtex entry xx
+.. **xx** xx [`MNRAS <xx>`_] [`arXiv <xx>`_] [`ADS <xx>`_].
+
+.. The `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_ is  ::
+
+..    @misc{}xx update ADS bibtex entry xx
 
 Authors
 -------

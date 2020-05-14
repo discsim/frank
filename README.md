@@ -18,7 +18,7 @@
   <a href="https://circleci.com/gh/discsim/frank">
       <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
   </a>    
-  
+
   <a href="https://discsim.github.io/frank/coverage/index.html">
       <img src="https://discsim.github.io/frank/coverage/badge.svg">
   </a>   
@@ -46,12 +46,12 @@ The [docs](https://discsim.github.io/frank/) have it all.
 
 Attribution
 -----------
-If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020) [[arXiv]](https://arxiv.org/xx)
-<!--MNRAS **xx** xx [[MNRAS]](xx) [[arXiv]](xx) [[ADS]](xx):
--->
+If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020, accepted). arXiv, ADS, MNRAS, Zenodo links coming soon!
+<!--[[arXiv]](https://arxiv.org/xx) MNRAS **xx** xx [[MNRAS]](xx) [[arXiv]](xx) [[ADS]](xx):
 ```
 xx
 ```
+-->
 
 Authors
 -------
