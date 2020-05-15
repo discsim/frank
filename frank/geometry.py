@@ -565,7 +565,7 @@ class FitGeometryFourierBessel(SourceGeometry):
         if self._phase_centre:
             dRA, dDec = self._phase_centre
 
-        inc, PA = _fix_inc_and_PA_ranges(inc, PA)
+        inc, pa = _fix_inc_and_PA_ranges(inc, pa)
 
         self._inc = inc
         self._PA = pa
