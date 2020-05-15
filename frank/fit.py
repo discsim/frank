@@ -297,32 +297,30 @@ def determine_geometry(u, v, vis, weights, model):
     elif model['geometry']['type'] in ('gaussian', 'nonparametric'):
         t1 = time.time()
 
-        if model['geometry']['type'] == 'gaussian':
-            if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryGaussian()
-
-            else:
-                geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
-                                                                  model['geometry']['ddec']))
-
-            geom.fit(u, v, vis, weights)
-
+        if model['geometry']['initial_guess']:
+            guess = [model['geometry']['inc'], model['geometry']['pa'],
+                     model['geometry']['dra'], model['geometry']['ddec']]
         else:
-            if model['geometry']['initial_guess']:
-                guess = [model['geometry']['inc'], model['geometry']['pa'],
-                         model['geometry']['dra'], model['geometry']['ddec']]
+            guess = None
 
-            if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20)
+        if model['geometry']['fit_phase_offset']:
+            phase_centre = (model['geometry']['dra'],
+                            model['geometry']['ddec'])
+        else:
+            phase_centre = None
 
-            else:
-                geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20,
-                                                         phase_centre=(model['geometry']['dra'],
-                                                                       model['geometry']['ddec']))
+            
+        if model['geometry']['type'] == 'gaussian':
+            geom = geometry.FitGeometryGaussian(
+                phase_centre=phase_centre, guess=guess, 
+            )
+        else:
+            geom = geometry.FitGeometryFourierBessel(
+                model['hyperparameters']['rout'], N=20,
+                phase_centre=phase_centre, guess=guess
+            )
 
-            geom.fit(u, v, vis, weights, guess)
+        geom.fit(u, v, vis, weights)
 
         logging.info('    Time taken for geometry %.1f sec' %
                      (time.time() - t1))
