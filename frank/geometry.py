@@ -33,8 +33,8 @@ from frank.radial_fitters import FourierBesselFitter
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     r"""
     Apply a phase shift to the visibilities.
-    
-    This is equivalent to moving the source in the image plane by the 
+
+    This is equivalent to moving the source in the image plane by the
     vector (dRA, dDec).
 
     Parameters
@@ -52,8 +52,8 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
         Phase shift in declination.
         NOTE: The sign convention is xx
     inverse : bool, default=False
-        If True, the phase shift is reversed (equivalent to 
-        flipping the signs of dRA and dDec). 
+        If True, the phase shift is reversed (equivalent to
+        flipping the signs of dRA and dDec).
     Returns
     -------
     shifted_vis : array of real, size = N, unit = Jy
@@ -438,17 +438,17 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
 
 class FitGeometryFourierBessel(SourceGeometry):
     """
-    Determine the disc geometry by fitting a non-parametric brightness 
-    profile in visibility space. 
+    Determine the disc geometry by fitting a non-parametric brightness
+    profile in visibility space.
 
     The best fit is obtained by finding the geometry that minimizes
-    the weighted Chi^2 squared of the visibility fit.
+    the weighted chi^2 of the visibility fit.
 
     The brightness profile is modelled using the FourierBesselFitter,
     which is equivalent to a FrankFitter fit without the Gaussian
-    Process prior. For this reason, a small number of bins is 
-    recommended. 
-    
+    Process prior. For this reason, a small number of bins is
+    recommended for fit stability.
+
 
     Parameters
     ----------
@@ -464,38 +464,41 @@ class FitGeometryFourierBessel(SourceGeometry):
     verbose : bool, default=False
         Determines whether to print the iteration progress.
     """
-    def __init__(self, Rmax, N,phase_centre=None, verbose=False):
+    def __init__(self, Rmax, N, phase_centre=None, verbose=False):
         self._N = N
         self._R = Rmax
         self._phase_centre = phase_centre
-        
+
         self._verbose = verbose
-        
+
+        self._counter = 0
+
     def _residual(self, params, uvdata=None):
         inc, pa, dRA, dDec = params
         if self._phase_centre is not None:
             dRA, dDec = self._phase_centre
-        
+
         geom = FixedGeometry(inc, pa, dRA, dDec)
-        
-        
-        FBF = FourierBesselFitter(self._R, self._N, geom)
-        
-        u,v,vis, w_half = uvdata
-        
+
+
+        FBF = FourierBesselFitter(self._R, self._N, geom, geom_fit=True)
+
+        u, v, vis, w_half = uvdata
+
         sol = FBF.fit(u,v,vis, w_half*w_half)
-        
+
         error = w_half*(sol.predict(u,v) - vis)
-        
+
         if self._verbose:
             Chi2 = 0.5 * np.sum(error.real**2 + error.imag**2) / len(w_half)
-            print('\rChi^2={:.8f}, inc={:.3f} PA={:.3f} dRA={:.5f} dDec={:.5f}'
-                  ''.format(Chi2, inc, pa, dRA, dDec),
+            print('\n      FitGeometryFourierBessel: Iteration {}, chi^2={:.8f}, inc={:.3f} PA={:.3f} dRA={:.5f} dDec={:.5f}'
+                  ''.format(self._counter, Chi2, inc, pa, dRA, dDec),
                   end='', flush=True)
-        
+            self._counter += 1
+
         return np.concatenate([error.real, error.imag])
-    
-    def fit(self, u,v,vis, w):
+
+    def fit(self, u, v, vis, w, guess=None):
         r"""
         Determine geometry using the provided uv-data
 
@@ -509,26 +512,34 @@ class FitGeometryFourierBessel(SourceGeometry):
             Complex visibilites
         weights : array of real, size = N, unit = Jy
             Weights on the visibilities
+        guess : list of len(4), default = None
+            Initial guess for source's the inclination [deg], position angle [deg],
+            right ascension offset [arcsec], and declination offset [arcsec]
         """
-        uvdata= [u,v,vis, w**0.5]
+        if self._phase_centre:
+            logging.info('    Fitting nonparametric form to determine geometry'
+                         ' (your supplied phase center will be applied at the '
+                         ' end of the geometry fitting routine)')
 
-        guess = [10., 10., 0., 0.]
+        else:
+            logging.info('    Fitting nonparametric form to determine geometry')
+
+        uvdata= [u, v, vis, w**0.5]
+
+        if guess is None:
+            guess = [10., 10., 0., 0.]
         result = least_squares(self._residual, guess, kwargs={'uvdata':uvdata},
                                method='lm')
-        if self._verbose:
-            print()
-        
+
         if not result.success:
             raise RuntimeError("FitGeometryFourierBessel failed to converge")
-            
+
         inc, pa, dRA, dDec = result.x
         if self._phase_centre:
             dRA, dDec = self._phase_centre
-            
-        
+
+
         self._inc = inc
         self._PA = pa
         self._dRA = dRA
         self._dDec = dDec
-            
-        
