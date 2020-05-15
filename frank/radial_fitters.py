@@ -447,10 +447,13 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
+    geom_fit : bool, default = False
+        Whether FourierBesselFitter is being called to fit the disc geometry
+        (see geometry.FitGeometryFourierBessel)
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5
+                 block_size=10 ** 5, geom_fit=False
                  ):
 
         Rmax /= rad_to_arcsec
@@ -461,6 +464,8 @@ class FourierBesselFitter(object):
 
         self._blocking = block_data
         self._block_size = block_size
+        
+        self._geom_fit = geom_fit
 
     def _check_uv_range(self, uv):
         """Don't check the bounds for FourierBesselFitterr"""
@@ -475,7 +480,8 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
-        logging.info('    Building visibility matrices M and j')
+        if not self._geom_fit:
+            logging.info('    Building visibility matrices M and j')
 
         # Deproject the visibilities
         u, v, V = self._geometry.apply_correction(u, v, V)
@@ -544,8 +550,9 @@ class FourierBesselFitter(object):
         sol : _HankelRegressor
             Least-squares Fourier-Bessel series fit
         """
-        logging.info('  Fitting for brightness profile using'
-                     ' FourierBesselFitter')
+        if not self._geom_fit:
+            logging.info('  Fitting for brightness profile using'
+                        ' FourierBesselFitter')
 
         self._geometry.fit(u, v, V, weights)
 
