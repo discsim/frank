@@ -29,6 +29,13 @@ import logging
 from frank.constants import rad_to_arcsec, deg_to_rad
 from frank.radial_fitters import FourierBesselFitter
 
+def _fix_inc_and_PA_ranges(inc, PA):
+    """Make sure the inclination and PA are in the ranges [0,90] and [0-180]."""
+    inc = inc % 180
+    PA = PA % 180
+    if inc > 90:
+        inc = 180 - inc
+    return inc, PA
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     r"""
@@ -344,6 +351,8 @@ class FitGeometryGaussian(SourceGeometry):
             u, v, V, weights, guess=self._guess,
             phase_centre=self._phase_centre)
 
+        inc, PA = _fix_inc_and_PA_ranges(inc, PA)
+
         self._inc = inc
         self._PA = PA
         self._dRA = dRA
@@ -558,6 +567,7 @@ class FitGeometryFourierBessel(SourceGeometry):
         if self._phase_centre:
             dRA, dDec = self._phase_centre
 
+        inc, PA = _fix_inc_and_PA_ranges(inc, PA)
 
         self._inc = inc
         self._PA = pa
