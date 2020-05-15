@@ -218,7 +218,7 @@ def test_fit_geometry_inside():
     geom = sol.geometry
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [86.46568992560152, -34.5071920284988,
+                               [86.46568992560152, 34.5071920284988,
                                 0.20818634201418384, -2.0988159662202714],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
