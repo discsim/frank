@@ -18,7 +18,7 @@
   "geometry" : {
     "type"             : "How the geometry is determined: 'known' if user-supplied, 'gaussian' to fit it with a gaussian, 'nonparametric' to fit it nonparametrically",
     "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
-    "initial_guess"    : "Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (only used if `type` is `nonparametric`)",
+    "initial_guess"    : "Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (only used if `type` is 'gaussian' or 'nonparametric')",
     "inc"              : "Inclination, unit=[deg]",
     "pa"               : "Position angle, unit=[deg]",
     "dra"              : "Delta (offset from 0) right ascension, unit=[arcsec]",

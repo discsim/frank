@@ -297,32 +297,36 @@ def determine_geometry(u, v, vis, weights, model):
     elif model['geometry']['type'] in ('gaussian', 'nonparametric'):
         t1 = time.time()
 
+        if model['geometry']['initial_guess']:
+            guess = [model['geometry']['inc'], model['geometry']['pa'],
+                     model['geometry']['dra'], model['geometry']['ddec']]
+        else:
+            guess = None
+            
         if model['geometry']['type'] == 'gaussian':
             if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryGaussian()
+                geom = geometry.FitGeometryGaussian(guess=guess)
 
             else:
                 geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
-                                                                  model['geometry']['ddec']))
+                                                                  model['geometry']['ddec']),
+                                                    guess=guess)
 
             geom.fit(u, v, vis, weights)
 
         else:
-            if model['geometry']['initial_guess']:
-                guess = [model['geometry']['inc'], model['geometry']['pa'],
-                         model['geometry']['dra'], model['geometry']['ddec']]
-
             if model['geometry']['fit_phase_offset']:
                 geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20)
+                                                         N=20, guess=guess)
 
             else:
                 geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
                                                          N=20,
                                                          phase_centre=(model['geometry']['dra'],
-                                                                       model['geometry']['ddec']))
+                                                                       model['geometry']['ddec']),
+                                                         guess=guess)
 
-            geom.fit(u, v, vis, weights, guess)
+            geom.fit(u, v, vis, weights)
 
         logging.info('    Time taken for geometry %.1f sec' %
                      (time.time() - t1))
