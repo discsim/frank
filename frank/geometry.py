@@ -296,8 +296,6 @@ class FitGeometryGaussian(SourceGeometry):
     guess : list of len(4), default = None
         Initial guess for the source's inclination [deg], position angle [deg],
         right ascension offset [arcsec], declination offset [arcsec].
-        Guesses for the Gaussian's normalization and its scaling are both
-        forced as 1.0
 
     Notes
     -----
@@ -374,9 +372,6 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
     phase_centre: [dRA, dDec], optional, unit = arcsec
         The phase centre offsets dRA and dDec.
         If not provided, these will be fit for
-   guess : list of len(4), default = None
-        Initial guess for source's the inclination [deg], position angle [deg],
-        right ascension offset [arcsec], and declination offset [arcsec]
 
     Returns
     -------
