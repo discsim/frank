@@ -300,7 +300,6 @@ def determine_geometry(u, v, vis, weights, model):
         if model['geometry']['initial_guess']:
             guess = [model['geometry']['inc'], model['geometry']['pa'],
                      model['geometry']['dra'], model['geometry']['ddec']]
-<<<<<<< Updated upstream
         else:
             guess = None
 
@@ -310,40 +309,16 @@ def determine_geometry(u, v, vis, weights, model):
         else:
             phase_centre = None
 
-            
+
         if model['geometry']['type'] == 'gaussian':
             geom = geometry.FitGeometryGaussian(
-                phase_centre=phase_centre, guess=guess, 
+                phase_centre=phase_centre, guess=guess,
             )
         else:
             geom = geometry.FitGeometryFourierBessel(
                 model['hyperparameters']['rout'], N=20,
                 phase_centre=phase_centre, guess=guess
             )
-=======
-        else: guess = None
-
-        if model['geometry']['type'] == 'gaussian':
-            if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryGaussian(guess=guess)
-
-            else:
-                geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
-                                                                  model['geometry']['ddec']),
-                                                    guess=guess)
-
-        else:
-            if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20, guess=guess, verbose=True)
-
-            else:
-                geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20,
-                                                         phase_centre=(model['geometry']['dra'],
-                                                                       model['geometry']['ddec']),
-                                                         guess=guess, verbose=True)
->>>>>>> Stashed changes
 
         geom.fit(u, v, vis, weights)
 
