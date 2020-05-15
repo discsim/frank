@@ -294,15 +294,10 @@ class FitGeometryGaussian(SourceGeometry):
          phase_centre = None, the phase centre is fit for. Else the phase
          centre should be provided as a tuple
     guess : list of len(4), default = None
-<<<<<<< Updated upstream
-        Initial guess for source's the inclination [deg], position angle [deg],
-        right ascension offset [arcsec], and declination offset [arcsec]
-=======
         Initial guess for the source's inclination [deg], position angle [deg],
         right ascension offset [arcsec], declination offset [arcsec].
         Guesses for the Gaussian's normalization and its scaling are both
         forced as 1.0
->>>>>>> Stashed changes
 
     Notes
     -----
@@ -348,13 +343,8 @@ class FitGeometryGaussian(SourceGeometry):
             logging.info('    Fitting Gaussian to determine geometry')
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
-<<<<<<< Updated upstream
-            u, v, V, weights,
-            phase_centre=self._phase_centre, guess=self._guess)
-=======
             u, v, V, weights, guess=self._guess,
             phase_centre=self._phase_centre)
->>>>>>> Stashed changes
 
         self._inc = inc
         self._PA = PA
@@ -362,11 +352,7 @@ class FitGeometryGaussian(SourceGeometry):
         self._dDec = dDec
 
 
-<<<<<<< Updated upstream
-def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None, guess=None):
-=======
 def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
->>>>>>> Stashed changes
     r"""
     Estimate the source geometry by fitting a Gaussian in uv-space
 
@@ -459,13 +445,6 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
 
         return jac.T
 
-<<<<<<< Updated upstream
-    if guess is None:
-        guess = [0.0, 0.0, 0.1, 0.1, 1.0, 1.0]
-    else:
-        guess = [guess[2], guess[3], guess[0], guess[1], 1.0, 1.0]
-=======
->>>>>>> Stashed changes
 
     res = least_squares(_gauss_fun, guess,
                         jac=_gauss_jac, method='lm')
