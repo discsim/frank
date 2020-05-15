@@ -44,8 +44,9 @@ jobs:
           name: run tests
           command: |
             . venv/bin/activate
-            py.test frank/tests.py -rXs
-      - store_artifacts:
+            mkdir -p test-reports
+            py.test --junitxml=test-reports/junit.xml frank/tests.py
+      - store_test_results:
           path: test-reports
           destination: test-reports
 
@@ -63,12 +64,22 @@ jobs:
             pip install jupyter_client
             pip install ipykernel
             python3 -m ipykernel install --user
-            pip install .[docs-build]
+            pip install .[docs-build] .[test]
       - run:
           name: Build docs
           command: |
             . venv/bin/activate
             cd docs/ && make html
+      - run:
+          name: Coverage
+          command: |
+            . venv/bin/activate
+            coverage run --source=frank -m pytest frank/tests.py
+            coverage report
+            mkdir -p docs/_build/html/coverage
+            coverage html -d docs/_build/html/coverage
+            coverage-badge -f -o docs/_build/html/coverage/badge.svg
+
       - persist_to_workspace:
           root: docs/_build
           paths: html

@@ -1,26 +1,34 @@
-<!---
 <p align="center">
   <img width = "800" src="https://github.com/discsim/frank/blob/master/docs/images/day_off.png?raw=true"/>
 </p>
--->
-
-**WARNING** Though you've found this repo, the code isn't quite released yet! v1.0 will be concurrent with the arXiv posting of the code's methods paper (we aim for April). Please [email Jeff](mailto:jmj51@ast.cam.ac.uk) if you'd like to use the code before then. Thanks!
 
 <p align="center">
-  <img width = "800" src="https://4.bp.blogspot.com/-pd5FC25Qv1E/TtkaQcZ2wgI/AAAAAAAAB4k/5AMux-W14T4/s1600/34-crop-horz.jpg"/>
+  <a href="https://github.com/discsim/frank/releases">
+      <img src="https://img.shields.io/github/release/discsim/frank/all.svg">
+  </a>
+
+  <a href="https://pypi.python.org/pypi/frank">
+      <img src="https://img.shields.io/pypi/v/frank.svg">
+  </a>
+
+  <a href="https://discsim.github.io/frank/">
+    <img src="https://img.shields.io/badge/docs-Read%20em!-blue.svg?style=flat"/>
+
+  <br/>
+  <a href="https://circleci.com/gh/discsim/frank">
+      <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
+  </a>    
+  
+  <a href="https://discsim.github.io/frank/coverage/index.html">
+      <img src="https://discsim.github.io/frank/coverage/badge.svg">
+  </a>   
+
+  <br/>
+  <a href="https://www.gnu.org/licenses/lgpl-3.0">
+      <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
+      [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">
+  </a>      
 </p>
-
-.. image:: https://circleci.com/xx/frank.svg?branch=master
-    :target: https://circleci.com/xx/frank
-
-.. image:: https://img.shields.io/pypi/v/frank.svg
-    :target: https://pypi.python.org/pypi/frank
-
-.. image:: https://img.shields.io/github/release/discsim/frank/all.svg
-    :target: https://github.com/discsim/frank/releases
-
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![DOI]()]()
 
 Frankenstein (**frank**) is a library that fits the 1D radial brightness profile of an interferometric source given a set of visibilities. It uses a Gaussian process that performs the fit in <1 minute for a typical protoplanetary disc continuum dataset.
 
@@ -38,7 +46,9 @@ The [docs](https://discsim.github.io/frank/) have it all.
 
 Attribution
 -----------
-If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020) MNRAS **xx** xx [[MNRAS]](xx) [[arXiv]](xx) [[ADS]](xx):
+If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020) [[arXiv]](https://arxiv.org/xx)
+<!--MNRAS **xx** xx [[MNRAS]](xx) [[arXiv]](xx) [[ADS]](xx):
+-->
 ```
 xx
 ```
