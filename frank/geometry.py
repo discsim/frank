@@ -486,7 +486,7 @@ class FitGeometryFourierBessel(SourceGeometry):
         geom = FixedGeometry(inc, pa, dRA, dDec)
 
 
-        FBF = FourierBesselFitter(self._R, self._N, geom, geom_fit=True)
+        FBF = FourierBesselFitter(self._R, self._N, geom, verbose=False)
 
         u, v, vis, w_half = uvdata
 
