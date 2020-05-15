@@ -83,6 +83,11 @@ a consequence of sparser sampling at the longest baselines. |br|
 **j)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.
 
+Fit for the source geometry
+###########################
+frank fits for the source geometry to deproject the visibilities before fitting for the brightness profile.
+See `here <tutorials/fitting_procedure.ipynb#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities>`_ for approaches to the deprojection.
+
 Test the fit's sensitivity to the hyperparameters
 #################################################
 It's **always** important to check a fit's sensitivity to the hyperparameters :math:`\alpha` and :math:`w_{\rm smooth}`.
