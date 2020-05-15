@@ -461,17 +461,22 @@ class FitGeometryFourierBessel(SourceGeometry):
         Determine whether to fit for the source's phase centre. If
         phase_centre = None, the phase centre is fit for. Else the phase
         centre should be provided as a tuple
+    guess : list of len(4), default = None
+        Initial guess for source's the inclination [deg], position angle [deg],
+        right ascension offset [arcsec], and declination offset [arcsec]
     verbose : bool, default=False
         Determines whether to print the iteration progress.
     """
-    def __init__(self, Rmax, N, phase_centre=None, verbose=False):
+    def __init__(self, Rmax, N, phase_centre=None, guess=None, verbose=False):
         self._N = N
         self._R = Rmax
         self._phase_centre = phase_centre
 
-        self._verbose = verbose
+        if guess is None:
+            guess = [10., 10., 0., 0.]
+        self._guess = guess
 
-        self._counter = 0
+        self._verbose = verbose
 
     def _residual(self, params, uvdata=None):
         inc, pa, dRA, dDec = params
@@ -498,7 +503,7 @@ class FitGeometryFourierBessel(SourceGeometry):
 
         return np.concatenate([error.real, error.imag])
 
-    def fit(self, u, v, vis, w, guess=None):
+    def fit(self, u, v, vis, w):
         r"""
         Determine geometry using the provided uv-data
 
@@ -512,9 +517,6 @@ class FitGeometryFourierBessel(SourceGeometry):
             Complex visibilites
         weights : array of real, size = N, unit = Jy
             Weights on the visibilities
-        guess : list of len(4), default = None
-            Initial guess for source's the inclination [deg], position angle [deg],
-            right ascension offset [arcsec], and declination offset [arcsec]
         """
         if self._phase_centre:
             logging.info('    Fitting nonparametric form to determine geometry'
@@ -526,9 +528,9 @@ class FitGeometryFourierBessel(SourceGeometry):
 
         uvdata= [u, v, vis, w**0.5]
 
-        if guess is None:
-            guess = [10., 10., 0., 0.]
-        result = least_squares(self._residual, guess, kwargs={'uvdata':uvdata},
+        self._counter = 0
+
+        result = least_squares(self._residual, self._guess, kwargs={'uvdata':uvdata},
                                method='lm')
 
         if not result.success:
