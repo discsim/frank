@@ -302,31 +302,25 @@ def determine_geometry(u, v, vis, weights, model):
                      model['geometry']['dra'], model['geometry']['ddec']]
         else:
             guess = None
+
+        if model['geometry']['fit_phase_offset']:
+            phase_centre = (model['geometry']['dra'],
+                            model['geometry']['ddec'])
+        else:
+            phase_centre = None
+
             
         if model['geometry']['type'] == 'gaussian':
-            if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryGaussian(guess=guess)
-
-            else:
-                geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
-                                                                  model['geometry']['ddec']),
-                                                    guess=guess)
-
-            geom.fit(u, v, vis, weights)
-
+            geom = geometry.FitGeometryGaussian(
+                phase_centre=phase_centre, guess=guess, 
+            )
         else:
-            if model['geometry']['fit_phase_offset']:
-                geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20, guess=guess)
+            geom = geometry.FitGeometryFourierBessel(
+                model['hyperparameters']['rout'], N=20,
+                phase_centre=phase_centre, guess=guess
+            )
 
-            else:
-                geom = geometry.FitGeometryFourierBessel(model['hyperparameters']['rout'],
-                                                         N=20,
-                                                         phase_centre=(model['geometry']['dra'],
-                                                                       model['geometry']['ddec']),
-                                                         guess=guess)
-
-            geom.fit(u, v, vis, weights)
+        geom.fit(u, v, vis, weights)
 
         logging.info('    Time taken for geometry %.1f sec' %
                      (time.time() - t1))
