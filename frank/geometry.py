@@ -54,10 +54,8 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
         Complex visibilites
     dRA : float, unit = arcsec
         Phase shift in right ascenion.
-        NOTE: The sign convention is xx
     dDec : float, unit = arcsec
         Phase shift in declination.
-        NOTE: The sign convention is xx
     inverse : bool, default=False
         If True, the phase shift is reversed (equivalent to
         flipping the signs of dRA and dDec).
