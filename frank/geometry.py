@@ -293,6 +293,9 @@ class FitGeometryGaussian(SourceGeometry):
          Determine whether to fit for the source's phase centre. If
          phase_centre = None, the phase centre is fit for. Else the phase
          centre should be provided as a tuple
+    guess : list of len(4), default = None
+        Initial guess for source's the inclination [deg], position angle [deg],
+        right ascension offset [arcsec], and declination offset [arcsec]
 
     Notes
     -----
@@ -300,10 +303,11 @@ class FitGeometryGaussian(SourceGeometry):
     from the phase centre.
     """
 
-    def __init__(self, phase_centre=None):
+    def __init__(self, phase_centre=None, guess=None):
         super(FitGeometryGaussian, self).__init__()
 
         self._phase_centre = phase_centre
+        self._guess = guess
 
     def fit(self, u, v, V, weights):
         r"""
@@ -328,7 +332,8 @@ class FitGeometryGaussian(SourceGeometry):
             logging.info('    Fitting Gaussian to determine geometry')
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
-            u, v, V, weights, phase_centre=self._phase_centre)
+            u, v, V, weights,
+            phase_centre=self._phase_centre, guess=self._guess)
 
         self._inc = inc
         self._PA = PA
@@ -336,7 +341,7 @@ class FitGeometryGaussian(SourceGeometry):
         self._dDec = dDec
 
 
-def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
+def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None, guess=None):
     r"""
     Estimate the source geometry by fitting a Gaussian in uv-space
 
@@ -353,6 +358,9 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     phase_centre: [dRA, dDec], optional, unit = arcsec
         The phase centre offsets dRA and dDec.
         If not provided, these will be fit for
+   guess : list of len(4), default = None
+        Initial guess for source's the inclination [deg], position angle [deg],
+        right ascension offset [arcsec], and declination offset [arcsec]
 
     Returns
     -------
@@ -421,9 +429,12 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
 
         return jac.T
 
-    res = least_squares(_gauss_fun, [0.0, 0.0,
-                                     0.1, 0.1,
-                                     1.0, 1.0],
+    if guess is None:
+        guess = [0.0, 0.0, 0.1, 0.1, 1.0, 1.0]
+    else:
+        guess = [guess[2], guess[3], guess[0], guess[1], 1.0, 1.0]
+
+    res = least_squares(_gauss_fun, guess,
                         jac=_gauss_jac, method='lm')
 
     dRA, dDec, inc, PA, _, _ = res.x
