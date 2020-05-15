@@ -334,7 +334,7 @@ def determine_geometry(u, v, vis, weights, model):
 
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
                  '           dRA  = {:.2e} mas,\n'
-                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
+                 '           dDec = {:.2e} mas'.format(abs(geom.inc), geom.PA,
                                                        geom.dRA*1e3,
                                                        geom.dDec*1e3))
 
