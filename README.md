@@ -55,7 +55,7 @@ The [docs](https://discsim.github.io/frank/) have it all.
 
 Attribution
 -----------
-If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020, accepted).
+If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. (2020, accepted)\ 
 [[MNRAS]](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b) [[arXiv]](xx) [[ADS]](xx) [[Zenodo]](xx):
 ```
 @article{10.1093/mnras/staa1365,
@@ -83,7 +83,7 @@ Authors
 - [Marco 'It's Alive!!!' Tazzari (University of Cambridge)](https://github.com/mtazzari)
 
 ### Contact ###
-Interested in collaborating to improve, extend or apply frank?
+Interested in collaborating to improve, extend or apply **frank**?
 Or just have questions about the code that don't require submitting an issue?
 [Email Jeff!](mailto:jmj51@ast.cam.ac.uk)
 
