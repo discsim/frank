@@ -7,9 +7,9 @@
    :align: left
    :figwidth: 700
 
- .. |br| raw:: html
+.. |br| raw:: html
 
-     <br>
+   <br>
 
 Documentation
 =============
@@ -43,8 +43,7 @@ License & attribution
 Frankenstein is free software licensed under the GPLv3 License.
 For more details see the `LICENSE <https://github.com/discsim/frank/blob/master/LICENSE.txt>`_.
 
-If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted) |br|
-`[MNRAS] <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_ [arXiv] [ADS] [Zenodo]
+If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted) `[MNRAS] <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_ [arXiv] [ADS] [Zenodo]
 
 .. The `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_ is  ::
 
