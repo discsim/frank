@@ -48,7 +48,6 @@ Get the code
 pip install frank
 ```
 
-
 Documentation
 -------------
 The [docs](https://discsim.github.io/frank/) have it all.
@@ -72,7 +71,6 @@ If you use **frank** for your research please cite Jennings, Booth, Tazzari et a
     eprint = {https://academic.oup.com/mnras/advance-article-pdf/doi/10.1093/mnras/staa1365/33220687/staa1365.pdf},
 }
 ```
--->
 
 Authors
 -------
@@ -89,7 +87,7 @@ Or just have questions about the code that don't require submitting an issue?
 
 License
 -------
-**frank** is free software licensed under the LGPLv3 License. For more details see the LICENSE.
+**frank** is free software licensed under the LGPLv3 License. For more details see the [LICENSE](https://github.com/discsim/frank/blob/master/LICENSE.txt).
 
 © Copyright 2019-2020 Richard Booth, Jeff Jennings, Marco Tazzari.
 
