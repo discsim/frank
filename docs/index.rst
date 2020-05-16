@@ -7,6 +7,10 @@
    :align: left
    :figwidth: 700
 
+ .. |br| raw:: html
+
+     <br>
+
 Documentation
 =============
 
@@ -22,7 +26,7 @@ interpreting its results, and hosts the code's API.
     Installation <install>
     Quickstart <quickstart>
     Tutorials <tutorials>
-    Papers using frank <https://ui.adsabs.harvard.edu/public-libraries/xx>
+    Papers using frank <https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&sort=date%20desc%2C%20bibcode%20desc&p_=0>
 
 .. toctree::
    :maxdepth: 1
@@ -39,14 +43,12 @@ License & attribution
 Frankenstein is free software licensed under the GPLv3 License.
 For more details see the `LICENSE <https://github.com/discsim/frank/blob/master/LICENSE.txt>`_.
 
-If you use frank for your research, please cite Jennings, Booth, Tazzari et al. (2020) MNRAS (accepted).
-arXiv, ADS, MNRAS, Zenodo links coming soon!
-
-.. **xx** xx [`MNRAS <xx>`_] [`arXiv <xx>`_] [`ADS <xx>`_].
+If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted) |br|
+`[MNRAS] <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_ [arXiv] [ADS] [Zenodo]
 
 .. The `Zenodo reference <https://zenodo.org/badge/latestdoi/xxx>`_ is  ::
 
-..    @misc{}xx update ADS bibtex entry xx
+..    xx
 
 Authors
 -------
