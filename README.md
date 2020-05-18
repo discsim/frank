@@ -52,7 +52,7 @@ Attribution
 -----------
 If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted)
 [[MNRAS]](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b) [[arXiv]](https://arxiv.org/abs/xx)
-[[ADS]](#)
+<!---[[ADS]](#)-->
 [[Zenodo]](https://doi.org/10.5281/zenodo.3832064):
 ```
 @article{10.1093/mnras/staa1365,
