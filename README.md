@@ -19,8 +19,8 @@
       <img src="https://img.shields.io/badge/paper-MNRAS-blue.svg">
   </a>
 
-  <a href="https://doi.org/10.5281/zenodo.3832065">
-      <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3832065.svg" alt="DOI">
+  <a href="https://doi.org/10.5281/zenodo.3832064">
+      <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3832064.svg" alt="DOI">
   </a>
 
   <br/>
@@ -57,7 +57,7 @@ Attribution
 If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted)
 [[MNRAS]](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b) [[arXiv]](xx)
 [[ADS]](xx)
-[[Zenodo]](https://doi.org/10.5281/zenodo.3832065):
+[[Zenodo]](https://doi.org/10.5281/zenodo.3832064):
 ```
 @article{10.1093/mnras/staa1365,
     author = {Jennings, Jeff and Booth, Richard A and Tazzari, Marco and Rosotti, Giovanni P and Clarke, Cathie J},

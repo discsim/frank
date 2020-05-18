@@ -47,7 +47,7 @@ If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 
 `[MNRAS] <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_
 [arXiv]
 [ADS]
-`[Zenodo] <https://doi.org/10.5281/zenodo.3832065>`_:
+`[Zenodo] <https://doi.org/10.5281/zenodo.3832064>`_:
 
 .. code-block:: bash
 
