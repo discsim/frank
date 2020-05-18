@@ -19,7 +19,8 @@
       <img src="https://img.shields.io/badge/paper-MNRAS-blue.svg">
   </a>
 
-  <a href="https://doi.org/10.5281/zenodo.3832065"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3832065.svg" alt="DOI">
+  <a href="https://doi.org/10.5281/zenodo.3832065">
+      <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3832065.svg" alt="DOI">
   </a>
 
   <br/>
