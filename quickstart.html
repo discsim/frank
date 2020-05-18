@@ -98,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install.html"> Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> Quickstart</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#perform-a-fit-from-the-terminal">Perform a fit from the terminal</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fit-for-the-source-geometry">Fit for the source geometry</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#test-the-fit-s-sensitivity-to-the-hyperparameters">Test the fit’s sensitivity to the hyperparameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#understand-the-model-s-limitations">Understand the model’s limitations</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#examine-the-fit-s-convergence">Examine the fit’s convergence</a></li>
@@ -281,7 +282,8 @@ and it looks like this,</p>
 55
 56
 57
-58</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+58
+59</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -301,6 +303,7 @@ and it looks like this,</p>
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
     <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;initial_guess&quot;</span>    <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -402,7 +405,8 @@ and it looks like this,</p>
 53
 54
 55
-56</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+56
+57</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
@@ -420,8 +424,9 @@ and it looks like this,</p>
   <span class="p">},</span>
 
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;How the geometry is determined: &#39;known&#39; if user-supplied, &#39;gaussian&#39; if it is to be fit&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;How the geometry is determined: &#39;known&#39; if user-supplied, &#39;gaussian&#39; to fit it with a gaussian, &#39;nonparametric&#39; to fit it nonparametrically&quot;</span><span class="p">,</span>
     <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center or just the inclination and position angle&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;initial_guess&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (only used if `type` is &#39;gaussian&#39; or &#39;nonparametric&#39;)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination, unit=[deg]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle, unit=[deg]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension, unit=[arcsec]&quot;</span><span class="p">,</span>
@@ -488,6 +493,11 @@ Note how the bin counts drop sharply beyond <span class="math notranslate nohigh
 a consequence of sparser sampling at the longest baselines. <br>
 <strong>j)</strong> The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
 it could indicate azimuthal asymmetry in the disc that frank will average over.</p>
+<div class="section" id="fit-for-the-source-geometry">
+<h3>Fit for the source geometry<a class="headerlink" href="#fit-for-the-source-geometry" title="Permalink to this headline">¶</a></h3>
+<p>frank fits for the source geometry to deproject the visibilities before fitting for the brightness profile.
+See <a class="reference internal" href="tutorials/fitting_procedure.html#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities"><span class="std std-ref">here</span></a> for approaches to the deprojection.</p>
+</div>
 <div class="section" id="test-the-fit-s-sensitivity-to-the-hyperparameters">
 <h3>Test the fit’s sensitivity to the hyperparameters<a class="headerlink" href="#test-the-fit-s-sensitivity-to-the-hyperparameters" title="Permalink to this headline">¶</a></h3>
 <p>It’s <strong>always</strong> important to check a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
@@ -594,7 +604,7 @@ when running from the terminal, frank produces this figure if <code class="code 
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 18 at 13:28:36 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 18 at 13:34:40 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

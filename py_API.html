@@ -225,19 +225,54 @@ from the phase centre.</p>
 
 <dl class="py class">
 <dt id="frank.geometry.FitGeometryGaussian">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a Gaussian in Fourier space.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
-centre should be provided as a tuple</p>
+centre should be provided as a tuple</p></li>
+<li><p><strong>guess</strong> (<em>list of len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
+right ascension offset [arcsec], declination offset [arcsec].</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>The phase centre offsets, dRA and dDec, refer to the distance to the source
 from the phase centre.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="frank.geometry.FitGeometryFourierBessel">
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryFourierBessel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryFourierBessel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the disc geometry by fitting a non-parametric brightness
+profile in visibility space.</p>
+<p>The best fit is obtained by finding the geometry that minimizes
+the weighted chi^2 of the visibility fit.</p>
+<p>The brightness profile is modelled using the FourierBesselFitter,
+which is equivalent to a FrankFitter fit without the Gaussian
+Process prior. For this reason, a small number of bins is
+recommended for fit stability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – <dl class="simple">
+<dt>Radius of support for the functions to transform, i.e.,</dt><dd><p>f(r) = 0 for R &gt;= Rmax</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Number of collocation points</p></li>
+<li><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
+phase_centre = None, the phase centre is fit for. Else the phase
+centre should be provided as a tuple</p></li>
+<li><p><strong>guess</strong> (<em>list of len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
+right ascension offset [arcsec], and declination offset [arcsec]</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Determines whether to print the iteration progress.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py class">
@@ -341,7 +376,7 @@ from the phase centre.</p>
 the deprojected visibilities.</p>
 <dl class="py class">
 <dt id="frank.radial_fitters.FrankFitter">
-<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">nu</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">block_data</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1.05</span></em>, <em class="sig-param"><span class="n">p_0</span><span class="o">=</span><span class="default_value">1e-15</span></em>, <em class="sig-param"><span class="n">weights_smooth</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">check_qbounds</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">store_iteration_diagnostics</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">nu</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">block_data</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1.05</span></em>, <em class="sig-param"><span class="n">p_0</span><span class="o">=</span><span class="default_value">1e-15</span></em>, <em class="sig-param"><span class="n">weights_smooth</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">check_qbounds</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">store_iteration_diagnostics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
 Baddour &amp; Chouinard (2015).</p>
 <p>The GP model is based upon Oppermann et al. (2013), which use a maximum
@@ -370,6 +405,7 @@ coefficients</p></li>
 (larger) than the shortest (longest) deprojected baseline in the dataset</p></li>
 <li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
 for each fit iteration</p></li>
+<li><p><strong>verbose</strong> – Whether to print notification messages</p></li>
 </ul>
 </dd>
 </dl>
@@ -872,7 +908,7 @@ brightness distribution</p>
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 18 at 13:28:36 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 18 at 13:34:40 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
