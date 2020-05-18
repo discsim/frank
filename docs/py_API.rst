@@ -11,6 +11,8 @@ Given a set of visibilities, together these classes: **(1)** optionally fit for 
 
 .. autoclass:: frank.geometry.FitGeometryGaussian
 
+.. autoclass:: frank.geometry.FitGeometryFourierBessel
+
 .. autoclass:: frank.geometry.SourceGeometry
  :members: apply_correction, undo_correction, deproject, reproject, fit
 

@@ -447,11 +447,12 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
+    verbose : bool, default = False
+        Whether to print notification messages
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5
-                 ):
+                 block_size=10 ** 5, verbose=True):
 
         Rmax /= rad_to_arcsec
 
@@ -461,6 +462,8 @@ class FourierBesselFitter(object):
 
         self._blocking = block_data
         self._block_size = block_size
+        
+        self._verbose = verbose
 
     def _check_uv_range(self, uv):
         """Don't check the bounds for FourierBesselFitterr"""
@@ -475,7 +478,8 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
-        logging.info('    Building visibility matrices M and j')
+        if self._verbose:
+            logging.info('    Building visibility matrices M and j')
 
         # Deproject the visibilities
         u, v, V = self._geometry.apply_correction(u, v, V)
@@ -544,8 +548,9 @@ class FourierBesselFitter(object):
         sol : _HankelRegressor
             Least-squares Fourier-Bessel series fit
         """
-        logging.info('  Fitting for brightness profile using'
-                     ' FourierBesselFitter')
+        if self._verbose:
+            logging.info('  Fitting for brightness profile using'
+                        ' FourierBesselFitter')
 
         self._geometry.fit(u, v, V, weights)
 
@@ -632,6 +637,8 @@ class FrankFitter(FourierBesselFitter):
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
+    verbose:
+        Whether to print notification messages
 
     References
     ----------
@@ -644,11 +651,10 @@ class FrankFitter(FourierBesselFitter):
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
                  tol=1e-3, max_iter=2000, check_qbounds=True,
-                 store_iteration_diagnostics=False):
+                 store_iteration_diagnostics=False, verbose=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
-                                          block_size
-                                          )
+                                          block_size, verbose)
 
         self._p0 = p_0
         self._ai = alpha
@@ -731,7 +737,8 @@ class FrankFitter(FourierBesselFitter):
         MAP_solution : _HankelRegressor
             Reconstructed profile using maximum a posteriori power spectrum
         """
-        logging.info('  Fitting for brightness profile using FrankFitter')
+        if self._verbose:
+            logging.info('  Fitting for brightness profile using FrankFitter')
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics = defaultdict(list)
@@ -777,7 +784,7 @@ class FrankFitter(FourierBesselFitter):
         while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
                count <= self._max_iter):
 
-            if logging.getLogger().isEnabledFor(logging.INFO):
+            if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
                 print('\r    FrankFitter iteration {}'.format(count),
                       end='', flush=True)
 
@@ -807,16 +814,16 @@ class FrankFitter(FourierBesselFitter):
 
             count += 1
 
-        if logging.getLogger().isEnabledFor(logging.INFO):
+        if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
             print()
 
-        if count < self._max_iter:
-            logging.info('    Convergence criterion met at iteration'
-                         ' {}'.format(count-1))
-        else:
-            logging.info('    Convergence criterion not met; fit stopped at'
-                         ' max_iter specified in your parameter file,'
-                         ' {}'.format(self._max_iter))
+            if count < self._max_iter:
+                logging.info('    Convergence criterion met at iteration'
+                             ' {}'.format(count-1))
+            else:
+                logging.info('    Convergence criterion not met; fit stopped at'
+                             ' max_iter specified in your parameter file,'
+                             ' {}'.format(self._max_iter))
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics['num_iterations'] = count

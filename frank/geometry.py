@@ -27,13 +27,21 @@ from scipy.optimize import least_squares
 import logging
 
 from frank.constants import rad_to_arcsec, deg_to_rad
+from frank.radial_fitters import FourierBesselFitter
 
+def _fix_inc_and_PA_ranges(inc, PA):
+    """Make sure the inclination and PA are in the ranges [0,90] and [0-180]."""
+    inc = inc % 180
+    PA = PA % 180
+    if inc > 90:
+        inc = 180 - inc
+    return inc, PA
 
 def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
     r"""
     Apply a phase shift to the visibilities.
-    
-    This is equivalent to moving the source in the image plane by the 
+
+    This is equivalent to moving the source in the image plane by the
     vector (dRA, dDec).
 
     Parameters
@@ -46,13 +54,11 @@ def apply_phase_shift(u, v, V, dRA, dDec, inverse=False):
         Complex visibilites
     dRA : float, unit = arcsec
         Phase shift in right ascenion.
-        NOTE: The sign convention is xx
     dDec : float, unit = arcsec
         Phase shift in declination.
-        NOTE: The sign convention is xx
     inverse : bool, default=False
-        If True, the phase shift is reversed (equivalent to 
-        flipping the signs of dRA and dDec). 
+        If True, the phase shift is reversed (equivalent to
+        flipping the signs of dRA and dDec).
     Returns
     -------
     shifted_vis : array of real, size = N, unit = Jy
@@ -292,6 +298,9 @@ class FitGeometryGaussian(SourceGeometry):
          Determine whether to fit for the source's phase centre. If
          phase_centre = None, the phase centre is fit for. Else the phase
          centre should be provided as a tuple
+    guess : list of len(4), default = None
+        Initial guess for the source's inclination [deg], position angle [deg],
+        right ascension offset [arcsec], declination offset [arcsec].
 
     Notes
     -----
@@ -299,10 +308,20 @@ class FitGeometryGaussian(SourceGeometry):
     from the phase centre.
     """
 
-    def __init__(self, phase_centre=None):
+    def __init__(self, phase_centre=None, guess=None):
         super(FitGeometryGaussian, self).__init__()
 
         self._phase_centre = phase_centre
+        self._guess = guess
+
+        if guess is None:
+            guess = [0.0, 0.0, 0.1, 0.1, 1.0, 1.0]
+        else:
+            guess = [guess[2], guess[3],
+                     guess[0] * deg_to_rad, guess[1] * deg_to_rad]
+            guess.extend([1.0, 1.0])
+
+        self._guess = guess
 
     def fit(self, u, v, V, weights):
         r"""
@@ -327,7 +346,10 @@ class FitGeometryGaussian(SourceGeometry):
             logging.info('    Fitting Gaussian to determine geometry')
 
         inc, PA, dRA, dDec = _fit_geometry_gaussian(
-            u, v, V, weights, phase_centre=self._phase_centre)
+            u, v, V, weights, guess=self._guess,
+            phase_centre=self._phase_centre)
+
+        inc, PA = _fix_inc_and_PA_ranges(inc, PA)
 
         self._inc = inc
         self._PA = PA
@@ -335,7 +357,7 @@ class FitGeometryGaussian(SourceGeometry):
         self._dDec = dDec
 
 
-def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
+def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
     r"""
     Estimate the source geometry by fitting a Gaussian in uv-space
 
@@ -349,6 +371,11 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
         Complex visibilites
     weights : array of real, size = N, unit = Jy^-2
         Weights on the visibilities
+    guess : list of len(6)
+        Initial guess for the source's inclination [deg], position angle [deg],
+        right ascension offset [arcsec], declination offset [arcsec],
+        the Gaussian's normalization, and its scaling. The latter 2 are forced
+        as 1.0
     phase_centre: [dRA, dDec], optional, unit = arcsec
         The phase centre offsets dRA and dDec.
         If not provided, these will be fit for
@@ -420,9 +447,8 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
 
         return jac.T
 
-    res = least_squares(_gauss_fun, [0.0, 0.0,
-                                     0.1, 0.1,
-                                     1.0, 1.0],
+
+    res = least_squares(_gauss_fun, guess,
                         jac=_gauss_jac, method='lm')
 
     dRA, dDec, inc, PA, _, _ = res.x
@@ -433,3 +459,115 @@ def _fit_geometry_gaussian(u, v, V, weights, phase_centre=None):
     geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
 
     return geometry
+
+
+class FitGeometryFourierBessel(SourceGeometry):
+    """
+    Determine the disc geometry by fitting a non-parametric brightness
+    profile in visibility space.
+
+    The best fit is obtained by finding the geometry that minimizes
+    the weighted chi^2 of the visibility fit.
+
+    The brightness profile is modelled using the FourierBesselFitter,
+    which is equivalent to a FrankFitter fit without the Gaussian
+    Process prior. For this reason, a small number of bins is
+    recommended for fit stability.
+
+
+    Parameters
+    ----------
+    Rmax : float, unit = arcsec
+        Radius of support for the functions to transform, i.e.,
+            f(r) = 0 for R >= Rmax
+    N : int
+        Number of collocation points
+    phase_centre : tuple = (dRA, dDec) or None (default), unit = arcsec
+        Determine whether to fit for the source's phase centre. If
+        phase_centre = None, the phase centre is fit for. Else the phase
+        centre should be provided as a tuple
+    guess : list of len(4), default = None
+        Initial guess for the source's inclination [deg], position angle [deg],
+        right ascension offset [arcsec], and declination offset [arcsec]
+    verbose : bool, default=False
+        Determines whether to print the iteration progress.
+    """
+    def __init__(self, Rmax, N, phase_centre=None, guess=None, verbose=False):
+        self._N = N
+        self._R = Rmax
+        self._phase_centre = phase_centre
+
+        if guess is None:
+            guess = [10., 10., 0., 0.]
+        self._guess = guess
+
+        self._verbose = verbose
+
+    def _residual(self, params, uvdata=None):
+        inc, pa, dRA, dDec = params
+        if self._phase_centre is not None:
+            dRA, dDec = self._phase_centre
+
+        geom = FixedGeometry(inc, pa, dRA, dDec)
+
+
+        FBF = FourierBesselFitter(self._R, self._N, geom, verbose=False)
+
+        u, v, vis, w_half = uvdata
+
+        sol = FBF.fit(u,v,vis, w_half*w_half)
+
+        error = w_half*(sol.predict(u,v) - vis)
+
+        if self._verbose:
+            Chi2 = 0.5 * np.sum(error.real**2 + error.imag**2) / len(w_half)
+            print('\n      FitGeometryFourierBessel: Iteration {}, chi^2={:.8f}, inc={:.3f} PA={:.3f} dRA={:.5f} dDec={:.5f}'
+                  ''.format(self._counter, Chi2, inc, pa, dRA, dDec),
+                  end='', flush=True)
+            self._counter += 1
+
+        return np.concatenate([error.real, error.imag])
+
+    def fit(self, u, v, vis, w):
+        r"""
+        Determine geometry using the provided uv-data
+
+        Parameters
+        ----------
+        u : array of real, size = N, unit = :math:`\lambda`
+            u-points of the visibilities
+        v : array of real, size = N, unit = :math:`\lambda`
+            v-points of the visibilities
+        V : array of complex, size = N, unit = Jy
+            Complex visibilites
+        weights : array of real, size = N, unit = Jy
+            Weights on the visibilities
+        """
+        if self._phase_centre:
+            logging.info('    Fitting nonparametric form to determine geometry'
+                         ' (your supplied phase center will be applied at the'
+                         ' end of the geometry fitting routine)')
+
+        else:
+            logging.info('    Fitting nonparametric form to determine geometry')
+
+        uvdata= [u, v, vis, w**0.5]
+
+        self._counter = 0
+
+        result = least_squares(self._residual, self._guess, kwargs={'uvdata':uvdata},
+                               method='lm')
+
+        if not result.success:
+            raise RuntimeError("FitGeometryFourierBessel failed to converge")
+
+        inc, pa, dRA, dDec = result.x
+        if self._phase_centre:
+            dRA, dDec = self._phase_centre
+
+        inc, pa = _fix_inc_and_PA_ranges(inc, pa)
+
+        self._inc = inc
+        self._PA = pa
+        self._dRA = dRA
+        self._dDec = dDec

@@ -24,7 +24,9 @@ import json
 
 from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
-from frank.geometry import FixedGeometry, FitGeometryGaussian
+from frank.geometry import (
+    FixedGeometry, FitGeometryGaussian, FitGeometryFourierBessel
+)
 from frank.constants import deg_to_rad
 from frank.utilities import UVDataBinner
 from frank.io import load_uvtable, save_uvtable
@@ -131,11 +133,20 @@ def test_fit_geometry():
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
                                [1.4916013559412147 / deg_to_rad,
-                                -0.5395904796783955 / deg_to_rad,
+                                0.5395904796783955 / deg_to_rad,
                                 -0.6431627790617276, -1.161768824369382],
                                err_msg="Gaussian geometry fit")
 
+    geom = FitGeometryFourierBessel(1.6, 20)
+    geom.fit(u, v, vis, weights)
 
+    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+                               1e3 * geom.dDec],
+                              [85.26142233422196, 33.819364762203364,
+                               0.5611211784189547, -1.170097994325657],
+                               rtol=1e-5,
+                              err_msg="FourierBessel geometry fit")
+    
 def test_fourier_bessel_fitter():
     """Check FourierBesselFitter fitting routine with AS 209 dataset"""
     AS209, geometry = load_AS209()
@@ -207,7 +218,7 @@ def test_fit_geometry_inside():
     geom = sol.geometry
     np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [86.46568992560152, -34.5071920284988,
+                               [86.46568992560152, 34.5071920284988,
                                 0.20818634201418384, -2.0988159662202714],
                                err_msg="Gaussian geometry fit inside Frank fit")
 

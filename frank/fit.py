@@ -294,24 +294,41 @@ def determine_geometry(u, v, vis, weights, model):
                                       model['geometry']['ddec']
                                       )
 
-    elif model['geometry']['type'] == 'gaussian':
+    elif model['geometry']['type'] in ('gaussian', 'nonparametric'):
         t1 = time.time()
 
-        if model['geometry']['fit_phase_offset']:
-            geom = geometry.FitGeometryGaussian()
-
+        if model['geometry']['initial_guess']:
+            guess = [model['geometry']['inc'], model['geometry']['pa'],
+                     model['geometry']['dra'], model['geometry']['ddec']]
         else:
-            geom = geometry.FitGeometryGaussian(phase_centre=(model['geometry']['dra'],
-                                                              model['geometry']['ddec']))
+            guess = None
+
+        if model['geometry']['fit_phase_offset']:
+            phase_centre = (model['geometry']['dra'],
+                            model['geometry']['ddec'])
+        else:
+            phase_centre = None
+
+
+        if model['geometry']['type'] == 'gaussian':
+            geom = geometry.FitGeometryGaussian(
+                phase_centre=phase_centre, guess=guess,
+            )
+        else:
+            geom = geometry.FitGeometryFourierBessel(
+                model['hyperparameters']['rout'], N=20,
+                phase_centre=phase_centre, guess=guess
+            )
 
         geom.fit(u, v, vis, weights)
 
         logging.info('    Time taken for geometry %.1f sec' %
                      (time.time() - t1))
 
+
     else:
-        raise ValueError("geometry_type in your parameter file must be one of"
-                         " 'known' or 'gaussian'")
+        raise ValueError("`geometry : type` in your parameter file must be one of"
+                         " 'known', 'gaussian' or 'nonparametric'.")
 
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
                  '           dRA  = {:.2e} mas,\n'
