@@ -1,4 +1,8 @@
 <p align="center">
+   <img width = "800" src="https://github.com/discsim/frank/blob/master/docs/images/day_off.png?raw=true"/>		   
+ </p>
+
+<p align="center">
   <a href="https://github.com/discsim/frank/releases">
       <img src="https://img.shields.io/github/release/discsim/frank/all.svg">
   </a>
