@@ -51,8 +51,7 @@ The [docs](https://discsim.github.io/frank/) have it all.
 Attribution
 -----------
 If you use **frank** for your research please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted)
-[[MNRAS]](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b) [[arXiv]](xx)
-[[ADS]](xx)
+[[MNRAS]](https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b) [[arXiv]](https://arxiv.org/abs/2005.07709)
 [[Zenodo]](https://doi.org/10.5281/zenodo.3832064):
 ```
 @article{10.1093/mnras/staa1365,
