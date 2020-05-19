@@ -45,7 +45,7 @@ For more details see the `LICENSE <https://github.com/discsim/frank/blob/master/
 
 If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 2020 MNRAS (accepted)
 `[MNRAS] <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_
-[arXiv]
+`[arXiv] <https://arxiv.org/abs/2005.07709>`_
 `[Zenodo] <https://doi.org/10.5281/zenodo.3832064>`_:
 
 .. code-block:: bash
