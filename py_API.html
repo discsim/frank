@@ -651,6 +651,38 @@ centre determined by the geometry object</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="frank.radial_fitters._HankelRegressor.predict_deprojected">
+<code class="sig-name descname">predict_deprojected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">I</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict_deprojected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the visibilities in the deprojected-plane</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
+the mean will be used. The intensity should be specified at the
+collocation points, I[k] = I(r_k)</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>V(q)</strong> – Predicted visibilties of a source with a radial flux distribution
+given by <span class="math notranslate nohighlight">\(I\)</span>. The amplitude of the visibilities are reduced
+according to the inclination of the source, for consistency with
+<code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, unit = Jy</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The visibility amplitudes are still reduced due to the projection,
+for consistentcy with <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.q">
 <em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
@@ -666,6 +698,12 @@ centre determined by the geometry object</p>
 <dt id="frank.radial_fitters._HankelRegressor.size">
 <em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="frank.radial_fitters._HankelRegressor.solve_non_negative">
+<code class="sig-name descname">solve_non_negative</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.solve_non_negative" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the best fit solution with non-negative intensities</p>
 </dd></dl>
 
 </dd></dl>
@@ -780,15 +818,11 @@ a length N dataset</p>
 <code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">estimate_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em>, <em class="sig-param"><span class="n">nbins</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">log</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_median</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.estimate_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the weights using the variance of the binned visibilities.</p>
 <p>The estimation is done assuming that the variation in each bin is dominated
-by the noise. This will be true if:</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p>The source is axi-symmetric,</p></li>
-<li><p>The uv-points have been deprojected,</p></li>
-<li><p>The bins are not too wide,</p></li>
-</ol>
-</div></blockquote>
-<p>Otherwise the variance may be dominated by intrinsic variations in the
+by the noise. This will be true if:
+1) The source is axi-symmetric,
+2) The uv-points have been deprojected,
+3) The bins are not too wide,
+Otherwise the variance may be dominated by intrinsic variations in the
 visibilities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -908,7 +942,7 @@ brightness distribution</p>
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 19 at 07:56:17 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 20 at 16:09:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

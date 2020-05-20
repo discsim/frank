@@ -204,14 +204,14 @@
 </style>
 <div class="section" id="fitting-mock-data">
 <h1>Fitting mock data<a class="headerlink" href="#fitting-mock-data" title="Permalink to this headline">¶</a></h1>
-<p>The process to fit a mock dataset is the same as a real dataset apart from one potential addition.
+<p>The process to fit a mock dataset is the same as a real dataset, apart from one potential addition.
 If you’ve produced the mock visibilities with, e.g., a pipeline that emulates
 ALMA observations, you may not have an estimate of the weights on your individual visibilities.</p>
 <p>In this case you can set <code class="docutils literal notranslate"><span class="pre">correct_weights=True</span></code> in your parameter file.
 This will instruct frank to use the variance of the binned visibilities to
 <em>coarsely</em> estimate the pointwise weights
-(see the <a class="reference external" href="https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.utilities.estimate_weights">estimate_weights</a> function).
-This is done after deprojecting the visibilities and before fitting for the brightness profile.</p>
+(see the <a class="reference internal" href="../py_API.html#frank.utilities.estimate_weights"><span class="std std-ref">estimate_weights</span></a> function).
+This is done between the steps to deproject the visibilities and fit for the brightness profile.</p>
 </div>
 
 
@@ -236,7 +236,7 @@ This is done after deprojecting the visibilities and before fitting for the brig
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 19 at 07:56:17 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 20 at 16:09:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

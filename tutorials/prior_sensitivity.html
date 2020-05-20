@@ -222,8 +222,8 @@ with a higher value more strongly smoothing the power spectrum.</p>
 - <span class="math notranslate nohighlight">\(N\)</span> is large enough to yield a grid of spatial frequency collocation points that extend beyond the longest baseline in the dataset
 (this also ensures the nominal fit resolution in real space is sufficiently sub-beam).
 Typical values are <span class="math notranslate nohighlight">\(N = 100 - 300\)</span>. <br>
-- <span class="math notranslate nohighlight">\(p_0\)</span> is small (<span class="math notranslate nohighlight">\(0 &lt; p_0 \ll 1\)</span>; the default is <span class="math notranslate nohighlight">\(10^{-15}\)</span>).</p>
-<p>See the frank methods paper for an extended discussion of the model’s hyperparameters.</p>
+- <span class="math notranslate nohighlight">\(p_0\)</span> is small (<span class="math notranslate nohighlight">\(0 &lt; p_0 \ll 1\)</span>; the default is <span class="math notranslate nohighlight">\(10^{-15}\)</span> Jy <span class="math notranslate nohighlight">\(^2\)</span>).</p>
+<p>See the frank <a class="reference external" href="https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b">methods paper</a> for an extended discussion of the model’s hyperparameters.</p>
 </div>
 <div class="section" id="performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">
 <h2>Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h2>
@@ -251,7 +251,7 @@ The frank brightness profile for this dataset is evidently only weakly sensitive
 <br>
 <strong>b)</strong> As in (a), on a log scale.
 <br>
-<strong>c)</strong> The visibility domain fits, and the data in 1 and 50 <span class="math notranslate nohighlight">\(kλ\)</span> bins.
+<strong>c)</strong> The visibility domain fits, and the data in 1 and 50 <span class="math notranslate nohighlight">\({\rm k}\lambda\)</span> bins.
 <br>
 <strong>d)</strong> As in (c), on a log scale, which shows the relatively small variation in how the fits
 handle the data as they become noise-dominated.
@@ -263,12 +263,12 @@ demonstrating the effect of the power spectrum as a prior is weak in this case.<
 </div>
 <div class="section" id="always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">
 <h2>Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h2>
-<p>While these sensitivities are weak for datasets such as that shown here,
+<p>While these sensitivities can be weak as shown above,
 a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> can be nontrivial
 for lower resolution or particularly noisy datasets.
 In these cases, the location and amplitude of substructure in the
 brightness profile can vary with <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>,
-so it’s <strong>always</strong> worth checking how the fit changes in the ranges <code class="code docutils literal notranslate"><span class="pre">alpha=[1.05,</span> <span class="pre">1.30]</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth=[1e-4,</span> <span class="pre">1e-1]</span></code>.</p>
+so it’s <strong>always</strong> worth checking how the fit changes over the ranges <code class="code docutils literal notranslate"><span class="pre">alpha=[1.05,</span> <span class="pre">1.30]</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth=[1e-4,</span> <span class="pre">1e-1]</span></code>.</p>
 </div>
 </div>
 
@@ -294,7 +294,7 @@ so it’s <strong>always</strong> worth checking how the fit changes in the rang
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 19 at 07:56:17 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 20 at 16:09:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

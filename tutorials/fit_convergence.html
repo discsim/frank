@@ -206,7 +206,7 @@
 <h1>Testing a fit’s convergence<a class="headerlink" href="#testing-a-fit-s-convergence" title="Permalink to this headline">¶</a></h1>
 <p>If you’d like an in-depth look at how well a fit has converged,
 the fastest way is to run a fit from the terminal
-(see the <a class="reference external" href="quickstart.rst">Quickstart</a>)
+(see the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>)
 and set <code class="code docutils literal notranslate"><span class="pre">diag_plot=True</span></code> in your <em>.json</em> parameter file.
 This produces a diagnostic figure that, using the fit to the DSHARP observations
 of AS 209 from the Quickstart, looks like this,</p>
@@ -214,27 +214,28 @@ of AS 209 from the Quickstart, looks like this,</p>
 <img alt="../_images/AS209_continuum_frank_fit_diag.png" src="../_images/AS209_continuum_frank_fit_diag.png" />
 </div>
 <p><strong>a)</strong> The fitted frank brightness profile over all fit iterations.
-Note how small amplitude, fast oscillations (‘ringing’) that are due to unconstrained
+Note how small amplitude, fast oscillations that are due to unconstrained
 baselines are damped over the first <span class="math notranslate nohighlight">\(\approx 300\)</span> iterations.
 The fit runs until a convergence criterion on the power spectrum is met at every collocation point,
 <span class="math notranslate nohighlight">\(|(P_{\rm i} - P_{\rm i-1}| \leq {\rm tol} * \pi\)</span>,
 where <span class="math notranslate nohighlight">\(P_{\rm i}\)</span> is the power spectrum at iteration <span class="math notranslate nohighlight">\(i\)</span>
 and <span class="math notranslate nohighlight">\({\rm tol}\)</span> is the tolerance (<code class="code docutils literal notranslate"><span class="pre">iter_tol</span></code>) in your parameter file.
-This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by the visibilities’ sparse sampling.
+This criterion is more robust than one based on the brightness profile because of the oscillations imposed on the latter by sparse sampling.
 If this stopping condition is not met, the fit runs until <code class="code docutils literal notranslate"><span class="pre">max_iter</span></code> as set in your parameter file. <br>
 <strong>b)</strong> Sequential difference between the last 100 brightness profile iterations.
-So in this case the oscillations remaining at the end of the fit (<span class="math notranslate nohighlight">\(\approx 1250\)</span> iterations) are at parts in <span class="math notranslate nohighlight">\(10^6\)</span>.
+Note the y-scale here is in <span class="math notranslate nohighlight">\(10^5\ {\rm Jy\ sr}^{-1}\)</span> (compared to <span class="math notranslate nohighlight">\(10^{10}\ {\rm Jy\ sr}^{-1}\)</span> in (a)),
+so in this case the oscillations remaining at the end of the fit (<span class="math notranslate nohighlight">\(\approx 1250\)</span> iterations) are at parts in <span class="math notranslate nohighlight">\(10^6\)</span>.
 <br>
 <strong>c)</strong> The reconstructed power spectrum over all fit iterations.
 Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first <span class="math notranslate nohighlight">\(\approx 250\)</span> iterations,
 and then we continue iterating to suppress the high power placed at the data’s noisiest, longest baselines. <br>
-<strong>d)</strong> Sequential difference between the last 100 brightness profile iterations.
-Note the y-scale here is small compared to (b),
-and the largest variation is at the baseline where the fit walks off the visibilities. <br>
+<strong>d)</strong> Sequential difference between the last 100 power spectrum iterations.
+Note the largest variation is at the baseline where the fit walks off the visibilities. <br>
 <strong>e)</strong> A simple metric for the brightness profile’s convergence, <span class="math notranslate nohighlight">\({\rm max}(|(I_{\rm i} - I_{\rm i-1}|)\ /\ {\rm max}(I_i)\)</span>,
 where <span class="math notranslate nohighlight">\(I_i\)</span> is the brightness profile at iteration <span class="math notranslate nohighlight">\(i\)</span> and <span class="math notranslate nohighlight">\({\rm max}\)</span> entails the largest value across all collocation points.
 In this case the largest variation across all collocation points at the last iteration is thus at a part in <span class="math notranslate nohighlight">\(10^6\)</span> of the profile’s peak brightness, consistent with (b).
-We want to ensure this convergence metric isn’t going start increasing again if we iterate for longer, so we wouldn’t have wanted to stop at iteration <span class="math notranslate nohighlight">\(\approx 750\)</span>,
+We always want to ensure this convergence metric isn’t going start increasing again if we iterate for longer.
+So in this case we wouldn’t have wanted to stop at iteration <span class="math notranslate nohighlight">\(\approx 750\)</span>,
 while by iteration <span class="math notranslate nohighlight">\(\approx 1000\)</span> the trend looks good. frank’s internal stopping criterion for the fit, as described above in (a), is not yet met at
 iteration 1000, as that criterion is conservative to help ensure the power spectrum (and thus the brightness profile) is no longer appreciably changing.</p>
 </div>
@@ -261,7 +262,7 @@ iteration 1000, as that criterion is conservative to help ensure the power spect
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 19 at 07:56:17 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 20 at 16:09:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

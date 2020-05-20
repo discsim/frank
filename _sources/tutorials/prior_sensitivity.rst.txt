@@ -20,10 +20,9 @@ Note that the model's other three hyperparameters, :math:`R_{\rm max}`, :math:`N
 - :math:`N` is large enough to yield a grid of spatial frequency collocation points that extend beyond the longest baseline in the dataset
 (this also ensures the nominal fit resolution in real space is sufficiently sub-beam).
 Typical values are :math:`N = 100 - 300`. |br|
-- :math:`p_0` is small (:math:`0 < p_0 \ll 1`; the default is :math:`10^{-15}`).
+- :math:`p_0` is small (:math:`0 < p_0 \ll 1`; the default is :math:`10^{-15}` Jy :math:`^2`).
 
-.. See `this tutorial <./model_framework.rst>`_ for an extended discussion of the model's hyperparameters.
-See the frank methods paper for an extended discussion of the model's hyperparameters.
+See the frank `methods paper <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_ for an extended discussion of the model's hyperparameters.
 
 Performing multiple fits to vary :math:`\alpha` and :math:`w_{\rm smooth}`
 --------------------------------------------------------------------------
@@ -57,7 +56,7 @@ The frank brightness profile for this dataset is evidently only weakly sensitive
 |br|
 **b)** As in (a), on a log scale.
 |br|
-**c)** The visibility domain fits, and the data in 1 and 50 :math:`kλ` bins.
+**c)** The visibility domain fits, and the data in 1 and 50 :math:`{\rm k}\lambda` bins.
 |br|
 **d)** As in (c), on a log scale, which shows the relatively small variation in how the fits
 handle the data as they become noise-dominated.
@@ -69,9 +68,9 @@ demonstrating the effect of the power spectrum as a prior is weak in this case.
 
 Always check a fit's sensitivity to :math:`\alpha` and :math:`w_{\rm smooth}`
 -----------------------------------------------------------------------------
-While these sensitivities are weak for datasets such as that shown here,
+While these sensitivities can be weak as shown above,
 a fit's sensitivity to :math:`\alpha` and :math:`w_{\rm smooth}` can be nontrivial
 for lower resolution or particularly noisy datasets.
 In these cases, the location and amplitude of substructure in the
 brightness profile can vary with :math:`\alpha` and :math:`w_{\rm smooth}`,
-so it's **always** worth checking how the fit changes in the ranges `alpha=[1.05, 1.30]` and `wsmooth=[1e-4, 1e-1]`.
+so it's **always** worth checking how the fit changes over the ranges `alpha=[1.05, 1.30]` and `wsmooth=[1e-4, 1e-1]`.

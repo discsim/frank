@@ -104,7 +104,7 @@
 <li class="toctree-l2"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Examining the model’s limitations</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#noisy-oscillations-imprinted-on-brightness-profile">Noisy oscillations imprinted on brightness profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#noisy-oscillations-imprinted-on-the-brightness-profile">Noisy oscillations imprinted on the brightness profile</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#allowed-regions-of-negative-brightness">Allowed regions of negative brightness</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#an-underestimated-brightness-profile-uncertainty">An underestimated brightness profile uncertainty</a></li>
 </ul>
@@ -209,8 +209,8 @@
 </style>
 <div class="section" id="examining-the-model-s-limitations">
 <h1>Examining the model’s limitations<a class="headerlink" href="#examining-the-model-s-limitations" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="noisy-oscillations-imprinted-on-brightness-profile">
-<h2>Noisy oscillations imprinted on brightness profile<a class="headerlink" href="#noisy-oscillations-imprinted-on-brightness-profile" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="noisy-oscillations-imprinted-on-the-brightness-profile">
+<h2>Noisy oscillations imprinted on the brightness profile<a class="headerlink" href="#noisy-oscillations-imprinted-on-the-brightness-profile" title="Permalink to this headline">¶</a></h2>
 <p>Regions in the visibilities with sparse and/or sufficiently noisy sampling can cause a lack of constraint on the local spatial frequency scale,
 inducing oscillations in the reconstructed brightness profile on the corresponding spatial scale.
 This can potentially mimic real structure.
@@ -223,7 +223,7 @@ is useful to assess and potentially suppress this behavior.</p>
 <div class="section" id="allowed-regions-of-negative-brightness">
 <h2>Allowed regions of negative brightness<a class="headerlink" href="#allowed-regions-of-negative-brightness" title="Permalink to this headline">¶</a></h2>
 <p>The fitted brightness profile can have negative regions corresponding to spatial scales un- or underconstrained by the visibilities.
-You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the <code class="code docutils literal notranslate"><span class="pre">solve_non_negative</span></code> method provided by the solution returned by <code class="code docutils literal notranslate"><span class="pre">FrankFitter</span></code> (if running frank from the terminal, set <code class="code docutils literal notranslate"><span class="pre">hyperparameters</span> <span class="pre">:</span> <span class="pre">nonnegative</span></code> to <code class="code docutils literal notranslate"><span class="pre">true</span></code> in your parameter file).
+You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.solve_non_negative"><span class="std std-ref">solve_non_negative</span></a> method provided by the solution returned by <code class="code docutils literal notranslate"><span class="pre">FrankFitter</span></code> (if running frank from the terminal, set <code class="code docutils literal notranslate"><span class="pre">hyperparameters</span> <span class="pre">:</span> <span class="pre">nonnegative</span></code> to <code class="code docutils literal notranslate"><span class="pre">true</span></code> in your parameter file).
 In tests we’ve seen the effect on the recovered brightness profile to typically be localized to the regions of negative flux,
 with otherwise minor differences.
 Since enforcing the profile to be non-negative requires some extrapolation beyond the data’s longest baseline,
@@ -278,7 +278,7 @@ If it is highly resolved, the local brightness uncertainty can be expected to be
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 May 19 at 07:56:17 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 May 20 at 16:09:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

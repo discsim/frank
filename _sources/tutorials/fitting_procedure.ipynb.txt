@@ -43,12 +43,12 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "As in the second example in the [Quickstart](../quickstart.rst) - where we use frank as a module - we'll import the internal classes [FrankFitter](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter) and [FitGeometryGaussian](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian) directly, in order to demonstrate their usage. Just note that `fit.py` uses the wrapper functions `deproject_disc` and `perform_fit` to call these, and more generally uses wrapper functions to do everything that we'll walk through more verbosely here."
+    "As in the second example in the [Quickstart](../quickstart.rst) - where we use frank as a module - we'll import the internal classes [FrankFitter](../py_API.rst#frank.radial_fitters.FrankFitter) and [FitGeometryGaussian](../py_API.rst#frank.geometry.FitGeometryGaussian) directly, in order to demonstrate their usage. Just note that `fit.py` uses the wrapper functions `deproject_disc` and `perform_fit` to call these, and more generally uses wrapper functions to do everything that we'll walk through more verbosely here."
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 1,
+   "execution_count": 2,
    "metadata": {
     "scrolled": true
    },
@@ -76,7 +76,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 2,
+   "execution_count": 3,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -90,8 +90,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 2. Determinine the disc geometry and deproject the visibilities\n",
-    "<a id='determine_geometry'></a>"
+    "## 2. Determinine the disc geometry and deproject the visibilities"
    ]
   },
   {
@@ -99,11 +98,11 @@
    "metadata": {},
    "source": [
     "Before fitting the radial brightness profile, we need to determine the disc's geometry (inclination, position angle and phase center) in order to deproject the visibilities (recall that frank, fitting in 1D, assumes an axisymmetric source).\n",
-    "To do this we pass an object specifying how the geometry is determined to the [FrankFitter](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter) class.\n",
+    "To do this we pass an object specifying how the geometry is determined to the [FrankFitter](../py_API.rst#frank.radial_fitters.FrankFitter) class.\n",
     "\n",
-    "frank has three classes for this: [FixedGeometry](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.FixedGeometry) just takes a geometry you provide, [FitGeometryGaussian](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian) determines the geometry by fitting a 2D Gaussian directly to the visibilities, and [FitGeometryFourierBessel](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.FitGeometryFourierBessel) determines the geometry by fitting a nonparametric form. \n",
+    "frank has three classes for this: [FixedGeometry](../py_API.rst#frank.geometry.FixedGeometry) just takes a geometry you provide, [FitGeometryGaussian](../py_API.rst#frank.geometry.FitGeometryGaussian) determines the geometry by fitting a 2D Gaussian directly to the visibilities, and [FitGeometryFourierBessel](../py_API.rst#frank.geometry.FitGeometryFourierBessel) determines the geometry by fitting a nonparametric form. \n",
     "\n",
-    "`FitGeometryFourierBessel` is a more robust approach than `FitGeometryGaussian`, as the former fits for the geometry without making any assumptions about the functional form of the visibilities. There is a significant tradeoff in speed though; even for large datasets (of order $10^7$ visibilities), `FitGeometryGaussian` takes only $\\approx 30$ sec, while `FitGeometryFourierBessel` takes $> 10$ min. You can also supply your own geometry fitting routine (see [Sec.2.1](#own_geometry)).\n",
+    "`FitGeometryFourierBessel` is a more robust approach than `FitGeometryGaussian`, as the former fits for the geometry without making any assumptions about the functional form of the visibilities. There is a significant tradeoff in speed though; even for large datasets (of order $10^7$ visibilities), `FitGeometryGaussian` takes only $\\approx 30$ sec, while `FitGeometryFourierBessel` takes $> 10$ min. You can also supply your own geometry fitting routine (see Sec.2.1 below).\n",
     "\n",
     "For `FitGeometryGaussian` and `FitGeometryFourierBessel` you can choose to provide a known phase center if you _just_ want to fit for the inclination and PA (if running frank from the terminal, set `geometry : fit_phase_offset` to `false` in your parameter file and specify `dra` and `ddec` there). \n",
     "\n",
@@ -144,7 +143,7 @@
    "source": [
     "And let's plot the deprojected (u, v) coordinates and visibilities, just to verify that our correction had a reasonable effect. Note that `FrankFitter` (which we'll use below) deprojects the visibilities as a step in the fit; here we'll just redundantly deproject them to make the plot. \n",
     "\n",
-    "If running frank from the terminal, you can produce this figure just by setting `deprojec_plot` to `true` in your parameter file."
+    "If running frank from the terminal, you can produce this figure by setting `deprojec_plot` to `true` in your parameter file."
    ]
   },
   {
@@ -176,30 +175,28 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### 2.1 Adding your own geometry fit routine \n",
-    "<a id='own_geometry'></a>"
+    "### 2.1 Adding your own geometry fit routine "
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "You can extend frank's geometry fitting capabilities with your own routines by writing a class that inherits from the [SourceGeometry](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry) base class. This base class provides the interface used by frank to deproject the visibilities, but you do need to implement your own [fit()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry.fit) method. This method will be called internally by `FrankFitter` to determine the geometry.\n",
+    "You can extend frank's geometry fitting capabilities with your own routines by writing a class that inherits from the [SourceGeometry](../py_API.rst#frank.geometry.SourceGeometry) base class. This base class provides the interface used by frank to deproject the visibilities, but you do need to implement your own [fit()](../py_API.rst#frank.geometry.SourceGeometry.fit) method. This method will be called internally by `FrankFitter` to determine the geometry.\n",
     "\n",
-    "The [fit()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry.fit) method should set the attributes `_inc`,  `_PA`, `_dRA`, and `_dDec` -- in respective units of [deg], [deg], [arcsec], [arcsec] -- that are used by the\n",
-    "[apply_correction()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry.apply_correction),\n",
-    "[undo_correction()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry.undo_correction),\n",
-    "[deproject()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry.deproject),\n",
+    "The `fit()` method should set the attributes `_inc`,  `_PA`, `_dRA`, and `_dDec` -- in respective units of [deg], [deg], [arcsec], [arcsec] -- that are used by the\n",
+    "[apply_correction()](../py_API.rst#frank.geometry.SourceGeometry.apply_correction),\n",
+    "[undo_correction()](../py_API.rst#frank.geometry.SourceGeometry.undo_correction),\n",
+    "[deproject()](../py_API.rst#frank.geometry.SourceGeometry.deproject),\n",
     "and\n",
-    "[reproject()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.geometry.SourceGeometry.reproject) methods."
+    "[reproject()](../py_API.rst#frank.geometry.SourceGeometry.reproject) methods."
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## 3. Fit the deprojected visibilities for the brightness profile\n",
-    "<a id='fit_vis'></a>"
+    "## 3. Fit the deprojected visibilities for the brightness profile"
    ]
   },
   {
@@ -208,10 +205,10 @@
    "source": [
     "Ok, so we have the deprojected visibilities...let's fit 'em!\n",
     "\n",
-    "Objects used to perform a fit are in the `FrankFitter` class. In addition to the the `geom` object detailed in [Sec.2](#determine_geometry), five hyperparameters affect the fit: `Rmax` and `N`, which set the disc radius out to which the fit is performed and the number of collocation points used in the fit; and `alpha`, `p_0` and `weights_smooth`, the hyperprior parameters on the reconstructed power spectrum prior. \n",
+    "Objects used to perform a fit are in the `FrankFitter` class. In addition to the the `geom` object detailed in Sec.2, five hyperparameters affect the fit: `Rmax` and `N`, which set the disc radius out to which the fit is performed and the number of collocation points used in the fit; and `alpha`, `p_0` and `weights_smooth`, the hyperprior parameters on the power spectrum prior. \n",
     "See the frank methods paper for an explanation and interpretation of these five hyperparameters, and [this tutorial](./prior_sensitivity.ipynb) for a demonstration of how to test their effect on a given fit.\n",
     "\n",
-    "frank performs a fit with the `FrankFitter` class' [fit()](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter.fit) function. Let's use this with the `geom` object we generated above using the published geometry values, `Rmax = 1.6\"` appropriate for AS 209, `N = 250` to ensure we resolve narrow features in the brightness profile, and the default values `p_0 = 1e-15`, `alpha = 1.05` and `weights_smooth = 1e-4`. Recall that we'll only fit the real component of the visibilities, as frank is assuming an axisymmetric source that has zero imaginary component."
+    "frank performs a fit with the `FrankFitter` class' [fit()](../py_API.rst#frank.radial_fitters.FrankFitter.fit) function. Let's use this with the `geom` object we generated above using the published geometry values, `Rmax = 1.6\"` appropriate for AS 209, `N = 250` to ensure we resolve narrow features in the brightness profile, and the default values `p_0 = 1e-15` Jy$^2$, `alpha = 1.05` and `weights_smooth = 1e-4`. Recall that we'll only fit the real component of the visibilities, as frank is assuming an axisymmetric source that has zero imaginary component."
    ]
   },
   {
@@ -233,15 +230,16 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Once the fit is complete, the brightness profile's best fit parameters are returned and stored in the `FrankFitter` class' [MAP_solution](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter.MAP_solution) object (we called it `sol`). This provides:\n",
+    "Once the fit is complete, the brightness profile's best fit parameters are returned and stored in the `FrankFitter` class' [MAP_solution](../py_API.rst#frank.radial_fitters.FrankFitter.MAP_solution) object (we called it `sol` above). This provides:\n",
     "\n",
-    "- the posterior [mean](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.mean) and [covariance](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.covariance) for the reconstructed brightness profile; \n",
-    "- the fit's radius points [r](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.r) and corresponding frequency points [q](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.q); \n",
-    "- methods to compute the best fit model's visibilities at given (u, v) coordinates in either the sky plane with [predict](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.predict) or the deprojected plane with [predict_deprojected](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.predict_deprojected);\n",
-    "- and a method to evaluate the best fit model's [log_likelihood](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters._HankelRegressor.log_likelihood).\n",
+    "- the posterior [mean](../py_API.rst#frank.radial_fitters._HankelRegressor.mean) and [covariance](../py_API.rst#frank.radial_fitters._HankelRegressor.covariance) for the reconstructed brightness profile; \n",
+    "- the fit's radius points [r](../py_API.rst#frank.radial_fitters._HankelRegressor.r) and corresponding frequency points [q](../py_API.rst#frank.radial_fitters._HankelRegressor.q); \n",
+    "- methods to compute the best fit model's visibilities at given (u, v) coordinates in either the sky plane with [predict](../py_API.rst#frank.radial_fitters._HankelRegressor.predict) or the deprojected plane with [predict_deprojected](../py_API.rst#frank.radial_fitters._HankelRegressor.predict_deprojected);\n",
+    "- and a method to evaluate the best fit model's [log_likelihood](../py_API.rst#frank.radial_fitters._HankelRegressor.log_likelihood).\n",
     "\n",
     "Additionally the `FrankFitter` object we created (we called it `FF`) contains the power spectrum's best fit parameters:\n",
-    "- the maximum a posteriori power spectrum mean ([MAP_spectrum](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum)) and covariance ([MAP_spectrum_covariance](https://github.com/discsim/frank/blob/master/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance)).\n",
+    "\n",
+    "- the maximum a posteriori power spectrum mean ([MAP_spectrum](../py_API.rst#frank.radial_fitters.FrankFitter.MAP_spectrum)) and covariance ([MAP_spectrum_covariance](../py_API.rst#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance)).\n",
     "\n"
    ]
   },
@@ -258,7 +256,7 @@
    "source": [
     "We could now save the fit results, including the `sol` object, with `save_fit(u, v, vis, weights, sol, prefix='AS209_continuum')`. We could also produce a full diagnostic figure and/or simplified figure of the fit. But since we've already done all this in the [Quickstart](../quickstart.rst), let's instead use the `sol` object to make a figure comparing the frank fitted brightness profile to the published CLEAN image-extracted profile ([Huang et al. 2018](https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..42H/abstract)). \n",
     "\n",
-    "If running frank from the terminal, you can produce this figure just by passing in the path to a file with a CLEAN profile (or any comparison profile) to `compare_profile` and passing in the beam parameters (FWHM along both axes, position angle) to `clean_beam` in your parameter file."
+    "If running frank from the terminal, you can produce this figure by setting, in your parameter file, `compare_profile` to the path to a file with a CLEAN profile (or any comparison profile) and `clean_beam` to the beam parameters (FWHM along both axes, position angle)."
    ]
   },
   {
@@ -337,7 +335,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.8.2"
+   "version": "3.7.6"
   },
   "pycharm": {
    "stem_cell": {

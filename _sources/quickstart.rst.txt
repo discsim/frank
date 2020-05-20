@@ -56,7 +56,7 @@ That's it! frank saves (in `save_dir`) these fit outputs: |br|
 - the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
 - the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
 - the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
-- the `sol` (solution) object (see `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- the `sol` (solution) object (see `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
 - UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
 - figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and optionally `<uvtable_filename>_frank_fit_diag.png`.
 
@@ -74,8 +74,8 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 **e)** As in (d), zooming on the longer baselines. |br|
 **f)** Residuals between the binned data and the fit. The residuals' RMSE is given in the legend;
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. |br|
-**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished since this is a log scale.
-On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly at :math:`\approx 4\ {\rm M}\lambda`. |br|
+**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished.
+On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly beyond :math:`\approx 4\ {\rm M}\lambda`. |br|
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile. |br|
 **i)** Histogram of the binned real component of the visibilities.
 Note how the bin counts drop sharply beyond :math:`\approx 4.5\ {\rm M}\lambda`,
@@ -102,11 +102,12 @@ Understand the model's limitations
 See `this tutorial <tutorials/model_limitations.rst>`_ for an explanation and discussion of the model's limitations,
 briefly summarized here: |br|
 - Noise in the visibilities can imprint noise on the reconstructed brightness profile
-(in the above fit to AS 209, this is limited to the regions of flux :math:`\lesssim 10^9` Jy sr:math:`^{-1}`.). |br|
+(in the above fit to AS 209, this is limited to the regions of flux :math:`\lesssim 10^9` Jy sr :math:`^{-1}`). |br|
 - The fit does not  by default prevent regions of negative brightness in the reconstructed profile
-(seen in the AS 209 fit's innermost gap). |br|
+(as seen above in the AS 209 fit's innermost gap). |br|
 - The model yields a fitted brightness profile whose uncertainty is typically underestimated.
 For this reason we do not show the uncertainty by default (note its absence in the above AS 209 fit).
+See `here <tutorials/model_limitations.rst#an-underestimated-brightness-profile-uncertainty>`_ for a fuller discussion and mitigation approaches.
 
 Examine the fit's convergence
 #############################
@@ -127,13 +128,13 @@ Perform a fit using `frank` as a Python module
 -----------------------------------------------
 
 To interface with the code more directly, you can use it as a module.
-The wrapper functions in ``fit.py`` can do everything we'll show below for us,
-but  we're going to mostly avoid those here,
+The wrapper functions in ``fit.py`` do everything we'll show below,
+but we're going to mostly avoid those here,
 just to show how to directly interface with the code's internal classes.
 
 First import some basic stuff from frank and load the data
 (again using the DSHARP observations of AS 209, available as a UVTable
-`here <https://github.com/discsim/frank/blob/master/tutorials/AS209_continuum.npz>`_).
+`here <https://github.com/discsim/frank/blob/master/docs/tutorials/AS209_continuum.npz>`_).
 
 .. code-block:: python
 
@@ -148,8 +149,8 @@ First import some basic stuff from frank and load the data
     uvtable_filename = save_prefix + '.npz'
     u, v, vis, weights = load_data(uvtable_filename)
 
-Now run the fit using the `FrankFitter <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.radial_fitters.FrankFitter>`_ class.
-In this example we'll ask frank to fit for the disc's geometry using the `FitGeometryGaussian <https://github.com/discsim/frank/blob/master/frank/docs/_build/html/py_API.html#frank.geometry.FitGeometryGaussian>`_ class.
+Now run the fit using the `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_ class.
+In this example we'll fit for the disc's geometry using the `FitGeometryGaussian <py_API.rst#frank.geometry.FitGeometryGaussian>`_ class.
 `FrankFitter` will then deproject the visibilities
 and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation points and the code's default ``alpha`` and ``weights_smooth`` hyperparameter values.
 
@@ -160,7 +161,7 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Ok now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
+Now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
 when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
 
 .. code-block:: python

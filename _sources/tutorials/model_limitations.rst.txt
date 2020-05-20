@@ -5,8 +5,8 @@
 Examining the model's limitations
 =================================
 
-Noisy oscillations imprinted on brightness profile
---------------------------------------------------
+Noisy oscillations imprinted on the brightness profile
+------------------------------------------------------
 Regions in the visibilities with sparse and/or sufficiently noisy sampling can cause a lack of constraint on the local spatial frequency scale,
 inducing oscillations in the reconstructed brightness profile on the corresponding spatial scale.
 This can potentially mimic real structure.
@@ -19,7 +19,7 @@ is useful to assess and potentially suppress this behavior.
 Allowed regions of negative brightness
 --------------------------------------
 The fitted brightness profile can have negative regions corresponding to spatial scales un- or underconstrained by the visibilities.
-You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the `solve_non_negative` method provided by the solution returned by `FrankFitter` (if running frank from the terminal, set `hyperparameters : nonnegative` to `true` in your parameter file).
+You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the `solve_non_negative <../py_API.rst#frank.radial_fitters._HankelRegressor.solve_non_negative>`_ method provided by the solution returned by `FrankFitter` (if running frank from the terminal, set `hyperparameters : nonnegative` to `true` in your parameter file).
 In tests we've seen the effect on the recovered brightness profile to typically be localized to the regions of negative flux,
 with otherwise minor differences.
 Since enforcing the profile to be non-negative requires some extrapolation beyond the data's longest baseline,
