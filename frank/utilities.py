@@ -344,9 +344,9 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
     The estimation is done assuming that the variation in each bin is dominated
     by the noise. This will be true if:
-        1) The source is axi-symmetric,
-        2) The uv-points have been deprojected,
-        3) The bins are not too wide,
+    1) The source is axi-symmetric,
+    2) The uv-points have been deprojected,
+    3) The bins are not too wide,
     Otherwise the variance may be dominated by intrinsic variations in the
     visibilities.
 

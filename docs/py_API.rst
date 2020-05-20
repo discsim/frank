@@ -26,7 +26,7 @@ the deprojected visibilities.
   :members: fit, MAP_solution, MAP_spectrum, MAP_spectrum_covariance, r, Rmax, q, Qmax, size, geometry
 
 .. autoclass:: frank.radial_fitters._HankelRegressor
-  :members: mean, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, log_likelihood
+  :members: mean, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, predict_deprojected, log_likelihood, solve_non_negative
 
 Utility functions and classes
 -----------------------------

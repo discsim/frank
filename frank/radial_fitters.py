@@ -345,7 +345,7 @@ class _HankelRegressor(object):
             Geometry used to correct the visibilities for the source
             inclination. If not provided, the geometry determined during the
             fit will be used
-       block_size : int, default = 10**5
+        block_size : int, default = 10**5
             Maximum matrix size used in the visibility calculation
 
         Returns
