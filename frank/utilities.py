@@ -405,10 +405,10 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         return np.full(len(u), 1/np.median(var[uvBin.bin_counts > 1]))
     else:
         # For bins with 1 uv point, use the average of the adjacent bins
-        no_var = np.argwhere(uvBin.bin_counts == 1)
+        no_var = np.argwhere(uvBin.bin_counts == 1).reshape(-1)
         if len(no_var) > 0:
             # Find the location `loc` of the bad points in the array of good points
-            good_var = np.argwhere(uvBin.bin_counts > 1)
+            good_var = np.argwhere(uvBin.bin_counts > 1).reshape(-1)
             loc = np.searchsorted(good_var, no_var, side='right')
 
             # Set the variance to the average of the two adjacent bins
