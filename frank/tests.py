@@ -101,31 +101,32 @@ def test_import_data():
 def load_AS209(uv_cut=None):
     """Load data for subsequent tests"""
     uv_AS209_DSHARP = np.load('docs/tutorials/AS209_continuum.npz')
-    geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
+    AS209_geometry = FixedGeometry(dRA=-1.9e-3, dDec=2.5e-3, inc=34.97,
                              PA=85.76)
 
     if uv_cut is not None:
         u, v = [uv_AS209_DSHARP[x] for x in ['u', 'v']]
 
-        q = np.hypot(*geometry.deproject(u,v))
+        q = np.hypot(*AS209_geometry.deproject(u,v))
 
         keep = q < uv_cut
 
         cut_data = {}
         for key in  uv_AS209_DSHARP:
-            if key not in { 'u', 'v', 'V', 'weights' }:
+            if key not in { 'u', 'v', 'ReV', 'ImV', 'weights' }:
                 continue
             cut_data[key] = uv_AS209_DSHARP[key][keep]
 
         uv_AS209_DSHARP = cut_data
 
-    return uv_AS209_DSHARP, geometry
+    return uv_AS209_DSHARP, AS209_geometry
 
 
 def test_fit_geometry():
     """Check the geometry fit on a subset of the AS209 data"""
     AS209, _ = load_AS209()
-    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
 
     geom = FitGeometryGaussian()
     geom.fit(u, v, vis, weights)
@@ -149,13 +150,14 @@ def test_fit_geometry():
     
 def test_fourier_bessel_fitter():
     """Check FourierBesselFitter fitting routine with AS 209 dataset"""
-    AS209, geometry = load_AS209()
+    AS209, AS209_geometry = load_AS209()
 
-    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+    u, v, re, im, weights = [AS209[k] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
 
     Rmax = 1.6
 
-    FB = FourierBesselFitter(Rmax, 20, geometry=geometry)
+    FB = FourierBesselFitter(Rmax, 20, geometry=AS209_geometry)
 
     sol = FB.fit(u, v, vis, weights)
     expected = np.array([1.89446696e+10, 1.81772972e+10, 1.39622125e+10,
@@ -176,26 +178,23 @@ def test_fourier_bessel_fitter():
 
 def test_frank_fitter():
     """Check FrankFitter fitting routine with AS 209 dataset"""
-    AS209, geometry = load_AS209(uv_cut=1e6)
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
 
-    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+    u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
 
     Rmax = 1.6
 
-    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
+    FF = FrankFitter(Rmax, 20, AS209_geometry, alpha=1.05, weights_smooth=1e-2)
 
     sol = FF.fit(u, v, vis, weights)
+    print(sol.mean)
     expected = np.array([
-         2.007565323969626999e+10,  1.843519801944299698e+10,
-         1.349007486432532310e+10,  1.272366226872675896e+10,
-         1.034881390038976860e+10,  2.579120285502616405e+09,
-         6.974036526280273199e+08,  4.127651298085847378e+09,
-         2.502142350921279907e+09, -2.756869487129538059e+08,
-         2.823359106868867278e+08,  8.706525814211348295e+08,
-         3.257354471853072166e+09,  3.112075096447698593e+09,
-        -5.146053743384782672e+08,  1.491212688054856777e+09,
-        -5.191258159130128026e+08,  5.100511550974740982e+08,
-        -1.922647420605963767e+08,  8.068002451905013621e+07,
+        1.98412226e+10,  1.88897931e+10,  1.35298932e+10,  1.25937780e+10,
+        1.06247023e+10,  2.41041917e+09,  8.48900947e+08,  4.25620911e+09,
+        2.19599281e+09,  5.53184738e+07,  4.65888337e+07,  9.73402488e+08,
+        3.56565340e+09,  2.52916177e+09,  3.39299547e+08,  6.87694292e+08,
+        2.23703869e+08,  1.36913099e+08,  2.55069045e+06, -1.10932464e+08        
     ])
 
     np.testing.assert_allclose(sol.mean, expected,
@@ -206,7 +205,8 @@ def test_fit_geometry_inside():
     """Check the geometry fit embedded in a call to FrankFitter"""
     AS209, _ = load_AS209(uv_cut=1e6)
 
-    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
 
     Rmax = 1.6
 
@@ -225,13 +225,14 @@ def test_fit_geometry_inside():
 def test_throw_error_on_bad_q_range():
     """Check that frank correctly raises an error when the
     q range is bad."""
-    AS209, geometry = load_AS209()
+    AS209, AS209_geometry = load_AS209()
 
-    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
-
+    u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
+    
     Rmax = 1.6
 
-    FF = FrankFitter(Rmax, 20, geometry,
+    FF = FrankFitter(Rmax, 20, AS209_geometry,
                      alpha=1.05, weights_smooth=1e-2)
 
     try:
@@ -242,21 +243,24 @@ def test_throw_error_on_bad_q_range():
 
 def test_uvbin():
     """Check the uv-data binning routine"""
-    AS209, geometry = load_AS209()
+    AS209, AS209_geometry = load_AS209()
 
-    uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
+    u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
+    
+    uv = np.hypot(*AS209_geometry.deproject(u, v))
 
-    uvbin = UVDataBinner(uv, AS209['V'], AS209['weights'], 50e3)
+    uvbin = UVDataBinner(uv, vis, weights, 50e3)
 
     uvmin = 1e6
     uvmax = 1e6 + 50e3
 
     idx = (uv >= uvmin) & (uv < uvmax)
 
-    widx = AS209['weights'][idx]
+    widx = weights[idx]
 
     w = np.sum(widx)
-    V = np.sum(widx*AS209['V'][idx]) / w
+    V = np.sum(widx*vis[idx]) / w
     q = np.sum(widx*uv[idx]) / w
 
     i = (uvbin.uv >= uvmin) & (uvbin.uv < uvmax)
@@ -274,8 +278,9 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False,
     # Build a subset of the data that we'll load during the fit
     AS209, AS209_geometry = load_AS209(uv_cut=1e6)
 
-    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
-
+    u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
+    vis = re + 1j * im
+    
     tmp_dir = '/tmp/frank/tests'
     os.makedirs(tmp_dir, exist_ok=True)
 
