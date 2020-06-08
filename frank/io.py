@@ -58,11 +58,10 @@ def load_uvtable(data_file):
 
     if extension in {'.txt', '.dat'}:
         u, v, re, im, weights = np.genfromtxt(data_file).T
-        vis = re + 1j*im
 
     elif extension == '.npz':
         dat = np.load(data_file)
-        u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
+        u, v, re, im, weights = [dat[i] for i in ['u', 'v', 'ReV', 'ImV', 'weights']]
 
     else:
         raise ValueError("You provided a UVTable with the extension {}."
@@ -70,6 +69,8 @@ def load_uvtable(data_file):
                          " `.npz`. Formats .txt and .dat may optionally be"
                          " compressed (`.gz`, `.bz2`).".format(extension))
 
+    vis = re + 1j * im
+    
     return u, v, vis, weights
 
 
@@ -97,15 +98,14 @@ def save_uvtable(filename, u, v, vis, weights):
         header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
 
         np.savetxt(filename,
-                   np.stack([u, v, vis.real, vis.imag,
-                             weights], axis=-1),
-                   header=header)
+                   np.stack([u, v, vis.real, vis.imag, weights], axis=-1),
+                            header=header)
 
     elif extension == '.npz':
         np.savez(filename,
-                 u=u, v=v, V=vis, weights=weights,
+                 u=u, v=v, ReV=vis.real, ImV=vis.imag, weights=weights,
                  units={'u': 'lambda', 'v': 'lambda',
-                        'V': 'Jy', 'weights': "Jy^-2"})
+                        'ReV': 'Jy', 'ImV': 'Jy', 'weights': "Jy^-2"})
 
 
 def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
