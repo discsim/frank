@@ -280,12 +280,13 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False,
 
     u, v, re, im, weights = [AS209[k][::100] for k in ['u', 'v', 'ReV', 'ImV', 'weights']]
     vis = re + 1j * im
+    ncols = 5
     
     tmp_dir = '/tmp/frank/tests'
     os.makedirs(tmp_dir, exist_ok=True)
 
     uv_table = os.path.join(tmp_dir, 'small_uv.npz')
-    save_uvtable(uv_table, u, v, vis, weights)
+    save_uvtable(uv_table, u, v, vis, weights, ncols)
 
     # Build a parameter file
     params = fit.load_default_parameters()
