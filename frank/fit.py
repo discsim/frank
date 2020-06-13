@@ -204,12 +204,14 @@ def load_data(model):
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
+    ncols : int
+          Number of columns in the UVTable
     """
 
-    u, v, vis, weights = io.load_uvtable(
+    u, v, vis, weights, ncols = io.load_uvtable(
         model['input_output']['uvtable_filename'])
 
-    return u, v, vis, weights
+    return u, v, vis, weights, ncols
 
 
 def alter_data(u, v, vis, weights, geom, model):
@@ -403,7 +405,7 @@ def perform_fit(u, v, vis, weights, geom, model):
         return [sol, None]
 
 
-def run_multiple_fits(u, v, vis, weights, geom, model):
+def run_multiple_fits(u, v, vis, weights, ncols, geom, model):
     r"""
     Perform and overplot multiple fits to a dataset by varying two of the
     model hyperparameters
@@ -417,6 +419,8 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
+    ncols: int
+        Number of columns in the UVTables to be saved
     geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry)
     model : dict
@@ -457,7 +461,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
             sols.append(sol)
 
             # Save the fit for the current choice of hyperparameter values
-            output_results(u, v, vis, weights, sol, geom, this_model)
+            output_results(u, v, vis, weights, ncols, sol, geom, this_model)
 
     multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
                                                            model['plotting']['bin_widths'],
@@ -471,7 +475,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
     return multifit_fig, multifit_axes
 
 
-def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=None):
+def output_results(u, v, vis, weights, ncols, sol, geom, model, iteration_diagnostics=None):
     r"""
     Save datafiles of fit results; generate and save figures of fit results (see
     frank.io.save_fit, frank.make_figs)
@@ -485,6 +489,8 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
+    ncols : int
+        Number of columns to save in the UVTable
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
@@ -595,7 +601,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         figs.append(clean_fig)
         axes.append(clean_axes)
 
-    io.save_fit(u, v, vis, weights, sol,
+    io.save_fit(u, v, vis, weights, ncols, sol,
                 model['input_output']['save_prefix'],
                 model['input_output']['save_solution'],
                 model['input_output']['save_profile_fit'],
@@ -689,7 +695,7 @@ def main(*args):
 
     model, param_path = parse_parameters(*args)
 
-    u, v, vis, weights = load_data(model)
+    u, v, vis, weights, ncols = load_data(model)
 
     geom = determine_geometry(u, v, vis, weights, model)
 
@@ -707,7 +713,7 @@ def main(*args):
     elif (type(model['hyperparameters']['alpha']) or \
     type(model['hyperparameters']['wsmooth'])) is list:
         multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
-                                                        geom, model)
+                                                        ncols, geom, model)
 
         return multifit_fig, multifit_axes
 
@@ -715,8 +721,8 @@ def main(*args):
         sol, iteration_diagnostics = perform_fit(
             u, v, vis, weights, geom, model)
 
-        figs, axes, model = output_results(u, v, vis, weights, sol, geom, model,
-                                           iteration_diagnostics
+        figs, axes, model = output_results(u, v, vis, weights, ncols, sol, geom,
+                                           model, iteration_diagnostics
                                            )
 
         logging.info('  Updating {} with final parameters used'
