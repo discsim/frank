@@ -32,9 +32,11 @@ def load_uvtable(data_file):
     Parameters
     ----------
     data_file : string
-          UVTable with data to be fit, with columns:
+          UVTable with data to be fit, with columns (if ncols = 5):
           u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
-
+          or columns (if ncols = 4):
+          u [lambda]  v [lambda]  V (Re + Im * 1j) [Jy]  Im(V) [Jy] Weight [Jy^-2]
+          
     Returns
     -------
     u, v : array, unit = :math:`\lambda`
@@ -44,6 +46,10 @@ def load_uvtable(data_file):
     weights : array, unit = Jy^-2
           Weights on the visibilities, of the form
           :math:`1 / \sigma^2`
+    ncols : int
+          Number of columns in the UVTable 
+          (used to save a table in the same format; see save_uvtable).
+          If ncols = 4, the column 'V' must be of the form xx + yy * 1j
     """
 
     logging.info('  Loading UVTable')
@@ -57,24 +63,34 @@ def load_uvtable(data_file):
                              "one of the formats `.txt` or `.dat`.")
 
     if extension in {'.txt', '.dat'}:
-        u, v, re, im, weights = np.genfromtxt(data_file).T
-
+        try:
+            u, v, re, im, weights = np.genfromtxt(data_file).T
+            vis = re + 1j * im
+            ncols = 5
+        except ValueError:
+            u, v, vis, weights = np.genfromtxt(data_file).T
+            ncols = 4
+            
     elif extension == '.npz':
         dat = np.load(data_file)
-        u, v, re, im, weights = [dat[i] for i in ['u', 'v', 'ReV', 'ImV', 'weights']]
-
+        try:
+            u, v, re, im, weights = [dat[i] for i in ['u', 'v', 'ReV', 'ImV', 'weights']]
+            vis = re + 1j * im
+            ncols = 5
+        except KeyError:
+            u, v, vis, weights = [dat[i] for i in ['u', 'v', 'V', 'weights']]
+            ncols = 4
+            
     else:
         raise ValueError("You provided a UVTable with the extension {}."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
                          " `.npz`. Formats .txt and .dat may optionally be"
                          " compressed (`.gz`, `.bz2`).".format(extension))
-
-    vis = re + 1j * im
     
-    return u, v, vis, weights
+    return u, v, vis, weights, ncols
 
 
-def save_uvtable(filename, u, v, vis, weights):
+def save_uvtable(filename, u, v, vis, weights, ncols=5):
     r"""Save a uvtable to file.
 
     Parameters
@@ -88,6 +104,8 @@ def save_uvtable(filename, u, v, vis, weights):
     weights : array, unit = Jy^-2
         Weights on the visibilities, of the form
         :math:`1 / \sigma^2`
+    ncols : int, default = 5
+        Number of columns in the UVTable to be saved
     """
 
     extension = os.path.splitext(filename)[1]
@@ -95,20 +113,37 @@ def save_uvtable(filename, u, v, vis, weights):
         raise ValueError("file extension must be 'npz', 'txt', or 'dat'.")
 
     if extension in {'.txt', '.dat'}:
-        header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
-
-        np.savetxt(filename,
-                   np.stack([u, v, vis.real, vis.imag, weights], axis=-1),
-                            header=header)
+        if ncols == 5:
+            header = 'u [lambda]\tv [lambda]\tRe(V)  [Jy]\tIm(V) [Jy]\tWeight [Jy^-2]'
+            np.savetxt(filename,
+                       np.stack([u, v, vis.real, vis.imag, weights], axis=-1),
+                                header=header)  
+                                          
+        elif ncols == 4:
+            header = 'u [lambda]\tv [lambda]\tV (Re + Im * 1j) [Jy]\tWeight [Jy^-2]'
+            np.savetxt(filename,
+                       np.stack([u, v, vis, weights], axis=-1),
+                                header=header)              
+        else: 
+            raise ValueError("'ncols' must be '4' or '5'.")            
 
     elif extension == '.npz':
-        np.savez(filename,
-                 u=u, v=v, ReV=vis.real, ImV=vis.imag, weights=weights,
-                 units={'u': 'lambda', 'v': 'lambda',
-                        'ReV': 'Jy', 'ImV': 'Jy', 'weights': "Jy^-2"})
+        if ncols == 5:            
+            np.savez(filename,
+                     u=u, v=v, ReV=vis.real, ImV=vis.imag, weights=weights,
+                     units={'u': 'lambda', 'v': 'lambda',
+                            'ReV': 'Jy', 'ImV': 'Jy', 'weights': "Jy^-2"})
+        elif ncols == 4:
+            np.savez(filename,
+                     u=u, v=v, V=vis, weights=weights,
+                     units={'u': 'lambda', 'v': 'lambda',
+                            'V': 'Jy', 'weights': "Jy^-2"}) 
+        
+        else:           
+            raise ValueError("'ncols' must be '4' or '5'.")
 
 
-def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
+def save_fit(u, v, vis, weights, ncols, sol, prefix, save_solution=True,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
              save_iteration_diag=False, iteration_diag=None,
              format='npz',
@@ -125,6 +160,8 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
     weights : array, unit = Jy^-2
         Weights on the visibilities, of the form
         :math:`1 / \sigma^2`
+    ncols : int
+        Number of columns in the UVTable to be saved
     sol : _HankelRegressor object
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
@@ -181,6 +218,6 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
         V_pred = sol.predict(u, v)
 
         save_uvtable(prefix + '_frank_uv_fit.' + format,
-                     u, v, V_pred, weights)
+                     u, v, V_pred, weights, ncols)
         save_uvtable(prefix + '_frank_uv_resid.' + format,
-                     u, v, vis - V_pred, weights)
+                     u, v, vis - V_pred, weights, ncols)
