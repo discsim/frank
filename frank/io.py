@@ -90,7 +90,7 @@ def load_uvtable(data_file):
     return u, v, vis, weights, ncols
 
 
-def save_uvtable(filename, u, v, vis, weights, ncols=5):
+def save_uvtable(filename, u, v, vis, weights, ncols=4):
     r"""Save a uvtable to file.
 
     Parameters
