@@ -212,7 +212,10 @@
 <p>To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a <em>.json</em> parameter file (see below) are needed. A UVTable can be extracted
 with CASA as demonstrated in <a class="reference internal" href="tutorials/mstable_to_uvtable.html"><span class="doc">this tutorial</span></a>.
-The column format should be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
+The column format is assumed to be <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>
+if the UVTable is in ASCII format (<code class="code docutils literal notranslate"><span class="pre">.txt</span></code> or <code class="code docutils literal notranslate"><span class="pre">.dat</span></code>),
+or <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">V</span> <span class="pre">(Re</span> <span class="pre">+</span> <span class="pre">Im</span> <span class="pre">*</span> <span class="pre">1j)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>
+if the UVTable is in binary format (<code class="code docutils literal notranslate"><span class="pre">.npz</span></code>).</p>
 <p>You can quickly run a fit with the default parameter file, <code class="code docutils literal notranslate"><span class="pre">default_parameters.json</span></code> (see below),
 by just passing in the filename of the UVTable to be fit with the <code class="code docutils literal notranslate"><span class="pre">-uv</span></code> option. The UVTable can be a <code class="code docutils literal notranslate"><span class="pre">.npz</span></code>, <code class="code docutils literal notranslate"><span class="pre">.txt</span></code> or <code class="code docutils literal notranslate"><span class="pre">.dat</span></code>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -m frank.fit -uv &lt;uvtable_filename.npz&gt;
@@ -605,7 +608,7 @@ when running from the terminal, frank produces this figure if <code class="code 
     <p>
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Jun 03 at 11:17:52 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Jun 15 at 13:04:38 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
