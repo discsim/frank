@@ -304,10 +304,10 @@ def determine_geometry(u, v, vis, weights, model):
             guess = None
 
         if model['geometry']['fit_phase_offset']:
+            phase_centre = None            
+        else:
             phase_centre = (model['geometry']['dra'],
                             model['geometry']['ddec'])
-        else:
-            phase_centre = None
 
 
         if model['geometry']['type'] == 'gaussian':
