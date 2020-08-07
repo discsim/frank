@@ -236,9 +236,9 @@ def alter_data(u, v, vis, weights, geom, model):
     to the modification operations specified in model
     """
 
-    if model['modify_data']['normalization_wle'] is not None:
+    if model['modify_data']['norm_wle'] is not None:
         u, v = utilities.normalize_uv(
-            u, v, model['modify_data']['normalization_wle'])
+            u, v, model['modify_data']['norm_wle'])
 
     if model['modify_data']['baseline_range']:
         u, v, vis, weights = \
