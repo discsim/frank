@@ -303,8 +303,14 @@ def determine_geometry(u, v, vis, weights, model):
         else:
             guess = None
 
+        if model['geometry']['fit_inc_pa']:
+            inc_pa = None
+        else:
+            inc_pa = (model['geometry']['inc'],
+                      model['geometry']['pa'])
+
         if model['geometry']['fit_phase_offset']:
-            phase_centre = None            
+            phase_centre = None
         else:
             phase_centre = (model['geometry']['dra'],
                             model['geometry']['ddec'])
@@ -312,11 +318,13 @@ def determine_geometry(u, v, vis, weights, model):
 
         if model['geometry']['type'] == 'gaussian':
             geom = geometry.FitGeometryGaussian(
+                inc_pa=inc_pa,
                 phase_centre=phase_centre, guess=guess,
             )
         else:
             geom = geometry.FitGeometryFourierBessel(
                 model['hyperparameters']['rout'], N=20,
+                inc_pa=inc_pa,
                 phase_centre=phase_centre, guess=guess
             )
 
