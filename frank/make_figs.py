@@ -663,10 +663,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         Reconstructed profile using Maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
     clean_profile : dict
-        Dictionary with entries for radial points [arcsec],
-        brightness [Jy / sr], and optionally the negative and positive
-        brightness uncertainties [Jy / sr]. If only the negative uncertainty is
-        provided, the positive uncertainty is assumed equal to it
+        Dictionary with entries 'r' for the radial points [arcsec],
+        'I' for the brightness [Jy / sr], and optionally the negative and positive
+        brightness uncertainties 'lo_err' and 'hi_err' [Jy / sr]. If only the
+        negative uncertainty is provided, the positive uncertainty is assumed
+        equal to it
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
     gamma : float, default = 1.0
