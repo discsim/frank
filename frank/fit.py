@@ -518,6 +518,17 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         Axes for each of the produced figures
     """
 
+    io.save_fit(u, v, vis, weights, sol,
+                model['input_output']['save_prefix'],
+                model['input_output']['save_solution'],
+                model['input_output']['save_profile_fit'],
+                model['input_output']['save_vis_fit'],
+                model['input_output']['save_uvtables'],
+                model['input_output']['iteration_diag'],
+                iteration_diagnostics,
+                model['input_output']['format']
+                )
+
     logging.info('  Plotting results')
 
     figs, axes = [], []
@@ -608,17 +619,6 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
         figs.append(clean_fig)
         axes.append(clean_axes)
-
-    io.save_fit(u, v, vis, weights, sol,
-                model['input_output']['save_prefix'],
-                model['input_output']['save_solution'],
-                model['input_output']['save_profile_fit'],
-                model['input_output']['save_vis_fit'],
-                model['input_output']['save_uvtables'],
-                model['input_output']['iteration_diag'],
-                iteration_diagnostics,
-                model['input_output']['format']
-                )
 
     return figs, axes, model
 
