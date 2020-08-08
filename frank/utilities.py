@@ -458,38 +458,77 @@ def draw_bootstrap_sample(u, v, vis, weights):
     return u_boot, v_boot, vis_boot, weights_boot
 
 
-def sweep_profile(r, I, axis=0):
+def sweep_profile(r, I, project=False, geom=None, axis=0):
     r"""
     Sweep a 1D radial brightness profile over :math:`2 \pi` to yield a 2D
-    brightness distribution
+    brightness distribution. Optionally project this sweep by a supplied
+    geometry.
 
     Parameters
     ----------
     r : array
-          Radial coordinates at which the 1D brightness profile is defined
+        Radial coordinates at which the 1D brightness profile is defined
     I : array
-          Brightness values at r
+        Brightness values at r
+    project : bool, default = False
+        Whether to project the swept profile by the supplied geom
+    phase_shift : bool, default = False
+        Whether to phase shift the projected profile by the supplied geom.
+        If False, the source will be centered in the image
+    geom : SourceGeometry object, default=None
+        Fitted geometry (see frank.geometry.SourceGeometry). Here we use
+        geom.inc [deg], geom.PA [deg], geom.dRA [arcsec], geom.dDec [arcsec] if
+        project=True
     axis : int, default = 0
-          Axis over which to interpolate the 1D profile
+        Axis over which to interpolate the 1D profile
 
     Returns
     -------
     I2D : array, shape = (len(r), len(r))
-        2D brightness distribution
+        2D brightness distribution (projected if project=True)
     xmax : float
         Maximum x-value of the 2D grid
     ymax : float
         Maximum y-value of the 2D grid
 
+    Notes
+    -----
+    Sign convention: a negative geom.dRA shifts the source to the right
+    in the image
     """
+    if project:
+        inc, pa, dra, ddec = geom.inc, geom.PA, geom.dRA, geom.dDec
+        inc *= deg_to_rad
+        pa *= deg_to_rad
+        if not phase_shift:
+            dra, ddec = 0., 0.
+
+        cos_i = np.cos(inc)
+        cos_pa, sin_pa = np.cos(pa), np.sin(pa)
 
     xmax = ymax = r.max()
     dr = np.mean(np.diff(r))
+
+    if project:
+        xmax *= abs(cos_i * cos_pa) + abs(sin_pa)
+        ymax *= abs(cos_i * sin_pa) + abs(cos_pa)
+        xmax = ymax = int(max(xmax, ymax) / dr + 1) * dr
+
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
 
-    xi, yi = np.meshgrid(x, y)
-    r1D = np.hypot(xi, yi)
+    if project:
+        xi, yi = np.meshgrid(x + dra, y - ddec)
+
+        xp  = (xi + dra) * cos_pa + (yi - ddec) * sin_pa
+        yp  = -(xi + dra) * sin_pa + (yi - ddec) * cos_pa
+        xp /= cos_i
+
+        r1D = np.hypot(xp, yp)
+
+    else:
+        xi, yi = np.meshgrid(x, y)
+        r1D = np.hypot(xi, yi)
 
     im_shape = r1D.shape + I.shape[1:]
 
