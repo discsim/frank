@@ -706,9 +706,21 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
         axes = [ax0, ax1, ax2, ax3, ax4]
 
+        try:
+            clean_I_low_uncer = clean_profile['lo_err']
+        except KeyError:
+            clean_I_low_uncer = None
+            clean_I_high_uncer = None
+
+        if clean_I_low_uncer is not None:
+            try:
+                clean_I_high_uncer = clean_profile['hi_err']
+            except KeyError:
+                clean_I_high_uncer = clean_profile['lo_err']
+
         plot_brightness_profile(clean_profile['r'], clean_profile['I'] / 1e10, ax0,
-                                low_uncer=clean_profile['lo_err'],
-                                high_uncer=clean_profile['hi_err'], c='b', ls='--',
+                                low_uncer=clean_I_low_uncer,
+                                high_uncer=clean_I_high_uncer, c='b', ls='--',
                                 label='CLEAN')
 
         plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', ls=':', label='frank')
