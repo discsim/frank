@@ -649,8 +649,8 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         The axes of the produced figure
     """
 
-    if (type(model['hyperparameters']['alpha']) or \
-    type(model['hyperparameters']['wsmooth'])) is list:
+    if type(model['hyperparameters']['alpha']) is list or \
+    type(model['hyperparameters']['wsmooth']) is list:
         raise ValueError("For the bootstrap, both `alpha` and `wsmooth` in your "
                          "parameter file must be a float, not a list.")
 
@@ -718,8 +718,8 @@ def main(*args):
 
         return boot_fig, boot_axes
 
-    elif (type(model['hyperparameters']['alpha']) or \
-    type(model['hyperparameters']['wsmooth'])) is list:
+    elif type(model['hyperparameters']['alpha']) is list or \
+    type(model['hyperparameters']['wsmooth']) is list:
         multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
                                                         geom, model)
 
