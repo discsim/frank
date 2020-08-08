@@ -57,11 +57,11 @@ which returns
 That's it! frank saves (in `save_dir`) these fit outputs: |br|
 - the logged messages printed during the fit as `<uvtable_filename>_frank_fit.log`, |br|
 - the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
-- the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
-- the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
-- the `sol` (solution) object (see `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
-- UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
-- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and optionally `<uvtable_filename>_frank_fit_diag.png`.
+- optionally, the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
+- optionally, the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
+- optionally, the `sol` (solution) object (see `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- optionally, the UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
+- optionally, figures showing the fit and its diagnostics as `<uvtable_filename>_*.png`.
 
 Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
