@@ -461,20 +461,26 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
 
             logging.info('  Running fit for alpha = {}, wsmooth = {}'.format(alphas[ii], ws[jj]))
 
-            sol, _ = perform_fit(u, v, vis, weights, geom, this_model)
+            sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, this_model)
             sols.append(sol)
 
             # Save the fit for the current choice of hyperparameter values
-            output_results(u, v, vis, weights, sol, geom, this_model)
+            output_results(u, v, vis, weights, sol, geom, this_model,
+                           iteration_diagnostics=iteration_diagnostics)
 
-    multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
-                                                           model['plotting']['bin_widths'],
-                                                           ['alpha', 'wsmooth'],
-                                                           [alphas, ws],
-                                                           model['plotting']['distance'],
-                                                           model['plotting']['force_style'],
-                                                           model['input_output']['save_prefix'],
-                                                           )
+    if len(alphas) in [1,2] and len(ws) in [1,2]:
+        multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
+                                                               model['plotting']['bin_widths'],
+                                                               ['alpha', 'wsmooth'],
+                                                               [alphas, ws],
+                                                               model['plotting']['distance'],
+                                                               model['plotting']['force_style'],
+                                                               model['input_output']['save_prefix'],
+                                                               )
+    else:
+        logging.info('The multifit figure requires alpha and wsmooth to be lists of length <= 2.'
+                     'Your lists are length {} and {} --> The multifit figure will not be made.'.format(len(alphas), len(ws)))
+        multifit_fig, multifit_axes = None, None
 
     return multifit_fig, multifit_axes
 

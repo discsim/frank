@@ -896,15 +896,16 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
+        # Alter the lists of varied parameters for the plot legend
+        if np.shape(varied_vals) == (2,2):
+            varied_vals[0] = np.repeat(varied_vals[0], 2)
+            varied_vals[1] = np.repeat(varied_vals[1], 2)
+        elif len(varied_vals[0]) == 1:
+            varied_vals[0] = np.repeat(varied_vals[0], 2)
+        else:
+            varied_vals[1] = np.repeat(varied_vals[0], 2)
+
         # Overplot the multiple fits
-        def repeat_val(x):
-            if len(x) == 1:
-                return list(np.repeat(x,2))
-            return x
-
-        varied_vals[0] = repeat_val(varied_vals[0])
-        varied_vals[1] = repeat_val(varied_vals[1])
-
         for ii in range(len(sols)):
             plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii],
                 label='{} = {}, {} = {}'.format(varied_pars[0], varied_vals[0][ii], varied_pars[1], varied_vals[1][ii]))
