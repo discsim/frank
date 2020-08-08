@@ -136,21 +136,20 @@ but we're going to mostly avoid those here,
 just to show how to directly interface with the code's internal classes.
 
 First import some basic stuff from frank and load the data
-(again using the DSHARP observations of AS 209, available as a UVTable
+(again using the DSHARP observations of AS 209, available as a UVTable - with some reasonable time- and channel-averaging -
 `here <https://github.com/discsim/frank/blob/master/docs/tutorials/AS209_continuum.npz>`_).
 
 .. code-block:: python
 
-    import os
+    import matplotlib.pyplot as plt
+    from frank.io import load_uvtable, save_fit
     from frank.radial_fitters import FrankFitter
     from frank.geometry import FitGeometryGaussian
-    from frank.fit import load_data
-    from frank.make_figs import frank_plotting_style, make_quick_fig
-    from frank.io import save_fit
+    from frank.make_figs import make_quick_fig
 
     save_prefix = 'AS209_continuum'
     uvtable_filename = save_prefix + '.npz'
-    u, v, vis, weights = load_data(uvtable_filename)
+    u, v, vis, weights = load_uvtable(uvtable_filename)
 
 Now run the fit using the `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll fit for the disc's geometry using the `FitGeometryGaussian <py_API.rst#frank.geometry.FitGeometryGaussian>`_ class.
