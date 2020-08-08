@@ -80,7 +80,7 @@ def use_frank_plotting_style():
 
 
 def make_deprojection_fig(u, v, vis, geom, force_style=True,
-                          save_prefix=None):
+                          save_prefix=None, figsize=(8,6)):
     r"""
     Produce a simple figure showing the effect of deprojection on the (u, v)
     coordinates and visibilities
@@ -97,6 +97,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -115,7 +116,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(2, 1)
-        fig = plt.figure(figsize=(8, 6))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[1])
@@ -147,7 +148,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    force_style=True, save_prefix=None, norm_residuals=False,
-                   ):
+                   figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
 
@@ -174,6 +175,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     norm_residuals : bool, default = False
         Whether to normalize the residual visibilities by the data's
         visibility amplitudes
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -187,7 +189,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(2, 2, hspace=0)
-        fig = plt.figure(figsize=(8, 6))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
@@ -274,7 +276,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
 def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
                   gamma=1.0, dist=None, force_style=True, save_prefix=None,
-                  norm_residuals=False):
+                  norm_residuals=False, figsize=(8, 6)):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
 
@@ -311,6 +313,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     norm_residuals : bool, default = False
         Whether to normalize the residual visibilities by the data's
         visibility amplitudes
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -326,7 +329,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         gs = GridSpec(3, 3, hspace=0)
         gs1 = GridSpec(4, 3, hspace=0, top=.88)
         gs2 = GridSpec(3, 3, hspace=.35, left=.04)
-        fig = plt.figure(figsize=(8, 6))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[3])
@@ -508,7 +511,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
 
 def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
-                  force_style=True, save_prefix=None):
+                  force_style=True, save_prefix=None, figsize=(8, 6)):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
 
@@ -534,6 +537,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -563,7 +567,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(2, 2, hspace=0, bottom=.35)
         gs2 = GridSpec(3, 2, hspace=0, top=.7)
-        fig = plt.figure(figsize=(8, 6))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
@@ -643,8 +647,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                               bin_widths, gamma=1.0, mean_convolved=None,
-                              dist=None, force_style=True, save_prefix=None
-                             ):
+                              dist=None, force_style=True, save_prefix=None,
+                              figsize=(8, 10)):
     r"""
     Produce a figure comparing a frank fit to a CLEAN fit, in real space by
     convolving the frank fit with the CLEAN beam, and in visibility space by
@@ -683,6 +687,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -695,7 +700,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         gs = GridSpec(3, 1)
         gs2 = GridSpec(3, 3)
 
-        fig = plt.figure(figsize=(8, 10))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[1])
@@ -812,7 +817,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
 
 def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
-                      varied_vals, dist=None, force_style=True, save_prefix=None
+                      varied_vals, dist=None, force_style=True, save_prefix=None,
+                      figsize=(8, 8)
                      ):
     r"""
     Produce a figure overplotting multiple fits
@@ -841,6 +847,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -854,7 +861,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0)
-        fig = plt.figure(figsize=(8, 8))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
@@ -959,7 +966,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
 
 
 def make_bootstrap_fig(r, profiles, force_style=True,
-                       save_prefix=None):
+                       save_prefix=None, figsize=(8, 6)):
     r"""
     Produce a figure showing a bootstrap analysis for a Frankenstein fit
 
@@ -973,6 +980,7 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
+    figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
     -------
@@ -986,7 +994,7 @@ def make_bootstrap_fig(r, profiles, force_style=True,
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(2, 2, hspace=0)
-        fig = plt.figure(figsize=(8, 6))
+        fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
