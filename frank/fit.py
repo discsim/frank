@@ -669,7 +669,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         u_s, v_s, vis_s, w_s = utilities.draw_bootstrap_sample(
             u, v, vis, weights)
 
-        sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
+        sol, iteration_diagnostics = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
         if model['hyperparameters']['nonnegative']:
             profiles_bootstrap.append(sol._nonneg)
