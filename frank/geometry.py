@@ -349,7 +349,7 @@ class FitGeometryGaussian(SourceGeometry):
                          ' but you provided values for inclination, PA, and the phase offset.'
                          ' --> Using your provided values (not fitting for the geometry)')
             self._inc, self._PA = self._inc_pa
-            self._dRA, self._dDec = sel.f_phase_centre
+            self._dRA, self._dDec = self._phase_centre
 
         else:
             if self._inc_pa:
@@ -588,7 +588,7 @@ class FitGeometryFourierBessel(SourceGeometry):
                          ' but you provided values for inclination, PA, and the phase offset.'
                          ' --> Using your provided values (not fitting for the geometry)')
             self._inc, self._PA = self._inc_pa
-            self._dRA, self._dDec = sel.f_phase_centre
+            self._dRA, self._dDec = self._phase_centre
 
         else:
             if self._inc_pa:
