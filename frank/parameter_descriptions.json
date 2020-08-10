@@ -13,7 +13,7 @@
   "modify_data" : {
     "baseline_range"   : "(Deprojected) baseline range outside of which visibilities are truncated, unit=[\\lambda]",
     "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)",
-    "norm_wle"         : "Wavelength (unit=[m]) by which to normalize the (u, v) points. Not needed if the (u, v) points are already in units of [\\lambda]"
+    "norm_wle"         : "Wavelength (unit=[m]) by which to normalize the (u, v) points (i.e., convert from [m] to [rad]). Not needed if the (u, v) points are already in units of [\\lambda]"
   },
 
   "geometry" : {
