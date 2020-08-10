@@ -297,6 +297,7 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
     geom = params['geometry']
     geom['type'] = geometry
     geom['fit_phase_offset'] = fit_phase_offset
+    geom['fit_inc_pa'] = fit_inc_pa
     geom['inc'] = AS209_geometry.inc
     geom['pa'] = AS209_geometry.PA
     geom['dra'] = AS209_geometry.dRA
