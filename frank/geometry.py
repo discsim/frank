@@ -344,27 +344,37 @@ class FitGeometryGaussian(SourceGeometry):
             Weights on the visibilities
         """
 
-        if self._inc_pa:
-            logging.info('    Fitting Gaussian to determine geometry'
-                         ' (not fitting for inc or PA)')
-        if self._phase_centre:
-            logging.info('    Fitting Gaussian to determine geometry'
-                         ' (not fitting for phase center)')
+        if self._inc_pa and self._phase_centre:
+            logging.info('    You requested a Gaussian fit to determine the geometry,'
+                         ' but you provided values for inclination, PA, and the phase offset.'
+                         ' --> Using your provided values (not fitting for the geometry)')
+            self._inc, self._PA = self._inc_pa
+            self._dRA, self._dDec = sel.f_phase_centre
+
         else:
-            logging.info('    Fitting Gaussian to determine geometry')
+            if self._inc_pa:
+                logging.info('    Fitting Gaussian to determine geometry'
+                             ' (not fitting for inc or PA)')
 
-        inc, PA, dRA, dDec = _fit_geometry_gaussian(
-            u, v, V, weights, guess=self._guess,
-            inc_pa=self._inc_pa,
-            phase_centre=self._phase_centre)
+            elif self._phase_centre:
+                logging.info('    Fitting Gaussian to determine geometry'
+                             ' (not fitting for phase center)')
 
-        if not self._inc_pa:
-            inc, PA = _fix_inc_and_PA_ranges(inc, PA)
+            else:
+                logging.info('    Fitting Gaussian to determine geometry')
 
-        self._inc = inc
-        self._PA = PA
-        self._dRA = dRA
-        self._dDec = dDec
+            inc, PA, dRA, dDec = _fit_geometry_gaussian(
+                u, v, V, weights, guess=self._guess,
+                inc_pa=self._inc_pa,
+                phase_centre=self._phase_centre)
+
+            if not self._inc_pa:
+                inc, PA = _fix_inc_and_PA_ranges(inc, PA)
+
+            self._inc = inc
+            self._PA = PA
+            self._dRA = dRA
+            self._dDec = dDec
 
 
 def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
@@ -573,39 +583,47 @@ class FitGeometryFourierBessel(SourceGeometry):
         weights : array of real, size = N, unit = Jy
             Weights on the visibilities
         """
-        if self._inc_pa:
-            logging.info('    Fitting nonparametric form to determine geometry'
-                         ' (your supplied inclination and position angle will'
-                         ' be applied at the end of the geometry fitting'
-                         ' routine)')
-        if self._phase_centre:
-            logging.info('    Fitting nonparametric form to determine geometry'
-                         ' (your supplied phase center will be applied at the'
-                         ' end of the geometry fitting routine)')
+        if self._inc_pa and self._phase_centre:
+            logging.info('    You requested a nonparametric fit to determine the geometry,'
+                         ' but you provided values for inclination, PA, and the phase offset.'
+                         ' --> Using your provided values (not fitting for the geometry)')
+            self._inc, self._PA = self._inc_pa
+            self._dRA, self._dDec = sel.f_phase_centre
 
         else:
-            logging.info('    Fitting nonparametric form to determine geometry')
+            if self._inc_pa:
+                logging.info('    Fitting nonparametric form to determine geometry'
+                             ' (your supplied inclination and position angle will'
+                             ' be applied at the end of the geometry fitting'
+                             ' routine)')
+            if self._phase_centre:
+                logging.info('    Fitting nonparametric form to determine geometry'
+                             ' (your supplied phase center will be applied at the'
+                             ' end of the geometry fitting routine)')
 
-        uvdata= [u, v, vis, w**0.5]
+            else:
+                logging.info('    Fitting nonparametric form to determine geometry')
 
-        self._counter = 0
+            uvdata= [u, v, vis, w**0.5]
 
-        result = least_squares(self._residual, self._guess, kwargs={'uvdata':uvdata},
-                               method='lm')
+            self._counter = 0
 
-        if not result.success:
-            raise RuntimeError("FitGeometryFourierBessel failed to converge")
+            result = least_squares(self._residual, self._guess, kwargs={'uvdata':uvdata},
+                                   method='lm')
 
-        inc, pa, dRA, dDec = result.x
-        if self._inc_pa:
-            inc, pa = self._inc_pa
-        if self._phase_centre:
-            dRA, dDec = self._phase_centre
+            if not result.success:
+                raise RuntimeError("FitGeometryFourierBessel failed to converge")
 
-        if not self._inc_pa:
-            inc, pa = _fix_inc_and_PA_ranges(inc, pa)
+            inc, pa, dRA, dDec = result.x
+            if self._inc_pa:
+                inc, pa = self._inc_pa
+            if self._phase_centre:
+                dRA, dDec = self._phase_centre
 
-        self._inc = inc
-        self._PA = pa
-        self._dRA = dRA
-        self._dDec = dDec
+            if not self._inc_pa:
+                inc, pa = _fix_inc_and_PA_ranges(inc, pa)
+
+            self._inc = inc
+            self._PA = pa
+            self._dRA = dRA
+            self._dDec = dDec
