@@ -136,7 +136,7 @@ but we're going to mostly avoid those here,
 just to show how to directly interface with the code's internal classes.
 
 First import some basic stuff from frank and load the data
-(again using the DSHARP observations of AS 209, available as a UVTable - with some reasonable time- and channel-averaging -
+(again using the DSHARP observations of AS 209, available as a UVTable - with time-averaging of 30 s and channel-averaging of 1 channel per spectral window -
 `here <https://github.com/discsim/frank/blob/master/docs/tutorials/AS209_continuum.npz>`_).
 
 .. code-block:: python
