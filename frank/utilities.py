@@ -458,7 +458,7 @@ def draw_bootstrap_sample(u, v, vis, weights):
     return u_boot, v_boot, vis_boot, weights_boot
 
 
-def sweep_profile(r, I, project=False, geom=None, axis=0):
+def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0):
     r"""
     Sweep a 1D radial brightness profile over :math:`2 \pi` to yield a 2D
     brightness distribution. Optionally project this sweep by a supplied
@@ -517,17 +517,17 @@ def sweep_profile(r, I, project=False, geom=None, axis=0):
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
 
-    if project:
+    if phase_shift:
         xi, yi = np.meshgrid(x + dra, y - ddec)
+    else:
+        xi, yi = np.meshgrid(x, y)
 
+    if project:
         xp  = (xi + dra) * cos_pa + (yi - ddec) * sin_pa
         yp  = -(xi + dra) * sin_pa + (yi - ddec) * cos_pa
         xp /= cos_i
-
         r1D = np.hypot(xp, yp)
-
     else:
-        xi, yi = np.meshgrid(x, y)
         r1D = np.hypot(xi, yi)
 
     im_shape = r1D.shape + I.shape[1:]
