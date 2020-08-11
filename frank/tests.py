@@ -146,7 +146,7 @@ def test_fit_geometry():
                                0.5611211784189547, -1.170097994325657],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit")
-    
+
 def test_fourier_bessel_fitter():
     """Check FourierBesselFitter fitting routine with AS 209 dataset"""
     AS209, geometry = load_AS209()
@@ -267,7 +267,8 @@ def test_uvbin():
     np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
 
 
-def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False, 
+def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
+                   fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
     """Check the full pipeline that performs a fit and outputs results"""
 
@@ -296,6 +297,7 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False,
     geom = params['geometry']
     geom['type'] = geometry
     geom['fit_phase_offset'] = fit_phase_offset
+    geom['fit_inc_pa'] = fit_inc_pa
     geom['inc'] = AS209_geometry.inc
     geom['pa'] = AS209_geometry.PA
     geom['dra'] = AS209_geometry.dRA
@@ -321,13 +323,13 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False,
         params['plotting']['full_plot'] = False
         params['plotting']['diag_plot'] = False
         params['plotting']['deprojec_plot'] = False
-    
-    if multifit: 
-        params['hyperparameters']['alpha'] = [1.05, 1.30]        
-        
+
+    if multifit:
+        params['hyperparameters']['alpha'] = [1.05, 1.30]
+
     if bootstrap:
         params['analysis']['bootstrap_ntrials'] = 2
-    
+
     # Save the new parameter file
     param_file = os.path.join(tmp_dir, 'params.json')
     with open(param_file, 'w') as f:
@@ -346,6 +348,10 @@ def test_pipeline_no_phase():
     """Check the full fit pipeline when fitting for the disc's inc, PA"""
     _run_pipeline('gaussian', False)
 
+def test_pipeline_no_inc_no_pa():
+    """Check the full fit pipeline when fitting for the disc's inc, PA"""
+    _run_pipeline('gaussian', True, False)
+
 
 def test_pipeline_known_geom():
     """Check the full fit pipeline when supplying a known disc geometry"""
@@ -355,13 +361,13 @@ def test_pipeline_known_geom():
 def test_pipeline_figure_generation():
     """Check the full fit pipeline when producing all figures"""
     _run_pipeline('known', make_figs=True)
-    
-    
+
+
 def test_pipeline_multifit():
     """Check the full fit pipeline when producing all figures"""
-    _run_pipeline('known', multifit=True)    
-    
-    
+    _run_pipeline('known', multifit=True)
+
+
 def test_pipeline_bootstrap():
     """Check the full fit pipeline when producing all figures"""
-    _run_pipeline('known', bootstrap=True)        
+    _run_pipeline('known', bootstrap=True)

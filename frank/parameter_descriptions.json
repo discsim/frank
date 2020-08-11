@@ -12,12 +12,14 @@
 
   "modify_data" : {
     "baseline_range"   : "(Deprojected) baseline range outside of which visibilities are truncated, unit=[\\lambda]",
-    "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)"
+    "correct_weights"  : "Whether to estimate the data's weights (as they may be unknown for mock data)",
+    "norm_wle"         : "Wavelength (unit=[m]) by which to normalize the (u, v) points (i.e., convert from [m] to [rad]). Not needed if the (u, v) points are already in units of [\\lambda]"
   },
 
   "geometry" : {
     "type"             : "How the geometry is determined: 'known' if user-supplied, 'gaussian' to fit it with a gaussian, 'nonparametric' to fit it nonparametrically",
-    "fit_phase_offset" : "Whether to fit for the phase center or just the inclination and position angle",
+    "fit_phase_offset" : "Whether to fit for the phase center",
+    "fit_inc_pa"       : "Whether to fit for the inclination and position angle",
     "initial_guess"    : "Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (only used if `type` is 'gaussian' or 'nonparametric')",
     "inc"              : "Inclination, unit=[deg]",
     "pa"               : "Position angle, unit=[deg]",
