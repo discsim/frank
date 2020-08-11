@@ -510,14 +510,10 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
         cos_i = np.cos(inc)
         cos_pa, sin_pa = np.cos(pa), np.sin(pa)
 
-    if not xmax and not ymax:
-        xmax = ymax = r.max()
-    elif not xmax:
+    if not xmax:
         xmax = r.max()
-    elif not ymax:
+    if not ymax:
         ymax = r.max()
-    else:
-        pass
 
     dr = np.mean(np.diff(r))
 
