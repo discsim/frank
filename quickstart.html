@@ -289,7 +289,9 @@ and it looks like this,</p>
 56
 57
 58
-59</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+59
+60
+61</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -303,12 +305,14 @@ and it looks like this,</p>
 
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
-    <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="kc">false</span>
+    <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;norm_wle&quot;</span>         <span class="p">:</span> <span class="kc">null</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;gaussian&quot;</span><span class="p">,</span>
     <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;fit_inc_pa&quot;</span>       <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;initial_guess&quot;</span>    <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -412,7 +416,9 @@ and it looks like this,</p>
 54
 55
 56
-57</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+57
+58
+59</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
@@ -426,12 +432,14 @@ and it looks like this,</p>
 
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="s2">&quot;(Deprojected) baseline range outside of which visibilities are truncated, unit=[\\lambda]&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Whether to estimate the data&#39;s weights (as they may be unknown for mock data)&quot;</span>
+    <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Whether to estimate the data&#39;s weights (as they may be unknown for mock data)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;norm_wle&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Wavelength (unit=[m]) by which to normalize the (u, v) points (i.e., convert from [m] to [rad]). Not needed if the (u, v) points are already in units of [\\lambda]&quot;</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;geometry&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;How the geometry is determined: &#39;known&#39; if user-supplied, &#39;gaussian&#39; to fit it with a gaussian, &#39;nonparametric&#39; to fit it nonparametrically&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center or just the inclination and position angle&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;fit_inc_pa&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Whether to fit for the inclination and position angle&quot;</span><span class="p">,</span>
     <span class="nt">&quot;initial_guess&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (only used if `type` is &#39;gaussian&#39; or &#39;nonparametric&#39;)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination, unit=[deg]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle, unit=[deg]&quot;</span><span class="p">,</span>
@@ -611,7 +619,7 @@ when running from the terminal, frank produces this figure if <code class="code 
         
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Aug 11 at 10:31:42 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Aug 11 at 10:38:18 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

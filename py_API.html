@@ -228,12 +228,15 @@ from the phase centre.</p>
 
 <dl class="py class">
 <dt id="frank.geometry.FitGeometryGaussian">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inc_pa</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a Gaussian in Fourier space.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>inc_pa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">(inclination</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">position</span> <span class="pre">angle)</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span> <span class="pre">(default)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Determine whether to fit for the source’s inclination and position
+angle. If inc_pa = None, the inclination and PA are fit for. Else
+inc_pa should be provided as a tuple</p></li>
 <li><p><strong>phase_centre</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">(dRA</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dDec)</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span> <span class="pre">(default)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p></li>
@@ -249,7 +252,7 @@ from the phase centre.</p>
 
 <dl class="py class">
 <dt id="frank.geometry.FitGeometryFourierBessel">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryFourierBessel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryFourierBessel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryFourierBessel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">inc_pa</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryFourierBessel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a non-parametric brightness
 profile in visibility space.</p>
 <p>The best fit is obtained by finding the geometry that minimizes
@@ -267,6 +270,9 @@ recommended for fit stability.</p>
 </dl>
 </p></li>
 <li><p><strong>N</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of collocation points</p></li>
+<li><p><strong>inc_pa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">(inclination</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">position</span> <span class="pre">angle)</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span> <span class="pre">(default)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Determine whether to fit for the source’s inclination and position
+angle. If inc_pa = None, the inclination and PA are fit for. Else
+inc_pa should be provided as a tuple</p></li>
 <li><p><strong>phase_centre</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">(dRA</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dDec)</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span> <span class="pre">(default)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p></li>
@@ -952,7 +958,7 @@ brightness distribution</p>
         
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Aug 11 at 10:31:42 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Aug 11 at 10:38:18 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
