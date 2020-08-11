@@ -3,8 +3,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -14,12 +13,19 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -34,11 +40,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Index" href="genindex.html" />
@@ -56,7 +57,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> frank
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> frank
           
 
           
@@ -86,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -116,6 +118,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -154,7 +157,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>The Frankenstein Python API</li>
     
@@ -211,10 +214,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc inclination</p></li>
-<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc positition angle.</p></li>
-<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension</p></li>
-<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>default = 0</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in declination</p></li>
+<li><p><strong>inc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Disc inclination</p></li>
+<li><p><strong>PA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Disc positition angle.</p></li>
+<li><p><strong>dRA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">0</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Phase centre offset in right ascension</p></li>
+<li><p><strong>dDec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">0</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Phase centre offset in declination</p></li>
 </ul>
 </dd>
 </dl>
@@ -231,10 +234,10 @@ from the phase centre.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
+<li><p><strong>phase_centre</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">(dRA</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dDec)</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span> <span class="pre">(default)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p></li>
-<li><p><strong>guess</strong> (<em>list of len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
+<li><p><strong>guess</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">len(4)</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">None</span></code>) – Initial guess for the source’s inclination [deg], position angle [deg],
 right ascension offset [arcsec], declination offset [arcsec].</p></li>
 </ul>
 </dd>
@@ -258,18 +261,18 @@ recommended for fit stability.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – <dl class="simple">
+<li><p><strong>Rmax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – <dl class="simple">
 <dt>Radius of support for the functions to transform, i.e.,</dt><dd><p>f(r) = 0 for R &gt;= Rmax</p>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>N</strong> (<em>int</em>) – Number of collocation points</p></li>
-<li><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
+<li><p><strong>N</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of collocation points</p></li>
+<li><p><strong>phase_centre</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span> <span class="pre">=</span> <span class="pre">(dRA</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dDec)</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">None</span> <span class="pre">(default)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p></li>
-<li><p><strong>guess</strong> (<em>list of len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
+<li><p><strong>guess</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">len(4)</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">None</span></code>) – Initial guess for the source’s inclination [deg], position angle [deg],
 right ascension offset [arcsec], and declination offset [arcsec]</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Determines whether to print the iteration progress.</p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>default</em> <code class="xref py py-obj docutils literal notranslate"><span class="pre">False</span></code>) – Determines whether to print the iteration progress.</p></li>
 </ul>
 </dd>
 </dl>
@@ -283,10 +286,10 @@ right ascension offset [arcsec], and declination offset [arcsec]</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Inclination of the disc</p></li>
-<li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Position angle of the disc</p></li>
-<li><p><strong>dRA</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Phase centre offset in right ascension.</p></li>
-<li><p><strong>dDec</strong> (<em>float</em><em>, </em><em>units = arcsec</em>) – Phase centre offset in declination.</p></li>
+<li><p><strong>inc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Inclination of the disc</p></li>
+<li><p><strong>PA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Position angle of the disc</p></li>
+<li><p><strong>dRA</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Phase centre offset in right ascension.</p></li>
+<li><p><strong>dDec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Phase centre offset in declination.</p></li>
 </ul>
 </dd>
 </dl>
@@ -300,16 +303,16 @@ from the phase centre.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
-<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>V</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>units = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – v-points of the visibilities</p></li>
+<li><p><strong>V</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">units</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Complex visibilites</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
-<li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
-<li><p><strong>Vp</strong> (<em>array of real, size = N, unit = Jy</em>) – Corrected complex visibilites</p></li>
+<li><p><strong>up</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Corrected u-points of the visibilities</p></li>
+<li><p><strong>vp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Corrected v-points of the visibilities</p></li>
+<li><p><strong>Vp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Corrected complex visibilites</p></li>
 </ul>
 </p>
 </dd>
@@ -329,10 +332,10 @@ from the phase centre.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
-<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>V</strong> (<em>array of complex</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
-<li><p><strong>weights</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Weights on the visibilities</p></li>
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – v-points of the visibilities</p></li>
+<li><p><strong>V</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">complex</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Complex visibilites</p></li>
+<li><p><strong>weights</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Weights on the visibilities</p></li>
 </ul>
 </dd>
 </dl>
@@ -351,16 +354,16 @@ from the phase centre.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
-<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>V</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – v-points of the visibilities</p></li>
+<li><p><strong>V</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Complex visibilites</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
-<li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
-<li><p><strong>Vp</strong> (<em>array of real, size = N, unit = Jy</em>) – Corrected complex visibilites</p></li>
+<li><p><strong>up</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Corrected u-points of the visibilities</p></li>
+<li><p><strong>vp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Corrected v-points of the visibilities</p></li>
+<li><p><strong>Vp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">real</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Corrected complex visibilites</p></li>
 </ul>
 </p>
 </dd>
@@ -385,25 +388,25 @@ real-space coefficients</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Radius of support for the functions to transform, i.e., f(r) = 0 for
+<li><p><strong>Rmax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">arcsec</span></code>) – Radius of support for the functions to transform, i.e., f(r) = 0 for
 R &gt;= Rmax.</p></li>
-<li><p><strong>N</strong> (<em>int</em>) – Number of collaction points</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em>) – Geometry used to deproject the visibilities before fitting</p></li>
-<li><p><strong>nu</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Order of the discrete Hankel transform, given by J_nu(r)</p></li>
-<li><p><strong>block_data</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Large temporary matrices are needed to set up the data. If block_data
+<li><p><strong>N</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of collaction points</p></li>
+<li><p><strong>geometry</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span> <span class="pre">object</span></code>) – Geometry used to deproject the visibilities before fitting</p></li>
+<li><p><strong>nu</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">0</span></code>) – Order of the discrete Hankel transform, given by J_nu(r)</p></li>
+<li><p><strong>block_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">True</span></code>) – Large temporary matrices are needed to set up the data. If block_data
 is True, we avoid this, limiting the memory requirement to block_size
 elements</p></li>
-<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Size of the matrices if blocking is used</p></li>
-<li><p><strong>alpha</strong> (<em>float &gt;= 1</em><em>, </em><em>default = 1.05</em>) – Order parameter of the inverse gamma prior for the power spectrum
+<li><p><strong>block_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">10**5</span></code>) – Size of the matrices if blocking is used</p></li>
+<li><p><strong>alpha</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">&gt;=</span> <span class="pre">1</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">1.05</span></code>) – Order parameter of the inverse gamma prior for the power spectrum
 coefficients</p></li>
-<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-15</em><em>, </em><em>unit=Jy^2</em>) – Scale parameter of the inverse gamma prior for the power spectrum
+<li><p><strong>p_0</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">&gt;=</span> <span class="pre">0</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">1e-15</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit=Jy^2</span></code>) – Scale parameter of the inverse gamma prior for the power spectrum
 coefficients</p></li>
-<li><p><strong>weights_smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-4</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
-<li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration</p></li>
-<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 2000</em>) – Maximum number of fit iterations</p></li>
-<li><p><strong>check_qbounds</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to check if the first (last) collocation point is smaller
+<li><p><strong>weights_smooth</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">&gt;=</span> <span class="pre">0</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">1e-4</span></code>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
+<li><p><strong>tol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">1e-3</span></code>) – Tolerence for convergence of the power spectrum iteration</p></li>
+<li><p><strong>max_iter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">2000</span></code>) – Maximum number of fit iterations</p></li>
+<li><p><strong>check_qbounds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">True</span></code>) – Whether to check if the first (last) collocation point is smaller
 (larger) than the shortest (longest) deprojected baseline in the dataset</p></li>
-<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
+<li><p><strong>store_iteration_diagnostics</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">False</span></code>) – Whether to store the power spectrum parameters and brightness profile
 for each fit iteration</p></li>
 <li><p><strong>verbose</strong> – Whether to print notification messages</p></li>
 </ul>
@@ -453,11 +456,12 @@ for each fit iteration</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>u</strong><strong>,</strong><strong>v</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
-<li><p><strong>V</strong> (<em>1D array</em><em>, </em><em>unit = Jy</em>) – Visibility amplitudes at q</p></li>
-<li><p><strong>weights</strong> (<em>1D array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy^-2</em>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">1D</span> <span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – uv-points of the visibilies</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">1D</span> <span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – uv-points of the visibilies</p></li>
+<li><p><strong>V</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">1D</span> <span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Visibility amplitudes at q</p></li>
+<li><p><strong>weights</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">1D</span> <span class="pre">array</span></code>, <em>optional</em>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy^-2</span></code>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
 the standard deviation</p></li>
-<li><p><strong>iteration_diagnostics</strong> (<em>dict</em><em>, </em><em>optional</em><em>,</em>) – size = N_iter x 2 x N_{collocation points}
+<li><p><strong>iteration_diagnostics</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">optional,</span></code>) – size = N_iter x 2 x N_{collocation points}
 Power spectrum parameters and posterior mean brightness profile at
 each fit iteration, and number of iterations</p></li>
 </ul>
@@ -466,7 +470,7 @@ each fit iteration, and number of iterations</p></li>
 <dd class="field-even"><p><strong>MAP_solution</strong> – Reconstructed profile using maximum a posteriori power spectrum</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters._HankelRegressor" title="frank.radial_fitters._HankelRegressor">_HankelRegressor</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters._HankelRegressor" title="frank.radial_fitters._HankelRegressor"><code class="xref py py-class docutils literal notranslate"><span class="pre">_HankelRegressor</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -534,14 +538,14 @@ visibility space. <span class="math notranslate nohighlight">\(M\)</span> is def
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DHT</strong> (<em>DiscreteHankelTransform</em>) – A DHT object with N bins that defines H(p). The DHT is used to compute
+<li><p><strong>DHT</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DiscreteHankelTransform</span></code>) – A DHT object with N bins that defines H(p). The DHT is used to compute
 <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
-<li><p><strong>M</strong> (<em>2D array</em><em>, </em><em>size =</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – The design matrix, see above</p></li>
-<li><p><strong>j</strong> (<em>1D array</em><em>, </em><em>size = N</em>) – Information source, see above</p></li>
-<li><p><strong>p</strong> (<em>1D array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em>) – Power spectrum used to generate the covarience matrix <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – If provided, this geometry will be used to deproject the visibilities
+<li><p><strong>M</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">2D</span> <span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">(N</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">N)</span></code>) – The design matrix, see above</p></li>
+<li><p><strong>j</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">1D</span> <span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>) – Information source, see above</p></li>
+<li><p><strong>p</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">1D</span> <span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <em>optional</em>) – Power spectrum used to generate the covarience matrix <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
+<li><p><strong>geometry</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span> <span class="pre">object</span></code>, <em>optional</em>) – If provided, this geometry will be used to deproject the visibilities
 in self.predict</p></li>
-<li><p><strong>noise_likelihood</strong> (<em>float</em><em>, </em><em>optional</em>) – <p>An optional parameter needed to compute the full likelihood, which
+<li><p><strong>noise_likelihood</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <em>optional</em>) – <p>An optional parameter needed to compute the full likelihood, which
 should be equal to</p>
 <div class="math notranslate nohighlight">
 \[-\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2 \pi)].\]</div>
@@ -583,13 +587,13 @@ missing constant</p>
 <p>Otherwise the marginalized likelihood is computed,</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity <span class="math notranslate nohighlight">\(I(r)\)</span> to compute the likelihood of</p>
+<dd class="field-odd"><p><strong>I</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">size</span> <span class="pre">=</span> <span class="pre">N</span></code>, <em>optional</em>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span> <span class="pre">/</span> <span class="pre">sr</span></code>) – Intensity <span class="math notranslate nohighlight">\(I(r)\)</span> to compute the likelihood of</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>log_P</strong> – Log likelihood, <span class="math notranslate nohighlight">\(\log[P(I,V|p)]\)</span> or <span class="math notranslate nohighlight">\(\log[P(V|p)]\)</span></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -629,14 +633,15 @@ missing constant</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>u</em><em>,</em>) – uv-points to predict the visibilities at</p></li>
-<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy</em>) – Intensity points to predict the vibilities of. If not specified,
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – uv-points to predict the visibilities at</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <em>optional</em>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Intensity points to predict the vibilities of. If not specified,
 the mean will be used. The intensity should be specified at the
 collocation points, I[k] = <span class="math notranslate nohighlight">\(I(r_k)\)</span></p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+<li><p><strong>geometry</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span> <span class="pre">object</span></code>, <em>optional</em>) – Geometry used to correct the visibilities for the source
 inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
-<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
+<li><p><strong>block_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">10**5</span></code>) – Maximum matrix size used in the visibility calculation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -645,7 +650,7 @@ given by <span class="math notranslate nohighlight">\(I\)</span> and the positio
 centre determined by the geometry object</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array, unit = Jy</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -657,14 +662,14 @@ centre determined by the geometry object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
-<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
+<li><p><strong>q</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">self.q</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – 1D uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <em>optional</em>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span> <span class="pre">/</span> <span class="pre">sr</span></code>) – Intensity points to predict the vibilities of. If not specified,
 the mean will be used. The intensity should be specified at the
 collocation points, I[k] = I(r_k)</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+<li><p><strong>geometry</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span> <span class="pre">object</span></code>, <em>optional</em>) – Geometry used to correct the visibilities for the source
 inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
-<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
+<li><p><strong>block_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">10**5</span></code>) – Maximum matrix size used in the visibility calculation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -674,7 +679,7 @@ according to the inclination of the source, for consistency with
 <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array, unit = Jy</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -719,13 +724,13 @@ for consistentcy with <code class="code docutils literal notranslate"><span clas
 [lambda], or vice-versa</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>float</em>) – Radial scale [arcsec] or baseline [lambda]</p>
+<dd class="field-odd"><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Radial scale [arcsec] or baseline [lambda]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>converted</strong> – Baseline [lambda] or radial scale [arcsec]</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -738,23 +743,23 @@ the profile’s resolution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>array</em>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
-<li><p><strong>I</strong> (<em>array</em>) – Brightness values at r</p></li>
-<li><p><strong>disc_i</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc inclination</p></li>
-<li><p><strong>disc_pa</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc position angle</p></li>
-<li><p><strong>clean_beam</strong> (<em>dict</em>) – Dictionary with beam <code class="code docutils literal notranslate"><span class="pre">bmaj</span></code> (FWHM of beam along its major axis) [arcsec],
+<li><p><strong>r</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
+<li><p><strong>I</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Brightness values at r</p></li>
+<li><p><strong>disc_i</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Disc inclination</p></li>
+<li><p><strong>disc_pa</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">deg</span></code>) – Disc position angle</p></li>
+<li><p><strong>clean_beam</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Dictionary with beam <code class="code docutils literal notranslate"><span class="pre">bmaj</span></code> (FWHM of beam along its major axis) [arcsec],
 <code class="code docutils literal notranslate"><span class="pre">bmin</span></code> (FWHM of beam along its minor axis) [arcsec],
 <code class="code docutils literal notranslate"><span class="pre">pa</span></code> (beam position angle) [deg]</p></li>
-<li><p><strong>n_per_sigma</strong> (<em>int</em><em>, </em><em>default = 5</em>) – Number of points per standard deviation of the Gaussian kernel (used
+<li><p><strong>n_per_sigma</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">5</span></code>) – Number of points per standard deviation of the Gaussian kernel (used
 for gridding)</p></li>
-<li><p><strong>axis</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Axis over which to interpolate the 1D profile</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">0</span></code>) – Axis over which to interpolate the 1D profile</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>I_smooth</strong> – Convolved brightness profile I at coordinates r</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array, shape = (len(r), len(r))</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">shape</span> <span class="pre">=</span> <span class="pre">(len(r)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">len(r))</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -768,20 +773,21 @@ provided.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>u</em><em>,</em>) – u and v coordinates of observations</p></li>
-<li><p><strong>vis</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Observed visibilities (complex: real + imag * 1j)</p></li>
-<li><p><strong>weights</strong> (<em>array</em><em>, </em><em>unit = Jy^-2</em>) – Weights assigned to observed visibilities, of the form
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">[m]</span></code>) – u and v coordinates of observations</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">[m]</span></code>) – u and v coordinates of observations</p></li>
+<li><p><strong>vis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Observed visibilities (complex: real + imag * 1j)</p></li>
+<li><p><strong>weights</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy^-2</span></code>) – Weights assigned to observed visibilities, of the form
 <span class="math notranslate nohighlight">\(1 / \sigma^2\)</span></p></li>
-<li><p><strong>cut_range</strong> (<em>list of float</em><em>, </em><em>length = 2</em><em>, </em><em>unit =</em><em> [</em><em>lambda</em><em>]</em>) – Lower and upper baseline bounds outside of which visibilities are
+<li><p><strong>cut_range</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">length</span> <span class="pre">=</span> <span class="pre">2</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">[lambda]</span></code>) – Lower and upper baseline bounds outside of which visibilities are
 truncated</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Fitted geometry (see frank.geometry.SourceGeometry).</p></li>
+<li><p><strong>geometry</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SourceGeometry</span> <span class="pre">object</span></code>, <em>optional</em>) – Fitted geometry (see frank.geometry.SourceGeometry).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>u_cut, v_cut</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates in the chosen baseline range</p></li>
-<li><p><strong>vis_cut</strong> (<em>array, unit = Jy</em>) – Visibilities in the chosen baseline range</p></li>
-<li><p><strong>weights_cut</strong> (<em>array, unit = Jy^-2</em>) – Weights in the chosen baseline range</p></li>
+<li><p><strong>u_cut, v_cut</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u and v coordinates in the chosen baseline range</p></li>
+<li><p><strong>vis_cut</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Visibilities in the chosen baseline range</p></li>
+<li><p><strong>weights_cut</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy^-2</span></code>) – Weights in the chosen baseline range</p></li>
 </ul>
 </p>
 </dd>
@@ -796,17 +802,18 @@ a length N dataset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>u</em><em>,</em>) – u and v coordinates of observations</p></li>
-<li><p><strong>vis</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Observed visibilities (complex: real + imag * 1j)</p></li>
-<li><p><strong>weights</strong> (<em>array</em><em>, </em><em>unit = Jy^-2</em>) – Weights on the visibilities, of the form
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u and v coordinates of observations</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u and v coordinates of observations</p></li>
+<li><p><strong>vis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Observed visibilities (complex: real + imag * 1j)</p></li>
+<li><p><strong>weights</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy^-2</span></code>) – Weights on the visibilities, of the form
 <span class="math notranslate nohighlight">\(1 / \sigma^2\)</span></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>u_boot, v_boot</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Bootstrap sampled u and v coordinates</p></li>
-<li><p><strong>vis_boot</strong> (<em>array, unit = Jy</em>) – Bootstrap sampled visibilities</p></li>
-<li><p><strong>weights_boot</strong> (<em>array, unit = Jy^-2</em>) – Boostrap sampled weights on the visibilities</p></li>
+<li><p><strong>u_boot, v_boot</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Bootstrap sampled u and v coordinates</p></li>
+<li><p><strong>vis_boot</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Bootstrap sampled visibilities</p></li>
+<li><p><strong>weights_boot</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy^-2</span></code>) – Boostrap sampled weights on the visibilities</p></li>
 </ul>
 </p>
 </dd>
@@ -827,14 +834,15 @@ visibilities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>u</em><em>,</em>) – u and v coordinates of observations (deprojected).</p></li>
-<li><p><strong>V</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Observed visibility. If complex, the weights will be computed from the
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u and v coordinates of observations (deprojected).</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – u and v coordinates of observations (deprojected).</p></li>
+<li><p><strong>V</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Observed visibility. If complex, the weights will be computed from the
 average of the variance of the real and imaginary components, as in
 CASA’s statwt. Otherwise the variance of the real part is used.</p></li>
-<li><p><strong>nbins</strong> (<em>int</em><em>, </em><em>default = 300</em>) – Number of bins used.</p></li>
-<li><p><strong>log</strong> (<em>bool</em><em>, </em><em>default = True</em>) – If True, the uv bins will be constructed in log space, otherwise linear
+<li><p><strong>nbins</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">300</span></code>) – Number of bins used.</p></li>
+<li><p><strong>log</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">True</span></code>) – If True, the uv bins will be constructed in log space, otherwise linear
 spaced bins will be used.</p></li>
-<li><p><strong>use_median</strong> (<em>bool</em><em>, </em><em>default = False</em>) – If True all of the weights will be set to the median of the variance
+<li><p><strong>use_median</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">False</span></code>) – If True all of the weights will be set to the median of the variance
 estimated across the bins. Otherwise, the baseline dependent variance
 will be used.</p></li>
 </ul>
@@ -843,7 +851,7 @@ will be used.</p></li>
 <dd class="field-even"><p><strong>weights</strong> – Estimate of the weight for each uv point.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -861,15 +869,16 @@ the mean of the variance in the two adjacent bins is used instead.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>v</strong> (<em>u</em><em>,</em>) – u and v coordinates of observations</p></li>
-<li><p><strong>wle</strong> (<em>float</em><em>, </em><em>unit =</em><em> [</em><em>m</em><em>]</em>) – Observing wavelength of observations</p></li>
+<li><p><strong>u</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">[m]</span></code>) – u and v coordinates of observations</p></li>
+<li><p><strong>v</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">[m]</span></code>) – u and v coordinates of observations</p></li>
+<li><p><strong>wle</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">[m]</span></code>) – Observing wavelength of observations</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>u_normed, v_normed</strong> – u and v coordinates normalized by observing wavelength</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``</p>
 </dd>
 </dl>
 </dd></dl>
@@ -882,16 +891,16 @@ brightness distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>r</strong> (<em>array</em>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
-<li><p><strong>I</strong> (<em>array</em>) – Brightness values at r</p></li>
-<li><p><strong>axis</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Axis over which to interpolate the 1D profile</p></li>
+<li><p><strong>r</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
+<li><p><strong>I</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Brightness values at r</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <em>default</em> <code class="xref py py-class docutils literal notranslate"><span class="pre">=</span> <span class="pre">0</span></code>) – Axis over which to interpolate the 1D profile</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>I2D</strong> (<em>array, shape = (len(r), len(r))</em>) – 2D brightness distribution</p></li>
-<li><p><strong>xmax</strong> (<em>float</em>) – Maximum x-value of the 2D grid</p></li>
-<li><p><strong>ymax</strong> (<em>float</em>) – Maximum y-value of the 2D grid</p></li>
+<li><p><strong>I2D</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">shape</span> <span class="pre">=</span> <span class="pre">(len(r)</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">len(r))</span></code>) – 2D brightness distribution</p></li>
+<li><p><strong>xmax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Maximum x-value of the 2D grid</p></li>
+<li><p><strong>ymax</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Maximum y-value of the 2D grid</p></li>
 </ul>
 </p>
 </dd>
@@ -906,10 +915,10 @@ brightness distribution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uv</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Baselines of the data to bin</p></li>
-<li><p><strong>V</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Complex visibilities</p></li>
-<li><p><strong>weights</strong> (<em>array</em><em>, </em><em>unit = Jy^-2</em>) – Weights on the visibility points</p></li>
-<li><p><strong>bin_width</strong> (float, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Width of the uv-bins</p></li>
+<li><p><strong>uv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Baselines of the data to bin</p></li>
+<li><p><strong>V</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy</span></code>) – Complex visibilities</p></li>
+<li><p><strong>weights</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">Jy^-2</span></code>) – Weights on the visibility points</p></li>
+<li><p><strong>bin_width</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">:math:</span></code>lambda``) – Width of the uv-bins</p></li>
 </ul>
 </dd>
 </dl>
@@ -940,14 +949,22 @@ brightness distribution</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Jun 15 at 13:04:38 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Aug 11 at 10:31:42 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -958,7 +975,6 @@ brightness distribution</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

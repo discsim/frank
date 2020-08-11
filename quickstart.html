@@ -3,8 +3,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -14,12 +13,19 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -34,11 +40,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Tutorials" href="tutorials.html" />
@@ -56,7 +57,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> frank
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> frank
           
 
           
@@ -86,6 +87,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -122,6 +124,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -160,7 +163,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Performing a fit</li>
     
@@ -460,7 +463,7 @@ and it looks like this,</p>
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;compare_profile&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Path of file with comparison profile to be overplotted with frank fit (.txt or .dat; columns: r [arcsec], I [Jy / sr])&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;compare_profile&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Path of file with comparison profile to be overplotted with frank fit (.txt or .dat). Columns: r [arcsec], I [Jy / sr], optional 3rd column with a single error [Jy / sr] or optional 3rd and 4th columns with lower and upper errors&quot;</span><span class="p">,</span>
     <span class="nt">&quot;clean_beam&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Dictionary of B_major [arcsec], B_minor [arcsec], position angle [deg] of beam to convolve frank profile&quot;</span><span class="p">,</span>
     <span class="nt">&quot;bootstrap_ntrials&quot;</span><span class="p">:</span> <span class="s2">&quot;Number of trials (dataset realizations) to perform in a bootstrap analysis&quot;</span><span class="p">,</span>
 
@@ -471,11 +474,11 @@ and it looks like this,</p>
 <p>That’s it! frank saves (in <code class="code docutils literal notranslate"><span class="pre">save_dir</span></code>) these fit outputs: <br>
 - the logged messages printed during the fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit.log</span></code>, <br>
 - the parameter file used in the fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_used_pars.json</span></code>, <br>
-- the fitted brightness profile as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_profile_fit.txt</span></code>, <br>
-- the visibility domain fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_vis_fit.npz</span></code>, <br>
-- the <code class="code docutils literal notranslate"><span class="pre">sol</span></code> (solution) object (see <a class="reference internal" href="py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_sol.obj</span></code> and optionally the <code class="code docutils literal notranslate"><span class="pre">iteration_diagnostics</span></code> object as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_iteration_diagnostics.obj</span></code>, <br>
-- UVTables for the <strong>reprojected</strong> fit and its residuals as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_fit.npz</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_resid.npz</span></code>, <br>
-- figures showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_quick.png</span></code>, <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_full.png</span></code> and optionally <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_fit_diag.png</span></code>.</p>
+- optionally, the fitted brightness profile as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_profile_fit.txt</span></code>, <br>
+- optionally, the visibility domain fit as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_vis_fit.npz</span></code>, <br>
+- optionally, the <code class="code docutils literal notranslate"><span class="pre">sol</span></code> (solution) object (see <a class="reference internal" href="py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a>) as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_sol.obj</span></code> and the <code class="code docutils literal notranslate"><span class="pre">iteration_diagnostics</span></code> object as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_iteration_diagnostics.obj</span></code>, <br>
+- optionally, the UVTables for the <strong>reprojected</strong> fit and its residuals as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_fit.npz</span></code> and <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_frank_uv_resid.npz</span></code>, <br>
+- optionally, figures showing the fit and its diagnostics as <code class="code docutils literal notranslate"><span class="pre">&lt;uvtable_filename&gt;_*.png</span></code>.</p>
 <p>Here’s the full figure frank produces (if <code class="code docutils literal notranslate"><span class="pre">full_plot=True</span></code> in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract">Andrews et al. 2018</a>).</p>
 <div class="figure align-left" style="width: 700px">
@@ -545,18 +548,17 @@ The wrapper functions in <code class="docutils literal notranslate"><span class=
 but we’re going to mostly avoid those here,
 just to show how to directly interface with the code’s internal classes.</p>
 <p>First import some basic stuff from frank and load the data
-(again using the DSHARP observations of AS 209, available as a UVTable
+(again using the DSHARP observations of AS 209, available as a UVTable - with time-averaging of 30 s and channel-averaging of 1 channel per spectral window -
 <a class="reference external" href="https://github.com/discsim/frank/blob/master/docs/tutorials/AS209_continuum.npz">here</a>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">frank.io</span> <span class="kn">import</span> <span class="n">load_uvtable</span><span class="p">,</span> <span class="n">save_fit</span>
 <span class="kn">from</span> <span class="nn">frank.radial_fitters</span> <span class="kn">import</span> <span class="n">FrankFitter</span>
 <span class="kn">from</span> <span class="nn">frank.geometry</span> <span class="kn">import</span> <span class="n">FitGeometryGaussian</span>
-<span class="kn">from</span> <span class="nn">frank.fit</span> <span class="kn">import</span> <span class="n">load_data</span>
-<span class="kn">from</span> <span class="nn">frank.make_figs</span> <span class="kn">import</span> <span class="n">frank_plotting_style</span><span class="p">,</span> <span class="n">make_quick_fig</span>
-<span class="kn">from</span> <span class="nn">frank.io</span> <span class="kn">import</span> <span class="n">save_fit</span>
+<span class="kn">from</span> <span class="nn">frank.make_figs</span> <span class="kn">import</span> <span class="n">make_quick_fig</span>
 
 <span class="n">save_prefix</span> <span class="o">=</span> <span class="s1">&#39;AS209_continuum&#39;</span>
 <span class="n">uvtable_filename</span> <span class="o">=</span> <span class="n">save_prefix</span> <span class="o">+</span> <span class="s1">&#39;.npz&#39;</span>
-<span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">uvtable_filename</span><span class="p">)</span>
+<span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">load_uvtable</span><span class="p">(</span><span class="n">uvtable_filename</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now run the fit using the <a class="reference internal" href="py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> class.
@@ -606,14 +608,22 @@ when running from the terminal, frank produces this figure if <code class="code 
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Jun 15 at 13:04:38 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Aug 11 at 10:31:42 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -624,7 +634,6 @@ when running from the terminal, frank produces this figure if <code class="code 
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

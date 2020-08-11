@@ -57,11 +57,11 @@ which returns
 That's it! frank saves (in `save_dir`) these fit outputs: |br|
 - the logged messages printed during the fit as `<uvtable_filename>_frank_fit.log`, |br|
 - the parameter file used in the fit as `<uvtable_filename>_frank_used_pars.json`, |br|
-- the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
-- the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
-- the `sol` (solution) object (see `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and optionally the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
-- UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
-- figures showing the fit and its diagnostics as `<uvtable_filename>_frank_fit_quick.png`, `<uvtable_filename>_frank_fit_full.png` and optionally `<uvtable_filename>_frank_fit_diag.png`.
+- optionally, the fitted brightness profile as `<uvtable_filename>_frank_profile_fit.txt`, |br|
+- optionally, the visibility domain fit as `<uvtable_filename>_frank_vis_fit.npz`, |br|
+- optionally, the `sol` (solution) object (see `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_) as `<uvtable_filename>_frank_sol.obj` and the `iteration_diagnostics` object as `<uvtable_filename>_frank_iteration_diagnostics.obj`, |br|
+- optionally, the UVTables for the **reprojected** fit and its residuals as `<uvtable_filename>_frank_uv_fit.npz` and `<uvtable_filename>_frank_uv_resid.npz`, |br|
+- optionally, figures showing the fit and its diagnostics as `<uvtable_filename>_*.png`.
 
 Here's the full figure frank produces (if `full_plot=True` in your parameter file) for a fit to the DSHARP continuum observations of the protoplanetary disc
 AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract>`_).
@@ -136,21 +136,20 @@ but we're going to mostly avoid those here,
 just to show how to directly interface with the code's internal classes.
 
 First import some basic stuff from frank and load the data
-(again using the DSHARP observations of AS 209, available as a UVTable
+(again using the DSHARP observations of AS 209, available as a UVTable - with time-averaging of 30 s and channel-averaging of 1 channel per spectral window -
 `here <https://github.com/discsim/frank/blob/master/docs/tutorials/AS209_continuum.npz>`_).
 
 .. code-block:: python
 
-    import os
+    import matplotlib.pyplot as plt
+    from frank.io import load_uvtable, save_fit
     from frank.radial_fitters import FrankFitter
     from frank.geometry import FitGeometryGaussian
-    from frank.fit import load_data
-    from frank.make_figs import frank_plotting_style, make_quick_fig
-    from frank.io import save_fit
+    from frank.make_figs import make_quick_fig
 
     save_prefix = 'AS209_continuum'
     uvtable_filename = save_prefix + '.npz'
-    u, v, vis, weights = load_data(uvtable_filename)
+    u, v, vis, weights = load_uvtable(uvtable_filename)
 
 Now run the fit using the `FrankFitter <py_API.rst#frank.radial_fitters.FrankFitter>`_ class.
 In this example we'll fit for the disc's geometry using the `FitGeometryGaussian <py_API.rst#frank.geometry.FitGeometryGaussian>`_ class.
