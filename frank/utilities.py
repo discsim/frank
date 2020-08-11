@@ -458,7 +458,8 @@ def draw_bootstrap_sample(u, v, vis, weights):
     return u_boot, v_boot, vis_boot, weights_boot
 
 
-def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0):
+def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
+                  xmax=None, ymax=None):
     r"""
     Sweep a 1D radial brightness profile over :math:`2 \pi` to yield a 2D
     brightness distribution. Optionally project this sweep by a supplied
@@ -481,6 +482,9 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0):
         project=True
     axis : int, default = 0
         Axis over which to interpolate the 1D profile
+    xmax, ymax : float, default = None
+        Value setting the x- and y-bounds of the image (same units as r). The
+        positive and negative bounds are both set to this value (modulo sign)
 
     Returns
     -------
@@ -506,13 +510,16 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0):
         cos_i = np.cos(inc)
         cos_pa, sin_pa = np.cos(pa), np.sin(pa)
 
-    xmax = ymax = r.max()
-    dr = np.mean(np.diff(r))
+    if not xmax and not ymax:
+        xmax = ymax = r.max()
+    elif not xmax:
+        xmax = r.max()
+    elif not ymax:
+        ymax = r.max()
+    else:
+        pass
 
-    if project:
-        xmax *= abs(cos_i * cos_pa) + abs(sin_pa)
-        ymax *= abs(cos_i * sin_pa) + abs(cos_pa)
-        xmax = ymax = int(max(xmax, ymax) / dr + 1) * dr
+    dr = np.mean(np.diff(r))
 
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
