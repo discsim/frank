@@ -413,7 +413,7 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
     w = np.sqrt(weights)
 
     if inc_pa is not None:
-        inc, pa = inc_pa
+        inc, PA = inc_pa
 
     if phase_centre is not None:
         dRA, dDec = phase_centre
@@ -424,7 +424,7 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
         return np.concatenate([fun.real, fun.imag])
 
     def _gauss_fun(params):
-        dRA, dDec, inc, pa, norm, scal = params
+        dRA, dDec, inc, PA, norm, scal = params
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
@@ -432,8 +432,8 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
         else:
             Vp = V
 
-        c_t = np.cos(pa)
-        s_t = np.sin(pa)
+        c_t = np.cos(PA)
+        s_t = np.sin(PA)
         c_i = np.cos(inc)
         up = (u*c_t - v*s_t) * c_i / (scal*rad_to_arcsec)
         vp = (u*s_t + v*c_t) / (scal*rad_to_arcsec)
@@ -443,7 +443,7 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
         return wrap(fun)
 
     def _gauss_jac(params):
-        dRA, dDec, inc, pa, norm, scal = params
+        dRA, dDec, inc, PA, norm, scal = params
 
         jac = np.zeros([6, 2*len(w)])
 
@@ -454,8 +454,8 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
             jac[0] = wrap(dVp*u)
             jac[1] = wrap(dVp*v)
 
-        c_t = np.cos(pa)
-        s_t = np.sin(pa)
+        c_t = np.cos(PA)
+        s_t = np.sin(PA)
         c_i = np.cos(inc)
         s_i = np.sin(inc)
         up = (u*c_t - v*s_t)
@@ -488,7 +488,10 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
+    geometry = inc, PA, dRA, dDec
+    if inc_pa is None:
+        inc /= deg_to_rad
+        PA /= deg_to_rad
 
     return geometry
 
