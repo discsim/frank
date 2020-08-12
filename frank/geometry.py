@@ -545,6 +545,11 @@ class FitGeometryFourierBessel(SourceGeometry):
 
         if guess is None:
             guess = [10., 10., 0., 0.]
+        if self._inc_pa is not None:
+            guess[0], guess[1] = self._inc_pa
+        if self._phase_centre is not None:
+            guess[2], guess[3] = self._phase_centre
+
         self._guess = guess
 
         self._verbose = verbose
