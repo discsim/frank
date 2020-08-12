@@ -316,6 +316,10 @@ class FitGeometryGaussian(SourceGeometry):
         super(FitGeometryGaussian, self).__init__()
 
         self._inc_pa = inc_pa
+        # Convert self._inc_pa from [deg] to [rad]
+        if self._inc_pa is not None:
+            self._inc_pa = tuple(np.array(self._inc_pa) * deg_to_rad)
+
         self._phase_centre = phase_centre
         self._guess = guess
 
