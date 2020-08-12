@@ -329,6 +329,10 @@ class FitGeometryGaussian(SourceGeometry):
             guess = [guess[2], guess[3],
                      guess[0] * deg_to_rad, guess[1] * deg_to_rad]
             guess.extend([1.0, 1.0])
+        if self._inc_pa is not None:
+            guess[2], guess[3] = self._inc_pa
+        if self._phase_centre is not None:
+            guess[0], guess[1] = self._phase_centre
 
         self._guess = guess
 
