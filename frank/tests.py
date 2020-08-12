@@ -146,7 +146,7 @@ def test_fit_geometry():
                                 1e3 * geom.dDec],
                                [1.4916013559412147 / deg_to_rad,
                                 0.5395904796783955 / deg_to_rad,
-                                -0.4873171618995407, -1.244953549468638],
+                                -0.6432951224590862, -1.1619271783674576],
                                err_msg="Gaussian geometry fit (provided inc_pa)")
 
 
