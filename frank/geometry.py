@@ -492,10 +492,7 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    if inc_pa is None:
-        geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
-    else:
-        geometry = inc, PA, dRA, dDec
+    geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
 
     return geometry
 
