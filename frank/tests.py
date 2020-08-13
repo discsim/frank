@@ -168,7 +168,7 @@ def test_fit_geometry():
     np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                1e3 * geom.dDec],
                               [33.81936473347169, 85.26142233735665,
-                                0.5611264472976515, -1.1700974015075502],
+                               0.5611264472976515, -1.1700974015075502],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit")
 
