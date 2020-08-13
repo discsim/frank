@@ -440,7 +440,7 @@ and it looks like this,</p>
     <span class="nt">&quot;type&quot;</span>             <span class="p">:</span> <span class="s2">&quot;How the geometry is determined: &#39;known&#39; if user-supplied, &#39;gaussian&#39; to fit it with a gaussian, &#39;nonparametric&#39; to fit it nonparametrically&quot;</span><span class="p">,</span>
     <span class="nt">&quot;fit_phase_offset&quot;</span> <span class="p">:</span> <span class="s2">&quot;Whether to fit for the phase center&quot;</span><span class="p">,</span>
     <span class="nt">&quot;fit_inc_pa&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Whether to fit for the inclination and position angle&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;initial_guess&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (only used if `type` is &#39;gaussian&#39; or &#39;nonparametric&#39;)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;initial_guess&quot;</span>    <span class="p">:</span> <span class="s2">&quot;Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (if `fit_phase_offset` is True or `fit_inc_pa` is True, the respective values below will be used. Guess is only used if `type` is &#39;gaussian&#39; or &#39;nonparametric&#39;)&quot;</span><span class="p">,</span>
     <span class="nt">&quot;inc&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Inclination, unit=[deg]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;pa&quot;</span>               <span class="p">:</span> <span class="s2">&quot;Position angle, unit=[deg]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;dra&quot;</span>              <span class="p">:</span> <span class="s2">&quot;Delta (offset from 0) right ascension, unit=[arcsec]&quot;</span><span class="p">,</span>
@@ -619,7 +619,7 @@ when running from the terminal, frank produces this figure if <code class="code 
         
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Aug 11 at 10:38:18 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Aug 13 at 17:44:20 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
