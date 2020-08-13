@@ -459,7 +459,7 @@ def draw_bootstrap_sample(u, v, vis, weights):
 
 
 def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
-                  xmax=None, ymax=None):
+                  xmax=None, ymax=None, dr=None):
     r"""
     Sweep a 1D radial brightness profile over :math:`2 \pi` to yield a 2D
     brightness distribution. Optionally project this sweep by a supplied
@@ -485,6 +485,8 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
     xmax, ymax : float, default = None
         Value setting the x- and y-bounds of the image (same units as r). The
         positive and negative bounds are both set to this value (modulo sign)
+    dr : float, default = None
+        Pixel size (same units as r)
 
     Returns
     -------
@@ -515,7 +517,8 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
     if ymax is None:
         ymax = r.max()
 
-    dr = np.mean(np.diff(r))
+    if dr is None:
+        dr = np.mean(np.diff(r))
 
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
