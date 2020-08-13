@@ -127,6 +127,9 @@ def test_fit_geometry():
     AS209, _ = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
+    inc_pa = [30.916257151011674, 85.46246241142246]
+    phase_centre = [-0.6431627790617276e-3, -1.161768824369382e-3]
+
     geom = FitGeometryGaussian()
     geom.fit(u, v, vis, weights)
 
@@ -137,8 +140,6 @@ def test_fit_geometry():
                                 -0.6434703241180601, -1.1623515516661052],
                                err_msg="Gaussian geometry fit")
 
-
-    inc_pa = [30.916257151011674, 85.46246241142246]
     geom = FitGeometryGaussian(inc_pa=inc_pa)
     geom.fit(u, v, vis, weights)
 
@@ -149,8 +150,6 @@ def test_fit_geometry():
                                 -0.6432951224590862, -1.1619271783674576],
                                err_msg="Gaussian geometry fit (provided inc_pa)")
 
-
-    phase_centre = [-0.6431627790617276e-3, -1.161768824369382e-3]
     geom = FitGeometryGaussian(phase_centre=phase_centre)
     geom.fit(u, v, vis, weights)
 
@@ -168,7 +167,7 @@ def test_fit_geometry():
     np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                1e3 * geom.dDec],
                               [33.81936473347169, 85.26142233735665,
-                               0.5611264472976515, -1.1700974015075502],
+                               0.5611211784189547, -1.170097994325657],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit")
 
