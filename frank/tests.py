@@ -130,22 +130,22 @@ def test_fit_geometry():
     geom = FitGeometryGaussian()
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [1.4916013559412147 / deg_to_rad,
-                                0.5395904796783955 / deg_to_rad,
-                                -0.6431627790617276, -1.161768824369382],
+                               [30.916256948647096,
+                                85.46246845532691,
+                                -0.6434703241180601, -1.1623515516661052],
                                err_msg="Gaussian geometry fit")
 
 
-    inc_pa = [0.5395904796783955 / deg_to_rad, 1.4916013559412147 / deg_to_rad]
+    inc_pa = [30.916257151011674, 85.46246241142246]
     geom = FitGeometryGaussian(inc_pa=inc_pa)
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [1.4916013559412147 / deg_to_rad,
-                                0.5395904796783955 / deg_to_rad,
+                               [30.916257151011674,
+                                85.46246241142246,
                                 -0.6432951224590862, -1.1619271783674576],
                                err_msg="Gaussian geometry fit (provided inc_pa)")
 
@@ -154,10 +154,10 @@ def test_fit_geometry():
     geom = FitGeometryGaussian(phase_centre=phase_centre)
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [1.491675547239919 / deg_to_rad,
-                                0.5395923690803472 / deg_to_rad,
+                               [30.91601671340713,
+                                85.471787339838,
                                 -0.6431627790617276, -1.161768824369382],
                                err_msg="Gaussian geometry fit (provided phase_centre)")
 
@@ -165,10 +165,10 @@ def test_fit_geometry():
     geom = FitGeometryFourierBessel(1.6, 20)
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                1e3 * geom.dDec],
-                              [85.26142233422196, 33.819364762203364,
-                               0.5611211784189547, -1.170097994325657],
+                              [33.81936473347169, 85.26142233735665,
+                                0.5611264472976515, -1.1700974015075502],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit")
 
@@ -176,9 +176,9 @@ def test_fit_geometry():
     geom = FitGeometryFourierBessel(1.6, 20, inc_pa=inc_pa)
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                1e3 * geom.dDec],
-                              [85.46246241142246, 30.916257151011674,
+                              [30.916257151011674, 85.46246241142246,
                                1.4567005881700168, -1.658896248809076],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit (provided inc_pa)")
@@ -187,9 +187,9 @@ def test_fit_geometry():
     geom = FitGeometryFourierBessel(1.6, 20, phase_centre=phase_centre)
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                1e3 * geom.dDec],
-                              [85.2562498368987, 33.83672738960381,
+                              [33.83672738960381, 85.2562498368987,
                                -0.6431627790617276, -1.161768824369382],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit (provided phase_centre)")
@@ -263,10 +263,10 @@ def test_fit_geometry_inside():
     sol = FF.fit(u, v, vis, weights)
 
     geom = sol.geometry
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [86.46568992560152, 34.5071920284988,
-                                0.20818634201418384, -2.0988159662202714],
+                               [34.50710460482996, 86.4699107557648,
+                                0.21017246809441995, -2.109586872914908],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
 def test_throw_error_on_bad_q_range():
