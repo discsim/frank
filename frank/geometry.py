@@ -294,6 +294,10 @@ class FitGeometryGaussian(SourceGeometry):
 
     Parameters
     ----------
+    inc_pa : tuple = (inclination, position angle) or None (default), unit = deg
+         Determine whether to fit for the source's inclination and position
+         angle. If inc_pa = None, the inclination and PA are fit for. Else
+         inc_pa should be provided as a tuple
     phase_centre : tuple = (dRA, dDec) or None (default), unit = arcsec
          Determine whether to fit for the source's phase centre. If
          phase_centre = None, the phase centre is fit for. Else the phase
@@ -308,18 +312,22 @@ class FitGeometryGaussian(SourceGeometry):
     from the phase centre.
     """
 
-    def __init__(self, phase_centre=None, guess=None):
+    def __init__(self, inc_pa=None, phase_centre=None, guess=None):
         super(FitGeometryGaussian, self).__init__()
 
+        self._inc_pa = inc_pa
         self._phase_centre = phase_centre
         self._guess = guess
 
         if guess is None:
-            guess = [0.0, 0.0, 0.1, 0.1, 1.0, 1.0]
+            guess = [10.0, 10.0, 0.0, 0.0, 1.0, 1.0]
         else:
-            guess = [guess[2], guess[3],
-                     guess[0] * deg_to_rad, guess[1] * deg_to_rad]
-            guess.extend([1.0, 1.0])
+            guess = guess.extend([1.0, 1.0])
+
+        if self._inc_pa is not None:
+            guess[0], guess[1] = self._inc_pa
+        if self._phase_centre is not None:
+            guess[2], guess[3] = self._phase_centre
 
         self._guess = guess
 
@@ -339,25 +347,41 @@ class FitGeometryGaussian(SourceGeometry):
             Weights on the visibilities
         """
 
-        if self._phase_centre:
-            logging.info('    Fitting Gaussian to determine geometry'
-                         ' (not fitting for phase center)')
+        if self._inc_pa and self._phase_centre:
+            logging.info('    You requested a Gaussian fit to determine the geometry,'
+                         ' but you provided values for inclination, PA, and the phase offset.'
+                         ' --> Using your provided values (not fitting for the geometry)')
+            self._inc, self._PA = self._inc_pa
+            self._dRA, self._dDec = self._phase_centre
+
         else:
-            logging.info('    Fitting Gaussian to determine geometry')
+            if self._inc_pa:
+                logging.info('    Fitting Gaussian to determine geometry'
+                             ' (not fitting for inc or PA)')
 
-        inc, PA, dRA, dDec = _fit_geometry_gaussian(
-            u, v, V, weights, guess=self._guess,
-            phase_centre=self._phase_centre)
+            elif self._phase_centre:
+                logging.info('    Fitting Gaussian to determine geometry'
+                             ' (not fitting for phase center)')
 
-        inc, PA = _fix_inc_and_PA_ranges(inc, PA)
+            else:
+                logging.info('    Fitting Gaussian to determine geometry')
 
-        self._inc = inc
-        self._PA = PA
-        self._dRA = dRA
-        self._dDec = dDec
+            inc, PA, dRA, dDec = _fit_geometry_gaussian(
+                u, v, V, weights, guess=self._guess,
+                inc_pa=self._inc_pa,
+                phase_centre=self._phase_centre)
+
+            if not self._inc_pa:
+                inc, PA = _fix_inc_and_PA_ranges(inc, PA)
+
+            self._inc = inc
+            self._PA = PA
+            self._dRA = dRA
+            self._dDec = dDec
 
 
-def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
+def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
+                           phase_centre=None):
     r"""
     Estimate the source geometry by fitting a Gaussian in uv-space
 
@@ -376,6 +400,9 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
         right ascension offset [arcsec], declination offset [arcsec],
         the Gaussian's normalization, and its scaling. The latter 2 are forced
         as 1.0
+    inc_pa: [inclination, position angle], optional, unit = deg
+        The inclination and position angle.
+        If not provided, these will be fit for
     phase_centre: [dRA, dDec], optional, unit = arcsec
         The phase centre offsets dRA and dDec.
         If not provided, these will be fit for
@@ -388,16 +415,26 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
     fac = 2*np.pi / rad_to_arcsec
     w = np.sqrt(weights)
 
+    if inc_pa is not None:
+        inc, PA = inc_pa
+        # Convert inc and PA from [deg] --> [rad]
+        inc *= deg_to_rad
+        PA *= deg_to_rad
+
     if phase_centre is not None:
         dRA, dDec = phase_centre
         phi = dRA*fac * u + dDec*fac * v
         V = V * (np.cos(phi) - 1j*np.sin(phi))
 
+    # Convert guess inc and PA from [deg] --> [rad]
+    guess[0] *= deg_to_rad
+    guess[1] *= deg_to_rad
+
     def wrap(fun):
         return np.concatenate([fun.real, fun.imag])
 
     def _gauss_fun(params):
-        dRA, dDec, inc, pa, norm, scal = params
+        inc, PA, dRA, dDec, norm, scal = params
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
@@ -405,8 +442,8 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
         else:
             Vp = V
 
-        c_t = np.cos(pa)
-        s_t = np.sin(pa)
+        c_t = np.cos(PA)
+        s_t = np.sin(PA)
         c_i = np.cos(inc)
         up = (u*c_t - v*s_t) * c_i / (scal*rad_to_arcsec)
         vp = (u*s_t + v*c_t) / (scal*rad_to_arcsec)
@@ -416,7 +453,7 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
         return wrap(fun)
 
     def _gauss_jac(params):
-        dRA, dDec, inc, pa, norm, scal = params
+        inc, PA, dRA, dDec, norm, scal = params
 
         jac = np.zeros([6, 2*len(w)])
 
@@ -424,11 +461,11 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
             phi = dRA*fac * u + dDec*fac * v
             dVp = - w*V * (-np.sin(phi) - 1j*np.cos(phi)) * fac
 
-            jac[0] = wrap(dVp*u)
-            jac[1] = wrap(dVp*v)
+            jac[2] = wrap(dVp*u)
+            jac[3] = wrap(dVp*v)
 
-        c_t = np.cos(pa)
-        s_t = np.sin(pa)
+        c_t = np.cos(PA)
+        s_t = np.sin(PA)
         c_i = np.cos(inc)
         s_i = np.sin(inc)
         up = (u*c_t - v*s_t)
@@ -440,8 +477,10 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
 
         norm = norm / (scal*rad_to_arcsec)**2
 
-        jac[2] = wrap(norm*G*up*up*c_i*s_i)
-        jac[3] = wrap(norm*G*up*vp*(c_i*c_i - 1)/2)
+        if inc_pa is None:
+            jac[0] = wrap(norm*G*up*up*c_i*s_i)
+            jac[1] = wrap(norm*G*up*vp*(c_i*c_i - 1)/2)
+
         jac[4] = wrap(G)
         jac[5] = wrap(norm*G*uv/scal)
 
@@ -451,12 +490,19 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, phase_centre=None):
     res = least_squares(_gauss_fun, guess,
                         jac=_gauss_jac, method='lm')
 
-    dRA, dDec, inc, PA, _, _ = res.x
+    inc, PA, dRA, dDec, _, _ = res.x
+
+    if inc_pa is not None:
+        inc, PA = inc_pa
+    else:
+        # convert back to [deg]
+        inc /= deg_to_rad
+        PA /= deg_to_rad
 
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
+    geometry = inc, PA, dRA, dDec
 
     return geometry
 
@@ -482,6 +528,10 @@ class FitGeometryFourierBessel(SourceGeometry):
             f(r) = 0 for R >= Rmax
     N : int
         Number of collocation points
+    inc_pa : tuple = (inclination, position angle) or None (default), unit = deg
+         Determine whether to fit for the source's inclination and position
+         angle. If inc_pa = None, the inclination and PA are fit for. Else
+         inc_pa should be provided as a tuple
     phase_centre : tuple = (dRA, dDec) or None (default), unit = arcsec
         Determine whether to fit for the source's phase centre. If
         phase_centre = None, the phase centre is fit for. Else the phase
@@ -492,19 +542,28 @@ class FitGeometryFourierBessel(SourceGeometry):
     verbose : bool, default=False
         Determines whether to print the iteration progress.
     """
-    def __init__(self, Rmax, N, phase_centre=None, guess=None, verbose=False):
+    def __init__(self, Rmax, N, inc_pa=None, phase_centre=None, guess=None,
+                 verbose=False):
         self._N = N
         self._R = Rmax
+        self._inc_pa = inc_pa
         self._phase_centre = phase_centre
 
         if guess is None:
             guess = [10., 10., 0., 0.]
+        if self._inc_pa is not None:
+            guess[0], guess[1] = self._inc_pa
+        if self._phase_centre is not None:
+            guess[2], guess[3] = self._phase_centre
+
         self._guess = guess
 
         self._verbose = verbose
 
     def _residual(self, params, uvdata=None):
         inc, pa, dRA, dDec = params
+        if self._inc_pa is not None:
+            inc, pa = self._inc_pa
         if self._phase_centre is not None:
             dRA, dDec = self._phase_centre
 
@@ -543,31 +602,47 @@ class FitGeometryFourierBessel(SourceGeometry):
         weights : array of real, size = N, unit = Jy
             Weights on the visibilities
         """
-        if self._phase_centre:
-            logging.info('    Fitting nonparametric form to determine geometry'
-                         ' (your supplied phase center will be applied at the'
-                         ' end of the geometry fitting routine)')
+        if self._inc_pa and self._phase_centre:
+            logging.info('    You requested a nonparametric fit to determine the geometry,'
+                         ' but you provided values for inclination, PA, and the phase offset.'
+                         ' --> Using your provided values (not fitting for the geometry)')
+            self._inc, self._PA = self._inc_pa
+            self._dRA, self._dDec = self._phase_centre
 
         else:
-            logging.info('    Fitting nonparametric form to determine geometry')
+            if self._inc_pa:
+                logging.info('    Fitting nonparametric form to determine geometry'
+                             ' (your supplied inclination and position angle will'
+                             ' be applied at the end of the geometry fitting'
+                             ' routine)')
+            if self._phase_centre:
+                logging.info('    Fitting nonparametric form to determine geometry'
+                             ' (your supplied phase center will be applied at the'
+                             ' end of the geometry fitting routine)')
 
-        uvdata= [u, v, vis, w**0.5]
+            else:
+                logging.info('    Fitting nonparametric form to determine geometry')
 
-        self._counter = 0
+            uvdata= [u, v, vis, w**0.5]
 
-        result = least_squares(self._residual, self._guess, kwargs={'uvdata':uvdata},
-                               method='lm')
+            self._counter = 0
 
-        if not result.success:
-            raise RuntimeError("FitGeometryFourierBessel failed to converge")
+            result = least_squares(self._residual, self._guess, kwargs={'uvdata':uvdata},
+                                   method='lm')
 
-        inc, pa, dRA, dDec = result.x
-        if self._phase_centre:
-            dRA, dDec = self._phase_centre
+            if not result.success:
+                raise RuntimeError("FitGeometryFourierBessel failed to converge")
 
-        inc, pa = _fix_inc_and_PA_ranges(inc, pa)
+            inc, pa, dRA, dDec = result.x
+            if self._inc_pa:
+                inc, pa = self._inc_pa
+            if self._phase_centre:
+                dRA, dDec = self._phase_centre
 
-        self._inc = inc
-        self._PA = pa
-        self._dRA = dRA
-        self._dDec = dDec
+            if not self._inc_pa:
+                inc, pa = _fix_inc_and_PA_ranges(inc, pa)
+
+            self._inc = inc
+            self._PA = pa
+            self._dRA = dRA
+            self._dDec = dDec
