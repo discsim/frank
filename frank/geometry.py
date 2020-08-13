@@ -320,11 +320,14 @@ class FitGeometryGaussian(SourceGeometry):
         self._guess = guess
 
         if guess is None:
-            guess = [0.0, 0.0, 0.1, 0.1, 1.0, 1.0]
+            guess = [10.0, 10.0, 0.0, 0.0, 1.0, 1.0]
         else:
-            guess = [guess[2], guess[3],
-                     guess[0] * deg_to_rad, guess[1] * deg_to_rad]
-            guess.extend([1.0, 1.0])
+            guess = guess.extend([1.0, 1.0])
+
+        if self._inc_pa is not None:
+            guess[0], guess[1] = self._inc_pa
+        if self._phase_centre is not None:
+            guess[2], guess[3] = self._phase_centre
 
         self._guess = guess
 
@@ -413,18 +416,25 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
     w = np.sqrt(weights)
 
     if inc_pa is not None:
-        inc, pa = inc_pa
+        inc, PA = inc_pa
+        # Convert inc and PA from [deg] --> [rad]
+        inc *= deg_to_rad
+        PA *= deg_to_rad
 
     if phase_centre is not None:
         dRA, dDec = phase_centre
         phi = dRA*fac * u + dDec*fac * v
         V = V * (np.cos(phi) - 1j*np.sin(phi))
 
+    # Convert guess inc and PA from [deg] --> [rad]
+    guess[0] *= deg_to_rad
+    guess[1] *= deg_to_rad
+
     def wrap(fun):
         return np.concatenate([fun.real, fun.imag])
 
     def _gauss_fun(params):
-        dRA, dDec, inc, pa, norm, scal = params
+        inc, PA, dRA, dDec, norm, scal = params
 
         if phase_centre is None:
             phi = dRA*fac * u + dDec*fac * v
@@ -432,8 +442,8 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
         else:
             Vp = V
 
-        c_t = np.cos(pa)
-        s_t = np.sin(pa)
+        c_t = np.cos(PA)
+        s_t = np.sin(PA)
         c_i = np.cos(inc)
         up = (u*c_t - v*s_t) * c_i / (scal*rad_to_arcsec)
         vp = (u*s_t + v*c_t) / (scal*rad_to_arcsec)
@@ -443,7 +453,7 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
         return wrap(fun)
 
     def _gauss_jac(params):
-        dRA, dDec, inc, pa, norm, scal = params
+        inc, PA, dRA, dDec, norm, scal = params
 
         jac = np.zeros([6, 2*len(w)])
 
@@ -451,11 +461,11 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
             phi = dRA*fac * u + dDec*fac * v
             dVp = - w*V * (-np.sin(phi) - 1j*np.cos(phi)) * fac
 
-            jac[0] = wrap(dVp*u)
-            jac[1] = wrap(dVp*v)
+            jac[2] = wrap(dVp*u)
+            jac[3] = wrap(dVp*v)
 
-        c_t = np.cos(pa)
-        s_t = np.sin(pa)
+        c_t = np.cos(PA)
+        s_t = np.sin(PA)
         c_i = np.cos(inc)
         s_i = np.sin(inc)
         up = (u*c_t - v*s_t)
@@ -468,8 +478,8 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
         norm = norm / (scal*rad_to_arcsec)**2
 
         if inc_pa is None:
-            jac[2] = wrap(norm*G*up*up*c_i*s_i)
-            jac[3] = wrap(norm*G*up*vp*(c_i*c_i - 1)/2)
+            jac[0] = wrap(norm*G*up*up*c_i*s_i)
+            jac[1] = wrap(norm*G*up*vp*(c_i*c_i - 1)/2)
 
         jac[4] = wrap(G)
         jac[5] = wrap(norm*G*uv/scal)
@@ -480,15 +490,19 @@ def _fit_geometry_gaussian(u, v, V, weights, guess, inc_pa=None,
     res = least_squares(_gauss_fun, guess,
                         jac=_gauss_jac, method='lm')
 
-    dRA, dDec, inc, PA, _, _ = res.x
+    inc, PA, dRA, dDec, _, _ = res.x
 
     if inc_pa is not None:
         inc, PA = inc_pa
+    else:
+        # convert back to [deg]
+        inc /= deg_to_rad
+        PA /= deg_to_rad
 
     if phase_centre is not None:
         dRA, dDec = phase_centre
 
-    geometry = inc / deg_to_rad, PA / deg_to_rad, dRA, dDec
+    geometry = inc, PA, dRA, dDec
 
     return geometry
 
@@ -537,6 +551,11 @@ class FitGeometryFourierBessel(SourceGeometry):
 
         if guess is None:
             guess = [10., 10., 0., 0.]
+        if self._inc_pa is not None:
+            guess[0], guess[1] = self._inc_pa
+        if self._phase_centre is not None:
+            guess[2], guess[3] = self._phase_centre
+
         self._guess = guess
 
         self._verbose = verbose
