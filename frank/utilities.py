@@ -344,7 +344,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
+def estimate_weights(u, v, V, nbins=300, log=True, use_median=False, q=None):
     r"""
     Estimate the weights using the variance of the binned visibilities.
 
@@ -373,6 +373,9 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         If True all of the weights will be set to the median of the variance
         estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
+    q : array, optional, default = None, unit = :math:`\lambda`
+        Baseline coordinates of observations (deprojected). If provided,
+        u and v will not be used.
 
     Returns
     -------
@@ -389,7 +392,11 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
 
     logging.info('  Estimating visibility weights.')
 
-    q = np.hypot(u,v)
+    if q is None:
+        q = np.hypot(u,v)
+    else:
+        logging.info('    Using supplied `q` (rather than `u`, `v`) to estimate weights')
+
     if log:
         q = np.log(q)
         q -= q.min()
