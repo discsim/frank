@@ -56,7 +56,8 @@ class UVDataBinner(object):
     uv : array, unit = :math:`\lambda`
         Baselines of the data to bin
     V : array, unit = Jy
-        Complex visibilities
+        Observed visibility. If complex, both the real and imaginary
+        components will be binned. Else only the real part will be binned.
     weights : array, unit = Jy^-2
         Weights on the visibility points
     bin_width : float, unit = :math:`\lambda`
@@ -107,19 +108,24 @@ class UVDataBinner(object):
         mu = self._V[self.determine_uv_bin(uv)]
 
         #   2) Compute weighted error for bins with n > 1
-        err = self.bin_quantities(uv, weights**2,
-                                  (V-mu).real**2 + 1j * (V-mu).imag**2)
+        quantities = (V-mu).real**2
+        if np.iscomplexobj(V):
+            quantities = quantities + 1j * (V-mu).imag**2
+        err = self.bin_quantities(uv, weights**2, quantities)
 
         idx2 = bin_n > 1
         err[idx2] /= bin_wgt[idx2]**2 * (1 - 1 / bin_n[idx2])
 
-        bin_vis_err[idx2] = \
-            np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
+        temp_error = np.sqrt(err.real[idx2])
+        if np.iscomplexobj(V):
+            temp_error = temp_error + 1.j * np.sqrt(err.imag[idx2])
+        bin_vis_err[idx2] = temp_error
 
         #   3) Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
-        bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
-            1 / np.sqrt(bin_wgt[idx1])
+        bin_vis_err[idx1].real = 1 / np.sqrt(bin_wgt[idx1])
+        if np.iscomplexobj(V):
+            bin_vis_err[idx1].imag = bin_vis_err[idx1].real
         bin_vis_err[mask] = np.nan
 
         #   4) Store the error
