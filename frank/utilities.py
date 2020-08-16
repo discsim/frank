@@ -482,11 +482,13 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
         project=True
     axis : int, default = 0
         Axis over which to interpolate the 1D profile
-    xmax, ymax : float, default = None
+    xmax, ymax : float, optional, default = None
         Value setting the x- and y-bounds of the image (same units as r). The
-        positive and negative bounds are both set to this value (modulo sign)
-    dr : float, default = None
-        Pixel size (same units as r)
+        positive and negative bounds are both set to this value (modulo sign).
+        If not provided, these will be set to r.max()
+    dr : float, optional, default = None
+        Pixel size (same units as r). If not provided, it will be set at the
+        same spatial scale as r
 
     Returns
     -------
