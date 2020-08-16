@@ -303,7 +303,8 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
 
 
 def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
-                 vmax=None, xmax=None, plot_colorbar=True, **kwargs):
+                 vmax=None, xmax=None, ymax=None, dr=None, plot_colorbar=True,
+                 project=False, phase_shift=False, geom=None, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -324,22 +325,43 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         Lower and upper brightness values (assumed in Jy / sr) for the 2D
         image and colorbar plot's y-axis. If None, they will be set by
         Matplotlib
-    xmax : float or None (default)
-        Radius at edge of image. If None, it will be set by max(r)
+    xmax, ymax : float or None (default)
+        Value setting the x- and y-bounds of the image (same units as r). The
+        positive and negative bounds are both set to this value (modulo sign).
+        If not provided, these will be set to r.max()
+    dr : float, optional, default = None
+        Pixel size (same units as r). If not provided, it will be set at the
+        same spatial scale as r
     plot_colorbar: bool, default = True
         Whether to plot a colorbar beside the image
+    project : bool, default = False
+        Whether to project the swept profile by the supplied geom
+    phase_shift : bool, default = False
+        Whether to phase shift the projected profile by the supplied geom.
+        If False, the source will be centered in the image
+    geom : SourceGeometry object, default=None
+        Fitted geometry (see frank.geometry.SourceGeometry). Here we use
+        geom.inc [deg], geom.PA [deg], geom.dRA [arcsec], geom.dDec [arcsec] if
+        project=True
     """
 
+    I2D, xmax_computed, ymax_computed = sweep_profile(r, I,
+                                                    xmax=xmax, ymax=ymax,
+                                                    dr=dr,
+                                                    project=project,
+                                                    phase_shift=phase_shift,
+                                                    geom=geom)
     if xmax is None:
-        I2D, xmax, ymax = sweep_profile(r, I)
-    else:
-        I2D, _, _ = sweep_profile(r, I)
-        ymax = xmax * 1
+        xmax = xmax_computed
+    if ymax is None:
+        ymax = ymax_computed
 
     I2D /= 1e10
 
-    if vmin is None and vmax is None:
-        vmin, vmax = I2D.min(), I2D.max()
+    if vmin is None:
+        vmin = I2D.min()
+    if vmax is None:
+        vmax = I2D.min()
 
     ax.imshow(I2D, origin='lower', extent=(xmax, -xmax, -ymax, ymax), vmin=vmin,
               vmax=vmax, cmap=cmap, norm=norm, **kwargs
