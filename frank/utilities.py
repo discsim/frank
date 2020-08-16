@@ -23,6 +23,8 @@ import logging
 import numpy as np
 from scipy.interpolate import interp1d
 
+from frank.constants import deg_to_rad
+
 def arcsec_baseline(x):
     """
     Provide x as a radial scale [arcsec] to return the corresponding baseline
