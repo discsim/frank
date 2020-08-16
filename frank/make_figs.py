@@ -450,7 +450,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         vmin = 0
         vmax = sol.mean.max()
         norm = PowerNorm(gamma, vmin, vmax)
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0, vmax=vmax / 1e10)
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
+                    vmax=vmax / 1e10, project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
