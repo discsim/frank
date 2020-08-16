@@ -148,7 +148,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    force_style=True, save_prefix=None, norm_residuals=False,
-                   figsize=(8,6)):
+                   gamma=1.0, figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
 
@@ -175,6 +175,10 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     norm_residuals : bool, default = False
         Whether to normalize the residual visibilities by the data's
         visibility amplitudes
+    gamma : float, default = 1.0
+        Index of power law normalization to apply to swept profile image's
+        colormap (see matplotlib.colors.PowerNorm).
+        gamma=1.0 yields a linear colormap
     figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
@@ -188,7 +192,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
     logging.info('    Making quick figure')
 
     with frank_plotting_style_context_manager(force_style):
-        gs = GridSpec(2, 2, hspace=0)
+        gs = GridSpec(3, 2, hspace=0, bottom=.12)
+        gs2 = GridSpec(3, 2, hspace=.2)
         fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
@@ -197,13 +202,19 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         ax2 = fig.add_subplot(gs[1])
         ax3 = fig.add_subplot(gs[3])
 
+        ax4 = fig.add_subplot(gs2[4])
+        ax5 = fig.add_subplot(gs2[5])
+
         ax0.text(.5, .9, 'a)', transform=ax0.transAxes)
         ax1.text(.5, .9, 'b)', transform=ax1.transAxes)
 
         ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
         ax3.text(.5, .9, 'd)', transform=ax3.transAxes)
 
-        axes = [ax0, ax1, ax2, ax3]
+        ax4.text(.5, .9, 'e)', transform=ax2.transAxes)
+        ax5.text(.5, .9, 'f)', transform=ax3.transAxes)
+
+        axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
         total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
         plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
@@ -244,6 +255,14 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
         plot_vis_quantity(grid, vis_fit_kl, ax2, c='r', label='frank')
 
+        vmin = 0
+        vmax = sol.mean.max()
+        norm = PowerNorm(gamma, vmin, vmax)
+        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm, vmin=0,
+                    vmax=vmax / 1e10, project=False)
+        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm, vmin=0,
+                    vmax=vmax / 1e10, project=True, geom=sol.geometry)
+
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -261,6 +280,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         xlims = ax2.get_xlim()
         ax3.set_xlim(xlims)
+
+        ax4.set_xlabel('RA offset ["]')
+        ax4.set_ylabel('Dec offset ["]')
+        ax5.set_xlabel('RA offset ["]')
+        ax5.set_ylabel('Dec offset ["]')
 
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.setp(ax2.get_xticklabels(), visible=False)
