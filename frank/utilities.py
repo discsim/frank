@@ -344,7 +344,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-def estimate_weights(u, v, V, nbins=300, log=True, use_median=False, q=None):
+def estimate_weights(u, v, V=None, nbins=300, log=True, use_median=False):
     r"""
     Estimate the weights using the variance of the binned visibilities.
 
@@ -360,10 +360,12 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False, q=None):
     ----------
     u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations (deprojected).
-    V : array, unit = Jy
+    V : array, unit = Jy, default = None
         Observed visibility. If complex, the weights will be computed from the
         average of the variance of the real and imaginary components, as in
         CASA's statwt. Otherwise the variance of the real part is used.
+        To pass in baselines `q` instead of `u` and `v` separately, call
+        estimate_weights(q, V) rather than estimate_weights(u, v, V)
     nbins : int, default = 300
         Number of bins used.
     log : bool, default = True
@@ -373,9 +375,6 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False, q=None):
         If True all of the weights will be set to the median of the variance
         estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
-    q : array, optional, default = None, unit = :math:`\lambda`
-        Baseline coordinates of observations (deprojected). If provided,
-        u and v will not be used.
 
     Returns
     -------
@@ -392,10 +391,14 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False, q=None):
 
     logging.info('  Estimating visibility weights.')
 
-    if q is None:
-        q = np.hypot(u,v)
+    # Bit of a hack in case you only want to pass in 'q' rather than 'u' and 'v'
+    if V is None:
+        logging.info('    Using your supplied `q` (rather than `u`, `v`) to'
+                    ' estimate weights')
+        q = np.abs(u)
+        V = v
     else:
-        logging.info('    Using supplied `q` (rather than `u`, `v`) to estimate weights')
+        q = np.hypot(u,v)
 
     if log:
         q = np.log(q)
