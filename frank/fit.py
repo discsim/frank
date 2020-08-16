@@ -236,9 +236,9 @@ def alter_data(u, v, vis, weights, geom, model):
     to the modification operations specified in model
     """
 
-    if model['modify_data']['normalization_wle'] is not None:
+    if model['modify_data']['norm_wle'] is not None:
         u, v = utilities.normalize_uv(
-            u, v, model['modify_data']['normalization_wle'])
+            u, v, model['modify_data']['norm_wle'])
 
     if model['modify_data']['baseline_range']:
         u, v, vis, weights = \
@@ -303,20 +303,28 @@ def determine_geometry(u, v, vis, weights, model):
         else:
             guess = None
 
+        if model['geometry']['fit_inc_pa']:
+            inc_pa = None
+        else:
+            inc_pa = (model['geometry']['inc'],
+                      model['geometry']['pa'])
+
         if model['geometry']['fit_phase_offset']:
+            phase_centre = None
+        else:
             phase_centre = (model['geometry']['dra'],
                             model['geometry']['ddec'])
-        else:
-            phase_centre = None
 
 
         if model['geometry']['type'] == 'gaussian':
             geom = geometry.FitGeometryGaussian(
+                inc_pa=inc_pa,
                 phase_centre=phase_centre, guess=guess,
             )
         else:
             geom = geometry.FitGeometryFourierBessel(
                 model['hyperparameters']['rout'], N=20,
+                inc_pa=inc_pa,
                 phase_centre=phase_centre, guess=guess
             )
 
@@ -453,20 +461,26 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
 
             logging.info('  Running fit for alpha = {}, wsmooth = {}'.format(alphas[ii], ws[jj]))
 
-            sol, _ = perform_fit(u, v, vis, weights, geom, this_model)
+            sol, iteration_diagnostics = perform_fit(u, v, vis, weights, geom, this_model)
             sols.append(sol)
 
             # Save the fit for the current choice of hyperparameter values
-            output_results(u, v, vis, weights, sol, geom, this_model)
+            output_results(u, v, vis, weights, sol, geom, this_model,
+                           iteration_diagnostics=iteration_diagnostics)
 
-    multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
-                                                           model['plotting']['bin_widths'],
-                                                           ['alpha', 'wsmooth'],
-                                                           [alphas, ws],
-                                                           model['plotting']['distance'],
-                                                           model['plotting']['force_style'],
-                                                           model['input_output']['save_prefix'],
-                                                           )
+    if len(alphas) in [1,2] and len(ws) in [1,2]:
+        multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
+                                                               model['plotting']['bin_widths'],
+                                                               ['alpha', 'wsmooth'],
+                                                               [alphas, ws],
+                                                               model['plotting']['distance'],
+                                                               model['plotting']['force_style'],
+                                                               model['input_output']['save_prefix'],
+                                                               )
+    else:
+        logging.info('The multifit figure requires alpha and wsmooth to be lists of length <= 2.'
+                     'Your lists are length {} and {} --> The multifit figure will not be made.'.format(len(alphas), len(ws)))
+        multifit_fig, multifit_axes = None, None
 
     return multifit_fig, multifit_axes
 
@@ -503,6 +517,17 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     axes : Matplotlib `~.axes.Axes` class
         Axes for each of the produced figures
     """
+
+    io.save_fit(u, v, vis, weights, sol,
+                model['input_output']['save_prefix'],
+                model['input_output']['save_solution'],
+                model['input_output']['save_profile_fit'],
+                model['input_output']['save_vis_fit'],
+                model['input_output']['save_uvtables'],
+                model['input_output']['iteration_diag'],
+                iteration_diagnostics,
+                model['input_output']['format']
+                )
 
     logging.info('  Plotting results')
 
@@ -595,17 +620,6 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         figs.append(clean_fig)
         axes.append(clean_axes)
 
-    io.save_fit(u, v, vis, weights, sol,
-                model['input_output']['save_prefix'],
-                model['input_output']['save_solution'],
-                model['input_output']['save_profile_fit'],
-                model['input_output']['save_vis_fit'],
-                model['input_output']['save_uvtables'],
-                model['input_output']['iteration_diag'],
-                iteration_diagnostics,
-                model['input_output']['format']
-                )
-
     return figs, axes, model
 
 
@@ -635,8 +649,8 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         The axes of the produced figure
     """
 
-    if (type(model['hyperparameters']['alpha']) or \
-    type(model['hyperparameters']['wsmooth'])) is list:
+    if type(model['hyperparameters']['alpha']) is list or \
+    type(model['hyperparameters']['wsmooth']) is list:
         raise ValueError("For the bootstrap, both `alpha` and `wsmooth` in your "
                          "parameter file must be a float, not a list.")
 
@@ -655,7 +669,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         u_s, v_s, vis_s, w_s = utilities.draw_bootstrap_sample(
             u, v, vis, weights)
 
-        sol, _ = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
+        sol, iteration_diagnostics = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
         if model['hyperparameters']['nonnegative']:
             profiles_bootstrap.append(sol._nonneg)
@@ -704,8 +718,8 @@ def main(*args):
 
         return boot_fig, boot_axes
 
-    elif (type(model['hyperparameters']['alpha']) or \
-    type(model['hyperparameters']['wsmooth'])) is list:
+    elif type(model['hyperparameters']['alpha']) is list or \
+    type(model['hyperparameters']['wsmooth']) is list:
         multifit_fig, multifit_axes = run_multiple_fits(u, v, vis, weights,
                                                         geom, model)
 

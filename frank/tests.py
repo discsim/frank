@@ -127,26 +127,72 @@ def test_fit_geometry():
     AS209, _ = load_AS209()
     u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
 
+    inc_pa = [30.916257151011674, 85.46246241142246]
+    phase_centre = [-0.6431627790617276e-3, -1.161768824369382e-3]
+
     geom = FitGeometryGaussian()
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [1.4916013559412147 / deg_to_rad,
-                                0.5395904796783955 / deg_to_rad,
-                                -0.6431627790617276, -1.161768824369382],
+                               [30.916256948647096,
+                                85.46246845532691,
+                                -0.6434703241180601, -1.1623515516661052],
                                err_msg="Gaussian geometry fit")
+
+    geom = FitGeometryGaussian(inc_pa=inc_pa)
+    geom.fit(u, v, vis, weights)
+
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
+                                1e3 * geom.dDec],
+                               [30.916257151011674,
+                                85.46246241142246,
+                                -0.6432951224590862, -1.1619271783674576],
+                               err_msg="Gaussian geometry fit (provided inc_pa)")
+
+    geom = FitGeometryGaussian(phase_centre=phase_centre)
+    geom.fit(u, v, vis, weights)
+
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
+                                1e3 * geom.dDec],
+                               [30.91601671340713,
+                                85.471787339838,
+                                -0.6431627790617276, -1.161768824369382],
+                               err_msg="Gaussian geometry fit (provided phase_centre)")
+
 
     geom = FitGeometryFourierBessel(1.6, 20)
     geom.fit(u, v, vis, weights)
 
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                1e3 * geom.dDec],
-                              [85.26142233422196, 33.819364762203364,
+                              [33.81936473347169, 85.26142233735665,
                                0.5611211784189547, -1.170097994325657],
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit")
-    
+
+
+    geom = FitGeometryFourierBessel(1.6, 20, inc_pa=inc_pa)
+    geom.fit(u, v, vis, weights)
+
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
+                               1e3 * geom.dDec],
+                              [30.916257151011674, 85.46246241142246,
+                               1.4567005881700168, -1.658896248809076],
+                               rtol=1e-5,
+                              err_msg="FourierBessel geometry fit (provided inc_pa)")
+
+
+    geom = FitGeometryFourierBessel(1.6, 20, phase_centre=phase_centre)
+    geom.fit(u, v, vis, weights)
+
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
+                               1e3 * geom.dDec],
+                              [33.83672738960381, 85.2562498368987,
+                               -0.6431627790617276, -1.161768824369382],
+                               rtol=1e-5,
+                              err_msg="FourierBessel geometry fit (provided phase_centre)")
+
 def test_fourier_bessel_fitter():
     """Check FourierBesselFitter fitting routine with AS 209 dataset"""
     AS209, geometry = load_AS209()
@@ -216,10 +262,10 @@ def test_fit_geometry_inside():
     sol = FF.fit(u, v, vis, weights)
 
     geom = sol.geometry
-    np.testing.assert_allclose([geom.PA, geom.inc, 1e3 * geom.dRA,
+    np.testing.assert_allclose([geom.inc, geom.PA, 1e3 * geom.dRA,
                                 1e3 * geom.dDec],
-                               [86.46568992560152, 34.5071920284988,
-                                0.20818634201418384, -2.0988159662202714],
+                               [34.50710460482996, 86.4699107557648,
+                                0.21017246809441995, -2.109586872914908],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
 def test_throw_error_on_bad_q_range():
@@ -267,7 +313,8 @@ def test_uvbin():
     np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
 
 
-def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False, 
+def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
+                   fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
     """Check the full pipeline that performs a fit and outputs results"""
 
@@ -296,6 +343,7 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False,
     geom = params['geometry']
     geom['type'] = geometry
     geom['fit_phase_offset'] = fit_phase_offset
+    geom['fit_inc_pa'] = fit_inc_pa
     geom['inc'] = AS209_geometry.inc
     geom['pa'] = AS209_geometry.PA
     geom['dra'] = AS209_geometry.dRA
@@ -321,13 +369,13 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True, make_figs=False,
         params['plotting']['full_plot'] = False
         params['plotting']['diag_plot'] = False
         params['plotting']['deprojec_plot'] = False
-    
-    if multifit: 
-        params['hyperparameters']['alpha'] = [1.05, 1.30]        
-        
+
+    if multifit:
+        params['hyperparameters']['alpha'] = [1.05, 1.30]
+
     if bootstrap:
         params['analysis']['bootstrap_ntrials'] = 2
-    
+
     # Save the new parameter file
     param_file = os.path.join(tmp_dir, 'params.json')
     with open(param_file, 'w') as f:
@@ -346,6 +394,10 @@ def test_pipeline_no_phase():
     """Check the full fit pipeline when fitting for the disc's inc, PA"""
     _run_pipeline('gaussian', False)
 
+def test_pipeline_no_inc_no_pa():
+    """Check the full fit pipeline when fitting for the disc's inc, PA"""
+    _run_pipeline('gaussian', True, False)
+
 
 def test_pipeline_known_geom():
     """Check the full fit pipeline when supplying a known disc geometry"""
@@ -355,13 +407,13 @@ def test_pipeline_known_geom():
 def test_pipeline_figure_generation():
     """Check the full fit pipeline when producing all figures"""
     _run_pipeline('known', make_figs=True)
-    
-    
+
+
 def test_pipeline_multifit():
     """Check the full fit pipeline when producing all figures"""
-    _run_pipeline('known', multifit=True)    
-    
-    
+    _run_pipeline('known', multifit=True)
+
+
 def test_pipeline_bootstrap():
     """Check the full fit pipeline when producing all figures"""
-    _run_pipeline('known', bootstrap=True)        
+    _run_pipeline('known', bootstrap=True)
