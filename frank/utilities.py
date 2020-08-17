@@ -546,7 +546,7 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
 
     PA = (disc_pa - clean_beam['beam_pa']) * np.pi / 180.
 
-    cos_i = np.cos(disc_i) * np.pi/180.
+    cos_i = np.cos(disc_i * np.pi/180.)
     cos_PA = np.cos(PA)
     sin_PA = np.sin(PA)
 
