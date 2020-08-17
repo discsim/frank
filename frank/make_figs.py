@@ -148,7 +148,7 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    force_style=True, save_prefix=None, norm_residuals=False,
-                   gamma=1.0, figsize=(8,6)):
+                   gamma=1.0, stretch='asinh', asinh_a=0.02, figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
 
@@ -179,6 +179,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         Index of power law normalization to apply to swept profile image's
         colormap (see matplotlib.colors.PowerNorm).
         gamma=1.0 yields a linear colormap
+    stretch: string, default = 'asinh'
+        Transformation to apply to the colorscale. The default is an
+        arcsinh transformation
+    asinh_a: float, default = 0.02
+        Scale parameter for the asinh stretch
     figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
@@ -211,8 +216,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
         ax3.text(.5, .9, 'd)', transform=ax3.transAxes)
 
-        ax4.text(.5, .9, 'e)', transform=ax2.transAxes)
-        ax5.text(.5, .9, 'f)', transform=ax3.transAxes)
+        ax4.text(.5, .9, 'e)', transform=ax4.transAxes)
+        ax5.text(.5, .9, 'f)', transform=ax5.transAxes)
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
@@ -255,12 +260,19 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
         plot_vis_quantity(grid, vis_fit_kl, ax2, c='r', label='frank')
 
-        vmin = 0
-        vmax = sol.mean.max()
-        norm = PowerNorm(gamma, vmin, vmax)
-        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm, vmin=0,
+        if stretch == 'asinh':
+            vmin = max(0, min(sol.mean))
+            vmax = max(sol.mean)
+            from astropy.visualization.mpl_normalize import simple_norm
+            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+        else:
+            vmin = 0
+            vmax = sol.mean.max()
+            norm = PowerNorm(gamma, vmin, vmax)
+
+        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=False)
-        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm, vmin=0,
+        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
