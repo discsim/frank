@@ -344,7 +344,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-def estimate_weights(u, v, V=None, nbins=300, log=True, use_median=False):
+def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
     r"""
     Estimate the weights using the variance of the binned visibilities.
 
@@ -359,13 +359,13 @@ def estimate_weights(u, v, V=None, nbins=300, log=True, use_median=False):
     Parameters
     ----------
     u, v : array, unit = :math:`\lambda`
-        u and v coordinates of observations (deprojected).
+        u and v coordinates of observations (deprojected). Data will be binned
+        by baseline. If v is not None, np.hpot(u,v) will be used instead. Note
+        that if V is None the argument v will be intepreted as V instead
     V : array, unit = Jy, default = None
         Observed visibility. If complex, the weights will be computed from the
         average of the variance of the real and imaginary components, as in
         CASA's statwt. Otherwise the variance of the real part is used.
-        To pass in baselines `q` instead of `u` and `v` separately, call
-        estimate_weights(q, V) rather than estimate_weights(u, v, V)
     nbins : int, default = 300
         Number of bins used.
     log : bool, default = True
@@ -386,20 +386,34 @@ def estimate_weights(u, v, V=None, nbins=300, log=True, use_median=False):
         - This function does not use the original weights in the estimation.
         - Bins with only one uv point do not have a variance estimate. Thus
           the mean of the variance in the two adjacent bins is used instead.
-
+    
+    Examples
+    --------
+        All of the following calls will work as expected:
+            `estimate_weights(u, v, V) `
+            `estimate_weights(u, V)`
+            `estimate_weights(u, V=V)`
+        In each case the variance of V in the uv-bins is used to estimate the
+        weights. The first call will use q = np.hypot(u, v) in the uv-bins. The
+        second and third calls are equivalent to the first with u=0.
     """
 
     logging.info('  Estimating visibility weights.')
 
     # Bit of a hack in case you only want to pass in 'q' rather than 'u' and 'v'
     if V is None:
-        logging.info('    Using your supplied `q` (rather than `u`, `v`) to'
-                    ' estimate weights')
-        q = np.abs(u)
-        V = v
-    else:
+        #logging.info('    Using your supplied `q` (rather than `u`, `v`) to'
+        #            ' estimate weights')
+        if v is not None:
+            V = v
+            q = np.abs(u)
+        else:
+            raise ValueError("The visibilities, V, must be supplied")
+    elif v is not None
         q = np.hypot(u,v)
-
+    else:
+        q = np.abs(u)
+        
     if log:
         q = np.log(q)
         q -= q.min()
