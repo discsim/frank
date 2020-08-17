@@ -409,7 +409,7 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
             q = np.abs(u)
         else:
             raise ValueError("The visibilities, V, must be supplied")
-    elif v is not None
+    elif v is not None:
         q = np.hypot(u,v)
     else:
         q = np.abs(u)
