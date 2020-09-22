@@ -533,8 +533,8 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
         xi, yi = np.meshgrid(x, y)
 
     if project:
-        xp  = (xi + dra) * cos_pa + (yi - ddec) * sin_pa
-        yp  = -(xi + dra) * sin_pa + (yi - ddec) * cos_pa
+        xp  = xi * cos_pa + yi * sin_pa
+        yp  = -xi * sin_pa + yi * cos_pa
         xp /= cos_i
         r1D = np.hypot(xp, yp)
     else:
