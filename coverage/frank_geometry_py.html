@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for frank/geometry.py: 94%</title>
+    <title>Coverage for frank/geometry.py: 95%</title>
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="jquery.hotkeys.js"></script>
@@ -17,13 +17,13 @@
 <div id="header">
     <div class="content">
         <h1>Coverage for <b>frank/geometry.py</b> :
-            <span class="pc_cov">94%</span>
+            <span class="pc_cov">95%</span>
         </h1>
         <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
         <h2 class="stats">
             214 statements &nbsp;
-            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">202 run</button>
-            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">12 missing</button>
+            <button type="button" class="run shortkey_r button_toggle_run" title="Toggle lines run">204 run</button>
+            <button type="button" class="mis show_mis shortkey_m button_toggle_mis" title="Toggle lines missing">10 missing</button>
             <button type="button" class="exc show_exc shortkey_x button_toggle_exc" title="Toggle lines excluded">0 excluded</button>
         </h2>
     </div>
@@ -87,7 +87,7 @@
     <p id="t34" class="run"><span class="n"><a href="#t34">34</a></span><span class="t">    <span class="nam">inc</span> <span class="op">=</span> <span class="nam">inc</span> <span class="op">%</span> <span class="num">180</span>&nbsp;</span><span class="r"></span></p>
     <p id="t35" class="run"><span class="n"><a href="#t35">35</a></span><span class="t">    <span class="nam">PA</span> <span class="op">=</span> <span class="nam">PA</span> <span class="op">%</span> <span class="num">180</span>&nbsp;</span><span class="r"></span></p>
     <p id="t36" class="run"><span class="n"><a href="#t36">36</a></span><span class="t">    <span class="key">if</span> <span class="nam">inc</span> <span class="op">></span> <span class="num">90</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t37" class="mis show_mis"><span class="n"><a href="#t37">37</a></span><span class="t">        <span class="nam">inc</span> <span class="op">=</span> <span class="num">180</span> <span class="op">-</span> <span class="nam">inc</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t37" class="run"><span class="n"><a href="#t37">37</a></span><span class="t">        <span class="nam">inc</span> <span class="op">=</span> <span class="num">180</span> <span class="op">-</span> <span class="nam">inc</span>&nbsp;</span><span class="r"></span></p>
     <p id="t38" class="run"><span class="n"><a href="#t38">38</a></span><span class="t">    <span class="key">return</span> <span class="nam">inc</span><span class="op">,</span> <span class="nam">PA</span>&nbsp;</span><span class="r"></span></p>
     <p id="t39" class="pln"><span class="n"><a href="#t39">39</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t40" class="run"><span class="n"><a href="#t40">40</a></span><span class="t"><span class="key">def</span> <span class="nam">apply_phase_shift</span><span class="op">(</span><span class="nam">u</span><span class="op">,</span> <span class="nam">v</span><span class="op">,</span> <span class="nam">V</span><span class="op">,</span> <span class="nam">dRA</span><span class="op">,</span> <span class="nam">dDec</span><span class="op">,</span> <span class="nam">inverse</span><span class="op">=</span><span class="key">False</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -375,7 +375,7 @@
     <p id="t322" class="run"><span class="n"><a href="#t322">322</a></span><span class="t">        <span class="key">if</span> <span class="nam">guess</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t323" class="run"><span class="n"><a href="#t323">323</a></span><span class="t">            <span class="nam">guess</span> <span class="op">=</span> <span class="op">[</span><span class="num">10.0</span><span class="op">,</span> <span class="num">10.0</span><span class="op">,</span> <span class="num">0.0</span><span class="op">,</span> <span class="num">0.0</span><span class="op">,</span> <span class="num">1.0</span><span class="op">,</span> <span class="num">1.0</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p id="t324" class="pln"><span class="n"><a href="#t324">324</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p id="t325" class="mis show_mis"><span class="n"><a href="#t325">325</a></span><span class="t">            <span class="nam">guess</span> <span class="op">=</span> <span class="nam">guess</span><span class="op">.</span><span class="nam">extend</span><span class="op">(</span><span class="op">[</span><span class="num">1.0</span><span class="op">,</span> <span class="num">1.0</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p id="t325" class="run"><span class="n"><a href="#t325">325</a></span><span class="t">            <span class="nam">guess</span><span class="op">.</span><span class="nam">extend</span><span class="op">(</span><span class="op">[</span><span class="num">1.0</span><span class="op">,</span> <span class="num">1.0</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p id="t326" class="pln"><span class="n"><a href="#t326">326</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p id="t327" class="run"><span class="n"><a href="#t327">327</a></span><span class="t">        <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_inc_pa</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p id="t328" class="run"><span class="n"><a href="#t328">328</a></span><span class="t">            <span class="nam">guess</span><span class="op">[</span><span class="num">0</span><span class="op">]</span><span class="op">,</span> <span class="nam">guess</span><span class="op">[</span><span class="num">1</span><span class="op">]</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_inc_pa</span>&nbsp;</span><span class="r"></span></p>
@@ -703,8 +703,8 @@
 <div id="footer">
     <div class="content">
         <p>
-            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.2.1</a>,
-            created at 2020-08-17 17:36 +0000
+            <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v5.3</a>,
+            created at 2020-10-09 08:19 +0000
         </p>
     </div>
 </div>
