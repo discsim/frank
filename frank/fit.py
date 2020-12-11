@@ -708,7 +708,8 @@ def main(*args):
     geom = determine_geometry(u, v, vis, weights, model)
 
     if model['modify_data']['baseline_range'] or \
-            model['modify_data']['correct_weights']:
+            model['modify_data']['correct_weights'] or \
+            model['modify_data']['norm_wle']:
         u, v, vis, weights = alter_data(
             u, v, vis, weights, geom, model)
 
