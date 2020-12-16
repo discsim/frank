@@ -147,8 +147,8 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
 
 
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
-                   gamma=1.0, force_style=True, save_prefix=None,
-                   stretch='asinh', asinh_a=0.02, figsize=(8,6)):
+                   force_style=True, save_prefix=None,
+                   stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
 
@@ -178,11 +178,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
-    stretch: string, default = 'asinh'
-        Transformation to apply to the colorscale. The default is an
-        arcsinh transformation
+    stretch: string, default = 'power'
+        Transformation to apply to the colorscale. The default 'power' is a
+        power law stretch; the other option is 'asinh', an arcsinh stretch.
     asinh_a: float, default = 0.02
-        Scale parameter for the asinh stretch
+        Scale parameter for an asinh stretch
     figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
@@ -264,10 +264,13 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
             vmax = max(sol.mean)
             from astropy.visualization.mpl_normalize import simple_norm
             norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
-        else:
+        elif stretch == 'power':
             vmin = 0
             vmax = sol.mean.max()
             norm = PowerNorm(gamma, vmin, vmax)
+        else:
+            err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
+            raise err
 
         plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=False)
@@ -311,9 +314,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
 
 def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
-                  dist=None, logx=True, gamma=1.0, force_style=True,
-                  save_prefix=None, norm_residuals=False, stretch='asinh',
-                  asinh_a=0.02, figsize=(8, 6)):
+                  dist=None, logx=True, force_style=True,
+                  save_prefix=None, norm_residuals=False, stretch='power',
+                  gamma=1.0, asinh_a=0.02, figsize=(8, 6)):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
 
@@ -341,10 +344,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = True
         Whether to plot the visibility distributions in log(baseline)
-    gamma : float, default = 1.0
-        Index of power law normalization to apply to swept profile image's
-        colormap (see matplotlib.colors.PowerNorm).
-        gamma=1.0 yields a linear colormap
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -352,6 +351,15 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     norm_residuals : bool, default = False
         Whether to normalize the residual visibilities by the data's
         visibility amplitudes
+    stretch: string, default = 'power'
+        Transformation to apply to the colorscale. The default 'power' is a
+        power law stretch; the other option is 'asinh', an arcsinh stretch.
+    gamma : float, default = 1.0
+        Index of power law normalization to apply to swept profile image's
+        colormap (see matplotlib.colors.PowerNorm).
+        gamma=1.0 yields a linear colormap
+    asinh_a: float, default = 0.02
+        Scale parameter for an asinh stretch
     figsize : tuple = (width, height) of figure, unit = inch
 
     Returns
@@ -486,10 +494,20 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
-        vmin = 0
-        vmax = sol.mean.max()
-        norm = PowerNorm(gamma, vmin, vmax)
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
+        if stretch == 'asinh':
+            vmin = max(0, min(sol.mean))
+            vmax = max(sol.mean)
+            from astropy.visualization.mpl_normalize import simple_norm
+            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+        elif stretch == 'power':
+            vmin = 0
+            vmax = sol.mean.max()
+            norm = PowerNorm(gamma, vmin, vmax)
+        else:
+            err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
+            raise err
+
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')

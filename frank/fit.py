@@ -159,6 +159,10 @@ def parse_parameters(*args):
             except TypeError:
                 raise err
 
+    if model['plotting']['stretch'] not in ["power", "asinh"]:
+        err = ValueError("stretch should be 'power'  or 'asinh'")
+        raise err
+
     if model['modify_data']['baseline_range'] is not None:
         err = ValueError("baseline_range should be 'null' (None)"
                          " or a list specifying the low and high"
@@ -547,9 +551,11 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                          model['plotting']['bin_widths'],
                                                          model['plotting']['distance'],
                                                          model['plotting']['plot_in_logx'],
-                                                         model['plotting']['gamma'],
                                                          model['plotting']['force_style'],
-                                                         model['input_output']['save_prefix']
+                                                         model['input_output']['save_prefix'],
+                                                         model['plotting']['stretch'],
+                                                         model['plotting']['gamma'],
+                                                         model['plotting']['asinh_a']
                                                          )
 
         figs.append(quick_fig)
@@ -562,9 +568,13 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                       model['hyperparameters']['wsmooth'],
                                                       model['plotting']['distance'],
                                                       model['plotting']['plot_in_logx'],
-                                                      model['plotting']['gamma'],
                                                       model['plotting']['force_style'],
-                                                      model['input_output']['save_prefix']
+                                                      model['input_output']['save_prefix'],
+                                                      model['input_output']['norm_residuals']
+                                                      model['plotting']['stretch'],
+                                                      model['plotting']['gamma'],
+                                                      model['plotting']['asinh_a']
+
                                                       )
 
         figs.append(full_fig)
