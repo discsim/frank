@@ -570,7 +570,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                       model['plotting']['plot_in_logx'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix'],
-                                                      model['input_output']['norm_residuals']
+                                                      model['plotting']['norm_residuals'],
                                                       model['plotting']['stretch'],
                                                       model['plotting']['gamma'],
                                                       model['plotting']['asinh_a']
