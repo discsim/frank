@@ -146,9 +146,9 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
     return fig, axes
 
 
-def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
-                   force_style=True, save_prefix=None, norm_residuals=False,
-                   gamma=1.0, stretch='asinh', asinh_a=0.02, figsize=(8,6)):
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
+                   gamma=1.0, force_style=True, save_prefix=None,
+                   stretch='asinh', asinh_a=0.02, figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
 
@@ -168,17 +168,16 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         Bin widths in which to bin the observed visibilities
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
-    force_style: bool, default = True
-        Whether to use preconfigured matplotlib rcParams in generated figure
-    save_prefix : string, default = None
-        Prefix for saved figure name. If None, the figure won't be saved
-    norm_residuals : bool, default = False
-        Whether to normalize the residual visibilities by the data's
-        visibility amplitudes
+    logx : bool, default = True
+        Whether to plot the visibility distributions in log(baseline)
     gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile image's
         colormap (see matplotlib.colors.PowerNorm).
         gamma=1.0 yields a linear colormap
+    force_style: bool, default = True
+        Whether to use preconfigured matplotlib rcParams in generated figure
+    save_prefix : string, default = None
+        Prefix for saved figure name. If None, the figure won't be saved
     stretch: string, default = 'asinh'
         Transformation to apply to the colorscale. The default is an
         arcsinh transformation
@@ -281,14 +280,15 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         ax1.set_yscale('log')
         ax1.set_ylim(bottom=1e-3)
 
-        ax3.set_xlabel(r'Baseline [$\lambda$]')
+        ax3.set_xlabel(r'Baseline [M$\lambda$]')
         ax2.set_ylabel('Re(V) [mJy]')
-        if norm_residuals:
-            ax3.set_ylabel('Norm. residual')
+        ax3.set_ylabel('Re(V) [mJy]')
+
+        if logx:
+            ax2.set_xscale('log')
+            ax3.set_xscale('log')
         else:
-            ax3.set_ylabel('Residual [mJy]')
-        ax2.set_xscale('log')
-        ax3.set_xscale('log')
+            ax2.set_xlim(0., max(binned_vis.uv) / 1e6 * 1.1)
 
         xlims = ax2.get_xlim()
         ax3.set_xlim(xlims)
@@ -311,8 +311,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
 
 def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
-                  gamma=1.0, dist=None, force_style=True, save_prefix=None,
-                  norm_residuals=False, figsize=(8, 6)):
+                  dist=None, logx=True, gamma=1.0, force_style=True,
+                  save_prefix=None, norm_residuals=False, stretch='asinh',
+                  asinh_a=0.02, figsize=(8, 6)):
     r"""
     Produce a figure showing a Frankenstein fit and some useful diagnostics
 
@@ -336,12 +337,14 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     wsmooth : float
         Value for the :math:`w_{smooth}` hyperparameter.
         Used for the plot legends
+    dist : float, optional, unit = AU, default = None
+        Distance to source, used to show second x-axis in [AU]
+    logx : bool, default = True
+        Whether to plot the visibility distributions in log(baseline)
     gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile image's
         colormap (see matplotlib.colors.PowerNorm).
         gamma=1.0 yields a linear colormap
-    dist : float, optional, unit = AU, default = None
-        Distance to source, used to show second x-axis in [AU]
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -505,31 +508,34 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         else:
             ax5.set_ylabel('Residual [mJy]')
         ax5.set_xlabel(r'Baseline [$\lambda$]')
-        ax3.set_xscale('log')
-        ax4.set_xscale('log')
-        ax5.set_xscale('log')
 
         ax6.set_ylabel('Re(V) [mJy]')
         ax7.set_ylabel(r'Power [Jy$^2$]')
         ax8.set_ylabel('Count')
         ax9.set_ylabel('Im(V) [mJy]')
         ax9.set_xlabel(r'Baseline [$\lambda$]')
-        ax6.set_xscale('log')
-        ax6.set_yscale('log')
-        ax7.set_xscale('log')
-        ax7.set_yscale('log')
-        ax8.set_xscale('log')
-        ax8.set_yscale('log')
-        ax9.set_xscale('log')
-        ax6.set_ylim(bottom=1e-4)
 
-        xlims = ax3.get_xlim()
+        if logx:
+            ax3.set_xscale('log')
+            ax4.set_xscale('log')
+            ax5.set_xscale('log')
+            ax6.set_xscale('log')
+            ax7.set_xscale('log')
+            ax8.set_xscale('log')
+            ax9.set_xscale('log')
+
+        xlims = ax5.get_xlim()
+        ax3.set_xlim(xlims)
         ax4.set_xlim(xlims)
-        ax5.set_xlim(xlims)
         ax6.set_xlim(xlims)
         ax7.set_xlim(xlims)
         ax8.set_xlim(xlims)
         ax9.set_xlim(xlims)
+
+        ax6.set_yscale('log')
+        ax7.set_yscale('log')
+        ax8.set_yscale('log')
+        ax6.set_ylim(bottom=1e-4)
 
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.setp(ax3.get_xticklabels(), visible=False)

@@ -47,7 +47,8 @@
     "force_style"      : true,
     "bin_widths"       : [1e3, 5e4],
     "gamma"            : 1.0,
-    "iter_plot_range"  : null
+    "iter_plot_range"  : null,
+    "plot_in_logx"     : true
   },
 
   "analysis" : {

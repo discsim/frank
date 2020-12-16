@@ -546,6 +546,8 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
                                                          model['plotting']['bin_widths'],
                                                          model['plotting']['distance'],
+                                                         model['plotting']['plot_in_logx'],
+                                                         model['plotting']['gamma'],
                                                          model['plotting']['force_style'],
                                                          model['input_output']['save_prefix']
                                                          )
@@ -558,8 +560,9 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                       model['plotting']['bin_widths'],
                                                       model['hyperparameters']['alpha'],
                                                       model['hyperparameters']['wsmooth'],
-                                                      model['plotting']['gamma'],
                                                       model['plotting']['distance'],
+                                                      model['plotting']['plot_in_logx'],
+                                                      model['plotting']['gamma'],
                                                       model['plotting']['force_style'],
                                                       model['input_output']['save_prefix']
                                                       )
