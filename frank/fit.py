@@ -534,7 +534,8 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     figs, axes = [], []
 
     if model['plotting']['deprojec_plot']:
-        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, vis, geom,
+        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, vis, weights, geom,
+                                                         model['plotting']['bin_widths'],
                                                          model['plotting']['force_style'],
                                                          model['input_output']['save_prefix']
                                                          )

@@ -31,7 +31,7 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 from frank.utilities import sweep_profile
 
 
-def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
+def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
     """
     Overplot projected and deprojected (u, v) coordinates;
     projected and deprojected visibility amplitudes
@@ -48,12 +48,12 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
         Projected visibilities (either the real or imaginary component)
     visp : array
         Deprojected visibilities (either the real or imaginary component)
-    ax0 : Matplotlib `~.axes.Axes` class
-        Axis on which to plot effect of deprojection on the (u, v) coordinates
-    ax1 : Matplotlib `~.axes.Axes` class
-        Axis on which to plot effect of deprojection on the visibility amplitudes
+    axes : Matplotlib `~.axes.Axes` class
+        Axes on which to plot
     """
 
+    ax0, ax1, ax2 = axes
+    
     ax0.plot(u, v, '+', c='#1EC8FE', label='Projected')
     ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
 
@@ -65,8 +65,12 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, ax0, ax1):
     ax1.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
     ax1.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
+    ax2.plot(bs, vis, '+', c='#1EC8FE', label='Projected')
+    ax2.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
+
     ax0.legend(loc='best')
     ax1.legend(loc='best')
+    ax2.legend(loc='best')
 
 
 def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
