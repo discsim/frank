@@ -243,21 +243,22 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
             vis_err_re_kl = binned_vis.error.real * 1e3
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
-            resid = vis_re_kl - vis_fit
-            if norm_residuals:
-                 resid /= vis_re_kl
-            rmse = (np.mean(resid**2))**.5
-
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax2, c=cs[i],
+            for jj in [ax2, ax3]:
+                plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, jj,
+                     vis_err_re_kl, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, resid, ax3, c=cs[i], marker=ms[i],
-                           ls='None',
-                           label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
-
         vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-        plot_vis_quantity(grid, vis_fit_kl, ax2, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax2, c='r', label='frank')
+
+        # Make a guess of good y-bounds for zooming in on the visibility fit
+        # in linear-y
+        zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
+        zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
+        ax3.set_ylim(zoom_bounds)
+
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank')
 
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
