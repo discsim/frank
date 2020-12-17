@@ -79,8 +79,8 @@ def use_frank_plotting_style():
     plt.style.use(style_path)
 
 
-def make_deprojection_fig(u, v, vis, geom, force_style=True,
-                          save_prefix=None, figsize=(8,6)):
+def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True,
+                          save_prefix=None, figsize=(8, 6)):
     r"""
     Produce a simple figure showing the effect of deprojection on the (u, v)
     coordinates and visibilities
@@ -91,6 +91,11 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
         Projected (u, v) coordinates
     vis : array, unit = Jy
         Projected visibilities (complex: real + imag * 1j)
+    weights : array, unit = Jy^-2
+        Weights assigned to observed visibilities, of the form
+        :math:`1 / \sigma^2`
+    bin_widths : list, unit = \lambda
+        Bin widths in which to bin the observed visibilities
     geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry)
     force_style: bool, default = True
@@ -107,6 +112,8 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
         The axes of the produced figure
     """
 
+    logging.info('    Making deprojection figure')
+
     # Apply the deprojection to the provided (u, v) coordinates
     # and visibility amplitudes
     up, vp, visp = geom.apply_correction(u, v, vis)
@@ -114,38 +121,62 @@ def make_deprojection_fig(u, v, vis, geom, force_style=True,
     re_vis = np.real(vis)
     re_visp = np.real(visp)
 
+    bsp = np.hypot(up, vp)
+
     with frank_plotting_style_context_manager(force_style):
-        gs = GridSpec(2, 1)
+        gs = GridSpec(3, 1, hspace=0.2, top=0.97, left=0.07, right=0.97)
         fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[1])
+        ax2 = fig.add_subplot(gs[2])
+        axes = [ax0, ax1, ax2]
 
-        axes = [ax0, ax1]
+        plot_deprojection_effect(u / 1e6, v / 1e6, up / 1e6, vp / 1e6,
+                                 re_vis * 1e3, re_visp * 1e3, axes)
 
-        plot_deprojection_effect(u / 1e6, v / 1e6, up / 1e6, vp / 1e6, re_vis * 1e3,
-                                 re_visp * 1e3, ax0, ax1)
+    for i in range(len(bin_widths)):
+        binned_vis = UVDataBinner(bsp, visp, weights, bin_widths[i])
+        vis_re = binned_vis.V.real
+        vis_err_re = binned_vis.error.real
 
-        ax0.set_xlabel(r'u [M$\lambda$]')
-        ax0.set_ylabel(r'v [M$\lambda$]')
-        ax1.set_xlabel(r'Baseline [M$\lambda$]')
-        ax1.set_ylabel('Re(V) [mJy]')
-        ax1.set_xscale('log')
-        ax1.set_yscale('log')
-        ax1.set_ylim(bottom=1e-3)
+        plot_vis_quantity(binned_vis.uv / 1e6, vis_re * 1e3, ax1, c=cs[i],
+             marker=ms[i], ls='None',
+             label=r'Deprojected, >0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        plot_vis_quantity(binned_vis.uv / 1e6, -vis_re * 1e3, ax1, c=cs2[i],
+             marker=ms[i], ls='None',
+             label=r'Deprojected, <0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        ax0.legend(loc=0)
-        ax1.legend(loc=0)
+        plot_vis_quantity(binned_vis.uv / 1e6, vis_re * 1e3, ax2, c=cs[i],
+             marker=ms[i], ls='None',
+             label=r'Deprojected, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        plt.tight_layout()
+    ax0.set_xlabel(r'u [M$\lambda$]')
+    ax0.set_ylabel(r'v [M$\lambda$]')
 
-        if save_prefix:
-            plt.savefig(save_prefix + '_frank_deprojection.png', dpi=600)
-            plt.close()
+    ax1.set_xlabel(r'Baseline [M$\lambda$]')
+    ax1.set_ylabel('Re(V) [mJy]')
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1.set_ylim(bottom=1e-3)
+
+    ax2.set_xlabel(r'Baseline [M$\lambda$]')
+    ax2.set_ylabel('Re(V) [mJy]')
+    ax2.set_xscale('log')
+
+    ax0.legend(loc=0)
+    ax1.legend(loc=0)
+    ax2.legend(loc=0)
+
+    plt.tight_layout()
+
+    if save_prefix:
+        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=600)
+        plt.close()
 
     return fig, axes
 
-
+  
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
                    force_style=True, save_prefix=None,
                    stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
@@ -761,6 +792,9 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info('    Making CLEAN comparison figure')
+
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 1)
         gs2 = GridSpec(3, 3)
@@ -922,7 +956,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         The axes of the produced figure
     """
 
-    logging.info(' Making multifit figure')
+    logging.info('    Making multifit figure')
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0)
@@ -1056,7 +1090,7 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         The axes of the produced figure
     """
 
-    logging.info(' Making bootstrap summary figure')
+    logging.info('    Making bootstrap summary figure')
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(2, 2, hspace=0)
