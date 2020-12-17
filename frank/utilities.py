@@ -287,6 +287,9 @@ def normalize_uv(u, v, wle):
 
     """
 
+    logging.info('  Normalizing u and v coordinates by provided'
+                 ' observing wavelength of {} m'.format(wle))
+
     u_normed = u / wle
     v_normed = v / wle
 
