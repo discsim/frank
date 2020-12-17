@@ -361,7 +361,7 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
     if vmin is None:
         vmin = I2D.min()
     if vmax is None:
-        vmax = I2D.min()
+        vmax = I2D.max()
 
     ax.imshow(I2D, origin='lower', extent=(xmax, -xmax, -ymax, ymax), vmin=vmin,
               vmax=vmax, cmap=cmap, norm=norm, **kwargs
