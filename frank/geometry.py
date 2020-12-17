@@ -112,7 +112,7 @@ def deproject(u, v, inc, PA, inverse=False):
 
     if inverse:
         sin_t *= -1
-        u /= np.cos(inc)
+        u = u / np.cos(inc)
 
     up = u * cos_t - v * sin_t
     vp = u * sin_t + v * cos_t
