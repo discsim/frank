@@ -46,8 +46,12 @@
     "distance"         : "Distance to source, optionally used for plotting, unit=[pc]",
     "force_style"      : "Whether to use preconfigured matplotlib rcParams in generated figures",
     "bin_widths"       : "Bin widths in which to bin the observed visibilities, list of float or int, unit=[\\lambda]",
+    "stretch"          : "Type of stretch to apply to swept profile image colormaps, either 'power' or 'asinh'",
     "gamma"            : "Index of power law normalization to apply to swept profile image colormaps (1.0 = linear scaling)",
+    "asinh_a"          : "Scale parameter for an arcsinh normalization to apply to swept profile image colormaps",
     "iter_plot_range"  : "Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]",
+    "plot_in_logx"     : "Whether to plot visibility distributions in log(baseline) in 'quick_plot' and 'full_plot'",
+    "norm_residuals"   : "Whether to normalize plotted visibility residuals in 'full_plot'"
   },
 
   "analysis" : {
