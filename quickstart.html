@@ -291,7 +291,11 @@ and it looks like this,</p>
 58
 59
 60
-61</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+61
+62
+63
+64
+65</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -339,8 +343,12 @@ and it looks like this,</p>
     <span class="nt">&quot;distance&quot;</span>         <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
     <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
     <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span>
+    <span class="nt">&quot;stretch&quot;</span>          <span class="p">:</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span>
     <span class="nt">&quot;gamma&quot;</span>            <span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-    <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="kc">null</span>
+    <span class="nt">&quot;asinh_a&quot;</span>          <span class="p">:</span> <span class="mf">0.02</span><span class="p">,</span>
+    <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
+    <span class="nt">&quot;plot_in_logx&quot;</span>     <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nt">&quot;norm_residuals&quot;</span>   <span class="p">:</span> <span class="kc">false</span>    
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -418,7 +426,11 @@ and it looks like this,</p>
 56
 57
 58
-59</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+59
+60
+61
+62
+63</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
@@ -466,8 +478,12 @@ and it looks like this,</p>
     <span class="nt">&quot;distance&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Distance to source, optionally used for plotting, unit=[pc]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;force_style&quot;</span>      <span class="p">:</span> <span class="s2">&quot;Whether to use preconfigured matplotlib rcParams in generated figures&quot;</span><span class="p">,</span>
     <span class="nt">&quot;bin_widths&quot;</span>       <span class="p">:</span> <span class="s2">&quot;Bin widths in which to bin the observed visibilities, list of float or int, unit=[\\lambda]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;stretch&quot;</span>          <span class="p">:</span> <span class="s2">&quot;Type of stretch to apply to swept profile image colormaps, either &#39;power&#39; or &#39;asinh&#39;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;gamma&quot;</span>            <span class="p">:</span> <span class="s2">&quot;Index of power law normalization to apply to swept profile image colormaps (1.0 = linear scaling)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;asinh_a&quot;</span>          <span class="p">:</span> <span class="s2">&quot;Scale parameter for an arcsinh normalization to apply to swept profile image colormaps&quot;</span><span class="p">,</span>
     <span class="nt">&quot;iter_plot_range&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Range of iterations to be plotted in the diagnostic figure, list of int of the form [start, stop]&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;plot_in_logx&quot;</span>     <span class="p">:</span> <span class="s2">&quot;Whether to plot visibility distributions in log(baseline) in &#39;quick_plot&#39; and &#39;full_plot&#39;&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;norm_residuals&quot;</span>   <span class="p">:</span> <span class="s2">&quot;Whether to normalize plotted visibility residuals in &#39;full_plot&#39;&quot;</span>
   <span class="p">},</span>
 
   <span class="nt">&quot;analysis&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -494,7 +510,7 @@ AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/20
 </div>
 <p><strong>a)</strong> The fitted frank brightness profile. <br>
 <strong>b)</strong> As in (a), on a log scale. The oscillations below <span class="math notranslate nohighlight">\(\approx 10^9\ {\rm Jy\ sr}^{-1}\)</span> indicate the fit’s noise floor. <br>
-<strong>c)</strong> The frank profile swept over <span class="math notranslate nohighlight">\(2\pi\)</span>. Note this image is not convolved with any beam. <br>
+<strong>c)</strong> The frank profile swept over <span class="math notranslate nohighlight">\(2\pi\)</span> and reprojected. Note this image is not convolved with any beam. <br>
 <strong>d)</strong> The visibility domain fit and the data in 1 and 50 <span class="math notranslate nohighlight">\({\rm k}\lambda\)</span> bins. <br>
 <strong>e)</strong> As in (d), zooming on the longer baselines. <br>
 <strong>f)</strong> Residuals between the binned data and the fit. The residuals’ RMSE is given in the legend;
@@ -579,8 +595,9 @@ and fit for the brightness profile. We’ll fit out to 1.6” using 250 collocat
 <span class="n">sol</span> <span class="o">=</span> <span class="n">FF</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
-when running from the terminal, frank produces this figure if <code class="code docutils literal notranslate"><span class="pre">quick_plot=True</span></code> in your parameter file).</p>
+<p>Now make a simplified figure showing the fit (a subset of plots from the full figure above,
+plus the frank profile swept over <span class="math notranslate nohighlight">\(2\pi\)</span>, but face-on).
+When running from the terminal, frank produces this figure if <code class="code docutils literal notranslate"><span class="pre">quick_plot=True</span></code> in your parameter file).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">make_quick_fig</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">bin_widths</span><span class="o">=</span><span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">],</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_prefix</span> <span class="o">+</span> <span class="s1">&#39;_frank_fit_quick.png&#39;</span><span class="p">)</span>
 </pre></div>
@@ -619,7 +636,7 @@ when running from the terminal, frank produces this figure if <code class="code 
         
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Dec 17 at 08:54:11 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Dec 17 at 18:00:22 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

@@ -72,7 +72,7 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 
 **a)** The fitted frank brightness profile. |br|
 **b)** As in (a), on a log scale. The oscillations below :math:`\approx 10^9\ {\rm Jy\ sr}^{-1}` indicate the fit's noise floor. |br|
-**c)** The frank profile swept over :math:`2\pi`. Note this image is not convolved with any beam. |br|
+**c)** The frank profile swept over :math:`2\pi` and reprojected. Note this image is not convolved with any beam. |br|
 **d)** The visibility domain fit and the data in 1 and 50 :math:`{\rm k}\lambda` bins. |br|
 **e)** As in (d), zooming on the longer baselines. |br|
 **f)** Residuals between the binned data and the fit. The residuals' RMSE is given in the legend;
@@ -163,8 +163,9 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
 
     sol = FF.fit(u, v, vis, weights)
 
-Now make a simplified figure showing the fit (with only subplots (a), (b), (d), (f) from the full figure above;
-when running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
+Now make a simplified figure showing the fit (a subset of plots from the full figure above,
+plus the frank profile swept over :math:`2\pi`, but face-on).
+When running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
 
 .. code-block:: python
 

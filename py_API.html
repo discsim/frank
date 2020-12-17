@@ -905,26 +905,44 @@ second and third calls are equivalent to the first with u=0.</p>
 
 <dl class="py function">
 <dt id="frank.utilities.sweep_profile">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">sweep_profile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">I</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.sweep_profile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">sweep_profile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">I</span></em>, <em class="sig-param"><span class="n">project</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">phase_shift</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">geom</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">xmax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ymax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.sweep_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sweep a 1D radial brightness profile over <span class="math notranslate nohighlight">\(2 \pi\)</span> to yield a 2D
-brightness distribution</p>
+brightness distribution. Optionally project this sweep by a supplied
+geometry.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>array</em>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
 <li><p><strong>I</strong> (<em>array</em>) – Brightness values at r</p></li>
+<li><p><strong>project</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to project the swept profile by the supplied geom</p></li>
+<li><p><strong>phase_shift</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to phase shift the projected profile by the supplied geom.
+If False, the source will be centered in the image</p></li>
+<li><p><strong>geom</strong> (<em>SourceGeometry object</em><em>, </em><em>default=None</em>) – Fitted geometry (see frank.geometry.SourceGeometry). Here we use
+geom.inc [deg], geom.PA [deg], geom.dRA [arcsec], geom.dDec [arcsec] if
+project=True</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Axis over which to interpolate the 1D profile</p></li>
+<li><p><strong>xmax</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – Value setting the x- and y-bounds of the image (same units as r). The
+positive and negative bounds are both set to this value (modulo sign).
+If not provided, these will be set to r.max()</p></li>
+<li><p><strong>ymax</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – Value setting the x- and y-bounds of the image (same units as r). The
+positive and negative bounds are both set to this value (modulo sign).
+If not provided, these will be set to r.max()</p></li>
+<li><p><strong>dr</strong> (<em>float</em><em>, </em><em>optional</em><em>, </em><em>default = None</em>) – Pixel size (same units as r). If not provided, it will be set at the
+same spatial scale as r</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><strong>I2D</strong> (<em>array, shape = (len(r), len(r))</em>) – 2D brightness distribution</p></li>
+<li><p><strong>I2D</strong> (<em>array, shape = (len(r), len(r))</em>) – 2D brightness distribution (projected if project=True)</p></li>
 <li><p><strong>xmax</strong> (<em>float</em>) – Maximum x-value of the 2D grid</p></li>
 <li><p><strong>ymax</strong> (<em>float</em>) – Maximum y-value of the 2D grid</p></li>
 </ul>
 </p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>Sign convention: a negative geom.dRA shifts the source to the right
+in the image</p>
 </dd></dl>
 
 <dl class="py class">
@@ -973,7 +991,7 @@ components will be binned. Else only the real part will be binned.</p></li>
         
         &copy; Copyright 2019-2020, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).
       <span class="lastupdated">
-        Last updated on 2020 Dec 17 at 08:54:11 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2020 Dec 17 at 18:00:22 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
