@@ -178,10 +178,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
         Prefix for saved figure name. If None, the figure won't be saved
-    stretch: string, default = 'power'
+    stretch : string, default = 'power'
         Transformation to apply to the colorscale. The default 'power' is a
-        power law stretch; the other option is 'asinh', an arcsinh stretch.
-    asinh_a: float, default = 0.02
+        power law stretch. The other option is 'asinh', an arcsinh stretch,
+        which requires astropy.visualization.mpl_normalize.simple_norm
+    asinh_a : float, default = 0.02
         Scale parameter for an asinh stretch
     figsize : tuple = (width, height) of figure, unit = inch
 
@@ -352,14 +353,15 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     norm_residuals : bool, default = False
         Whether to normalize the residual visibilities by the data's
         visibility amplitudes
-    stretch: string, default = 'power'
+    stretch : string, default = 'power'
         Transformation to apply to the colorscale. The default 'power' is a
-        power law stretch; the other option is 'asinh', an arcsinh stretch.
+        power law stretch. The other option is 'asinh', an arcsinh stretch,
+        which requires astropy.visualization.mpl_normalize.simple_norm
     gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile image's
         colormap (see matplotlib.colors.PowerNorm).
         gamma=1.0 yields a linear colormap
-    asinh_a: float, default = 0.02
+    asinh_a : float, default = 0.02
         Scale parameter for an asinh stretch
     figsize : tuple = (width, height) of figure, unit = inch
 
