@@ -23,6 +23,8 @@ import logging
 import numpy as np
 from scipy.interpolate import interp1d
 
+from frank.constants import deg_to_rad
+
 def arcsec_baseline(x):
     """
     Provide x as a radial scale [arcsec] to return the corresponding baseline
@@ -488,38 +490,85 @@ def draw_bootstrap_sample(u, v, vis, weights):
     return u_boot, v_boot, vis_boot, weights_boot
 
 
-def sweep_profile(r, I, axis=0):
+def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
+                  xmax=None, ymax=None, dr=None):
     r"""
     Sweep a 1D radial brightness profile over :math:`2 \pi` to yield a 2D
-    brightness distribution
+    brightness distribution. Optionally project this sweep by a supplied
+    geometry.
 
     Parameters
     ----------
     r : array
-          Radial coordinates at which the 1D brightness profile is defined
+        Radial coordinates at which the 1D brightness profile is defined
     I : array
-          Brightness values at r
+        Brightness values at r
+    project : bool, default = False
+        Whether to project the swept profile by the supplied geom
+    phase_shift : bool, default = False
+        Whether to phase shift the projected profile by the supplied geom.
+        If False, the source will be centered in the image
+    geom : SourceGeometry object, default=None
+        Fitted geometry (see frank.geometry.SourceGeometry). Here we use
+        geom.inc [deg], geom.PA [deg], geom.dRA [arcsec], geom.dDec [arcsec] if
+        project=True
     axis : int, default = 0
-          Axis over which to interpolate the 1D profile
+        Axis over which to interpolate the 1D profile
+    xmax, ymax : float, optional, default = None
+        Value setting the x- and y-bounds of the image (same units as r). The
+        positive and negative bounds are both set to this value (modulo sign).
+        If not provided, these will be set to r.max()
+    dr : float, optional, default = None
+        Pixel size (same units as r). If not provided, it will be set at the
+        same spatial scale as r
 
     Returns
     -------
     I2D : array, shape = (len(r), len(r))
-        2D brightness distribution
+        2D brightness distribution (projected if project=True)
     xmax : float
         Maximum x-value of the 2D grid
     ymax : float
         Maximum y-value of the 2D grid
 
+    Notes
+    -----
+    Sign convention: a negative geom.dRA shifts the source to the right
+    in the image
     """
+    if project:
+        inc, pa, dra, ddec = geom.inc, geom.PA, geom.dRA, geom.dDec
+        inc *= deg_to_rad
+        pa *= deg_to_rad
+        if not phase_shift:
+            dra, ddec = 0., 0.
 
-    xmax = ymax = r.max()
-    dr = np.mean(np.diff(r))
+        cos_i = np.cos(inc)
+        cos_pa, sin_pa = np.cos(pa), np.sin(pa)
+
+    if xmax is None:
+        xmax = r.max()
+    if ymax is None:
+        ymax = r.max()
+
+    if dr is None:
+        dr = np.mean(np.diff(r))
+
     x = np.linspace(-xmax, xmax, int(xmax/dr) + 1)
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
 
-    xi, yi = np.meshgrid(x, y)
-    r1D = np.hypot(xi, yi)
+    if phase_shift:
+        xi, yi = np.meshgrid(x + dra, y - ddec)
+    else:
+        xi, yi = np.meshgrid(x, y)
+
+    if project:
+        xp  = xi * cos_pa + yi * sin_pa
+        yp  = -xi * sin_pa + yi * cos_pa
+        xp /= cos_i
+        r1D = np.hypot(xp, yp)
+    else:
+        r1D = np.hypot(xi, yi)
 
     im_shape = r1D.shape + I.shape[1:]
 
