@@ -58,7 +58,8 @@ class UVDataBinner(object):
     uv : array, unit = :math:`\lambda`
         Baselines of the data to bin
     V : array, unit = Jy
-        Complex visibilities
+        Observed visibility. If complex, both the real and imaginary
+        components will be binned. Else only the real part will be binned.
     weights : array, unit = Jy^-2
         Weights on the visibility points
     bin_width : float, unit = :math:`\lambda`
@@ -109,19 +110,24 @@ class UVDataBinner(object):
         mu = self._V[self.determine_uv_bin(uv)]
 
         #   2) Compute weighted error for bins with n > 1
-        err = self.bin_quantities(uv, weights**2,
-                                  (V-mu).real**2 + 1j * (V-mu).imag**2)
+        quantities = (V-mu).real**2
+        if np.iscomplexobj(V):
+            quantities = quantities + 1j * (V-mu).imag**2
+        err = self.bin_quantities(uv, weights**2, quantities)
 
         idx2 = bin_n > 1
         err[idx2] /= bin_wgt[idx2]**2 * (1 - 1 / bin_n[idx2])
 
-        bin_vis_err[idx2] = \
-            np.sqrt(err.real[idx2]) + 1.j * np.sqrt(err.imag[idx2])
+        temp_error = np.sqrt(err.real[idx2])
+        if np.iscomplexobj(V):
+            temp_error = temp_error + 1.j * np.sqrt(err.imag[idx2])
+        bin_vis_err[idx2] = temp_error
 
         #   3) Use a sensible error for bins with one baseline
         idx1 = bin_n == 1
-        bin_vis_err[idx1].real = bin_vis_err[idx1].imag = \
-            1 / np.sqrt(bin_wgt[idx1])
+        bin_vis_err[idx1].real = 1 / np.sqrt(bin_wgt[idx1])
+        if np.iscomplexobj(V):
+            bin_vis_err[idx1].imag = bin_vis_err[idx1].real
         bin_vis_err[mask] = np.nan
 
         #   4) Store the error
@@ -283,6 +289,9 @@ def normalize_uv(u, v, wle):
 
     """
 
+    logging.info('  Normalizing u and v coordinates by provided'
+                 ' observing wavelength of {} m'.format(wle))
+
     u_normed = u / wle
     v_normed = v / wle
 
@@ -340,7 +349,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
+def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
     r"""
     Estimate the weights using the variance of the binned visibilities.
 
@@ -355,8 +364,10 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
     Parameters
     ----------
     u, v : array, unit = :math:`\lambda`
-        u and v coordinates of observations (deprojected).
-    V : array, unit = Jy
+        u and v coordinates of observations (deprojected). Data will be binned
+        by baseline. If v is not None, np.hpot(u,v) will be used instead. Note
+        that if V is None the argument v will be intepreted as V instead
+    V : array, unit = Jy, default = None
         Observed visibility. If complex, the weights will be computed from the
         average of the variance of the real and imaginary components, as in
         CASA's statwt. Otherwise the variance of the real part is used.
@@ -381,11 +392,30 @@ def estimate_weights(u, v, V, nbins=300, log=True, use_median=False):
         - Bins with only one uv point do not have a variance estimate. Thus
           the mean of the variance in the two adjacent bins is used instead.
 
+    Examples
+    --------
+        All of the following calls will work as expected:
+            `estimate_weights(u, v, V) `
+            `estimate_weights(u, V)`
+            `estimate_weights(u, V=V)`
+        In each case the variance of V in the uv-bins is used to estimate the
+        weights. The first call will use q = np.hypot(u, v) in the uv-bins. The
+        second and third calls are equivalent to the first with u=0.
     """
 
     logging.info('  Estimating visibility weights.')
 
-    q = np.hypot(u,v)
+    if V is None:
+        if v is not None:
+            V = v
+            q = np.abs(u)
+        else:
+            raise ValueError("The visibilities, V, must be supplied")
+    elif v is not None:
+        q = np.hypot(u,v)
+    else:
+        q = np.abs(u)
+
     if log:
         q = np.log(q)
         q -= q.min()
@@ -595,7 +625,7 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
 
     PA = (disc_pa - clean_beam['beam_pa']) * np.pi / 180.
 
-    cos_i = np.cos(disc_i) * np.pi/180.
+    cos_i = np.cos(disc_i * np.pi/180.)
     cos_PA = np.cos(PA)
     sin_PA = np.sin(PA)
 

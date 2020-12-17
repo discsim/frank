@@ -75,6 +75,8 @@ If you use **frank** for your research please cite Jennings, Booth, Tazzari et a
 }
 ```
 
+**[These papers](https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&sort=date%20desc%2C%20bibcode%20desc&p_=0)** cite **frank**.
+
 Authors
 -------
 - [Richard 'Dr. Frankenstein' Booth (University of Cambridge)](https://github.com/rbooth200)

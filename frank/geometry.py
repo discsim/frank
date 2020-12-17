@@ -322,7 +322,7 @@ class FitGeometryGaussian(SourceGeometry):
         if guess is None:
             guess = [10.0, 10.0, 0.0, 0.0, 1.0, 1.0]
         else:
-            guess = guess.extend([1.0, 1.0])
+            guess.extend([1.0, 1.0])
 
         if self._inc_pa is not None:
             guess[0], guess[1] = self._inc_pa
