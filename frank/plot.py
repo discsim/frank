@@ -48,12 +48,12 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
         Projected visibilities (either the real or imaginary component)
     visp : array
         Deprojected visibilities (either the real or imaginary component)
-    axes : Matplotlib `~.axes.Axes` class
-        Axes on which to plot
+    axes : list[Axes, Axes]
+        Three axes on which to plot
     """
 
     ax0, ax1, ax2 = axes
-    
+
     ax0.plot(u, v, '+', c='#1EC8FE', label='Projected')
     ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
 
