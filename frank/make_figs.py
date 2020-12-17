@@ -112,6 +112,8 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
         The axes of the produced figure
     """
 
+    logging.info('    Making deprojection figure')
+
     # Apply the deprojection to the provided (u, v) coordinates
     # and visibility amplitudes
     up, vp, visp = geom.apply_correction(u, v, vis)
@@ -726,6 +728,9 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
     axes : Matplotlib `~.axes.Axes` class
         The axes of the produced figure
     """
+
+    logging.info('    Making CLEAN comparison figure')
+
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 1)
         gs2 = GridSpec(3, 3)
@@ -887,7 +892,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         The axes of the produced figure
     """
 
-    logging.info(' Making multifit figure')
+    logging.info('    Making multifit figure')
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0)
@@ -1021,7 +1026,7 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         The axes of the produced figure
     """
 
-    logging.info(' Making bootstrap summary figure')
+    logging.info('    Making bootstrap summary figure')
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(2, 2, hspace=0)
