@@ -244,8 +244,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
             vis_err_re_kl = binned_vis.error.real * 1e3
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
 
-            for jj in [ax2, ax3]:
-                plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, jj,
+            for ax in [ax2, ax3]:
+                plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax,
                      vis_err_re_kl, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
