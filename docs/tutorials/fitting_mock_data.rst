@@ -7,6 +7,8 @@ ALMA observations, you may not have an estimate of the weights on your individua
 
 In this case you can set ``correct_weights=True`` in your parameter file.
 This will instruct frank to use the variance of the binned visibilities to
-*coarsely* estimate the pointwise weights
+*coarsely* estimate the pointwise weights.
+Setting ``use_median_weight=True`` will set all weights as the median binned visibility variance;
+setting ``use_median_weight=False`` will instead use the baseline-dependent variance
 (see the `estimate_weights <../py_API.rst#frank.utilities.estimate_weights>`_ function).
 This is done between the steps to deproject the visibilities and fit for the brightness profile.
