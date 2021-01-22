@@ -176,7 +176,7 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
 
     return fig, axes
 
-  
+
 def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
                    force_style=True, save_prefix=None,
                    stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
@@ -282,7 +282,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax2, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax2, c='r', label='frank', zorder=10)
 
         # Make a guess of good y-bounds for zooming in on the visibility fit
         # in linear-y
@@ -290,7 +290,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
         ax3.set_ylim(zoom_bounds)
 
-        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank', zorder=10)
 
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
