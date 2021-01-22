@@ -700,10 +700,10 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
         # Plot the difference in the power spectrum between the last 100 iterations
-        plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
-                                 iter_plot_range_end, ax3,
-                                 cmap=plt.cm.cividis,  # pylint: disable=no-member
-                                 bbox_x=.45)
+        plot_pwr_spec_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
+                                iter_plot_range_end, ax3,
+                                cmap=plt.cm.cividis,  # pylint: disable=no-member
+                                bbox_x=.45)
 
         plot_convergence_criterion(profile_iter_toplot, num_iter, ax4, c='k')
 
@@ -712,7 +712,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         ax1.set_xlabel('r ["]')
 
         ax2.set_ylabel(r'Power [Jy$^2$]')
-        ax3.set_ylabel(r'PS$_i$ - PS$_{i-1}$ [Jy$^2$]')
+        ax3.set_ylabel(r'|PS$_i$ - PS$_{i-1}$| [Jy$^2$]')
         ax3.set_xlabel(r'Baseline [$\lambda$]')
         ax2.set_xscale('log')
         ax3.set_xscale('log')
