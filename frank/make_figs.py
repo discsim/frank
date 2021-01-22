@@ -247,8 +247,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
         ax3.text(.5, .9, 'd)', transform=ax3.transAxes)
 
-        ax4.text(.5, .9, 'e)', transform=ax4.transAxes)
-        ax5.text(.5, .9, 'f)', transform=ax5.transAxes)
+        ax4.text(.5, .9, 'e)', c='w', transform=ax4.transAxes)
+        ax5.text(.5, .9, 'f)', c='w', transform=ax5.transAxes)
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
