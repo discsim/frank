@@ -299,7 +299,8 @@ and it looks like this,</p>
 62
 63
 64
-65</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+65
+66</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -314,6 +315,7 @@ and it looks like this,</p>
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
     <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+    <span class="nt">&quot;use_median_weight&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
     <span class="nt">&quot;norm_wle&quot;</span>         <span class="p">:</span> <span class="kc">null</span>
   <span class="p">},</span>
 
@@ -434,7 +436,8 @@ and it looks like this,</p>
 60
 61
 62
-63</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+63
+64</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;input_output&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;uvtable_filename&quot;</span> <span class="p">:</span> <span class="s2">&quot;UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])&quot;</span><span class="p">,</span>
     <span class="nt">&quot;save_dir&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Directory in which output datafiles and figures are saved&quot;</span><span class="p">,</span>
@@ -449,6 +452,7 @@ and it looks like this,</p>
   <span class="nt">&quot;modify_data&quot;</span> <span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;baseline_range&quot;</span>   <span class="p">:</span> <span class="s2">&quot;(Deprojected) baseline range outside of which visibilities are truncated, unit=[\\lambda]&quot;</span><span class="p">,</span>
     <span class="nt">&quot;correct_weights&quot;</span>  <span class="p">:</span> <span class="s2">&quot;Whether to estimate the data&#39;s weights (as they may be unknown for mock data)&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;use_median_weight&quot;</span><span class="p">:</span> <span class="nt">&quot;Whether to estimate all weights as the median binned visibility variance (or instead estimate weights using the baseline-dependent variance)&quot;</span>
     <span class="nt">&quot;norm_wle&quot;</span>         <span class="p">:</span> <span class="s2">&quot;Wavelength (unit=[m]) by which to normalize the (u, v) points (i.e., convert from [m] to [rad]). Not needed if the (u, v) points are already in units of [\\lambda]&quot;</span>
   <span class="p">},</span>
 
@@ -633,7 +637,7 @@ When running from the terminal, frank produces this figure if <code class="code 
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Jan 22 at 11:45:39 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Jan 22 at 11:58:41 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
