@@ -141,6 +141,14 @@ def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
         Uncertainty on vis_quantity values
     """
 
+    # If input arrays are masked with invalid values ('--'), replace those
+    # masked values with NaN
+    if np.ma.is_masked(baselines):
+        baselines = np.ma.array(baselines).filled(np.nan)
+        vis_quantity = np.ma.array(vis_quantity).filled(np.nan)
+        if vis_quantity_err is not None:
+            vis_quantity_err = np.ma.array(vis_quantity_err).filled(np.nan)
+
     if vis_quantity_err is not None:
         ax.errorbar(baselines, vis_quantity, yerr=vis_quantity_err, **kwargs)
     else:
