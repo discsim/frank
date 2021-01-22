@@ -13,6 +13,7 @@
   "modify_data" : {
     "baseline_range"   : null,
     "correct_weights"  : false,
+    "use_median_weight": false,
     "norm_wle"         : null
   },
 
