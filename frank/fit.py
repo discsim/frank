@@ -252,7 +252,8 @@ def alter_data(u, v, vis, weights, geom, model):
 
     if model['modify_data']['correct_weights']:
         up, vp = geom.deproject(u,v)
-        weights = utilities.estimate_weights(up, vp, vis, use_median=True)
+        weights = utilities.estimate_weights(up, vp, vis,
+                                            use_median=model['modify_data']['use_median_weight'])
 
     return u, v, vis, weights
 
