@@ -435,7 +435,7 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
 
     if use_median:
         logging.info('    Setting all weights as median binned visibility variance')
-        return np.full(len(u), 1/np.median(var[uvBin.bin_counts > 1]))
+        return np.full(len(u), 1/np.ma.median(var[uvBin.bin_counts > 1]))
     else:
         logging.info('    Setting weights according to baseline-dependent binned'
                      ' visibility variance')
