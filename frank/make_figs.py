@@ -292,14 +292,13 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank', zorder=10)
 
+        vmax = sol.mean.max()
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
-            vmax = max(sol.mean)
             from astropy.visualization.mpl_normalize import simple_norm
             norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
-            vmax = sol.mean.max()
             norm = PowerNorm(gamma, vmin, vmax)
         else:
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
@@ -528,14 +527,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
+        vmax =sol.mean.max()
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
-            vmax = max(sol.mean)
             from astropy.visualization.mpl_normalize import simple_norm
             norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
-            vmax = sol.mean.max()
             norm = PowerNorm(gamma, vmin, vmax)
         else:
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
