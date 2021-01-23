@@ -54,7 +54,7 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
 
     ax0, ax1, ax2 = axes
 
-    ax0.plot(u, v, '+', c='#A4EC23', label='Projected')
+    ax0.plot(u, v, '+', c='#23E1DB', label='Projected')
     ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
 
     # Projected baselines
@@ -62,10 +62,10 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
     # Deprojected baselines
     bsp = np.hypot(up, vp)
 
-    ax1.plot(bs, vis, '+', c='#A4EC23', label='Projected')
+    ax1.plot(bs, vis, '+', c='#23E1DB', label='Projected')
     ax1.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
-    ax2.plot(bs, vis, '+', c='#A4EC23', label='Projected')
+    ax2.plot(bs, vis, '+', c='#23E1DB', label='Projected')
     ax2.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
     ax0.legend(loc='best')
