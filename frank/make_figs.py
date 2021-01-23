@@ -739,7 +739,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
 
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
-                              bin_widths, gamma=1.0, mean_convolved=None,
+                              bin_widths, stretch='power',
+                              gamma=1.0, asinh_a=0.02, mean_convolved=None,
                               dist=None, force_style=True, save_prefix=None,
                               figsize=(8, 10)):
     r"""
@@ -767,10 +768,16 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         equal to it
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+    stretch : string, default = 'power'
+        Transformation to apply to the colorscale. The default 'power' is a
+        power law stretch. The other option is 'asinh', an arcsinh stretch,
+        which requires astropy.visualization.mpl_normalize.simple_norm
     gamma : float, default = 1.0
-        Index of power law normalization to apply to swept profile images'
-        colormaps (see matplotlib.colors.PowerNorm).
+        Index of power law normalization to apply to swept profile image's
+        colormap (see matplotlib.colors.PowerNorm).
         gamma=1.0 yields a linear colormap
+    asinh_a : float, default = 0.02
+        Scale parameter for an asinh stretch
     mean_convolved : None (default) or array, unit = Jy / sr
         frank brightness profile convolved with a CLEAN beam
         (see utilities.convolve_profile).
@@ -853,12 +860,20 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         plot_vis_quantity(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
         plot_vis_quantity(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
-        vmin = 0
         if mean_convolved is not None:
             vmax = max(sol.mean.max(), mean_convolved.max(), clean_profile['I'].max())
         else:
             vmax = max(sol.mean.max(), clean_profile['I'].max())
-        norm = PowerNorm(gamma, vmin, vmax)
+        if stretch == 'asinh':
+            vmin = max(0, min(sol.mean))
+            from astropy.visualization.mpl_normalize import simple_norm
+            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+        elif stretch == 'power':
+            vmin = 0
+            norm = PowerNorm(gamma, vmin, vmax)
+        else:
+            err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
+            raise err
 
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
                     vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
