@@ -474,13 +474,14 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
                            iteration_diagnostics=iteration_diagnostics)
 
     if len(alphas) in [1,2] and len(ws) in [1,2]:
-        multifit_fig, multifit_axes = make_figs.make_multifit_fig(u, v, vis, weights, sols,
-                                                               model['plotting']['bin_widths'],
-                                                               ['alpha', 'wsmooth'],
-                                                               [alphas, ws],
-                                                               model['plotting']['distance'],
-                                                               model['plotting']['force_style'],
-                                                               model['input_output']['save_prefix'],
+        multifit_fig, multifit_axes = make_figs.make_multifit_fig(u=u, v=v, vis=vis,
+                                                               weights=weights, sols=sols,
+                                                               bin_widths=model['plotting']['bin_widths'],
+                                                               varied_pars=['alpha', 'wsmooth'],
+                                                               varied_vals=[alphas, ws],
+                                                               dist=model['plotting']['distance'],
+                                                               force_style=model['plotting']['force_style'],
+                                                               save_prefix=model['input_output']['save_prefix'],
                                                                )
     else:
         logging.info('The multifit figure requires alpha and wsmooth to be lists of length <= 2.'
@@ -539,55 +540,58 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     figs, axes = [], []
 
     if model['plotting']['deprojec_plot']:
-        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u, v, vis, weights, geom,
-                                                         model['plotting']['bin_widths'],
-                                                         model['plotting']['force_style'],
-                                                         model['input_output']['save_prefix']
+        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u=u, v=v,
+                                                         vis=vis, weights=weights,
+                                                         geom=geom,
+                                                         bin_widths=model['plotting']['bin_widths'],
+                                                         force_style=model['plotting']['force_style'],
+                                                         save_prefix=model['input_output']['save_prefix']
                                                          )
 
         figs.append(deproj_fig)
         axes.append(deproj_axes)
 
     if model['plotting']['quick_plot']:
-        quick_fig, quick_axes = make_figs.make_quick_fig(u, v, vis, weights, sol,
-                                                         model['plotting']['bin_widths'],
-                                                         model['plotting']['distance'],
-                                                         model['plotting']['plot_in_logx'],
-                                                         model['plotting']['force_style'],
-                                                         model['input_output']['save_prefix'],
-                                                         model['plotting']['stretch'],
-                                                         model['plotting']['gamma'],
-                                                         model['plotting']['asinh_a']
+        quick_fig, quick_axes = make_figs.make_quick_fig(u=u, v=v, vis=vis,
+                                                         weights=weights, sol=sol,
+                                                         bin_widths=model['plotting']['bin_widths'],
+                                                         dist=model['plotting']['distance'],
+                                                         logx=model['plotting']['plot_in_logx'],
+                                                         force_style=model['plotting']['force_style'],
+                                                         save_prefix=model['input_output']['save_prefix'],
+                                                         stretch=model['plotting']['stretch'],
+                                                         gamma=model['plotting']['gamma'],
+                                                         asinh_a=model['plotting']['asinh_a']
                                                          )
 
         figs.append(quick_fig)
         axes.append(quick_axes)
 
     if model['plotting']['full_plot']:
-        full_fig, full_axes = make_figs.make_full_fig(u, v, vis, weights, sol,
-                                                      model['plotting']['bin_widths'],
-                                                      model['hyperparameters']['alpha'],
-                                                      model['hyperparameters']['wsmooth'],
-                                                      model['plotting']['distance'],
-                                                      model['plotting']['plot_in_logx'],
-                                                      model['plotting']['force_style'],
-                                                      model['input_output']['save_prefix'],
-                                                      model['plotting']['norm_residuals'],
-                                                      model['plotting']['stretch'],
-                                                      model['plotting']['gamma'],
-                                                      model['plotting']['asinh_a']
-
+        full_fig, full_axes = make_figs.make_full_fig(u=u, v=v, vis=vis,
+                                                      weights=weights, sol=sol,
+                                                      bin_widths=model['plotting']['bin_widths'],
+                                                      alpha=model['hyperparameters']['alpha'],
+                                                      wsmooth=model['hyperparameters']['wsmooth'],
+                                                      dist=model['plotting']['distance'],
+                                                      logx=model['plotting']['plot_in_logx'],
+                                                      force_style=model['plotting']['force_style'],
+                                                      save_prefix=model['input_output']['save_prefix'],
+                                                      norm_residuals=model['plotting']['norm_residuals'],
+                                                      stretch=model['plotting']['stretch'],
+                                                      gamma=model['plotting']['gamma'],
+                                                      asinh_a=model['plotting']['asinh_a']
                                                       )
 
         figs.append(full_fig)
         axes.append(full_axes)
 
     if model['plotting']['diag_plot']:
-        diag_fig, diag_axes, _ = make_figs.make_diag_fig(sol.r, sol.q,
-                                                         iteration_diagnostics,
-                                                         model['plotting']['iter_plot_range'],
-                                                         model['plotting']['force_style'],
-                                                         model['input_output']['save_prefix']
+        diag_fig, diag_axes, _ = make_figs.make_diag_fig(r=sol.r, q=sol.q,
+                                                         iteration_diagnostics=iteration_diagnostics,
+                                                         iter_plot_range=model['plotting']['iter_plot_range'],
+                                                         force_style=model['plotting']['force_style'],
+                                                         save_prefix=model['input_output']['save_prefix']
                                                          )
 
         figs.append(diag_fig)
@@ -621,15 +625,17 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                         geom.inc, geom.PA,
                                                         model['analysis']['clean_beam'])
 
-        clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u, v, vis,
-                                                                    weights, sol,
-                                                                    clean_profile,
-                                                                    model['plotting']['bin_widths'],
-                                                                    model['plotting']['gamma'],
-                                                                    mean_convolved,
-                                                                    model['plotting']['distance'],
-                                                                    model['plotting']['force_style'],
-                                                                    model['input_output']['save_prefix']
+        clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u=u, v=v, vis=vis,
+                                                                    weights=weights, sol=sol,
+                                                                    clean_profile=clean_profile,
+                                                                    bin_widths=model['plotting']['bin_widths'],
+                                                                    stretch=model['plotting']['stretch'],
+                                                                    gamma=model['plotting']['gamma'],
+                                                                    asinh_a=model['plotting']['asinh_a'],
+                                                                    mean_convolved=mean_convolved,
+                                                                    dist=model['plotting']['distance'],
+                                                                    force_style=model['plotting']['force_style'],
+                                                                    save_prefix=model['input_output']['save_prefix']
                                                                     )
 
         figs.append(clean_fig)
@@ -698,10 +704,10 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     np.savez(bootstrap_path, r=sol.r, profiles=np.array(profiles_bootstrap))
 
-    boot_fig, boot_axes = make_figs.make_bootstrap_fig(sol.r,
-                                                       profiles_bootstrap,
-                                                       model['plotting']['force_style'],
-                                                       model['input_output']['save_prefix']
+    boot_fig, boot_axes = make_figs.make_bootstrap_fig(r=sol.r,
+                                                       profiles=profiles_bootstrap,
+                                                       force_style=model['plotting']['force_style'],
+                                                       save_prefix=model['input_output']['save_prefix']
                                                        )
 
     return boot_fig, boot_axes
