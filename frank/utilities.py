@@ -582,7 +582,7 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
 
 
 def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
-                    n_per_sigma=5, axis=0):
+                    n_per_sigma=50, axis=0):
     r"""
     Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
     the profile's resolution
@@ -601,7 +601,7 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
         Dictionary with beam `bmaj` (FWHM of beam along its major axis) [arcsec],
         `bmin` (FWHM of beam along its minor axis) [arcsec],
         `pa` (beam position angle) [deg]
-    n_per_sigma : int, default = 5
+    n_per_sigma : int, default = 50
         Number of points per standard deviation of the Gaussian kernel (used
         for gridding)
     axis : int, default = 0
