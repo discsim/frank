@@ -582,7 +582,7 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
 
 
 def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
-                    n_per_sigma=50, axis=0):
+                    n_per_sigma=5, axis=0):
     r"""
     Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
     the profile's resolution
