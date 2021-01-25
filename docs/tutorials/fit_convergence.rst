@@ -28,7 +28,7 @@ If this stopping condition is *not* met, the fit runs until `max_iter` as set in
 The oscillations remaining at the end of the fit (:math:`\approx 630` iterations) are at a couple parts in :math:`10^5`.
 |br|
 **c)** The reconstructed power spectrum over all fit iterations.
-Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 100` iterations,
+Our initial guess for the power spectrum, a power law with slope of -2, is apparent in the longest baselines for the first :math:`\approx 100` iterations (which depends on the chosen value of :math:`\alpha`),
 and then we continue iterating to suppress the high power placed at the data's noisiest, longest baselines. |br|
 **d)** Sequential difference between the last 100 power spectrum iterations. |br|
 **e)** A simple metric for the brightness profile's convergence, :math:`{\rm max}(|(I_{\rm i} - I_{\rm i-1}|)\ /\ {\rm max}(I_i)`,
