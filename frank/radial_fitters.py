@@ -120,7 +120,7 @@ class _HankelRegressor(object):
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
                 raise ValueError("Bad value in power spectrum. The power"
-                                 " spectrum must be postive and not contain"
+                                 " spectrum must be positive and not contain"
                                  " any NaN values. This is likely due to"
                                  " your UVtable (incorrect units or weights), "
                                  " or the deprojection being applied (incorrect"
