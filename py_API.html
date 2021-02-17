@@ -212,7 +212,7 @@
 <strong>(2)</strong> deproject the visibilities by the given or fitted geometry.</p>
 <dl class="py class">
 <dt id="frank.geometry.FixedGeometry">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FixedGeometry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inc</span></em>, <em class="sig-param"><span class="n">PA</span></em>, <em class="sig-param"><span class="n">dRA</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">dDec</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FixedGeometry" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.geometry.</span></code><code class="sig-name descname"><span class="pre">FixedGeometry</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dRA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dDec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FixedGeometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Disc Geometry class using pre-determined parameters.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
@@ -232,7 +232,7 @@ from the phase centre.</p>
 
 <dl class="py class">
 <dt id="frank.geometry.FitGeometryGaussian">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryGaussian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inc_pa</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.geometry.</span></code><code class="sig-name descname"><span class="pre">FitGeometryGaussian</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inc_pa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_centre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryGaussian" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a Gaussian in Fourier space.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
@@ -256,7 +256,7 @@ from the phase centre.</p>
 
 <dl class="py class">
 <dt id="frank.geometry.FitGeometryFourierBessel">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">FitGeometryFourierBessel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">inc_pa</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phase_centre</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">guess</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryFourierBessel" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.geometry.</span></code><code class="sig-name descname"><span class="pre">FitGeometryFourierBessel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inc_pa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_centre</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.FitGeometryFourierBessel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the disc geometry by fitting a non-parametric brightness
 profile in visibility space.</p>
 <p>The best fit is obtained by finding the geometry that minimizes
@@ -290,7 +290,7 @@ right ascension offset [arcsec], and declination offset [arcsec]</p></li>
 
 <dl class="py class">
 <dt id="frank.geometry.SourceGeometry">
-<em class="property">class </em><code class="sig-prename descclassname">frank.geometry.</code><code class="sig-name descname">SourceGeometry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">inc</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">PA</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dRA</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dDec</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.geometry.</span></code><code class="sig-name descname"><span class="pre">SourceGeometry</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dRA</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dDec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for geometry corrections.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
@@ -308,7 +308,7 @@ right ascension offset [arcsec], and declination offset [arcsec]</p></li>
 from the phase centre.</p>
 <dl class="py method">
 <dt id="frank.geometry.SourceGeometry.apply_correction">
-<code class="sig-name descname">apply_correction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">apply_correction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Correct the phase centre and deproject the visibilities</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -331,13 +331,13 @@ from the phase centre.</p>
 
 <dl class="py method">
 <dt id="frank.geometry.SourceGeometry.deproject">
-<code class="sig-name descname">deproject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">deproject</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert uv-points from sky-plane to deprojected space</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.geometry.SourceGeometry.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em>, <em class="sig-param"><span class="n">weights</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine geometry using the provided uv-data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -353,13 +353,13 @@ from the phase centre.</p>
 
 <dl class="py method">
 <dt id="frank.geometry.SourceGeometry.reproject">
-<code class="sig-name descname">reproject</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reproject</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert uv-points from deprojected space to sky-plane</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.geometry.SourceGeometry.undo_correction">
-<code class="sig-name descname">undo_correction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.undo_correction" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">undo_correction</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.undo_correction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Undo the phase centre correction and deprojection</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -389,7 +389,7 @@ from the phase centre.</p>
 the deprojected visibilities.</p>
 <dl class="py class">
 <dt id="frank.radial_fitters.FrankFitter">
-<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">FrankFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">Rmax</span></em>, <em class="sig-param"><span class="n">N</span></em>, <em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">nu</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">block_data</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1.05</span></em>, <em class="sig-param"><span class="n">p_0</span><span class="o">=</span><span class="default_value">1e-15</span></em>, <em class="sig-param"><span class="n">weights_smooth</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">max_iter</span><span class="o">=</span><span class="default_value">2000</span></em>, <em class="sig-param"><span class="n">check_qbounds</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">store_iteration_diagnostics</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></code><code class="sig-name descname"><span class="pre">FrankFitter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_qbounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_iteration_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
 Baddour &amp; Chouinard (2015).</p>
 <p>The GP model is based upon Oppermann et al. (2013), which use a maximum
@@ -431,37 +431,37 @@ for each fit iteration</p></li>
 </dl>
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.MAP_solution">
-<em class="property">property </em><code class="sig-name descname">MAP_solution</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_solution" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">MAP_solution</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_solution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reconstruction for the maximum a posteriori power spectrum</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.MAP_spectrum">
-<em class="property">property </em><code class="sig-name descname">MAP_spectrum</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">MAP_spectrum</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum a posteriori power spectrum</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.MAP_spectrum_covariance">
-<em class="property">property </em><code class="sig-name descname">MAP_spectrum_covariance</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">MAP_spectrum_covariance</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Covariance matrix of the maximum a posteriori power spectrum</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.Qmax">
-<em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Qmax" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">Qmax</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Qmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.Rmax">
-<em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Rmax" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">Rmax</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.Rmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.fit">
-<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">V</span></em>, <em class="sig-param"><span class="n">weights</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter.fit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">fit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the visibilties</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -487,25 +487,25 @@ each fit iteration, and number of iterations</p></li>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.geometry">
-<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.geometry" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">geometry</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometry object</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.q">
-<em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.q" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">q</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.r">
-<em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.r" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">r</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.r" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters.FrankFitter.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">size</span></code><a class="headerlink" href="#frank.radial_fitters.FrankFitter.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
 </dd></dl>
 
@@ -513,7 +513,7 @@ each fit iteration, and number of iterations</p></li>
 
 <dl class="py class">
 <dt id="frank.radial_fitters._HankelRegressor">
-<em class="property">class </em><code class="sig-prename descclassname">frank.radial_fitters.</code><code class="sig-name descname">_HankelRegressor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">DHT</span></em>, <em class="sig-param"><span class="n">M</span></em>, <em class="sig-param"><span class="n">j</span></em>, <em class="sig-param"><span class="n">p</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">noise_likelihood</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></code><code class="sig-name descname"><span class="pre">_HankelRegressor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DHT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_likelihood</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Solves the linear regression problem to compute the posterior,</p>
 <div class="math notranslate nohighlight">
 \[P(I|q,V,p) \propto G(I-\mu, D),\]</div>
@@ -567,31 +567,31 @@ missing constant</p>
 </dl>
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.Qmax">
-<em class="property">property </em><code class="sig-name descname">Qmax</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Qmax" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">Qmax</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Qmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.Rmax">
-<em class="property">property </em><code class="sig-name descname">Rmax</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Rmax" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">Rmax</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Rmax" title="Permalink to this definition">¶</a></dt>
 <dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.covariance">
-<em class="property">property </em><code class="sig-name descname">covariance</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.covariance" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">covariance</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Posterior covariance, unit = (Jy / sr)**2</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.geometry">
-<em class="property">property </em><code class="sig-name descname">geometry</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.geometry" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">geometry</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.geometry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Geometry object</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.log_likelihood">
-<code class="sig-name descname">log_likelihood</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">I</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">log_likelihood</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute one of two types of likelihood.</p>
 <p>If <span class="math notranslate nohighlight">\(I\)</span> is provided, this computes</p>
 <p>Otherwise the marginalized likelihood is computed,</p>
@@ -626,19 +626,19 @@ missing constant</p>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.mean">
-<em class="property">property </em><code class="sig-name descname">mean</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.mean" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">mean</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Posterior mean, unit = Jy / sr</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.power_spectrum">
-<em class="property">property </em><code class="sig-name descname">power_spectrum</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.power_spectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">power_spectrum</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.power_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Power spectrum coefficients</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">I</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">predict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -667,7 +667,7 @@ centre determined by the geometry object</p>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.predict_deprojected">
-<code class="sig-name descname">predict_deprojected</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">q</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">I</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">block_size</span><span class="o">=</span><span class="default_value">100000</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict_deprojected" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">predict_deprojected</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict_deprojected" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the visibilities in the deprojected-plane</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -699,25 +699,25 @@ for consistentcy with <code class="code docutils literal notranslate"><span clas
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.q">
-<em class="property">property </em><code class="sig-name descname">q</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.q" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">q</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.r">
-<em class="property">property </em><code class="sig-name descname">r</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.r" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">r</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.r" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.size">
-<em class="property">property </em><code class="sig-name descname">size</code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.size" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">size</span></code><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of points in reconstruction</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="frank.radial_fitters._HankelRegressor.solve_non_negative">
-<code class="sig-name descname">solve_non_negative</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.solve_non_negative" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">solve_non_negative</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.solve_non_negative" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute the best fit solution with non-negative intensities</p>
 </dd></dl>
 
@@ -729,7 +729,7 @@ for consistentcy with <code class="code docutils literal notranslate"><span clas
 <p>These are some useful functions and classes for various aspects of fitting and analysis.</p>
 <dl class="py function">
 <dt id="frank.utilities.arcsec_baseline">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">arcsec_baseline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.arcsec_baseline" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">arcsec_baseline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.arcsec_baseline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Provide x as a radial scale [arcsec] to return the corresponding baseline
 [lambda], or vice-versa</p>
 <dl class="field-list simple">
@@ -747,7 +747,7 @@ for consistentcy with <code class="code docutils literal notranslate"><span clas
 
 <dl class="py function">
 <dt id="frank.utilities.convolve_profile">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">convolve_profile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">I</span></em>, <em class="sig-param"><span class="n">disc_i</span></em>, <em class="sig-param"><span class="n">disc_pa</span></em>, <em class="sig-param"><span class="n">clean_beam</span></em>, <em class="sig-param"><span class="n">n_per_sigma</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.convolve_profile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">convolve_profile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disc_i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disc_pa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_beam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_per_sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.convolve_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
 the profile’s resolution</p>
 <dl class="field-list simple">
@@ -776,7 +776,7 @@ for gridding)</p></li>
 
 <dl class="py function">
 <dt id="frank.utilities.cut_data_by_baseline">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">cut_data_by_baseline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">vis</span></em>, <em class="sig-param"><span class="n">weights</span></em>, <em class="sig-param"><span class="n">cut_range</span></em>, <em class="sig-param"><span class="n">geometry</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.cut_data_by_baseline" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">cut_data_by_baseline</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cut_range</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.cut_data_by_baseline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Truncate the data to be within a chosen baseline range.</p>
 <p>The cut will be done in deprojected baseline space if the geometry is
 provided.</p>
@@ -806,7 +806,7 @@ truncated</p></li>
 
 <dl class="py function">
 <dt id="frank.utilities.draw_bootstrap_sample">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">draw_bootstrap_sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">vis</span></em>, <em class="sig-param"><span class="n">weights</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.draw_bootstrap_sample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">draw_bootstrap_sample</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.draw_bootstrap_sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Obtain the sample for a bootstrap, drawing, with replacement, N samples from
 a length N dataset</p>
 <dl class="field-list simple">
@@ -832,7 +832,7 @@ a length N dataset</p>
 
 <dl class="py function">
 <dt id="frank.utilities.estimate_weights">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">estimate_weights</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">V</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">nbins</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">log</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">use_median</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.estimate_weights" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">estimate_weights</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_median</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.estimate_weights" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate the weights using the variance of the binned visibilities.</p>
 <p>The estimation is done assuming that the variation in each bin is dominated
 by the noise. This will be true if:
@@ -888,7 +888,7 @@ second and third calls are equivalent to the first with u=0.</p>
 
 <dl class="py function">
 <dt id="frank.utilities.normalize_uv">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">normalize_uv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">u</span></em>, <em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">wle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.normalize_uv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">normalize_uv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.normalize_uv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize data u and v coordinates by the observing wavelength</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -909,7 +909,7 @@ second and third calls are equivalent to the first with u=0.</p>
 
 <dl class="py function">
 <dt id="frank.utilities.sweep_profile">
-<code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">sweep_profile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">r</span></em>, <em class="sig-param"><span class="n">I</span></em>, <em class="sig-param"><span class="n">project</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">phase_shift</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">geom</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">xmax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ymax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">dr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.sweep_profile" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">sweep_profile</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geom</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ymax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.sweep_profile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sweep a 1D radial brightness profile over <span class="math notranslate nohighlight">\(2 \pi\)</span> to yield a 2D
 brightness distribution. Optionally project this sweep by a supplied
 geometry.</p>
@@ -951,7 +951,7 @@ in the image</p>
 
 <dl class="py class">
 <dt id="frank.utilities.UVDataBinner">
-<em class="property">class </em><code class="sig-prename descclassname">frank.utilities.</code><code class="sig-name descname">UVDataBinner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">uv</span></em>, <em class="sig-param"><span class="n">V</span></em>, <em class="sig-param"><span class="n">weights</span></em>, <em class="sig-param"><span class="n">bin_width</span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.UVDataBinner" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">frank.utilities.</span></code><code class="sig-name descname"><span class="pre">UVDataBinner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_width</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.UVDataBinner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Average uv-data into bins of equal size.</p>
 <p>Compute the weighted mean of the visibilities in each bin</p>
 <dl class="field-list simple">
@@ -988,7 +988,7 @@ components will be binned. Else only the real part will be binned.</p></li>
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Jan 22 at 13:42:55 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Feb 17 at 19:42:55 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
