@@ -527,7 +527,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
-        vmax =sol.mean.max()
+        vmax = sol.mean.max()
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
             from astropy.visualization.mpl_normalize import simple_norm
