@@ -120,8 +120,13 @@ class _HankelRegressor(object):
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
                 raise ValueError("Bad value in power spectrum. The power"
-                                 " spectrum must be postive and not contain"
-                                 " any NaN values")
+                                 " spectrum must be positive and not contain"
+                                 " any NaN values. This is likely due to"
+                                 " your UVtable (incorrect units or weights), "
+                                 " or the deprojection being applied (incorrect"
+                                 " geometry and/or phase center). Else you may"
+                                 " want to increase `rout` by 10-20% or `n` so"
+                                 " that it is large, >~300.")
 
             Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
@@ -462,7 +467,7 @@ class FourierBesselFitter(object):
 
         self._blocking = block_data
         self._block_size = block_size
-        
+
         self._verbose = verbose
 
     def _check_uv_range(self, uv):
