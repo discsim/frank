@@ -3,31 +3,6 @@
 Changelog
 +++++++++
 
-v.0.1.0
-+++++++
-
-*Initial release of frank codebase for submission to MNRAS*
-
-- In progress: geometry fitting routines, README, docs
-
-v.1.0.0
-+++++++
-
-*Initial production/stable release as used in* `Jennings et al. 2020 <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_
-
-- default_parameters.json, parameter_descriptions.json:
-    - Adds 'initial_guess' parameter for geometry fitting routines
-- geometry.py:
-    - Adds nonparametric geometry fitting routine
-    - Adds routine to clip inclination and PA to expected range
-- tests.py:
-    - Adds several tests
-- Docs:
-    - Adds hyperlinks, badges to README
-    - Adds code coverage
-- Miscellaneous:
-    - Fixes a few other minor bugs
-
 v.1.1.0
 +++++++
 
@@ -63,3 +38,28 @@ v.1.1.0
 - Miscellaneous:
     - Fixes 'MaskedArray' warnings in 'utilities.py', 'plot.py'
     - Fixes a few other minor bugs
+
+v.1.0.0
++++++++
+
+*Initial production/stable release as used in* `Jennings et al. 2020 <https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b>`_
+
+- default_parameters.json, parameter_descriptions.json:
+    - Adds 'initial_guess' parameter for geometry fitting routines
+- geometry.py:
+    - Adds nonparametric geometry fitting routine
+    - Adds routine to clip inclination and PA to expected range
+- tests.py:
+    - Adds several tests
+- Docs:
+    - Adds hyperlinks, badges to README
+    - Adds code coverage
+- Miscellaneous:
+    - Fixes a few other minor bugs
+
+v.0.1.0
++++++++
+
+*Initial release of frank codebase for submission to MNRAS*
+
+- In progress: geometry fitting routines, README, docs
