@@ -34,6 +34,7 @@ interpreting its results, and hosts the code's API.
 
     API <py_API>
     Index <genindex>
+    Changelog <https://github.com/discsim/frank/blob/master/HISTORY.rst>    
     Github <https://github.com/discsim/frank>
     Submit an issue <https://github.com/discsim/frank/issues>
 

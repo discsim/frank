@@ -11,6 +11,10 @@
       <img src="https://img.shields.io/pypi/v/frank.svg">
   </a>
 
+  <a href="https://discsim.github.io/frank/blob/master/HISTORY.rst">
+    <img src="https://img.shields.io/badge/Changelog-detailed-blue"/>
+
+  <br/>
   <a href="https://discsim.github.io/frank/">
     <img src="https://img.shields.io/badge/docs-Read%20em!-blue.svg?style=flat"/>
 
