@@ -699,9 +699,9 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
         # Plot the difference in the power spectrum between the last 100 iterations
         plot_pwr_spec_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
-                                iter_plot_range_end, ax3,
-                                cmap=plt.cm.cividis,  # pylint: disable=no-member
-                                bbox_x=.45)
+                                 iter_plot_range_end, ax3,
+                                 cmap=plt.cm.cividis,  # pylint: disable=no-member
+                                 bbox_x=.45)
 
         plot_convergence_criterion(profile_iter_toplot, num_iter, ax4, c='k')
 
