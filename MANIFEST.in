@@ -1,4 +1,4 @@
-include README.md AUTHORS.rst LICENSE.txt requirements.txt
+include README.md AUTHORS.rst HISTORY.rst LICENSE.txt requirements.txt 
 global-include default_parameters.json parameter_descriptions.json frank.mplstyle
 prune docs
 prune .ci

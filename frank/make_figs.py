@@ -247,8 +247,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         ax2.text(.5, .9, 'c)', transform=ax2.transAxes)
         ax3.text(.5, .9, 'd)', transform=ax3.transAxes)
 
-        ax4.text(.5, .9, 'e)', transform=ax4.transAxes)
-        ax5.text(.5, .9, 'f)', transform=ax5.transAxes)
+        ax4.text(.5, .9, 'e)', c='w', transform=ax4.transAxes)
+        ax5.text(.5, .9, 'f)', c='w', transform=ax5.transAxes)
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
@@ -292,14 +292,13 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank', zorder=10)
 
+        vmax = sol.mean.max()
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
-            vmax = max(sol.mean)
             from astropy.visualization.mpl_normalize import simple_norm
             norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
-            vmax = sol.mean.max()
             norm = PowerNorm(gamma, vmin, vmax)
         else:
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
@@ -528,14 +527,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
+        vmax = sol.mean.max()
         if stretch == 'asinh':
             vmin = max(0, min(sol.mean))
-            vmax = max(sol.mean)
             from astropy.visualization.mpl_normalize import simple_norm
             norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
-            vmax = sol.mean.max()
             norm = PowerNorm(gamma, vmin, vmax)
         else:
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
@@ -700,7 +698,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
         # Plot the difference in the power spectrum between the last 100 iterations
-        plot_pwr_spec_iterations(q, np.diff(pwr_spec_iter, axis=0),
+        plot_pwr_spec_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
                                  iter_plot_range_end, ax3,
                                  cmap=plt.cm.cividis,  # pylint: disable=no-member
                                  bbox_x=.45)
@@ -712,7 +710,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         ax1.set_xlabel('r ["]')
 
         ax2.set_ylabel(r'Power [Jy$^2$]')
-        ax3.set_ylabel(r'PS$_i$ - PS$_{i-1}$ [Jy$^2$]')
+        ax3.set_ylabel(r'|PS$_i$ - PS$_{i-1}$| [Jy$^2$]')
         ax3.set_xlabel(r'Baseline [$\lambda$]')
         ax2.set_xscale('log')
         ax3.set_xscale('log')
@@ -741,7 +739,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 
 
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
-                              bin_widths, gamma=1.0, mean_convolved=None,
+                              bin_widths, stretch='power',
+                              gamma=1.0, asinh_a=0.02, mean_convolved=None,
                               dist=None, force_style=True, save_prefix=None,
                               figsize=(8, 10)):
     r"""
@@ -769,10 +768,16 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         equal to it
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+    stretch : string, default = 'power'
+        Transformation to apply to the colorscale. The default 'power' is a
+        power law stretch. The other option is 'asinh', an arcsinh stretch,
+        which requires astropy.visualization.mpl_normalize.simple_norm
     gamma : float, default = 1.0
-        Index of power law normalization to apply to swept profile images'
-        colormaps (see matplotlib.colors.PowerNorm).
+        Index of power law normalization to apply to swept profile image's
+        colormap (see matplotlib.colors.PowerNorm).
         gamma=1.0 yields a linear colormap
+    asinh_a : float, default = 0.02
+        Scale parameter for an asinh stretch
     mean_convolved : None (default) or array, unit = Jy / sr
         frank brightness profile convolved with a CLEAN beam
         (see utilities.convolve_profile).
@@ -810,10 +815,18 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
         axes = [ax0, ax1, ax2, ax3, ax4]
 
+        if 'lo_err' in clean_profile.keys():
+            low_uncer = clean_profile['lo_err']
+        else:
+            low_uncer = None
+        if 'hi_err' in clean_profile.keys():
+            high_uncer = clean_profile['hi_err']
+        else:
+            high_uncer = None
+
         plot_brightness_profile(clean_profile['r'], clean_profile['I'] / 1e10, ax0,
-                                low_uncer=clean_profile['lo_err'],
-                                high_uncer=clean_profile['hi_err'], c='b', ls='--',
-                                label='CLEAN')
+                                low_uncer=low_uncer, high_uncer=high_uncer,
+                                c='b', ls='--', label='CLEAN')
 
         plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', ls=':', label='frank')
 
@@ -855,12 +868,20 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         plot_vis_quantity(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
         plot_vis_quantity(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
-        vmin = 0
         if mean_convolved is not None:
             vmax = max(sol.mean.max(), mean_convolved.max(), clean_profile['I'].max())
         else:
             vmax = max(sol.mean.max(), clean_profile['I'].max())
-        norm = PowerNorm(gamma, vmin, vmax)
+        if stretch == 'asinh':
+            vmin = max(0, min(sol.mean))
+            from astropy.visualization.mpl_normalize import simple_norm
+            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+        elif stretch == 'power':
+            vmin = 0
+            norm = PowerNorm(gamma, vmin, vmax)
+        else:
+            err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
+            raise err
 
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
                     vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
