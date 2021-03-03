@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Fitting mock data &mdash; frank 1.0.0 documentation</title>
+  <title>Fitting mock data &mdash; frank 1.1.0 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                1.0.0
+                1.1.0
               </div>
             
           
@@ -118,6 +118,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/blob/master/HISTORY.rst"> Changelog</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank"> Github</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
 </ul>
@@ -218,7 +219,9 @@ If you’ve produced the mock visibilities with, e.g., a pipeline that emulates
 ALMA observations, you may not have an estimate of the weights on your individual visibilities.</p>
 <p>In this case you can set <code class="docutils literal notranslate"><span class="pre">correct_weights=True</span></code> in your parameter file.
 This will instruct frank to use the variance of the binned visibilities to
-<em>coarsely</em> estimate the pointwise weights
+<em>coarsely</em> estimate the pointwise weights.
+Setting <code class="docutils literal notranslate"><span class="pre">use_median_weight=True</span></code> will set all weights as the median binned visibility variance;
+setting <code class="docutils literal notranslate"><span class="pre">use_median_weight=False</span></code> will instead use the baseline-dependent variance
 (see the <a class="reference internal" href="../py_API.html#frank.utilities.estimate_weights"><span class="std std-ref">estimate_weights</span></a> function).
 This is done between the steps to deproject the visibilities and fit for the brightness profile.</p>
 </div>
@@ -239,7 +242,7 @@ This is done between the steps to deproject the visibilities and fit for the bri
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Feb 17 at 19:42:55 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Mar 03 at 14:17:19 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

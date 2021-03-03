@@ -164,7 +164,7 @@ and fit for the brightness profile. We'll fit out to 1.6" using 250 collocation 
     sol = FF.fit(u, v, vis, weights)
 
 Now make a simplified figure showing the fit (a subset of plots from the full figure above,
-plus the frank profile swept over :math:`2\pi`, but face-on).
+plus the frank profile swept over :math:`2\pi`, but face-on, in (e)).
 When running from the terminal, frank produces this figure if `quick_plot=True` in your parameter file).
 
 .. code-block:: python
