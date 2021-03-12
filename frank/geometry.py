@@ -20,7 +20,7 @@
    the visibilties by a fitted or a given geometry.
 
    NOTE: The sign convention used here is east of north for position angle (PA)
-   and right ascension offset (dRA).
+   and positive toward east for right ascension offset (dRA).
 """
 
 import numpy as np
