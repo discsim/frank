@@ -23,8 +23,8 @@
     "fit_inc_pa"       : "Whether to fit for the inclination and position angle",
     "initial_guess"    : "Whether to use the below values of `inc`, `pa`, `dra`, and `ddec` as an initial guess for the geometry (if `fit_phase_offset` is True or `fit_inc_pa` is True, the respective values below will be used. Guess is only used if `type` is 'gaussian' or 'nonparametric')",
     "inc"              : "Inclination, unit=[deg]",
-    "pa"               : "Position angle, unit=[deg]",
-    "dra"              : "Delta (offset from 0) right ascension, unit=[arcsec]",
+    "pa"               : "Position angle, defined east of north, unit=[deg]",
+    "dra"              : "Delta (offset from 0) right ascension, defined east of north, unit=[arcsec]",
     "ddec"             : "Delta declination, unit=[arcsec]"
   },
 

@@ -19,7 +19,8 @@
 """This module contains methods for fitting a source's geometry and deprojecting
    the visibilties by a fitted or a given geometry.
 
-   NOTE: The sign convention used here is xx.
+   NOTE: The sign convention used here is east of north for position angle (PA)
+   and right ascension offset (dRA).
 """
 
 import numpy as np
@@ -91,7 +92,7 @@ def deproject(u, v, inc, PA, inverse=False):
     inc : float, unit = deg
         Inclination
     PA : float, unit = deg
-        Position angle
+        Position angle, defined east of north.
     inverse : bool, default=False
         If True, the uv-points are reprojected rather than deprojected
 
