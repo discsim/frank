@@ -525,7 +525,8 @@ we’ll walk through more verbosely here.</p>
 </div>
 <div class="section" id="2.-Determinine-the-disc-geometry-and-deproject-the-visibilities">
 <h2>2. Determinine the disc geometry and deproject the visibilities<a class="headerlink" href="#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities" title="Permalink to this headline">¶</a></h2>
-<p>Before fitting the radial brightness profile, we need to determine the disc’s geometry (inclination, position angle and phase center) in order to deproject the visibilities (recall that frank, fitting in 1D, assumes an axisymmetric source). To do this we pass an object specifying how the geometry is determined to the <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> class.</p>
+<p>Before fitting the radial brightness profile, we need to determine the disc’s geometry (inclination, position angle and phase center) in order to deproject the visibilities (recall that frank, fitting in 1D, assumes an axisymmetric source). To do this we pass an object specifying how the geometry is determined to the <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> class. <strong>The position angle (PA) is defined positive east of north, and the right ascension offset (dRA) is defined
+positive for offsets toward east.</strong></p>
 <p>frank has three classes for this: <a class="reference internal" href="../py_API.html#frank.geometry.FixedGeometry"><span class="std std-ref">FixedGeometry</span></a> just takes a geometry you provide, <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryGaussian"><span class="std std-ref">FitGeometryGaussian</span></a> determines the geometry by fitting a 2D Gaussian directly to the visibilities, and <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryFourierBessel"><span class="std std-ref">FitGeometryFourierBessel</span></a> determines the geometry by fitting a nonparametric form.</p>
 <p><strong>In practice we’ve found a determination of the disc geometry from an image (either from fitting a 2D Gaussian to the disc in the image plane, or fitting individual rings) to be more consistently accurate than</strong> <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> <strong>or</strong> <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code>. <strong>We thus recommend using a geometry determined from the image plane for the deprojection.</strong> If you are using <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> or <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code>, it’s good at minimum to check that the inclination and PA
 it finds are reasonable, given the disc image.</p>
@@ -704,7 +705,7 @@ al. 2018</a>).</p>
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Mar 03 at 14:17:19 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Mar 15 at 16:15:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

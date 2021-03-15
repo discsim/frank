@@ -97,7 +97,7 @@
    "metadata": {},
    "source": [
     "Before fitting the radial brightness profile, we need to determine the disc's geometry (inclination, position angle and phase center) in order to deproject the visibilities (recall that frank, fitting in 1D, assumes an axisymmetric source).\n",
-    "To do this we pass an object specifying how the geometry is determined to the [FrankFitter](../py_API.rst#frank.radial_fitters.FrankFitter) class.\n",
+    "To do this we pass an object specifying how the geometry is determined to the [FrankFitter](../py_API.rst#frank.radial_fitters.FrankFitter) class. **The position angle (PA) is defined positive east of north, and the right ascension offset (dRA) is defined positive for offsets toward east.**\n",
     "\n",
     "frank has three classes for this: [FixedGeometry](../py_API.rst#frank.geometry.FixedGeometry) just takes a geometry you provide, [FitGeometryGaussian](../py_API.rst#frank.geometry.FitGeometryGaussian) determines the geometry by fitting a 2D Gaussian directly to the visibilities, and [FitGeometryFourierBessel](../py_API.rst#frank.geometry.FitGeometryFourierBessel) determines the geometry by fitting a nonparametric form. \n",
     "\n",
