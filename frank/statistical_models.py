@@ -5,7 +5,6 @@
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
-
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
@@ -402,10 +401,194 @@ class LogNormalMAPModel:
         I = np.exp(scale * s)
         
         # Now compute the inverse information propogator  
-        Dinv = Sinv   
+        Dinv = Sinv.copy()
         Dinv += scale**2 * np.einsum('i,ij,j->ij', I, self._M, I)
         Dinv += scale**2 * np.diag(I * np.dot(self._M, I)) 
         Dinv -= scale**2 * np.diag(self._j * I)
+        
+        try:
+            self._Dchol = scipy.linalg.cho_factor(Dinv)
+            self._Dsvd  = None
+        except np.linalg.LinAlgError:
+            U, s_svd, V = scipy.linalg.svd(Dinv, full_matrices=False)
+            
+            s1 = np.where(s_svd > 0, 1./s_svd, 0)
+            
+            self._Dchol = None
+            self._Dsvd  = U, s1, V
+
+        self._cov = None
+                
+        return self._s
+
+    def Dsolve(self, b):
+        r"""
+        Compute :math:`D \cdot b` by solving :math:`D^{-1} x = b`.
+
+        Parameters
+        ----------
+        b : array, size = (N,...)
+            Right-hand side to solve for
+
+        Returns
+        -------
+        x : array, shape = np.shape(b)
+            Solution to the equation D x = b
+
+        """
+        if self._Dchol is not None:
+            return scipy.linalg.cho_solve(self._Dchol, b)
+        else:
+            U, s1, V = self._Dsvd
+            return np.dot(V.T, np.multiply(np.dot(U.T, b), s1))
+
+    @property
+    def MAP(self):
+        """Posterior maximum, unit = Jy / sr"""
+        return self._s
+
+    @property
+    def covariance(self):
+        """Posterior covariance at MAP, unit = (Jy / sr)**2"""
+        if self._cov is None:
+            self._cov = self.Dsolve(np.eye(self.size))
+        return self._cov
+
+    @property
+    def power_spectrum(self):
+        """Power spectrum coefficients"""
+        return self._p
+
+    @property
+    def r(self):
+        """Radius points, unit = arcsec"""
+        return self._DHT.r * rad_to_arcsec
+
+    @property
+    def Rmax(self):
+        """Maximum radius, unit = arcsec"""
+        return self._DHT.Rmax * rad_to_arcsec
+
+    @property
+    def q(self):
+        r"""Frequency points, unit = :math:`\lambda`"""
+        return self._DHT.q
+
+    @property
+    def Qmax(self):
+        r"""Maximum frequency, unit = :math:`\lambda`"""
+        return self._DHT.Qmax
+
+    @property
+    def size(self):
+        """Number of points in reconstruction"""
+        return self._DHT.size
+
+    @property 
+    def scale(self):
+        return self._scale
+
+
+
+
+class LogNormalMAPMultiModel:
+ 
+
+    def __init__(self, DHT, M, j, p=None, scale=[1.0], guess=None, noise_likelihood=0):
+
+        self._DHT = DHT
+        self._M = M
+        self._j = j
+
+        self._scale = np.array(scale)
+
+        self._p = p
+        if p is not None:
+            if np.any(p <= 0) or np.any(np.isnan(p)):
+                raise ValueError("Bad value in power spectrum. The power"
+                                 " spectrum must be postive and not contain"
+                                 " any NaN values")
+
+            Ykm = self._DHT.coefficients()
+            self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
+        else:
+            self._Sinv = None
+
+        self._like_noise = noise_likelihood
+
+        self._fit(guess)
+
+    def _fit(self, guess):
+        """Find the maximum likelihood solution and variance"""
+        Sinv = self._Sinv
+        if Sinv is None:
+            Sinv = 0 * self._M
+
+        scale = self._scale
+
+        def H(s):
+            """Log-likelihood function"""
+            I = np.exp(np.einsum('i,j->ij', scale,s))
+
+            f = 0.5*np.dot(s, np.dot(Sinv, s))
+            
+            f += 0.5*np.einsum('ij,ijk,ik',I,self._M,I)
+            f -= np.sum(I*self._j)
+            
+            return f
+        
+        def jac(s):  
+            """1st Derivative of log-likelihood"""
+            I = np.exp(np.einsum('i,j->ij', scale, s))
+            sI = (I.T*scale).T
+
+            S1_s = np.dot(Sinv, s) 
+            MI = np.einsum('ij,ijk,ik->j', sI, self._M, I)
+            jI = np.einsum('ij,ij->j', sI, self._j)
+            
+            return S1_s + (MI - jI)
+        
+        def hess(s):
+            """2nd derivative of log-likelihood"""
+            I = np.exp(np.einsum('i,j->ij', scale, s))
+            s2I = (I.T*scale**2).T
+            
+            Mij = np.einsum('ki,kij,kj->ij',s2I, self._M, I)
+            MI = np.einsum('ij,ijk,ik->j', s2I, self._M, I)
+            jI = np.einsum('ij,ij->j', s2I, self._j)
+            
+            term = (Mij + np.diag(MI - jI))
+            return Sinv + term
+        
+        if guess is None:
+            U, s_, V = scipy.linalg.svd(self._M + Sinv, full_matrices=False)
+            s1 = np.where(s_ > 0, 1./s_, 0)
+            I = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
+            I = np.maximum(I, 1e-3*I.max())
+            x = np.log(I) / scale 
+        else:
+            x = guess
+
+        def limit_step(dx, x):
+            alpha = 1.1*np.min(np.abs(x/dx))
+                                    
+            alpha = min(alpha, 1)
+            return alpha*dx
+           
+        # Ignore convergence because it will often fail due to round off when
+        # we're super close to the minimum
+        search = LineSearch(reduce_step=limit_step)
+        s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-6)
+ 
+        s  = self._s  = s
+        I = np.exp(np.einsum('i,j->ij', scale, s))
+        s2I = (I.T*scale**2).T
+
+        # Now compute the inverse information propogator  
+        Dinv = Sinv.copy()
+        Dinv += np.einsum('ki,kij,kj->ij', s2I, self._M, I)
+        Dinv += np.diag(np.einsum('ij,ijk,ik->j', s2I, self._M, I))
+        Dinv -= np.diag(np.einsum('ij,ij->j', s2I, self._j))
         
         try:
             self._Dchol = scipy.linalg.cho_factor(Dinv)
