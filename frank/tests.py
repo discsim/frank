@@ -280,8 +280,8 @@ def test_frank_fitter_log_normal():
         1.59883300e+08, 8.91996959e+07, 
         2.61688766e+07, 3.65197164e+04,
     ])
-    np.testing.assert_allclose(sol.MAP, expected,
-                               err_msg="Testing Frank Fit to AS 209")
+    np.testing.assert_allclose(sol.MAP, expected, rtol=1e-5,
+                               err_msg="Testing Frank Log-Normal Fit to AS 209")
 
 
 def test_fit_geometry_inside():
