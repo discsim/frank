@@ -23,7 +23,7 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
       - name: Install test dependencies
-        run:  python -c 'import setuptools; print(setuptools.__version__)' && pip -V && pip install pip --upgrade && pip install .[test]
+        run:  pip install setuptools --upgrade && pip install .[test]
       - name: Install
         run: pip install .
       - name: Run unit tests
