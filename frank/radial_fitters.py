@@ -315,6 +315,45 @@ class FrankLogNormalFit(FrankRadialFit):
         FrankRadialFit.__init__(self, DHT, geometry)
         self._fit = fit
 
+    def log_likelihood(self, I=None):
+        r"""
+        Compute the likelihood,
+
+        .. math:
+            \log[P(I,V|S)].
+
+        Parameters
+        ----------
+        I : array, size = N, optional
+            Intensity :math:`I(r)=exp(s0*s)` to compute the likelihood of
+
+        Returns
+        -------
+        log_P : float
+            Log likelihood, :math:`\log[P(I,V|p)]`
+
+        Notes
+        -----
+        1. The prior probability P(S) is not included.
+        2. The likelihood takes the form:
+
+        .. math::
+              \log[P(I,V|p)] = j^T I - \frac{1}{2} I^T D^{-1} I
+                 - \frac{1}{2} \log[\det(2 \pi S)] + H_0
+
+        where
+
+        .. math::
+            H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)
+
+        is the noise likelihood.
+        """
+        
+        if I is not None:
+            return self._fit.log_likelihood(np.log(I))
+        else:
+            return self._fit.log_likelihood()
+
     @property
     def MAP(self):
         """Posterior maximum, unit = Jy / sr"""
