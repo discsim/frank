@@ -20,7 +20,7 @@ jobs:
         run: python -c "import sys; print(sys.version)"
       - name: Install docs dependencies
         run: |
-          apt-get install pandoc
+          sudo apt-get install pandoc
           pip install setuptools --upgrade
           pip install .[test,docs-build]
       - name: Install and build docs
