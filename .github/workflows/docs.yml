@@ -4,8 +4,8 @@ name: Docs
 on: push
 
 jobs:
-  test:
-    name: Build and deploy docs
+  build:
+    name: Build docs
     runs-on: ubuntu-20.04
 
     steps:
@@ -28,10 +28,6 @@ jobs:
           pip install .
           cd docs
           make html
-      - name: Run unit tests
-        run: |
-          mkdir -p test-reports
-          py.test --junitxml=test-reports/junit.xml frank/tests.py
       - name: Coverage
         run: |
           coverage run --source=frank -m pytest frank/tests.py
