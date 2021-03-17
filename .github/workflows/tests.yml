@@ -1,0 +1,32 @@
+name: Tests
+
+# Run this workflow every time a new commit pushed to your repository
+on: push
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        python-version: [3.6]
+
+    steps:
+      # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Install test dependencies
+        run: pip install .[test]
+      - name: Install
+        run: pip install .
+      - name: Run unit tests
+        run: |
+          mkdir -p test-reports
+          py.test --junitxml=test-reports/junit.xml frank/tests.py
