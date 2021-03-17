@@ -24,6 +24,22 @@ from frank.constants import rad_to_arcsec
 
 
 class CriticalFilter:
+    """Optimizer for power-spectrum priors.
+
+    Parameters
+    ----------
+    alpha : float >= 1
+        Order parameter of the inverse gamma prior for the power spectrum
+        coefficients.
+    p_0 : float >= 0, default = None, unit=Jy^2
+        Scale parameter of the inverse gamma prior for the power spectrum
+        coefficients.
+    weights_smooth : float >= 0
+        Spectral smoothness prior parameter. Zero is no smoothness prior
+    tol : float > 0, default = 1e-3
+        Tolerence for convergence of the power spectrum iteration.
+    """
+    
     def __init__(self, DHT, alpha, p_0, weights_smooth,
                  tol=1e-3):
 

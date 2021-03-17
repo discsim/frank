@@ -93,9 +93,6 @@ class GaussianModel:
         Information source, see above
     p : 1D array, size = N, optional
         Power spectrum used to generate the covarience matrix :math:`S(p)`
-    geometry: SourceGeometry object, optional
-        If provided, this geometry will be used to deproject the visibilities
-        in self.predict
     noise_likelihood : float, optional
         An optional parameter needed to compute the full likelihood, which
         should be equal to
@@ -117,8 +114,13 @@ class GaussianModel:
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
                 raise ValueError("Bad value in power spectrum. The power"
-                                 " spectrum must be postive and not contain"
-                                 " any NaN values")
+                                 " spectrum must be positive and not contain"
+                                 " any NaN values. This is likely due to"
+                                 " your UVtable (incorrect units or weights), "
+                                 " or the deprojection being applied (incorrect"
+                                 " geometry and/or phase center). Else you may"
+                                 " want to increase `rout` by 10-20% or `n` so"
+                                 " that it is large, >~300.")
 
             Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
@@ -213,7 +215,7 @@ class GaussianModel:
         2. The likelihoods take the form:
 
         .. math::
-              \log[P(I,V|p)] = \frac{1}{2} j^T I - \frac{1}{2} I^T D^{-1} I
+              \log[P(I,V|p)] = j^T I - \frac{1}{2} I^T D^{-1} I
                  - \frac{1}{2} \log[\det(2 \pi S)] + H_0
 
         and
@@ -243,7 +245,7 @@ class GaussianModel:
 
             Dinv = self._M + Sinv
 
-            like = 0.5 * np.sum(self._j * I) - 0.5 * np.dot(I, np.dot(Dinv, I))
+            like = np.sum(self._j * I) - 0.5 * np.dot(I, np.dot(Dinv, I))
 
             if self._Sinv is not None:
                 like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
@@ -281,233 +283,119 @@ class GaussianModel:
     def power_spectrum(self):
         """Power spectrum coefficients"""
         return self._p
-
-    @property
-    def r(self):
-        """Radius points, unit = arcsec"""
-        return self._DHT.r * rad_to_arcsec
-
-    @property
-    def Rmax(self):
-        """Maximum radius, unit = arcsec"""
-        return self._DHT.Rmax * rad_to_arcsec
-
-    @property
-    def q(self):
-        r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
-
-    @property
-    def Qmax(self):
-        r"""Maximum frequency, unit = :math:`\lambda`"""
-        return self._DHT.Qmax
-
+    
     @property
     def size(self):
         """Number of points in reconstruction"""
         return self._DHT.size
 
 
-
 class LogNormalMAPModel:
- 
+    r"""
+    Finds the maximum a posteriori field for log-normal regression problems,
+
+    .. math::
+       P(s|q,V,p,s0) \propto G(H exp(s*s0) - V, M) P(s|p)
+
+    where :math:`s` is the log-intensity to be predicted, :math:`q` are the
+    baselines and :math:`V` the visibility data. :math:`\mu` and :math:`H` is
+    the design matrix of the transform, e.g. the coefficient matrix of
+    the forward Hankel transform.
+
+    If :math:`p` is provided, the covariance matrix of the prior is included,
+    with
+
+    .. math::
+        P(s|p) \propto G(s, S(p)),
+
+    The problem is framed in terms of the design matrix :math:`M` and
+    information source :math:`j`.
+
+    :math:`H(q)` is the matrix that projects the intensity :math:`exp(s*s0)` to
+    visibility space. :math:`M` is defined by
+
+    .. math::
+        M = H(q)^T w H(q),
+
+    where :math:`w` is the weights matrix and
+
+    .. math::
+        j = H(q)^T w V.
+
+
+    The maximum a posteori field, s_MAP, is found by maximizing 
+    :math:`\log P(s|q,V,p,s0)` and the posterior covariance at s_MAP is
+
+    .. math::
+        D = [ M + S(p)^{-1}]^{-1}.
+
+    If the prior is not provided then
+
+    .. math::
+        D = M^{-1}.
+
+    and the posterior for exp(s) is the same as the standard Gaussian model.
+
+    Note: This class also supports :math:`M` and :math:`j` being split into
+    multiple terms (i.e. :math:`M_i, j_i`) such that different scale 
+    factors, :math:`s0_i` can be applied to each system. This allows fitting
+    multi-frequency data.
+
+
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
+    M : 2D array, size = (N, N), or list of
+        The design matrix, see above
+    j : 1D array, size = N, or list of
+        Information source, see above
+    p : 1D array, size = N, optional
+        Power spectrum used to generate the covarience matrix :math:`S(p)`
+    scale : float, 1D array (size=N), or list of
+        Scale factors s0 (see above). These factors can be a constant, one
+        per brightness point or per band (optionally per collocation point)
+        to enable multi-frequency fitting.
+    noise_likelihood : float, optional
+        An optional parameter needed to compute the full likelihood, which
+        should be equal to
+
+        .. math::
+            -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2 \pi)].
+
+        If not  provided, the likelihood can still be computed up to this
+        missing constant
+    """ 
 
     def __init__(self, DHT, M, j, p=None, scale=1.0, guess=None, noise_likelihood=0):
 
         self._DHT = DHT
+
+        # Correct shape of design matrix etc.
+        scale = np.atleast_1d(scale)
+        if len(scale) == 1:
+            if len(M.shape) == 2:
+                M = [M,]
+            if len(j.shape) == 1:
+                j = [j,]
+
         self._M = M
         self._j = j
+        self._scale = scale
 
-        self._scale = 1.0
 
         self._p = p
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
                 raise ValueError("Bad value in power spectrum. The power"
-                                 " spectrum must be postive and not contain"
-                                 " any NaN values")
-
-            Ykm = self._DHT.coefficients()
-            self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
-        else:
-            self._Sinv = None
-
-        self._like_noise = noise_likelihood
-
-        self._fit(guess)
-
-    def _fit(self, guess):
-        """Find the maximum likelihood solution and variance"""
-        Sinv = self._Sinv
-        if Sinv is None:
-            Sinv = 0 * self._M
-
-        scale = self._scale
-
-        def H(s):
-            """Log-likelihood function"""
-            I = np.exp(scale * s)
-
-            f = 0.5*np.dot(s, np.dot(Sinv, s))
-            
-            f += 0.5*np.dot(I, np.dot(self._M, I))
-            f -= np.dot(I, self._j)
-            
-            return f
-        
-        def jac(s):  
-            """1st Derivative of log-likelihood"""
-            I = np.exp(scale * s)
-                
-            S1_s = np.dot(Sinv, s)
-            
-            MI = I * np.dot(self._M, I)
-            jI = I * self._j
-            
-            return S1_s + scale*(MI - jI)
-        
-        def hess(s):
-            """2nd derivative of log-likelihood"""
-            I = np.exp(scale * s)
-                
-            Mij = np.einsum('i,ij,j->ij',I, self._M, I)
-            MI = I * np.dot(self._M, I)
-            jI = I * self._j
-            
-            term = scale**2 * (Mij + np.diag(MI - jI))
-            return Sinv + term
-        
-        if guess is None:
-            U, s_, V = scipy.linalg.svd(self._M + Sinv, full_matrices=False)
-            s1 = np.where(s_ > 0, 1./s_, 0)
-            I = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
-            I = np.maximum(I, 1e-3*I.max())
-            x = np.log(I) / scale 
-        else:
-            x = guess
-
-        def limit_step(dx, x):
-            alpha = 1.1*np.min(np.abs(x/dx))
-                                    
-            alpha = min(alpha, 1)
-            return alpha*dx
-           
-        # Ignore convergence because it will often fail due to round off when
-        # we're super close to the minimum
-        search = LineSearch(reduce_step=limit_step)
-        s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-6)
- 
-        s  = self._s  = s
-        I = np.exp(scale * s)
-        
-        # Now compute the inverse information propogator  
-        Dinv = Sinv.copy()
-        Dinv += scale**2 * np.einsum('i,ij,j->ij', I, self._M, I)
-        Dinv += scale**2 * np.diag(I * np.dot(self._M, I)) 
-        Dinv -= scale**2 * np.diag(self._j * I)
-        
-        try:
-            self._Dchol = scipy.linalg.cho_factor(Dinv)
-            self._Dsvd  = None
-        except np.linalg.LinAlgError:
-            U, s_svd, V = scipy.linalg.svd(Dinv, full_matrices=False)
-            
-            s1 = np.where(s_svd > 0, 1./s_svd, 0)
-            
-            self._Dchol = None
-            self._Dsvd  = U, s1, V
-
-        self._cov = None
-                
-        return self._s
-
-    def Dsolve(self, b):
-        r"""
-        Compute :math:`D \cdot b` by solving :math:`D^{-1} x = b`.
-
-        Parameters
-        ----------
-        b : array, size = (N,...)
-            Right-hand side to solve for
-
-        Returns
-        -------
-        x : array, shape = np.shape(b)
-            Solution to the equation D x = b
-
-        """
-        if self._Dchol is not None:
-            return scipy.linalg.cho_solve(self._Dchol, b)
-        else:
-            U, s1, V = self._Dsvd
-            return np.dot(V.T, np.multiply(np.dot(U.T, b), s1))
-
-    @property
-    def MAP(self):
-        """Posterior maximum, unit = Jy / sr"""
-        return self._s
-
-    @property
-    def covariance(self):
-        """Posterior covariance at MAP, unit = (Jy / sr)**2"""
-        if self._cov is None:
-            self._cov = self.Dsolve(np.eye(self.size))
-        return self._cov
-
-    @property
-    def power_spectrum(self):
-        """Power spectrum coefficients"""
-        return self._p
-
-    @property
-    def r(self):
-        """Radius points, unit = arcsec"""
-        return self._DHT.r * rad_to_arcsec
-
-    @property
-    def Rmax(self):
-        """Maximum radius, unit = arcsec"""
-        return self._DHT.Rmax * rad_to_arcsec
-
-    @property
-    def q(self):
-        r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
-
-    @property
-    def Qmax(self):
-        r"""Maximum frequency, unit = :math:`\lambda`"""
-        return self._DHT.Qmax
-
-    @property
-    def size(self):
-        """Number of points in reconstruction"""
-        return self._DHT.size
-
-    @property 
-    def scale(self):
-        return self._scale
-
-
-
-
-class LogNormalMAPMultiModel:
- 
-
-    def __init__(self, DHT, M, j, p=None, scale=[1.0], guess=None, noise_likelihood=0):
-
-        self._DHT = DHT
-        self._M = M
-        self._j = j
-
-        self._scale = np.array(scale)
-
-        self._p = p
-        if p is not None:
-            if np.any(p <= 0) or np.any(np.isnan(p)):
-                raise ValueError("Bad value in power spectrum. The power"
-                                 " spectrum must be postive and not contain"
-                                 " any NaN values")
+                                 " spectrum must be positive and not contain"
+                                 " any NaN values. This is likely due to"
+                                 " your UVtable (incorrect units or weights), "
+                                 " or the deprojection being applied (incorrect"
+                                 " geometry and/or phase center). Else you may"
+                                 " want to increase `rout` by 10-20% or `n` so"
+                                 " that it is large, >~300.")
 
             Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
@@ -580,7 +468,7 @@ class LogNormalMAPMultiModel:
         search = LineSearch(reduce_step=limit_step)
         s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-6)
  
-        s  = self._s  = s
+        s  = self._s_MAP  = s
         I = np.exp(np.einsum('i,j->ij', scale, s))
         s2I = (I.T*scale**2).T
 
@@ -603,7 +491,7 @@ class LogNormalMAPMultiModel:
 
         self._cov = None
                 
-        return self._s
+        return self._s_MAP
 
     def Dsolve(self, b):
         r"""
@@ -625,11 +513,67 @@ class LogNormalMAPMultiModel:
         else:
             U, s1, V = self._Dsvd
             return np.dot(V.T, np.multiply(np.dot(U.T, b), s1))
+    
+
+    def log_likelihood(self, s=None):
+        r"""
+        Compute the likelihood,
+
+        .. math:
+            \log[P(I,V|S)].
+
+        Parameters
+        ----------
+        s : array, size = N, optional
+            Log-intensity :math:`I(r)=exp(s0*s)` to compute the likelihood of
+
+        Returns
+        -------
+        log_P : float
+            Log likelihood, :math:`\log[P(I,V|p)]`
+
+        Notes
+        -----
+        1. The prior probability P(S) is not included.
+        2. The likelihood takes the form:
+
+        .. math::
+              \log[P(I,V|p)] = j^T I - \frac{1}{2} I^T D^{-1} I
+                 - \frac{1}{2} \log[\det(2 \pi S)] + H_0
+
+        where
+
+        .. math::
+            H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)
+
+        is the noise likelihood.
+        """
+
+        if s is None:
+            s = self._s_MAP 
+        
+        Sinv = self._Sinv
+        if Sinv is None:
+            Sinv = 0
+
+
+        I = np.exp(np.einsum('i,j->ij', self._scale,s))
+
+        like = - 0.5*np.dot(s, np.dot(Sinv, s))
+            
+        like -= 0.5*np.einsum('ij,ijk,ik',I,self._M,I)
+        like += np.sum(I*self._j)
+            
+
+        if self._Sinv is not None:
+            like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
+
+        return like + self._like_noise
 
     @property
     def MAP(self):
         """Posterior maximum, unit = Jy / sr"""
-        return self._s
+        return self._s_MAP
 
     @property
     def covariance(self):
@@ -643,31 +587,11 @@ class LogNormalMAPMultiModel:
         """Power spectrum coefficients"""
         return self._p
 
-    @property
-    def r(self):
-        """Radius points, unit = arcsec"""
-        return self._DHT.r * rad_to_arcsec
-
-    @property
-    def Rmax(self):
-        """Maximum radius, unit = arcsec"""
-        return self._DHT.Rmax * rad_to_arcsec
-
-    @property
-    def q(self):
-        r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
-
-    @property
-    def Qmax(self):
-        r"""Maximum frequency, unit = :math:`\lambda`"""
-        return self._DHT.Qmax
+    @property 
+    def scale(self):
+        return self._scale
 
     @property
     def size(self):
         """Number of points in reconstruction"""
         return self._DHT.size
-
-    @property 
-    def scale(self):
-        return self._scale

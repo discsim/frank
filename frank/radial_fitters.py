@@ -5,6 +5,7 @@
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
+
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
@@ -31,6 +32,19 @@ from frank.statistical_models import GaussianModel, LogNormalMAPModel
 
 
 class FrankRadialFit(metaclass=abc.ABCMeta):
+    """
+    Base class for results of frank fits.
+
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
+    geometry: SourceGeometry object, optional
+        Geometry used to correct the visibilities for the source
+        inclination. If not provided, the geometry determined during the
+        fit will be used.
+    """
     def __init__(self, DHT, geometry):
         self._DHT = DHT
         self._geometry = geometry
@@ -180,7 +194,21 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
 
 
 class FrankGaussianFit(FrankRadialFit):
+    """
+    Result of a frank fit with a Gaussian brightness model.
 
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
+    fit : GaussianModel object
+        Result of fitting with MAP power spectrum.
+    geometry: SourceGeometry object, optional
+        Geometry used to correct the visibilities for the source
+        inclination. If not provided, the geometry determined during the
+        fit will be used.
+    """
 
     def __init__(self, DHT, fit, geometry=None):
         FrankRadialFit.__init__(self, DHT, geometry)
@@ -266,7 +294,22 @@ class FrankGaussianFit(FrankRadialFit):
 
 
 
-class FrankLogNormalFit(LogNormalMAPModel, FrankRadialFit):
+class FrankLogNormalFit(FrankRadialFit):
+    """
+    Result of a frank fit with a Gaussian brightness model.
+
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
+    fit : LogNormalMAPModel object
+        Result of fitting with MAP power spectrum.
+    geometry: SourceGeometry object, optional
+        Geometry used to correct the visibilities for the source
+        inclination. If not provided, the geometry determined during the
+        fit will be used.
+    """
 
     def __init__(self, DHT, fit, geometry=None):
         FrankRadialFit.__init__(self, DHT, geometry)
@@ -279,7 +322,7 @@ class FrankLogNormalFit(LogNormalMAPModel, FrankRadialFit):
 
     @property
     def covariance(self):
-        """Posterior covariance, unit = (Jy / sr)**2"""
+        """Posterior covariance, unit = log[(Jy / sr)**2]"""
         return self._fit.covariance
 
     @property
@@ -407,7 +450,7 @@ class FourierBesselFitter(object):
 
         Returns
         -------
-        sol : _HankelRegressor
+        sol : FrankRadialFit
             Least-squares Fourier-Bessel series fit
         """
         if self._verbose:
@@ -486,13 +529,17 @@ class FrankFitter(FourierBesselFitter):
     alpha : float >= 1, default = 1.05
         Order parameter of the inverse gamma prior for the power spectrum
         coefficients
-    p_0 : float >= 0, default = 1e-15, unit=Jy^2
+    p_0 : float >= 0, default = None, unit=Jy^2
         Scale parameter of the inverse gamma prior for the power spectrum
-        coefficients
+        coefficients. If not provided p_0 = 1e-15 (method="Normal") or 
+        1e-35 (method="LogNormal") will be used.
     weights_smooth : float >= 0, default = 1e-4
         Spectral smoothness prior parameter. Zero is no smoothness prior
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration
+    method : string, default="Normal"
+        Model used for the brightness reconstrution. This must be one of
+        "Normal" of "LogNormal".
     max_iter: int, default = 2000
         Maximum number of fit iterations
     check_qbounds: bool, default = True
@@ -514,8 +561,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
-                 method='Normal',
-                 tol=1e-3, max_iter=2000, check_qbounds=True,
+                 tol=1e-3, method='Normal', max_iter=2000, check_qbounds=True,
                  store_iteration_diagnostics=False, verbose=True):
 
         if method not in {'Normal', 'LogNormal'}:
@@ -587,7 +633,7 @@ class FrankFitter(FourierBesselFitter):
 
         Returns
         -------
-        MAP_solution : _HankelRegressor
+        MAP_solution : FrankRadialFit
             Reconstructed profile using maximum a posteriori power spectrum
         """
         if self._verbose:
@@ -642,7 +688,7 @@ class FrankFitter(FourierBesselFitter):
 
             if self._store_iteration_diagnostics:
                 self._iteration_diagnostics['power_spectrum'].append(pi)
-                self._iteration_diagnostics['mean'].append(fit.mean)
+                self._iteration_diagnostics['mean'].append(fit.MAP)
 
             count += 1
 
@@ -714,7 +760,7 @@ class FrankFitter(FourierBesselFitter):
 
         Returns
         -------
-        sol : _HankelRegressor
+        sol : FrankRadialFit
             Posterior solution object for P(I|V,p)
         """
         if fit_method is None:
@@ -772,7 +818,7 @@ class FrankFitter(FourierBesselFitter):
 
         Parameters
         ----------
-        sol : _HankelRegressor object, optional
+        sol : FrankRadialFit object, optional
            Posterior solution given a set power spectrum parameters, :math:`p`.
            If not provided, the MAP solution will be provided
 
