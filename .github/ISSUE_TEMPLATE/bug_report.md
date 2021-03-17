@@ -27,4 +27,4 @@ Even better, paste the full Traceback of the error.
  - frank version [run `python -c 'import frank; print(frank.__version__)'` and paste here the output]
 
 **Additional context**
-Add any other context about the problem here (e.g., any peculiarity of the data or of the problem you're trying to solve?
+Add any other context about the problem here (e.g., any peculiarity of the data or of the problem you're trying to solve?)
