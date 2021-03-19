@@ -85,7 +85,7 @@ class CriticalFilter:
         # Project mu to Fourier-space
         #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
         #       = (Ykm mu)**2
-        Tr1 = np.dot(Ykm, fit.MAP) ** 2
+        Tr1 = np.dot(Ykm, fit.MAP-fit.s_0) ** 2
         # Project D to Fourier-space
         #   Drr^-1 = Ykm^T Dqq^-1 Ykm
         #   Drr = Ykm^-1 Dqq Ykm^-T
@@ -128,7 +128,7 @@ class CriticalFilter:
         """
         Ykm = self._DHT.coefficients()
 
-        mq = np.dot(Ykm, fit.MAP)
+        mq = np.dot(Ykm, fit.MAP-fit.s_0)
 
         mqq = np.outer(mq, mq)
         Dqq = np.dot(Ykm, fit.Dsolve(Ykm.T))

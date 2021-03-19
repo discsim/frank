@@ -357,7 +357,7 @@ class FrankLogNormalFit(FrankRadialFit):
     @property
     def MAP(self):
         """Posterior maximum, unit = Jy / sr"""
-        return np.exp(self._fit.MAP * self._fit.scale)
+        return np.exp((self._fit.MAP) * self._fit.scale)
 
     @property
     def covariance(self):
@@ -579,6 +579,9 @@ class FrankFitter(FourierBesselFitter):
     method : string, default="Normal"
         Model used for the brightness reconstrution. This must be one of
         "Normal" of "LogNormal".
+    I_scale : float, default = 1e5, unit= Jy/Sr
+        Brightness scale. Only used in the LogNormal model. Notet the 
+        LogNormal model produces I(Rmax) =  I_scale.
     max_iter: int, default = 2000
         Maximum number of fit iterations
     check_qbounds: bool, default = True
@@ -600,7 +603,7 @@ class FrankFitter(FourierBesselFitter):
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
-                 tol=1e-3, method='Normal', max_iter=2000, check_qbounds=True,
+                 tol=1e-3, method='Normal', I_scale=1e5, max_iter=2000, check_qbounds=True,
                  store_iteration_diagnostics=False, verbose=True):
 
         if method not in {'Normal', 'LogNormal'}:
@@ -616,6 +619,8 @@ class FrankFitter(FourierBesselFitter):
                 p_0 = 1e-15
             else:
                 p_0 = 1e-35
+
+        self._s_scale = np.log(I_scale)
 
         self._filter = CriticalFilter(
             self._DHT, alpha, p_0, weights_smooth, tol
@@ -689,44 +694,44 @@ class FrankFitter(FourierBesselFitter):
         self._build_matrices(u, v, V, weights)
      
         # Inital guess for power spectrum
-        pi = np.ones([self.size])
+        pI = np.ones([self.size])
 
         # Do an extra iteration based on a power-law guess
-        fit = self._perform_fit(pi, fit_method='Normal')
+        fit = self._perform_fit(pI, fit_method='Normal')
    
-        pi = np.max(self._DHT.transform( fit.MAP)**2)
-        pi *= (self.q / self.q[0])**-2
+        pI = np.max(self._DHT.transform( fit.MAP)**2)
+        pI *= (self.q / self.q[0])**-2
 
-        fit = self._perform_fit(pi, fit_method='Normal')
+        fit = self._perform_fit(pI, fit_method='Normal')
 
         # Now that we've got a reasonable initial brightness, setup the
         # log-normal power spectrum estimate
         if self._method == 'LogNormal':
-            s = np.log(np.maximum(fit.MAP, 1e-3 * fit.MAP.max()))
+            s = np.log(np.maximum(fit.MAP, 1e-3 * fit.MAP.max())) 
             
-            pi = np.max(self._DHT.transform(s)**2)
-            pi *= (self.q / self.q[0])**-4
+            pI = np.max(self._DHT.transform(s)**2)
+            pI *= (self.q / self.q[0])**-4
 
-            fit = self._perform_fit(pi, guess=s)
+            fit = self._perform_fit(pI, guess=s)
 
         
 
         count = 0
         pi_old = 0
-        while (not self._filter.check_convergence(pi, pi_old) and
+        while (not self._filter.check_convergence(pI, pi_old) and
                count <= self._max_iter):
 
             if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
                 print('\r    FrankFitter iteration {}'.format(count),
                       end='', flush=True)
 
-            pi_old = pi.copy()
-            pi = self._filter.update_power_spectrum(fit)
+            pi_old = pI.copy()
+            pI = self._filter.update_power_spectrum(fit)
 
-            fit = self._perform_fit(pi, guess=fit.MAP)
+            fit = self._perform_fit(pI, guess=fit.MAP)
 
             if self._store_iteration_diagnostics:
-                self._iteration_diagnostics['power_spectrum'].append(pi)
+                self._iteration_diagnostics['power_spectrum'].append(pI)
                 self._iteration_diagnostics['mean'].append(fit.MAP)
 
             count += 1
@@ -754,7 +759,7 @@ class FrankFitter(FourierBesselFitter):
                                           geometry=self._geometry.clone())
 
         # Compute the power spectrum covariance at the maximum
-        self._ps = pi
+        self._ps = pI
         self._ps_cov = None
 
         return self._sol
@@ -811,7 +816,7 @@ class FrankFitter(FourierBesselFitter):
                                  noise_likelihood=self._H0)
         elif fit_method == 'LogNormal':
             return LogNormalMAPModel(self._DHT, self._M, self._j, p,
-                                     guess=guess,
+                                     guess=guess, s0=self._s_scale,
                                      noise_likelihood=self._H0)
         else:
             raise ValueError('fit_method must be one of the following:\n\t'

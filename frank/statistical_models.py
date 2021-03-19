@@ -280,6 +280,10 @@ class GaussianModel:
         return self._cov
 
     @property
+    def s_0(self):
+        return 0
+
+    @property
     def power_spectrum(self):
         """Power spectrum coefficients"""
         return self._p
@@ -368,7 +372,7 @@ class LogNormalMAPModel:
         missing constant
     """ 
 
-    def __init__(self, DHT, M, j, p=None, scale=1.0, guess=None, noise_likelihood=0):
+    def __init__(self, DHT, M, j, p=None, scale=1.0, s0=0, guess=None, noise_likelihood=0):
 
         self._DHT = DHT
 
@@ -383,6 +387,7 @@ class LogNormalMAPModel:
         self._M = M
         self._j = j
         self._scale = scale
+        self._s0 = s0
 
 
         self._p = p
@@ -413,10 +418,11 @@ class LogNormalMAPModel:
             Sinv = 0 * self._M
 
         scale = self._scale
+        s0 = self._s0
 
         def H(s):
             """Log-likelihood function"""
-            I = np.exp(np.einsum('i,j->ij', scale,s))
+            I = np.exp(np.einsum('i,j->ij', scale,s+s0))
 
             f = 0.5*np.dot(s, np.dot(Sinv, s))
             
@@ -427,7 +433,7 @@ class LogNormalMAPModel:
         
         def jac(s):  
             """1st Derivative of log-likelihood"""
-            I = np.exp(np.einsum('i,j->ij', scale, s))
+            I = np.exp(np.einsum('i,j->ij', scale, s+s0))
             sI = (I.T*scale).T
 
             S1_s = np.dot(Sinv, s) 
@@ -438,24 +444,17 @@ class LogNormalMAPModel:
         
         def hess(s):
             """2nd derivative of log-likelihood"""
-            I = np.exp(np.einsum('i,j->ij', scale, s))
+            I = np.exp(np.einsum('i,j->ij', scale, s+s0))
             s2I = (I.T*scale**2).T
             
-            Mij = np.einsum('ki,kij,kj->ij',s2I, self._M, I)
+            Mjk = np.einsum('ij,ijk,ik->jk',s2I, self._M, I)
             MI = np.einsum('ij,ijk,ik->j', s2I, self._M, I)
             jI = np.einsum('ij,ij->j', s2I, self._j)
             
-            term = (Mij + np.diag(MI - jI))
+            term = (Mjk + np.diag(MI - jI))
             return Sinv + term
         
-        if guess is None:
-            U, s_, V = scipy.linalg.svd(self._M + Sinv, full_matrices=False)
-            s1 = np.where(s_ > 0, 1./s_, 0)
-            I = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
-            I = np.maximum(I, 1e-3*I.max())
-            x = np.log(I) / scale 
-        else:
-            x = guess
+        x = guess - s0
 
         def limit_step(dx, x):
             alpha = 1.1*np.min(np.abs(x/dx))
@@ -468,8 +467,8 @@ class LogNormalMAPModel:
         search = LineSearch(reduce_step=limit_step)
         s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-6)
  
-        s  = self._s_MAP  = s
-        I = np.exp(np.einsum('i,j->ij', scale, s))
+        self._s_MAP = s + s0
+        I = np.exp(np.einsum('i,j->ij', scale, s+s0))
         s2I = (I.T*scale**2).T
 
         # Now compute the inverse information propogator  
@@ -491,8 +490,6 @@ class LogNormalMAPModel:
 
         self._cov = None
                 
-        return self._s_MAP
-
     def Dsolve(self, b):
         r"""
         Compute :math:`D \cdot b` by solving :math:`D^{-1} x = b`.
@@ -550,7 +547,7 @@ class LogNormalMAPModel:
         """
 
         if s is None:
-            s = self._s_MAP 
+            s = self._s_MAP
         
         Sinv = self._Sinv
         if Sinv is None:
@@ -559,7 +556,7 @@ class LogNormalMAPModel:
 
         I = np.exp(np.einsum('i,j->ij', self._scale,s))
 
-        like = - 0.5*np.dot(s, np.dot(Sinv, s))
+        like = - 0.5*np.dot(s-self._s0, np.dot(Sinv, s-self._s0))
             
         like -= 0.5*np.einsum('ij,ijk,ik',I,self._M,I)
         like += np.sum(I*self._j)
@@ -590,6 +587,10 @@ class LogNormalMAPModel:
     @property 
     def scale(self):
         return self._scale
+    
+    @property 
+    def s_0(self):
+        return self._s0
 
     @property
     def size(self):

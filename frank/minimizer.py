@@ -175,7 +175,7 @@ class LineSearch(BaseLineSearch):
 
 
 def MinimizeNewton(fun, jac, hess, guess, line_search,
-                  max_step=10**5, max_jev=1000, tol=1e-5):
+                  max_step=10**5, max_hev=1000, tol=1e-5):
     """Minimize a function using Newton's method with back-tracking
 
     Note, if Newton's method fails to find improvement a gradient descent step
@@ -183,7 +183,7 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
 
     Convergence is assumed when the r.m.s. jacobian is below the requested
     theshold. MinimizeNewton will guess if convergence fails due to too many 
-    iterations, jacobian calculations, or failure to improve the solution.
+    iterations, hessian calculations, or failure to improve the solution.
 
     Parameters
     ----------
@@ -213,19 +213,19 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
         0 : Success
         1 : Iteration failed to improve estimate
         2 : Too many iterations
-        3 : Too many jacobian evaluations
+        3 : Too many hessian evaluations
     """
-    need_jac = True
-    njac = 0
+    need_hess = True
+    nhess = 0
     x = guess
     fx = fun(x)
     for _ in range(max_step):
-        if need_jac:
-            if njac == max_jev: 
+        if need_hess:
+            if nhess == max_hev: 
                 return x, 3
             
             j_sol = (scipy.linalg.lu_factor(hess(x)),  scipy.linalg.lu_solve)
-            njac += 1
+            nhess += 1
         
         jx = jac(x)
         dx = j_sol[1](j_sol[0], -jx)
@@ -258,7 +258,7 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
                 fx = fn
                 x = xn
         
-        need_jac = failed or (line_search.reduction != 1.0)
+        need_hess = failed or (line_search.reduction != 1.0)
 
         # Small enough gradient
         if np.sqrt(np.mean(jac(x)**2)) < tol:
