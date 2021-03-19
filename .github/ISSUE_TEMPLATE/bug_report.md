@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: "[BUG] "
-labels: bug
-assignees: ''
+labels: bug [e.g.: 'bug', 'enhancement', 'question']
+assignees: '' [Leave blank unless you want to suggest specifically @rbooth200, @jeffjennings and/or @mtazzari.]
 
 ---
 
