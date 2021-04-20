@@ -58,7 +58,7 @@ def load_default_parameters():
 
 
 def get_parameter_descriptions():
-    """Get the description for paramters"""
+    """Get the description for parameters"""
     with open(os.path.join(frank_path, 'parameter_descriptions.json')) as f:
         param_descrip = json.load(f)
     return param_descrip
