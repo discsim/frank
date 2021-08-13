@@ -102,6 +102,9 @@ def deproject(u, v, inc, PA, inverse=False):
         Deprojected u-points
     vp : array, size = N, unit = :math:`\lambda`
         Deprojected v-points
+    wp : array of real, size = N, unit = :math:`\lambda`
+        Fourier w-points of the deprojected visibilities. Only returned if
+        deprojecting.
 
     """
 
@@ -118,12 +121,14 @@ def deproject(u, v, inc, PA, inverse=False):
     up = u * cos_t - v * sin_t
     vp = u * sin_t + v * cos_t
 
+    if inverse:
+        return up, vp
+    else:
     #   Deproject
-    if not inverse:
-        up *= np.cos(inc)
+        wp = up * np.sin(inc)
+        up = up * np.cos(inc)
 
-    return up, vp
-
+        return up, vp, wp
 
 def rescale_total_flux(V, weights, inc):
     r"""
@@ -194,7 +199,7 @@ class SourceGeometry(object):
         self._dRA = dRA
         self._dDec = dDec
 
-    def apply_correction(self, u, v, V):
+    def apply_correction(self, u, v, V, use3D=False):
         r"""
         Correct the phase centre and deproject the visibilities
 
@@ -206,6 +211,9 @@ class SourceGeometry(object):
             v-points of the visibilities
         V : array of real, size = N, units = Jy
             Complex visibilites
+        use3D : bool, default=False
+            If True, also return the 3rd compoent of the
+            de-projected visibilities, wp.
 
         Returns
         -------
@@ -213,14 +221,20 @@ class SourceGeometry(object):
             Corrected u-points of the visibilities
         vp : array of real, size = N, unit = :math:`\lambda`
             Corrected v-points of the visibilities
+        wp : array of real, size = N, unit = :math:`\lambda`
+            [Optional] Corrected w-points of the visibilities
         Vp : array of real, size = N, unit = Jy
             Corrected complex visibilites
 
         """
         Vp = apply_phase_shift(u, v, V, self._dRA, self._dDec, inverse=True)
-        up, vp = deproject(u, v, self._inc, self._PA)
+        up, vp, wp = deproject(u, v, self._inc, self._PA)
 
-        return up, vp, Vp
+        if use3D:
+            return up, vp, wp, Vp
+        else:
+            return up, vp, Vp
+
 
     def undo_correction(self, u, v, V):
         r"""
@@ -243,19 +257,61 @@ class SourceGeometry(object):
             Corrected v-points of the visibilities
         Vp : array of real, size = N, unit = Jy
             Corrected complex visibilites
+
         """
         up, vp = self.reproject(u, v)
         Vp = apply_phase_shift(up, vp, V, self._dRA, self._dDec, inverse=False)
 
         return up, vp, Vp
 
-    def deproject(self, u, v):
-        """Convert uv-points from sky-plane to deprojected space"""
-        return deproject(u, v, self._inc, self._PA)
+    def deproject(self, u, v, use3D=False):
+        r"""Convert uv-points from sky-plane to deprojected space (u,v)
+        
+        Parameters
+        ----------
+        u : array of real, size = N, unit = :math:`\lambda`
+            u-points of the visibilities
+        v : array of real, size = N, unit = :math:`\lambda`
+            v-points of the visibilities
+        use3D : bool, default=False
+            If True, also return the 3rd compoent of the
+            de-projected visibilities, wp.
+
+        Returns
+        -------
+        up : array of real, size = N, unit = :math:`\lambda`
+            Corrected u-points of the visibilities
+        vp : array of real, size = N, unit = :math:`\lambda`
+            Corrected v-points of the visibilities
+        wp : array of real, size = N, unit = :math:`\lambda`
+            [Optional] Corrected w-points of the visibilities
+            
+        """
+        if use3D:
+            return deproject(u, v, self._inc, self._PA)
+        else:
+            return deproject(u, v, self._inc, self._PA)[:2]
 
     def reproject(self, u, v):
-        """Convert uv-points from deprojected space to sky-plane"""
+        r"""Convert uv-points from deprojected space to sky-plane
+        
+        Parameters
+        ----------
+        u : array of real, size = N, unit = :math:`\lambda`
+            u-points of the visibilities
+        v : array of real, size = N, unit = :math:`\lambda`
+            v-points of the visibilities
+
+        Returns
+        -------
+        up : array of real, size = N, unit = :math:`\lambda`
+            Corrected u-points of the visibilities
+        vp : array of real, size = N, unit = :math:`\lambda`
+            Corrected v-points of the visibilities
+            
+        """
         return deproject(u, v, self._inc, self._PA, inverse=True)
+        
 
     def rescale_total_flux(self, V, weights):
         return rescale_total_flux(V, weights, self._inc)
@@ -302,10 +358,17 @@ class SourceGeometry(object):
         """Inclination of the disc, unit = rad"""
         return self._inc
 
+<<<<<<< HEAD
     @property
     def rescale_factor(self):
         """Factor used to rescale the visibility amplitudes, unit = 1 / rad"""
         return 1.0 / np.cos(self._inc * deg_to_rad)
+=======
+    def __repr__(self):
+        return "SourceGeometry(inc={}, PA={}, dRA={}, dDEC={})".format(
+            self.inc, self.PA, self.dRA, self.dDec
+        )
+>>>>>>> Added debris disc fitting
 
 
 class FixedGeometry(SourceGeometry):
@@ -334,7 +397,12 @@ class FixedGeometry(SourceGeometry):
     def __init__(self, inc, PA, dRA=0.0, dDec=0.0):
         super(FixedGeometry, self).__init__(inc, PA, dRA, dDec)
 
+    def __repr__(self):
+        return "FixedGeometry(inc={}, PA={}, dRA={}, dDEC={})".format(
+            self.inc, self.PA, self.dRA, self.dDec
+        )
 
+        
 class FitGeometryGaussian(SourceGeometry):
     """
     Determine the disc geometry by fitting a Gaussian in Fourier space.
