@@ -360,6 +360,11 @@ class FrankLogNormalFit(FrankRadialFit):
         return np.exp((self._fit.MAP) * self._fit.scale)
 
     @property
+    def mean(self):
+        """Posterior mean, unit = Jy / sr"""
+        return self.MAP
+
+    @property
     def covariance(self):
         """Posterior covariance, unit = log[(Jy / sr)**2]"""
         return self._fit.covariance
@@ -580,7 +585,7 @@ class FrankFitter(FourierBesselFitter):
         Model used for the brightness reconstrution. This must be one of
         "Normal" of "LogNormal".
     I_scale : float, default = 1e5, unit= Jy/Sr
-        Brightness scale. Only used in the LogNormal model. Notet the 
+        Brightness scale. Only used in the LogNormal model. Note the
         LogNormal model produces I(Rmax) =  I_scale.
     max_iter: int, default = 2000
         Maximum number of fit iterations
@@ -864,7 +869,7 @@ class FrankFitter(FourierBesselFitter):
         ----------
         sol : FrankRadialFit object, optional
            Posterior solution given a set power spectrum parameters, :math:`p`.
-           If not provided, the MAP solution will be provided
+           If not provided, the MAP solution will be used
 
         Returns
         -------
