@@ -613,9 +613,6 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     r : array
         Radial data coordinates at which the brightness profile is defined.
         The assumed unit (for the x-label) is arcsec
-    profile_iter : list, shape = (n_iter, N_coll)
-        Brightness profile reconstruction at each of n_iter iterations. The
-        assumed unit (for the y-label) is Jy / sr
     q : array
         Baselines at which the power spectrum is defined.
         The assumed unit (for the x-label) is :math:`\lambda`
