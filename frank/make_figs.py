@@ -361,7 +361,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     sol : _HankelRegressor object
-        Reconstructed profile using Maximum a posteriori power spectrum
+        Reconstructed profile using maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
