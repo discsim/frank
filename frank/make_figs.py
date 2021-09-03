@@ -254,8 +254,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
         total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-            label='frank, total flux {:.2e} Jy'.format(total_flux))
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
         if dist:
             ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
             xlims = ax0.get_xlim()
@@ -438,12 +437,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
-        # Calculate the fit's total flux (2D, by sweeping the 1D profile over 2\pi)
-        total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
-
         # Plot the fitted brightness profile in linear- and log-y
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-            label='frank, total flux {:.2e} Jy'.format(total_flux))
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
         if dist:
             ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
             xlims = ax0.get_xlim()
