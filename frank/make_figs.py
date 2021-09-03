@@ -79,8 +79,8 @@ def use_frank_plotting_style():
     plt.style.use(style_path)
 
 
-def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True,
-                          save_prefix=None, figsize=(8, 6)):
+def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
+                          force_style=True, save_prefix=None, figsize=(8, 6)):
     r"""
     Produce a simple figure showing the effect of deprojection on the (u, v)
     coordinates and visibilities
@@ -94,10 +94,12 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    bin_widths : list, unit = \lambda
-        Bin widths in which to bin the observed visibilities
     geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry)
+    bin_widths : list, unit = \lambda
+        Bin widths in which to bin the observed visibilities
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -156,13 +158,15 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
 
     ax1.set_xlabel(r'Baseline [M$\lambda$]')
     ax1.set_ylabel('Re(V) [mJy]')
-    ax1.set_xscale('log')
+    if logx:
+        ax1.set_xscale('log')
     ax1.set_yscale('log')
     ax1.set_ylim(bottom=1e-3)
 
     ax2.set_xlabel(r'Baseline [M$\lambda$]')
     ax2.set_ylabel('Re(V) [mJy]')
-    ax2.set_xscale('log')
+    if logx:
+        ax2.set_xscale('log')
 
     ax0.legend(loc=0)
     ax1.legend(loc=0)
@@ -603,7 +607,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
     return fig, axes
 
 
-def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
+def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
                   force_style=True, save_prefix=None, figsize=(8, 6)):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
@@ -618,11 +622,11 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         The assumed unit (for the x-label) is :math:`\lambda`
     iteration_diagnostics : dict
         The iteration_diagnostics from FrankFitter.
-    N_iter : int
-        Total number of iterations in the fit
     iter_plot_range : list
         Range of iterations in the fit over which to
         plot brightness profile and power spectrum reconstructions
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -709,8 +713,9 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         ax2.set_ylabel(r'Power [Jy$^2$]')
         ax3.set_ylabel(r'|PS$_i$ - PS$_{i-1}$| [Jy$^2$]')
         ax3.set_xlabel(r'Baseline [$\lambda$]')
-        ax2.set_xscale('log')
-        ax3.set_xscale('log')
+        if logx:
+            ax2.set_xscale('log')
+            ax3.set_xscale('log')
         ax2.set_yscale('log')
         ax3.set_yscale('log')
         ax3.set_ylim(bottom=1e-16)
@@ -738,8 +743,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                               bin_widths, stretch='power',
                               gamma=1.0, asinh_a=0.02, mean_convolved=None,
-                              dist=None, force_style=True, save_prefix=None,
-                              figsize=(8, 10)):
+                              dist=None, logx=False, force_style=True,
+                              save_prefix=None, figsize=(8, 10)):
     r"""
     Produce a figure comparing a frank fit to a CLEAN fit, in real space by
     convolving the frank fit with the CLEAN beam, and in visibility space by
@@ -781,6 +786,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         The assumed unit is for the x-label
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -912,7 +919,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             ax0_5.set_xlim(np.multiply(xlims, dist))
 
         ax1.set_xlim(.9 * baselines.min(), 1.2 * baselines.max())
-        ax1.set_xscale('log')
+        if logx:
+            ax1.set_xscale('log')
         ax1.set_yscale('log')
         ax1.set_ylim(bottom=1e-3)
 
@@ -934,8 +942,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
 
 def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
-                      varied_vals, dist=None, force_style=True, save_prefix=None,
-                      figsize=(8, 8)
+                      varied_vals, dist=None, logx=False, force_style=True,
+                      save_prefix=None, figsize=(8, 8)
                      ):
     r"""
     Produce a figure overplotting multiple fits
@@ -960,6 +968,8 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         Values for the `hyperparameters` that were varied over multiple fits
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -1058,9 +1068,10 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         ax2.set_ylabel('Re(V) [mJy]')
         ax3.set_ylabel('Re(V) [mJy]')
         ax4.set_ylabel(r'Power [Jy$^2$]')
-        ax2.set_xscale('log')
-        ax3.set_xscale('log')
-        ax4.set_xscale('log')
+        if logx:
+            ax2.set_xscale('log')
+            ax3.set_xscale('log')
+            ax4.set_xscale('log')
         ax3.set_yscale('log')
         ax4.set_yscale('log')
         ax3.set_ylim(bottom=1e-4)
