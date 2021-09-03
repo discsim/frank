@@ -51,8 +51,8 @@
     "gamma"            : 1.0,
     "asinh_a"          : 0.02,
     "iter_plot_range"  : null,
-    "plot_in_logx"     : true,
-    "norm_residuals"   : false    
+    "plot_in_logx"     : false,
+    "norm_residuals"   : false
   },
 
   "analysis" : {
