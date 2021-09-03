@@ -164,6 +164,10 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         pass
 
     @property
+    def I(self):
+        return self.MAP
+
+    @property
     def r(self):
         """Radius points, unit = arcsec"""
         return self._DHT.r * rad_to_arcsec
