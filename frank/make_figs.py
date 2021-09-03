@@ -80,7 +80,8 @@ def use_frank_plotting_style():
 
 
 def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
-                          force_style=True, save_prefix=None, figsize=(8, 6)):
+                          logy=False, force_style=True, save_prefix=None,
+                          figsize=(8, 6)):
     r"""
     Produce a simple figure showing the effect of deprojection on the (u, v)
     coordinates and visibilities
@@ -98,8 +99,8 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
         Fitted geometry (see frank.geometry.SourceGeometry)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    logx : bool, default = False
-        Whether to plot the visibility distributions in log(baseline)
+    logy : bool, default = False
+        Whether to plot the visibility distributions in log(flux)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -126,13 +127,12 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     bsp = np.hypot(up, vp)
 
     with frank_plotting_style_context_manager(force_style):
-        gs = GridSpec(3, 1, hspace=0.2, top=0.97, left=0.07, right=0.97)
+        gs = GridSpec(2, 1, hspace=0.2, top=0.97, left=0.07, right=0.97)
         fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[1])
-        ax2 = fig.add_subplot(gs[2])
-        axes = [ax0, ax1, ax2]
+        axes = [ax0, ax1]
 
         plot_deprojection_effect(u / 1e6, v / 1e6, up / 1e6, vp / 1e6,
                                  re_vis * 1e3, re_visp * 1e3, axes)
@@ -142,16 +142,18 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
         vis_re = binned_vis.V.real
         vis_err_re = binned_vis.error.real
 
+        if logy:
+            lab=r'Deprojected, >0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
+        else:
+            lab=r'Deprojected, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
         plot_vis_quantity(binned_vis.uv / 1e6, vis_re * 1e3, ax1, c=cs[i],
              marker=ms[i], ls='None',
-             label=r'Deprojected, >0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-        plot_vis_quantity(binned_vis.uv / 1e6, -vis_re * 1e3, ax1, c=cs2[i],
-             marker=ms[i], ls='None',
-             label=r'Deprojected, <0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+             label=lab)
 
-        plot_vis_quantity(binned_vis.uv / 1e6, vis_re * 1e3, ax2, c=cs[i],
-             marker=ms[i], ls='None',
-             label=r'Deprojected, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        if logy:
+            plot_vis_quantity(binned_vis.uv / 1e6, -vis_re * 1e3, ax1, c=cs2[i],
+                 marker=ms[i], ls='None',
+                 label=r'Deprojected, <0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     ax0.set_xlabel(r'u [M$\lambda$]')
     ax0.set_ylabel(r'v [M$\lambda$]')
@@ -160,17 +162,12 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     ax1.set_ylabel('Re(V) [mJy]')
     if logx:
         ax1.set_xscale('log')
-    ax1.set_yscale('log')
-    ax1.set_ylim(bottom=1e-3)
-
-    ax2.set_xlabel(r'Baseline [M$\lambda$]')
-    ax2.set_ylabel('Re(V) [mJy]')
-    if logx:
-        ax2.set_xscale('log')
+    if logy:
+        ax1.set_yscale('log')
+        ax1.set_ylim(bottom=1e-3)
 
     ax0.legend(loc=0)
     ax1.legend(loc=0)
-    ax2.legend(loc=0)
 
     plt.tight_layout()
 

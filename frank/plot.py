@@ -52,7 +52,7 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
         Three axes on which to plot
     """
 
-    ax0, ax1, ax2 = axes
+    ax0, ax1 = axes
 
     ax0.plot(u, v, '+', c='#23E1DB', label='Projected')
     ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
@@ -65,12 +65,8 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
     ax1.plot(bs, vis, '+', c='#23E1DB', label='Projected')
     ax1.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
-    ax2.plot(bs, vis, '+', c='#23E1DB', label='Projected')
-    ax2.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
-
     ax0.legend(loc='best')
     ax1.legend(loc='best')
-    ax2.legend(loc='best')
 
 
 def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
