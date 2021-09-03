@@ -13,7 +13,7 @@ Then use it to extract a UVTable by following `these simple steps <https://githu
 As noted there, we recommend performing a CASA `split` command with `keepflags=False` before exporting the UVTable,
 as this ensures that only valid visibilities are exported.
 
-In tests we've found that channel averaging an MSTable tends to have a weak effect on the frank fit,
-though it's worth performing a fit on your dataset without any averaging to verify.
-The increased density of (u, v) points under no channel averaging may in some cases improve the data's SNR
-at long baselines enough to increase the maximum baseline out to which frank fits.
+It's worth performing a fit for a given dataset with a UVTable extracted from an MSTable in which no
+or minimal time averaging and channel averaging have been applied.
+In some cases the increased density of (u, v) points can improve the data's SNR
+at long baselines enough that frank fits the visibilities in this region more closely.
