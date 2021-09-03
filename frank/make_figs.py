@@ -740,8 +740,9 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                               bin_widths, stretch='power',
                               gamma=1.0, asinh_a=0.02, mean_convolved=None,
-                              dist=None, logx=False, force_style=True,
-                              save_prefix=None, figsize=(8, 10)):
+                              dist=None, logx=False, logy=False, ylims=None,
+                              force_style=True, save_prefix=None,
+                              figsize=(8, 10)):
     r"""
     Produce a figure comparing a frank fit to a CLEAN fit, in real space by
     convolving the frank fit with the CLEAN beam, and in visibility space by
@@ -785,6 +786,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = False
         Whether to plot the visibility distributions in log(baseline)
+    logy : bool, default = False
+        Whether to plot the visibility distributions in log(flux)
+    ylims : list of len(2), default = None
+        Lower and upper y-bounds for the visibility domain plot
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -849,10 +854,15 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             vis_re_kl = binned_vis.V.real * 1e3
             vis_err_re_kl = binned_vis.error.real * 1e3
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax1, c=cs[i],
+            if logy:
+                lab=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
+            else:
+                lab=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax1, c=cs[i],
                      marker=ms[i], ls='None',
-                     label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax1, c=cs2[i],
+                     label=lab)
+            if logy:
+                plot_vis_quantity(binned_vis.uv / 1e6, -vis_re_kl, ax1, c=cs2[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -864,10 +874,27 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             sol.r, clean_profile['r'], clean_profile['I'].real) * 1e3
         clean_DHT_kl = sol.predict_deprojected(grid, I=Inu_interp)
 
-        plot_vis_quantity(grid, vis_fit_kl, ax1, c='r', label='frank>0')
-        plot_vis_quantity(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
-        plot_vis_quantity(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
-        plot_vis_quantity(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
+        if logy:
+            lab = 'frank, >0'
+            lab2 = 'DHT of CLEAN, >0'
+        else:
+            lab = 'frank'
+            lab2 = 'DHT of CLEAN'
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax1, c='r', label=lab)
+        plot_vis_quantity(grid / 1e6, clean_DHT_kl, ax1, c='b', label=lab2)
+        if logy:
+            plot_vis_quantity(grid / 1e6, -vis_fit_kl, ax1, c='r', ls='--', label='frank, <0')
+            plot_vis_quantity(grid / 1e6, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN, <0')
+
+        if logx:
+            ax1.set_xscale('log')
+        ax1.set_xlim(right=1.2 * max(baselines) / 1e6)
+
+        if logy:
+            ax1.set_yscale('log')
+            ax1.set_ylim(bottom=1e-3)
+        if ylims:
+            ax1.set_ylim(ylims)
 
         if mean_convolved is not None:
             vmax = max(sol.mean.max(), mean_convolved.max(), clean_profile['I'].max())
@@ -899,11 +926,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                     vmin=0, vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
 
         ax0.legend(loc='best')
-        ax1.legend(loc='best')
+        ax1.legend(loc='best', ncol=2)
 
         ax0.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
-        ax1.set_xlabel(r'Baseline [$\lambda$]')
+        ax1.set_xlabel(r'Baseline [M$\lambda$]')
         ax1.set_ylabel(r'Re(V) [mJy]')
         ax2.set_xlabel('RA offset ["]')
         ax3.set_xlabel('RA offset ["]')
@@ -915,11 +942,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             xlims = ax0.get_xlim()
             ax0_5.set_xlim(np.multiply(xlims, dist))
 
-        ax1.set_xlim(.9 * baselines.min(), 1.2 * baselines.max())
         if logx:
             ax1.set_xscale('log')
-        ax1.set_yscale('log')
-        ax1.set_ylim(bottom=1e-3)
+        if logy:
+            ax1.set_yscale('log')
+            ax1.set_ylim(bottom=1e-3)
 
         ax2.set_title('Unconvolved frank profile swept')
         ax3.set_title('Convolved frank profile swept')
