@@ -360,11 +360,6 @@ class FrankLogNormalFit(FrankRadialFit):
         return np.exp((self._fit.MAP) * self._fit.scale)
 
     @property
-    def mean(self):
-        """Posterior mean, unit = Jy / sr"""
-        return self.MAP
-
-    @property
     def covariance(self):
         """Posterior covariance, unit = log[(Jy / sr)**2]"""
         return self._fit.covariance
