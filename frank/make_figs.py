@@ -177,7 +177,7 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
     return fig, axes
 
 
-def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
                    force_style=True, save_prefix=None,
                    stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
     r"""
@@ -199,7 +199,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         Bin widths in which to bin the observed visibilities
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
-    logx : bool, default = True
+    logx : bool, default = False
         Whether to plot the visibility distributions in log(baseline)
     gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile image's
@@ -346,7 +346,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
 
 def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
-                  dist=None, logx=True, force_style=True,
+                  dist=None, logx=False, force_style=True,
                   save_prefix=None, norm_residuals=False, stretch='power',
                   gamma=1.0, asinh_a=0.02, figsize=(8, 6)):
     r"""
@@ -374,7 +374,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         Used for the plot legends
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
-    logx : bool, default = True
+    logx : bool, default = False
         Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
