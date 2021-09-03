@@ -20,7 +20,6 @@
 """
 import os
 import numpy as np
-from scipy.integrate import trapz
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.colors import PowerNorm
