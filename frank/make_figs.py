@@ -323,9 +323,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
         if logx:
             ax2.set_xscale('log')
             ax3.set_xscale('log')
-        else:
-            ax2.set_xlim(0., max(binned_vis.uv) / 1e6 * 1.1)
 
+        ax2.set_xlim(right=max(baselines) / 1e6 * 1.2)
         xlims = ax2.get_xlim()
         ax3.set_xlim(xlims)
 
@@ -566,22 +565,15 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         ax9.set_ylabel('Im(V) [mJy]')
         ax9.set_xlabel(r'Baseline [$\lambda$]')
 
+        axs = [ax3, ax4, ax5, ax6, ax7, ax8, ax9]
         if logx:
-            ax3.set_xscale('log')
-            ax4.set_xscale('log')
-            ax5.set_xscale('log')
-            ax6.set_xscale('log')
-            ax7.set_xscale('log')
-            ax8.set_xscale('log')
-            ax9.set_xscale('log')
+            for j in range(len(axs)):
+                axs[j].set_xscale('log')
 
+        ax5.set_xlim(right=max(baselines) / 1e6 * 1.2)
         xlims = ax5.get_xlim()
-        ax3.set_xlim(xlims)
-        ax4.set_xlim(xlims)
-        ax6.set_xlim(xlims)
-        ax7.set_xlim(xlims)
-        ax8.set_xlim(xlims)
-        ax9.set_xlim(xlims)
+        for j in range(len(axs)):
+            axs[j].set_xscale('log')
 
         ax6.set_yscale('log')
         ax7.set_yscale('log')
