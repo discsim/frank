@@ -304,10 +304,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm, vmin=vmin,
-                    vmax=vmax / 1e10, project=False)
-        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm, vmin=vmin,
-                    vmax=vmax / 1e10, project=True, geom=sol.geometry)
+        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm,
+                    vmin=vmin / 1e10, vmax=vmax / 1e10, project=False)
+        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm,
+                    vmin=vmin / 1e10, vmax=vmax / 1e10, project=True,
+                    geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -539,8 +540,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=vmin,
-                    vmax=vmax / 1e10, project=True, geom=sol.geometry)
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
+                    vmin=vmin / 1e10, vmax=vmax / 1e10, project=True,
+                    geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
