@@ -148,8 +148,8 @@ def parse_parameters(*args):
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
     # Sanity check some of the .json parameters
-    if model['hyperparameters']['method'] not in ["normal", "lognormal"]:
-        err = ValueError("method should be 'normal' or 'lognormal'")
+    if model['hyperparameters']['method'] not in ["Normal", "LogNormal"]:
+        err = ValueError("method should be 'Normal' or 'LogNormal'")
         raise err
 
     if model['plotting']['diag_plot']:
@@ -404,7 +404,7 @@ def perform_fit(u, v, vis, weights, geom, model):
 
     sol = FF.fit(u, v, vis, weights)
 
-    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'normal':
+    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'Normal':
         # Add the best fit nonnegative solution to the fit's `sol` object
         logging.info('  `nonnegative` is `true` in your parameter file --> '\
                     'Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
@@ -683,7 +683,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     profiles_bootstrap = []
 
-    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'normal':
+    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'Normal':
         logging.info('  `nonnegative` is `true` in your parameter file --> '
                      'The best fit nonnegative profile (rather than the mean '
                      'profile) will be saved and used to generate the bootstrap '
@@ -698,7 +698,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
         sol, iteration_diagnostics = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
-        if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'normal':
+        if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'Normal':
             profiles_bootstrap.append(sol._nonneg)
         else:
             profiles_bootstrap.append(sol.I)
