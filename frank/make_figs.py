@@ -171,7 +171,7 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     plt.tight_layout()
 
     if save_prefix:
-        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=600)
+        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=300)
         plt.close()
 
     return fig, axes
@@ -345,7 +345,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=300)
             plt.close()
 
     return fig, axes
@@ -593,7 +593,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_full.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_fit_full.png', dpi=300)
             plt.close()
 
     return fig, axes
@@ -726,7 +726,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=300)
             plt.close()
 
     return fig, axes, iter_plot_range
@@ -954,7 +954,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         ax4.text(.1, .9, 'e)', c='w', transform=ax4.transAxes)
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=300)
             plt.close()
 
     return fig, axes
@@ -1107,7 +1107,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         ax3.legend()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_multifit.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_multifit.png', dpi=300)
             plt.close()
 
     return fig, axes
@@ -1191,7 +1191,7 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=300)
             plt.close()
 
     return fig, axes
