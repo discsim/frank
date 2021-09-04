@@ -74,17 +74,17 @@ AS 209 (`Andrews et al. 2018 <https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..
 **b)** As in (a), on a log scale. The oscillations below :math:`\approx 10^9\ {\rm Jy\ sr}^{-1}` indicate the fit's noise floor. |br|
 **c)** The frank profile swept over :math:`2\pi` and reprojected. Note this image is not convolved with any beam. |br|
 **d)** The visibility domain fit and the data in 1 and 50 :math:`{\rm k}\lambda` bins. |br|
-**e)** As in (d), zooming on the longer baselines. |br|
+**e)** As in (d), zooming on the low flux region to examine the fit at longer baselines.
+frank walks off the visibilities as their binned noise begins to grow strongly beyond :math:`\approx 4\ {\rm M}\lambda`. |br|
 **f)** Residuals between the binned data and the fit. The residuals' RMSE is given in the legend;
 note this is being increased by the residuals beyond the baseline at which the fit walks off the data. |br|
-**g)** As in (d), on a log scale. The positive and negative data and fit regions are distinguished.
-On this scale it is more apparent that frank walks off the visibilities as their binned noise begins to grow strongly beyond :math:`\approx 4\ {\rm M}\lambda`. |br|
+**g)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
+it could indicate azimuthal asymmetry in the disc that frank will average over.As in (d), on a log scale.
 **h)** The fit's reconstructed power spectrum, the prior on the fitted brightness profile. |br|
 **i)** Histogram of the binned real component of the visibilities.
 Note how the bin counts drop sharply beyond :math:`\approx 4.5\ {\rm M}\lambda`,
 a consequence of sparser sampling at the longest baselines. |br|
-**j)** The (binned) imaginary component of the visibilities. frank only fits the real component, so if Im(V) is large,
-it could indicate azimuthal asymmetry in the disc that frank will average over.
+**j)** The data's binned signal-to-noise (SNR). This begins to dither about SNR=1 beyond :math:`\approx 4.5\ {\rm M}\lambda`.
 
 Fit for the source geometry
 ###########################
