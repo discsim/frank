@@ -177,8 +177,8 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     return fig, axes
 
 
-def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
-                   force_style=True, save_prefix=None,
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
+                   logx=False, force_style=True, save_prefix=None,
                    stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
@@ -197,6 +197,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+    priors : dict
+        Dictionary with fit hyperparameters: 'alpha', 'wsmooth', 'Rmax', 'N', 'p0'.
+        Used for figure title
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = False
@@ -227,10 +230,15 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
 
     logging.info('    Making quick figure')
 
+    alpha, wsmooth, Rmax, N, p0 = priors['alpha'], priors['wsmooth'],\
+                                  priors['Rmax'], priors['N'], priors['p0']
+
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0, bottom=.12)
         gs2 = GridSpec(3, 2, hspace=.2)
         fig = plt.figure(figsize=figsize)
+        fig.suptitle(r'$\alpha$ {:.2f}, $w_{{smooth}}$ {:.1e}, R$_{{max}}$ {},'\
+                     'N {}, p$_0$ {:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
@@ -343,7 +351,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=False,
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
+def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
                   dist=None, logx=False, force_style=True,
                   save_prefix=None, norm_residuals=False, stretch='power',
                   gamma=1.0, asinh_a=0.02, figsize=(8, 6)):
@@ -364,12 +372,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    alpha : float
-        Value for the :math:`\alpha` hyperparameter.
-        Used for the plot legends
-    wsmooth : float
-        Value for the :math:`w_{smooth}` hyperparameter.
-        Used for the plot legends
+    priors : dict
+        Dictionary with fit hyperparameters: 'alpha', 'wsmooth', 'Rmax', 'N', 'p0'.
+        Used for figure title
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = False
@@ -403,11 +408,16 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
     logging.info('    Making full figure')
 
+    alpha, wsmooth, Rmax, N, p0 = priors['alpha'], priors['wsmooth'],\
+                                  priors['Rmax'], priors['N'], priors['p0']
+
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 3, hspace=0)
         gs1 = GridSpec(4, 3, hspace=0, top=.88)
         gs2 = GridSpec(3, 3, hspace=.35, left=.04)
         fig = plt.figure(figsize=figsize)
+        fig.suptitle(r'$\alpha$ {:.2f}, $w_{{smooth}}$ {:.1e}, R$_{{max}}$ {},'\
+                     'N {}, p$_0$ {:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[3])
@@ -516,8 +526,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         plot_vis_quantity(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
         # Plot the frank inferred power spectrum
-        plot_vis_quantity(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
-            alpha) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(wsmooth))
+        plot_vis_quantity(sol.q, sol.power_spectrum, ax7)
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
