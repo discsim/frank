@@ -252,15 +252,15 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
-        total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
+        total_flux = trapz(sol.I * 2 * np.pi * sol.r, sol.r)
+        plot_brightness_profile(sol.r, sol.I / 1e10, ax0, c='r',
             label='frank, total flux {:.2e} Jy'.format(total_flux))
         if dist:
-            ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+            ax0_5 = plot_brightness_profile(sol.r, sol.I / 1e10, ax0, dist=dist, c='r')
             xlims = ax0.get_xlim()
             ax0_5.set_xlim(np.multiply(xlims, dist))
 
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
+        plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
         u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
         baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -292,11 +292,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank', zorder=10)
 
-        vmax = sol.mean.max()
+        vmax = sol.I.max()
         if stretch == 'asinh':
-            vmin = max(0, min(sol.mean))
+            vmin = max(0, min(sol.I))
             from astropy.visualization.mpl_normalize import simple_norm
-            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
             norm = PowerNorm(gamma, vmin, vmax)
@@ -304,9 +304,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm, vmin=vmin,
+        plot_2dsweep(sol.r, sol.I, ax=ax4, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=False)
-        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm, vmin=vmin,
+        plot_2dsweep(sol.r, sol.I, ax=ax5, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
@@ -439,17 +439,17 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
         # Calculate the fit's total flux (2D, by sweeping the 1D profile over 2\pi)
-        total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
+        total_flux = trapz(sol.I * 2 * np.pi * sol.r, sol.r)
 
         # Plot the fitted brightness profile in linear- and log-y
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
+        plot_brightness_profile(sol.r, sol.I / 1e10, ax0, c='r',
             label='frank, total flux {:.2e} Jy'.format(total_flux))
         if dist:
-            ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
+            ax0_5 = plot_brightness_profile(sol.r, sol.I / 1e10, ax0, dist=dist, c='r')
             xlims = ax0.get_xlim()
             ax0_5.set_xlim(np.multiply(xlims, dist))
 
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax1, c='r', label='frank')
+        plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
         # Apply deprojection to the provided (u, v) coordinates
         # and visibility amplitudes
@@ -527,11 +527,11 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
-        vmax = sol.mean.max()
+        vmax = sol.I.max()
         if stretch == 'asinh':
-            vmin = max(0, min(sol.mean))
+            vmin = max(0, min(sol.I))
             from astropy.visualization.mpl_normalize import simple_norm
-            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
             norm = PowerNorm(gamma, vmin, vmax)
@@ -539,7 +539,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=vmin,
+        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm, vmin=vmin,
                     vmax=vmax / 1e10, project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
@@ -828,14 +828,14 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                                 low_uncer=low_uncer, high_uncer=high_uncer,
                                 c='b', ls='--', label='CLEAN')
 
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', ls=':', label='frank')
+        plot_brightness_profile(sol.r, sol.I / 1e10, ax0, c='r', ls=':', label='frank')
 
         if mean_convolved is not None:
             plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls='-',
                                     label='frank, convolved')
 
         if dist:
-            ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r', ls=':')
+            ax0_5 = plot_brightness_profile(sol.r, sol.I / 1e10, ax0, dist=dist, c='r', ls=':')
 
         u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
         baselines = (u_deproj**2 + v_deproj**2)**.5
@@ -869,13 +869,13 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         plot_vis_quantity(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
 
         if mean_convolved is not None:
-            vmax = max(sol.mean.max(), mean_convolved.max(), clean_profile['I'].max())
+            vmax = max(sol.I.max(), mean_convolved.max(), clean_profile['I'].max())
         else:
-            vmax = max(sol.mean.max(), clean_profile['I'].max())
+            vmax = max(sol.I.max(), clean_profile['I'].max())
         if stretch == 'asinh':
-            vmin = max(0, min(sol.mean))
+            vmin = max(0, min(sol.I))
             from astropy.visualization.mpl_normalize import simple_norm
-            norm = simple_norm(sol.mean, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
         elif stretch == 'power':
             vmin = 0
             norm = PowerNorm(gamma, vmin, vmax)
@@ -883,7 +883,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
+        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm, vmin=0,
                     vmax=vmax / 1e10, xmax=sol.Rmax, plot_colorbar=True)
         if mean_convolved is not None:
             plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,

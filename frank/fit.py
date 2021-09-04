@@ -621,7 +621,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
         mean_convolved = None
         if model['analysis']['clean_beam']['bmaj'] is not None:
-            mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
+            mean_convolved = utilities.convolve_profile(sol.r, sol.I,
                                                         geom.inc, geom.PA,
                                                         model['analysis']['clean_beam'])
 
@@ -695,7 +695,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         if model['hyperparameters']['nonnegative']:
             profiles_bootstrap.append(sol._nonneg)
         else:
-            profiles_bootstrap.append(sol.mean)
+            profiles_bootstrap.append(sol.I)
 
     bootstrap_path = model['input_output']['save_prefix'] + '_bootstrap.npz'
 

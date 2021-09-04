@@ -224,7 +224,7 @@ def test_fourier_bessel_fitter():
                          3.33260713e+07
                          ])
 
-    np.testing.assert_allclose(sol.mean, expected,
+    np.testing.assert_allclose(sol.I, expected,
                                err_msg="Testing FourierBessel Fit to AS 209")
 
 
@@ -252,7 +252,7 @@ def test_frank_fitter():
         -1.922568182176418006e+08,  8.067782715878820419e+07,
     ])
 
-    np.testing.assert_allclose(sol.mean, expected,
+    np.testing.assert_allclose(sol.I, expected,
                                err_msg="Testing Frank Fit to AS 209")
 
 

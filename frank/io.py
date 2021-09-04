@@ -169,7 +169,7 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
-                   np.array([sol.r, sol.mean, np.diag(sol.covariance)**.5]).T,
+                   np.array([sol.r, sol.I, np.diag(sol.covariance)**.5]).T,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
