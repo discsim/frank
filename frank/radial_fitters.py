@@ -685,7 +685,8 @@ class FrankFitter(FourierBesselFitter):
             Reconstructed profile using maximum a posteriori power spectrum
         """
         if self._verbose:
-            logging.info('  Fitting for brightness profile using FrankFitter')
+            logging.info('  Fitting for brightness profile using FrankFitter: '\
+                        '{} method'.format(self._method))
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics = defaultdict(list)
