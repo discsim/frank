@@ -37,7 +37,7 @@
     "iter_tol"         : "Tolerance for fit iteration stopping criterion (suggested <<1)",
     "max_iter"         : "Maximum number of fit iterations",
     "nonnegative"      : "Whether frank provides the mean (if false) or best fit nonnegative solution",
-    "method"           : "The fit method: 'Normal' to fit in linear brighness, 'LogNormal' to fit in logarithmic brightness"
+    "method"           : "The fit method: 'normal' to fit in linear brighness, 'lognormal' to fit in logarithmic brightness"
   },
 
   "plotting" : {

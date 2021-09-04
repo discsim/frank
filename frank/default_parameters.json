@@ -37,7 +37,7 @@
     "iter_tol"         : 1e-3,
     "max_iter"         : 2000,
     "nonnegative"      : false,
-    "method"           : "Normal"
+    "method"           : "normal"
   },
 
   "plotting" : {

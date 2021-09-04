@@ -148,6 +148,10 @@ def parse_parameters(*args):
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
     # Sanity check some of the .json parameters
+    if model['hyperparameters']['method'] not in ["normal", "lognormal"]:
+        err = ValueError("method should be 'normal' or 'lognormal'")
+        raise err
+
     if model['plotting']['diag_plot']:
         if model['plotting']['iter_plot_range'] is not None:
             err = ValueError("iter_plot_range should be 'null' (None)"
@@ -160,7 +164,7 @@ def parse_parameters(*args):
                 raise err
 
     if model['plotting']['stretch'] not in ["power", "asinh"]:
-        err = ValueError("stretch should be 'power'  or 'asinh'")
+        err = ValueError("stretch should be 'power' or 'asinh'")
         raise err
 
     if model['modify_data']['baseline_range'] is not None:
@@ -393,15 +397,17 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     alpha=model['hyperparameters']['alpha'],
                                     weights_smooth=model['hyperparameters']['wsmooth'],
                                     tol=model['hyperparameters']['iter_tol'],
+                                    method=model['hyperparameters']['method'],
                                     max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations
                                     )
 
     sol = FF.fit(u, v, vis, weights)
 
-    if model['hyperparameters']['nonnegative']:
+    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'normal':
         # Add the best fit nonnegative solution to the fit's `sol` object
-        logging.info('  `nonnegative` is `true` in your parameter file --> Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
+        logging.info('  `nonnegative` is `true` in your parameter file --> '\
+                    'Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
         setattr(sol, '_nonneg', sol.solve_non_negative())
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
@@ -677,7 +683,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     profiles_bootstrap = []
 
-    if model['hyperparameters']['nonnegative']:
+    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'normal':
         logging.info('  `nonnegative` is `true` in your parameter file --> '
                      'The best fit nonnegative profile (rather than the mean '
                      'profile) will be saved and used to generate the bootstrap '
@@ -692,7 +698,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
         sol, iteration_diagnostics = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
-        if model['hyperparameters']['nonnegative']:
+        if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] == 'normal':
             profiles_bootstrap.append(sol._nonneg)
         else:
             profiles_bootstrap.append(sol.I)
