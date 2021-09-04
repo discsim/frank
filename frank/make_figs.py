@@ -237,8 +237,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
         gs = GridSpec(3, 2, hspace=0, bottom=.12)
         gs2 = GridSpec(3, 2, hspace=.2)
         fig = plt.figure(figsize=figsize)
-        fig.suptitle(r'$\alpha$ {:.2f}, $w_{{smooth}}$ {:.1e}, R$_{{max}}$ {},'\
-                     'N {}, p$_0$ {:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
+        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={}, '\
+                     'N={}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
@@ -260,7 +260,6 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
-        total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
         plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
         if dist:
             ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
@@ -412,12 +411,12 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
                                   priors['Rmax'], priors['N'], priors['p0']
 
     with frank_plotting_style_context_manager(force_style):
-        gs = GridSpec(3, 3, hspace=0)
-        gs1 = GridSpec(4, 3, hspace=0, top=.88)
-        gs2 = GridSpec(3, 3, hspace=.35, left=.04)
+        gs = GridSpec(3, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
+        gs1 = GridSpec(4, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
+        gs2 = GridSpec(3, 3, hspace=.35, wspace=0.25, left=0.06, right=0.98)
         fig = plt.figure(figsize=figsize)
-        fig.suptitle(r'$\alpha$ {:.2f}, $w_{{smooth}}$ {:.1e}, R$_{{max}}$ {},'\
-                     'N {}, p$_0$ {:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
+        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={}, '\
+                     'N={}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[3])
@@ -427,7 +426,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         ax4 = fig.add_subplot(gs[4])
         ax5 = fig.add_subplot(gs[7])
 
-        ax6 = fig.add_subplot(gs[2])
+        ax6 = fig.add_subplot(gs1[2])
         ax7 = fig.add_subplot(gs1[5])
         ax8 = fig.add_subplot(gs1[8])
         ax9 = fig.add_subplot(gs1[11])
@@ -436,13 +435,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         ax1.text(.9, .6, 'b)', transform=ax1.transAxes)
         ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
 
-        ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
-        ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
-        ax5.text(.1, .7, 'f)', transform=ax5.transAxes)
-        ax6.text(.9, .9, 'g)', transform=ax6.transAxes)
+        ax3.text(.9, .5, 'd)', transform=ax3.transAxes)
+        ax4.text(.9, .1, 'e)', transform=ax4.transAxes)
+        ax5.text(.9, .1, 'f)', transform=ax5.transAxes)
+        ax6.text(.9, .1, 'g)', transform=ax6.transAxes)
         ax7.text(.9, .9, 'h)', transform=ax7.transAxes)
-        ax8.text(.9, .9, 'i)', transform=ax8.transAxes)
-        ax9.text(.9, .9, 'j)', transform=ax9.transAxes)
+        ax8.text(.9, .1, 'i)', transform=ax8.transAxes)
+        ax9.text(.9, .1, 'j)', transform=ax9.transAxes)
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
@@ -499,15 +498,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax6, c=cs[i],
-                     marker=ms[i], ls='None',
-                     label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax6, c=cs2[i],
-                     marker=ms[i], ls='None',
-                     label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-
-            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax9, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax6, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -518,12 +509,15 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             # visibility count varies with baseline
             plot_vis_hist(binned_vis, ax8, color=hist_cs[i],
                           label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+            # Plot the binned data signal-to-noise as a function of baseline
+            plot_vis_quantity(binned_vis.uv,
+                          binned_vis.V.real**2 / binned_vis.error.real**2,
+                          ax9, color=hist_cs[i], marker=ms[i], ls='None',
+                          label=r'{:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         # Plot the visibility domain frank fit in log-y
         plot_vis_quantity(grid, vis_fit_kl, ax3, c='r', label='frank')
         plot_vis_quantity(grid, vis_fit_kl, ax4, c='r', label='frank')
-        plot_vis_quantity(grid, vis_fit_kl, ax6, c='r', label='frank>0')
-        plot_vis_quantity(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
         # Plot the frank inferred power spectrum
         plot_vis_quantity(sol.q, sol.power_spectrum, ax7)
@@ -550,9 +544,29 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_yscale('log')
         ax1.set_ylim(bottom=1e-3)
-
         ax2.set_xlabel('RA offset ["]')
         ax2.set_ylabel('Dec offset ["]')
+
+        axs = [ax3, ax4, ax5, ax6, ax7, ax8, ax9]
+        if logx:
+            for aa in axs:
+                aa.set_xscale('log')
+
+        ax3.set_xlim(right=max(baselines) * 1.2)
+        xlims = ax3.get_xlim()
+        for aa in axs:
+            aa.set_xlim(xlims)
+
+        ax7.set_yscale('log')
+        ax8.set_yscale('log')
+
+        ax7.set_yticks([1e-15, 1e-10, 1e-5, 1])
+        ax8.set_yticks([1, 10, 1e2, 1e3])
+
+        ax9.set_yscale('log')
+        ax9.set_ylim(1e-2,200)
+        ax9.set_yticks([1e-2, 1e-1, 1, 10, 100])
+        ax9.axhline(y=1, ls='--', c='c')
 
         ax3.set_ylabel('Re(V) [mJy]')
         ax4.set_ylabel('Re(V) [mJy]')
@@ -562,35 +576,15 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             ax5.set_ylabel('Residual [mJy]')
         ax5.set_xlabel(r'Baseline [$\lambda$]')
 
-        ax6.set_ylabel('Re(V) [mJy]')
+        ax6.set_ylabel('Im(V) [mJy]')
         ax7.set_ylabel(r'Power [Jy$^2$]')
         ax8.set_ylabel('Count')
-        ax9.set_ylabel('Im(V) [mJy]')
+        ax9.set_ylabel(r'SNR=$\mu_{\rm bin}^2 / \sigma_{\rm bin}^2$')
         ax9.set_xlabel(r'Baseline [$\lambda$]')
 
-        axs = [ax3, ax4, ax5, ax6, ax7, ax8, ax9]
-        if logx:
-            for j in range(len(axs)):
-                axs[j].set_xscale('log')
-
-        ax5.set_xlim(right=max(baselines) / 1e6 * 1.2)
-        xlims = ax5.get_xlim()
-        for j in range(len(axs)):
-            axs[j].set_xscale('log')
-
-        ax6.set_yscale('log')
-        ax7.set_yscale('log')
-        ax8.set_yscale('log')
-        ax6.set_ylim(bottom=1e-4)
-
-        plt.setp(ax0.get_xticklabels(), visible=False)
-        plt.setp(ax3.get_xticklabels(), visible=False)
-        plt.setp(ax4.get_xticklabels(), visible=False)
-        plt.setp(ax6.get_xticklabels(), visible=False)
-        plt.setp(ax7.get_xticklabels(), visible=False)
-        plt.setp(ax8.get_xticklabels(), visible=False)
-
-        plt.tight_layout()
+        axs = [ax0, ax3, ax4, ax6, ax7, ax8]
+        for aa in axs:
+            plt.setp(aa.get_xticklabels(), visible=False)
 
         if save_prefix:
             plt.savefig(save_prefix + '_frank_fit_full.png', dpi=300)
@@ -710,7 +704,6 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
             ax3.set_xscale('log')
         ax2.set_yscale('log')
         ax3.set_yscale('log')
-        ax3.set_ylim(bottom=1e-16)
 
         ax4.set_xlabel('Fit iteration')
         ax4.set_ylabel('Convergence criterion,\n' +
