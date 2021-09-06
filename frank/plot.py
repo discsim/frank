@@ -52,7 +52,7 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
         Three axes on which to plot
     """
 
-    ax0, ax1, ax2 = axes
+    ax0, ax1 = axes
 
     ax0.plot(u, v, '+', c='#23E1DB', label='Projected')
     ax0.plot(up, vp, 'x', c='#D14768', label='Deprojected')
@@ -65,12 +65,8 @@ def plot_deprojection_effect(u, v, up, vp, vis, visp, axes):
     ax1.plot(bs, vis, '+', c='#23E1DB', label='Projected')
     ax1.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
 
-    ax2.plot(bs, vis, '+', c='#23E1DB', label='Projected')
-    ax2.plot(bsp, visp, 'x', c='#D14768', label='Deprojected')
-
     ax0.legend(loc='best')
     ax1.legend(loc='best')
-    ax2.legend(loc='best')
 
 
 def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
@@ -315,7 +311,8 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
 
 
 def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
-                 vmax=None, xmax=None, ymax=None, dr=None, plot_colorbar=True,
+                 vmax=None, xmax=None, ymax=None, dr=None,
+                 rescale_brightness=True, plot_colorbar=True,
                  project=False, phase_shift=False, geom=None, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
@@ -344,6 +341,8 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
     dr : float, optional, default = None
         Pixel size (same units as r). If not provided, it will be set at the
         same spatial scale as r
+    rescale_brightness : bool, default = True
+        Whether to rescale the image and colorbar brightness by a factor of 10^{10}
     plot_colorbar: bool, default = True
         Whether to plot a colorbar beside the image
     project : bool, default = False
@@ -368,7 +367,10 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
     if ymax is None:
         ymax = ymax_computed
 
-    I2D /= 1e10
+    if rescale_brightness:
+        I2D /= 1e10
+        vmin /= 1e10
+        vmax /= 1e10
 
     if vmin is None:
         vmin = I2D.min()
@@ -389,4 +391,7 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         m.set_array([])
 
         cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=.7)
-        cbar.set_label(r'I [$10^{10}$ Jy sr$^{-1}$]')
+        if rescale_brightness:
+            cbar.set_label(r'I [$10^{10}$ Jy sr$^{-1}$]')
+        else:
+            cbar.set_label(r'I [Jy sr$^{-1}$]')
