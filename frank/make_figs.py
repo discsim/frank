@@ -20,7 +20,6 @@
 """
 import os
 import numpy as np
-from scipy.integrate import trapz
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 from matplotlib.colors import PowerNorm
@@ -79,8 +78,9 @@ def use_frank_plotting_style():
     plt.style.use(style_path)
 
 
-def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True,
-                          save_prefix=None, figsize=(8, 6)):
+def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
+                          logy=False, force_style=True, save_prefix=None,
+                          figsize=(8, 6)):
     r"""
     Produce a simple figure showing the effect of deprojection on the (u, v)
     coordinates and visibilities
@@ -94,10 +94,12 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
     weights : array, unit = Jy^-2
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
-    bin_widths : list, unit = \lambda
-        Bin widths in which to bin the observed visibilities
     geom : SourceGeometry object
         Fitted geometry (see frank.geometry.SourceGeometry)
+    bin_widths : list, unit = \lambda
+        Bin widths in which to bin the observed visibilities
+    logy : bool, default = False
+        Whether to plot the visibility distributions in log(flux)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -124,13 +126,12 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
     bsp = np.hypot(up, vp)
 
     with frank_plotting_style_context_manager(force_style):
-        gs = GridSpec(3, 1, hspace=0.2, top=0.97, left=0.07, right=0.97)
+        gs = GridSpec(2, 1, hspace=0.2, top=0.97, left=0.07, right=0.97)
         fig = plt.figure(figsize=figsize)
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[1])
-        ax2 = fig.add_subplot(gs[2])
-        axes = [ax0, ax1, ax2]
+        axes = [ax0, ax1]
 
         plot_deprojection_effect(u / 1e6, v / 1e6, up / 1e6, vp / 1e6,
                                  re_vis * 1e3, re_visp * 1e3, axes)
@@ -140,45 +141,44 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, force_style=True
         vis_re = binned_vis.V.real
         vis_err_re = binned_vis.error.real
 
+        if logy:
+            lab=r'Deprojected, >0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
+        else:
+            lab=r'Deprojected, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
         plot_vis_quantity(binned_vis.uv / 1e6, vis_re * 1e3, ax1, c=cs[i],
              marker=ms[i], ls='None',
-             label=r'Deprojected, >0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-        plot_vis_quantity(binned_vis.uv / 1e6, -vis_re * 1e3, ax1, c=cs2[i],
-             marker=ms[i], ls='None',
-             label=r'Deprojected, <0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+             label=lab)
 
-        plot_vis_quantity(binned_vis.uv / 1e6, vis_re * 1e3, ax2, c=cs[i],
-             marker=ms[i], ls='None',
-             label=r'Deprojected, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+        if logy:
+            plot_vis_quantity(binned_vis.uv / 1e6, -vis_re * 1e3, ax1, c=cs2[i],
+                 marker=ms[i], ls='None',
+                 label=r'Deprojected, <0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
     ax0.set_xlabel(r'u [M$\lambda$]')
     ax0.set_ylabel(r'v [M$\lambda$]')
 
     ax1.set_xlabel(r'Baseline [M$\lambda$]')
     ax1.set_ylabel('Re(V) [mJy]')
-    ax1.set_xscale('log')
-    ax1.set_yscale('log')
-    ax1.set_ylim(bottom=1e-3)
-
-    ax2.set_xlabel(r'Baseline [M$\lambda$]')
-    ax2.set_ylabel('Re(V) [mJy]')
-    ax2.set_xscale('log')
+    if logx:
+        ax1.set_xscale('log')
+    if logy:
+        ax1.set_yscale('log')
+        ax1.set_ylim(bottom=1e-3)
 
     ax0.legend(loc=0)
     ax1.legend(loc=0)
-    ax2.legend(loc=0)
 
     plt.tight_layout()
 
     if save_prefix:
-        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=600)
+        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=300)
         plt.close()
 
     return fig, axes
 
 
-def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
-                   force_style=True, save_prefix=None,
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
+                   logx=False, force_style=True, save_prefix=None,
                    stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
     r"""
     Produce a simple figure showing just a Frankenstein fit, not any diagnostics
@@ -197,9 +197,12 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
+    priors : dict
+        Dictionary with fit hyperparameters: 'alpha', 'wsmooth', 'Rmax', 'N', 'p0'.
+        Used for figure title
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
-    logx : bool, default = True
+    logx : bool, default = False
         Whether to plot the visibility distributions in log(baseline)
     gamma : float, default = 1.0
         Index of power law normalization to apply to swept profile image's
@@ -227,10 +230,15 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
     logging.info('    Making quick figure')
 
+    alpha, wsmooth, Rmax, N, p0 = priors['alpha'], priors['wsmooth'],\
+                                  priors['Rmax'], priors['N'], priors['p0']
+
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0, bottom=.12)
         gs2 = GridSpec(3, 2, hspace=.2)
         fig = plt.figure(figsize=figsize)
+        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={}, '\
+                     'N={}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
@@ -252,9 +260,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5]
 
-        total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-            label='frank, total flux {:.2e} Jy'.format(total_flux))
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
         if dist:
             ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
             xlims = ax0.get_xlim()
@@ -323,9 +329,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         if logx:
             ax2.set_xscale('log')
             ax3.set_xscale('log')
-        else:
-            ax2.set_xlim(0., max(binned_vis.uv) / 1e6 * 1.1)
 
+        ax2.set_xlim(right=max(baselines) / 1e6 * 1.2)
         xlims = ax2.get_xlim()
         ax3.set_xlim(xlims)
 
@@ -340,14 +345,14 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None, logx=True,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=300)
             plt.close()
 
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
-                  dist=None, logx=True, force_style=True,
+def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
+                  dist=None, logx=False, force_style=True,
                   save_prefix=None, norm_residuals=False, stretch='power',
                   gamma=1.0, asinh_a=0.02, figsize=(8, 6)):
     r"""
@@ -363,19 +368,16 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         Weights assigned to observed visibilities, of the form
         :math:`1 / \sigma^2`
     sol : _HankelRegressor object
-        Reconstructed profile using Maximum a posteriori power spectrum
+        Reconstructed profile using maximum a posteriori power spectrum
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    alpha : float
-        Value for the :math:`\alpha` hyperparameter.
-        Used for the plot legends
-    wsmooth : float
-        Value for the :math:`w_{smooth}` hyperparameter.
-        Used for the plot legends
+    priors : dict
+        Dictionary with fit hyperparameters: 'alpha', 'wsmooth', 'Rmax', 'N', 'p0'.
+        Used for figure title
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
-    logx : bool, default = True
+    logx : bool, default = False
         Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
@@ -406,11 +408,16 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
 
     logging.info('    Making full figure')
 
+    alpha, wsmooth, Rmax, N, p0 = priors['alpha'], priors['wsmooth'],\
+                                  priors['Rmax'], priors['N'], priors['p0']
+
     with frank_plotting_style_context_manager(force_style):
-        gs = GridSpec(3, 3, hspace=0)
-        gs1 = GridSpec(4, 3, hspace=0, top=.88)
-        gs2 = GridSpec(3, 3, hspace=.35, left=.04)
+        gs = GridSpec(3, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
+        gs1 = GridSpec(4, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
+        gs2 = GridSpec(3, 3, hspace=.35, wspace=0.25, left=0.06, right=0.98)
         fig = plt.figure(figsize=figsize)
+        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={}, '\
+                     'N={}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[3])
@@ -420,7 +427,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         ax4 = fig.add_subplot(gs[4])
         ax5 = fig.add_subplot(gs[7])
 
-        ax6 = fig.add_subplot(gs[2])
+        ax6 = fig.add_subplot(gs1[2])
         ax7 = fig.add_subplot(gs1[5])
         ax8 = fig.add_subplot(gs1[8])
         ax9 = fig.add_subplot(gs1[11])
@@ -429,22 +436,18 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         ax1.text(.9, .6, 'b)', transform=ax1.transAxes)
         ax2.text(.1, .9, 'c)', c='w', transform=ax2.transAxes)
 
-        ax3.text(.1, .5, 'd)', transform=ax3.transAxes)
-        ax4.text(.1, .7, 'e)', transform=ax4.transAxes)
-        ax5.text(.1, .7, 'f)', transform=ax5.transAxes)
-        ax6.text(.9, .9, 'g)', transform=ax6.transAxes)
+        ax3.text(.9, .5, 'd)', transform=ax3.transAxes)
+        ax4.text(.9, .1, 'e)', transform=ax4.transAxes)
+        ax5.text(.9, .1, 'f)', transform=ax5.transAxes)
+        ax6.text(.9, .1, 'g)', transform=ax6.transAxes)
         ax7.text(.9, .9, 'h)', transform=ax7.transAxes)
-        ax8.text(.9, .9, 'i)', transform=ax8.transAxes)
-        ax9.text(.9, .9, 'j)', transform=ax9.transAxes)
+        ax8.text(.9, .1, 'i)', transform=ax8.transAxes)
+        ax9.text(.9, .1, 'j)', transform=ax9.transAxes)
 
         axes = [ax0, ax1, ax2, ax3, ax4, ax5, ax6, ax7, ax8, ax9]
 
-        # Calculate the fit's total flux (2D, by sweeping the 1D profile over 2\pi)
-        total_flux = trapz(sol.mean * 2 * np.pi * sol.r, sol.r)
-
         # Plot the fitted brightness profile in linear- and log-y
-        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r',
-            label='frank, total flux {:.2e} Jy'.format(total_flux))
+        plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, c='r', label='frank')
         if dist:
             ax0_5 = plot_brightness_profile(sol.r, sol.mean / 1e10, ax0, dist=dist, c='r')
             xlims = ax0.get_xlim()
@@ -496,15 +499,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax6, c=cs[i],
-                     marker=ms[i], ls='None',
-                     label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax6, c=cs2[i],
-                     marker=ms[i], ls='None',
-                     label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-
-            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax9, c=cs[i],
+            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax6, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -515,16 +510,18 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             # visibility count varies with baseline
             plot_vis_hist(binned_vis, ax8, color=hist_cs[i],
                           label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
+            # Plot the binned data signal-to-noise as a function of baseline
+            plot_vis_quantity(binned_vis.uv,
+                          binned_vis.V.real**2 / binned_vis.error.real**2,
+                          ax9, color=hist_cs[i], marker=ms[i], ls='None',
+                          label=r'{:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         # Plot the visibility domain frank fit in log-y
         plot_vis_quantity(grid, vis_fit_kl, ax3, c='r', label='frank')
         plot_vis_quantity(grid, vis_fit_kl, ax4, c='r', label='frank')
-        plot_vis_quantity(grid, vis_fit_kl, ax6, c='r', label='frank>0')
-        plot_vis_quantity(grid, -vis_fit_kl, ax6, c='#1EFEDC', label='frank<0')
 
         # Plot the frank inferred power spectrum
-        plot_vis_quantity(sol.q, sol.power_spectrum, ax7, label=r'$\alpha$ {:.2f}'.format(
-            alpha) + '\n' + '$w_{smooth}$' + ' {:.1e}'.format(wsmooth))
+        plot_vis_quantity(sol.q, sol.power_spectrum, ax7)
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
@@ -549,9 +546,29 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
         ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_yscale('log')
         ax1.set_ylim(bottom=1e-3)
-
         ax2.set_xlabel('RA offset ["]')
         ax2.set_ylabel('Dec offset ["]')
+
+        axs = [ax3, ax4, ax5, ax6, ax7, ax8, ax9]
+        if logx:
+            for aa in axs:
+                aa.set_xscale('log')
+
+        ax3.set_xlim(right=max(baselines) * 1.2)
+        xlims = ax3.get_xlim()
+        for aa in axs:
+            aa.set_xlim(xlims)
+
+        ax7.set_yscale('log')
+        ax8.set_yscale('log')
+
+        ax7.set_yticks([1e-15, 1e-10, 1e-5, 1])
+        ax8.set_yticks([1, 10, 1e2, 1e3])
+
+        ax9.set_yscale('log')
+        ax9.set_ylim(1e-2,200)
+        ax9.set_yticks([1e-2, 1e-1, 1, 10, 100])
+        ax9.axhline(y=1, ls='--', c='c')
 
         ax3.set_ylabel('Re(V) [mJy]')
         ax4.set_ylabel('Re(V) [mJy]')
@@ -561,51 +578,24 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, alpha, wsmooth,
             ax5.set_ylabel('Residual [mJy]')
         ax5.set_xlabel(r'Baseline [$\lambda$]')
 
-        ax6.set_ylabel('Re(V) [mJy]')
+        ax6.set_ylabel('Im(V) [mJy]')
         ax7.set_ylabel(r'Power [Jy$^2$]')
         ax8.set_ylabel('Count')
-        ax9.set_ylabel('Im(V) [mJy]')
+        ax9.set_ylabel(r'SNR=$\mu_{\rm bin}^2 / \sigma_{\rm bin}^2$')
         ax9.set_xlabel(r'Baseline [$\lambda$]')
 
-        if logx:
-            ax3.set_xscale('log')
-            ax4.set_xscale('log')
-            ax5.set_xscale('log')
-            ax6.set_xscale('log')
-            ax7.set_xscale('log')
-            ax8.set_xscale('log')
-            ax9.set_xscale('log')
-
-        xlims = ax5.get_xlim()
-        ax3.set_xlim(xlims)
-        ax4.set_xlim(xlims)
-        ax6.set_xlim(xlims)
-        ax7.set_xlim(xlims)
-        ax8.set_xlim(xlims)
-        ax9.set_xlim(xlims)
-
-        ax6.set_yscale('log')
-        ax7.set_yscale('log')
-        ax8.set_yscale('log')
-        ax6.set_ylim(bottom=1e-4)
-
-        plt.setp(ax0.get_xticklabels(), visible=False)
-        plt.setp(ax3.get_xticklabels(), visible=False)
-        plt.setp(ax4.get_xticklabels(), visible=False)
-        plt.setp(ax6.get_xticklabels(), visible=False)
-        plt.setp(ax7.get_xticklabels(), visible=False)
-        plt.setp(ax8.get_xticklabels(), visible=False)
-
-        plt.tight_layout()
+        axs = [ax0, ax3, ax4, ax6, ax7, ax8]
+        for aa in axs:
+            plt.setp(aa.get_xticklabels(), visible=False)
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_full.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_fit_full.png', dpi=300)
             plt.close()
 
     return fig, axes
 
 
-def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
+def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
                   force_style=True, save_prefix=None, figsize=(8, 6)):
     r"""
     Produce a diagnostic figure showing fit convergence metrics
@@ -615,19 +605,16 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
     r : array
         Radial data coordinates at which the brightness profile is defined.
         The assumed unit (for the x-label) is arcsec
-    profile_iter : list, shape = (n_iter, N_coll)
-        Brightness profile reconstruction at each of n_iter iterations. The
-        assumed unit (for the y-label) is Jy / sr
     q : array
         Baselines at which the power spectrum is defined.
         The assumed unit (for the x-label) is :math:`\lambda`
     iteration_diagnostics : dict
         The iteration_diagnostics from FrankFitter.
-    N_iter : int
-        Total number of iterations in the fit
     iter_plot_range : list
         Range of iterations in the fit over which to
         plot brightness profile and power spectrum reconstructions
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -714,11 +701,11 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         ax2.set_ylabel(r'Power [Jy$^2$]')
         ax3.set_ylabel(r'|PS$_i$ - PS$_{i-1}$| [Jy$^2$]')
         ax3.set_xlabel(r'Baseline [$\lambda$]')
-        ax2.set_xscale('log')
-        ax3.set_xscale('log')
+        if logx:
+            ax2.set_xscale('log')
+            ax3.set_xscale('log')
         ax2.set_yscale('log')
         ax3.set_yscale('log')
-        ax3.set_ylim(bottom=1e-16)
 
         ax4.set_xlabel('Fit iteration')
         ax4.set_ylabel('Convergence criterion,\n' +
@@ -734,7 +721,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=300)
             plt.close()
 
     return fig, axes, iter_plot_range
@@ -743,7 +730,8 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None,
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                               bin_widths, stretch='power',
                               gamma=1.0, asinh_a=0.02, mean_convolved=None,
-                              dist=None, force_style=True, save_prefix=None,
+                              dist=None, logx=False, logy=False, ylims=None,
+                              force_style=True, save_prefix=None,
                               figsize=(8, 10)):
     r"""
     Produce a figure comparing a frank fit to a CLEAN fit, in real space by
@@ -786,6 +774,12 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         The assumed unit is for the x-label
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
+    logy : bool, default = False
+        Whether to plot the visibility distributions in log(flux)
+    ylims : list of len(2), default = None
+        Lower and upper y-bounds for the visibility domain plot
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -850,10 +844,15 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             vis_re_kl = binned_vis.V.real * 1e3
             vis_err_re_kl = binned_vis.error.real * 1e3
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax1, c=cs[i],
+            if logy:
+                lab=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
+            else:
+                lab=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3)
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax1, c=cs[i],
                      marker=ms[i], ls='None',
-                     label=r'Obs.>0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
-            plot_vis_quantity(binned_vis.uv, -vis_re_kl, ax1, c=cs2[i],
+                     label=lab)
+            if logy:
+                plot_vis_quantity(binned_vis.uv / 1e6, -vis_re_kl, ax1, c=cs2[i],
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
@@ -865,10 +864,27 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             sol.r, clean_profile['r'], clean_profile['I'].real) * 1e3
         clean_DHT_kl = sol.predict_deprojected(grid, I=Inu_interp)
 
-        plot_vis_quantity(grid, vis_fit_kl, ax1, c='r', label='frank>0')
-        plot_vis_quantity(grid, -vis_fit_kl, ax1, c='r', ls='--', label='frank<0')
-        plot_vis_quantity(grid, clean_DHT_kl, ax1, c='b', label='DHT of CLEAN>0')
-        plot_vis_quantity(grid, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN<0')
+        if logy:
+            lab = 'frank, >0'
+            lab2 = 'DHT of CLEAN, >0'
+        else:
+            lab = 'frank'
+            lab2 = 'DHT of CLEAN'
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax1, c='r', label=lab)
+        plot_vis_quantity(grid / 1e6, clean_DHT_kl, ax1, c='b', label=lab2)
+        if logy:
+            plot_vis_quantity(grid / 1e6, -vis_fit_kl, ax1, c='r', ls='--', label='frank, <0')
+            plot_vis_quantity(grid / 1e6, -clean_DHT_kl, ax1, c='b', ls='--', label='DHT of CLEAN, <0')
+
+        if logx:
+            ax1.set_xscale('log')
+        ax1.set_xlim(right=1.2 * max(baselines) / 1e6)
+
+        if logy:
+            ax1.set_yscale('log')
+            ax1.set_ylim(bottom=1e-3)
+        if ylims:
+            ax1.set_ylim(ylims)
 
         if mean_convolved is not None:
             vmax = max(sol.mean.max(), mean_convolved.max(), clean_profile['I'].max())
@@ -900,11 +916,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                     vmin=0, vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
 
         ax0.legend(loc='best')
-        ax1.legend(loc='best')
+        ax1.legend(loc='best', ncol=2)
 
         ax0.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
-        ax1.set_xlabel(r'Baseline [$\lambda$]')
+        ax1.set_xlabel(r'Baseline [M$\lambda$]')
         ax1.set_ylabel(r'Re(V) [mJy]')
         ax2.set_xlabel('RA offset ["]')
         ax3.set_xlabel('RA offset ["]')
@@ -916,10 +932,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             xlims = ax0.get_xlim()
             ax0_5.set_xlim(np.multiply(xlims, dist))
 
-        ax1.set_xlim(.9 * baselines.min(), 1.2 * baselines.max())
-        ax1.set_xscale('log')
-        ax1.set_yscale('log')
-        ax1.set_ylim(bottom=1e-3)
+        if logx:
+            ax1.set_xscale('log')
+        if logy:
+            ax1.set_yscale('log')
+            ax1.set_ylim(bottom=1e-3)
 
         ax2.set_title('Unconvolved frank profile swept')
         ax3.set_title('Convolved frank profile swept')
@@ -932,15 +949,15 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         ax4.text(.1, .9, 'e)', c='w', transform=ax4.transAxes)
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_clean_comparison.png', dpi=300)
             plt.close()
 
     return fig, axes
 
 
 def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
-                      varied_vals, dist=None, force_style=True, save_prefix=None,
-                      figsize=(8, 8)
+                      varied_vals, dist=None, logx=False, force_style=True,
+                      save_prefix=None, figsize=(8, 8)
                      ):
     r"""
     Produce a figure overplotting multiple fits
@@ -965,6 +982,8 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         Values for the `hyperparameters` that were varied over multiple fits
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
+    logx : bool, default = False
+        Whether to plot the visibility distributions in log(baseline)
     force_style: bool, default = True
         Whether to use preconfigured matplotlib rcParams in generated figure
     save_prefix : string, default = None
@@ -1063,9 +1082,10 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         ax2.set_ylabel('Re(V) [mJy]')
         ax3.set_ylabel('Re(V) [mJy]')
         ax4.set_ylabel(r'Power [Jy$^2$]')
-        ax2.set_xscale('log')
-        ax3.set_xscale('log')
-        ax4.set_xscale('log')
+        if logx:
+            ax2.set_xscale('log')
+            ax3.set_xscale('log')
+            ax4.set_xscale('log')
         ax3.set_yscale('log')
         ax4.set_yscale('log')
         ax3.set_ylim(bottom=1e-4)
@@ -1082,7 +1102,7 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         ax3.legend()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_multifit.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_multifit.png', dpi=300)
             plt.close()
 
     return fig, axes
@@ -1166,7 +1186,7 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         plt.tight_layout()
 
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=600)
+            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=300)
             plt.close()
 
     return fig, axes

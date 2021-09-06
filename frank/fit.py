@@ -539,6 +539,13 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
     figs, axes = [], []
 
+    priors = {'alpha': model['hyperparameters']['alpha'],\
+              'wsmooth': model['hyperparameters']['wsmooth'],\
+              'Rmax': model['hyperparameters']['rout'],\
+              'N': model['hyperparameters']['n'],\
+              'p0': model['hyperparameters']['p0']
+              }
+
     if model['plotting']['deprojec_plot']:
         deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u=u, v=v,
                                                          vis=vis, weights=weights,
@@ -555,6 +562,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         quick_fig, quick_axes = make_figs.make_quick_fig(u=u, v=v, vis=vis,
                                                          weights=weights, sol=sol,
                                                          bin_widths=model['plotting']['bin_widths'],
+                                                         priors=priors,
                                                          dist=model['plotting']['distance'],
                                                          logx=model['plotting']['plot_in_logx'],
                                                          force_style=model['plotting']['force_style'],
@@ -571,8 +579,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         full_fig, full_axes = make_figs.make_full_fig(u=u, v=v, vis=vis,
                                                       weights=weights, sol=sol,
                                                       bin_widths=model['plotting']['bin_widths'],
-                                                      alpha=model['hyperparameters']['alpha'],
-                                                      wsmooth=model['hyperparameters']['wsmooth'],
+                                                      priors=priors,
                                                       dist=model['plotting']['distance'],
                                                       logx=model['plotting']['plot_in_logx'],
                                                       force_style=model['plotting']['force_style'],

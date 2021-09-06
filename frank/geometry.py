@@ -616,7 +616,7 @@ class FitGeometryFourierBessel(SourceGeometry):
                              ' (your supplied inclination and position angle will'
                              ' be applied at the end of the geometry fitting'
                              ' routine)')
-            if self._phase_centre:
+            elif self._phase_centre:
                 logging.info('    Fitting nonparametric form to determine geometry'
                              ' (your supplied phase center will be applied at the'
                              ' end of the geometry fitting routine)')

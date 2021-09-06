@@ -46,13 +46,13 @@
     "deprojec_plot"    : false,
     "distance"         : null,
     "force_style"      : true,
-    "bin_widths"       : [1e3, 5e4],
+    "bin_widths"       : [20e3, 100e3],
     "stretch"          : "power",
     "gamma"            : 1.0,
     "asinh_a"          : 0.02,
     "iter_plot_range"  : null,
-    "plot_in_logx"     : true,
-    "norm_residuals"   : false    
+    "plot_in_logx"     : false,
+    "norm_residuals"   : false
   },
 
   "analysis" : {
