@@ -6,7 +6,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Testing a fit’s sensitivity to the hyperparameters \(\alpha\) and \(w_{\rm smooth}\) &mdash; frank 1.1.0 documentation</title>
@@ -15,6 +16,9 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
   
@@ -32,12 +36,13 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -97,31 +102,27 @@
               
             
             
-              <p class="caption"><span class="caption-text">Using the code</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Using the code</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#text-and-jupyter-notebook-tutorials">Text and Jupyter Notebook tutorials</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#context-interpreting-the-model-s-hyperparameters">Context: Interpreting the model’s hyperparameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#context-interpreting-the-model-s-hyperparameters">Context: Interpreting the model’s hyperparameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#video-tutorials">Video tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers citing frank</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers using frank</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Under the hood</span></p>
+<p class="caption" role="heading"><span class="caption-text">Under the hood</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
@@ -219,9 +220,9 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth">
+<section id="testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth">
 <h1>Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="context-interpreting-the-model-s-hyperparameters">
+<section id="context-interpreting-the-model-s-hyperparameters">
 <h2>Context: Interpreting the model’s hyperparameters<a class="headerlink" href="#context-interpreting-the-model-s-hyperparameters" title="Permalink to this headline">¶</a></h2>
 <p>The hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> affect the fit’s power spectrum estimate
 (which is itself a prior on the fitted brightness profile).
@@ -236,8 +237,8 @@ with a higher value more strongly smoothing the power spectrum.</p>
 Typical values are <span class="math notranslate nohighlight">\(N = 100 - 300\)</span>. <br>
 - <span class="math notranslate nohighlight">\(p_0\)</span> is small (<span class="math notranslate nohighlight">\(0 &lt; p_0 \ll 1\)</span>; the default is <span class="math notranslate nohighlight">\(10^{-15}\)</span> Jy <span class="math notranslate nohighlight">\(^2\)</span>).</p>
 <p>See the frank <a class="reference external" href="https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b">methods paper</a> for an extended discussion of the model’s hyperparameters.</p>
-</div>
-<div class="section" id="performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">
+</section>
+<section id="performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">
 <h2>Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h2>
 <p>The default value of <span class="math notranslate nohighlight">\(\alpha\)</span> is <span class="math notranslate nohighlight">\(1.05\)</span>, and  we suggest varying it between <span class="math notranslate nohighlight">\(1.00 - 1.30\)</span>.
 (Though note that choosing <span class="math notranslate nohighlight">\(\alpha = 1.00\)</span> will cause frank to fit a dataset’s entire visibility distribution.
@@ -255,9 +256,9 @@ using the extrema of the ranges we suggest for <span class="math notranslate noh
 That is, we’ll set <code class="code docutils literal notranslate"><span class="pre">alpha=[1.05,</span> <span class="pre">1.30]</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth=[1e-4,</span> <span class="pre">1e-1]</span></code> in our parameter file.
 This will run four fits (for the four combinations of these chosen values),
 generating this figure,</p>
-<div class="figure align-left" style="width: 700px">
+<figure class="align-left" style="width: 700px">
 <img alt="../_images/AS209_continuum_frank_hyperprior_sensitivity.png" src="../_images/AS209_continuum_frank_hyperprior_sensitivity.png" />
-</div>
+</figure>
 <p><strong>a)</strong> The fitted frank brightness profile for each combination of hyperparameter values.
 The frank brightness profile for this dataset is evidently only weakly sensitive to our choices for <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
 <br>
@@ -272,8 +273,8 @@ handle the data as they become noise-dominated.
 Despite the appreciable difference in the power spectrum substructure between the <span class="math notranslate nohighlight">\(\alpha = 1.05\)</span> and <span class="math notranslate nohighlight">\(1.30\)</span> fits,
 the visibility domain fits in (d) and brightness profiles in (a) are quite similar,
 demonstrating the effect of the power spectrum as a prior is weak in this case.</p>
-</div>
-<div class="section" id="always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">
+</section>
+<section id="always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">
 <h2>Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth" title="Permalink to this headline">¶</a></h2>
 <p>While these sensitivities can be weak as shown above,
 a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> can be nontrivial
@@ -281,8 +282,8 @@ for lower resolution or particularly noisy datasets.
 In these cases, the location and amplitude of substructure in the
 brightness profile can vary with <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>,
 so it’s <strong>always</strong> worth checking how the fit changes over the ranges <code class="code docutils literal notranslate"><span class="pre">alpha=[1.05,</span> <span class="pre">1.30]</span></code> and <code class="code docutils literal notranslate"><span class="pre">wsmooth=[1e-4,</span> <span class="pre">1e-1]</span></code>.</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -300,7 +301,7 @@ so it’s <strong>always</strong> worth checking how the fit changes over the ra
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Mar 15 at 16:15:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Sep 09 at 03:21:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

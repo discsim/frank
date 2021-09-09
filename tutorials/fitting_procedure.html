@@ -6,7 +6,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>What’s fit.py doing? The fitting procedure in detail &mdash; frank 1.1.0 documentation</title>
@@ -15,6 +16,9 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
   
@@ -32,12 +36,13 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -97,32 +102,31 @@
               
             
             
-              <p class="caption"><span class="caption-text">Using the code</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Using the code</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#text-and-jupyter-notebook-tutorials">Text and Jupyter Notebook tutorials</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">What’s fit.py doing? The fitting procedure in detail</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#1.-Read-in-the-parameter-values-and-data">1. Read in the parameter values and data</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities">2. Determinine the disc geometry and deproject the visibilities</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#3.-Fit-the-deprojected-visibilities-for-the-brightness-profile">3. Fit the deprojected visibilities for the brightness profile</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#4.-Save-the-results-and-generate-plots">4. Save the results and generate plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">What’s fit.py doing? The fitting procedure in detail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#1.-Read-in-the-parameter-values-and-data">1. Read in the parameter values and data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities">2. Determinine the disc geometry and deproject the visibilities</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#2.1-Adding-your-own-geometry-fit-routine">2.1 Adding your own geometry fit routine</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
-<li class="toctree-l3"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3.-Fit-the-deprojected-visibilities-for-the-brightness-profile">3. Fit the deprojected visibilities for the brightness profile</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#4.-Save-the-results-and-generate-plots">4. Save the results and generate plots</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#video-tutorials">Video tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers using frank</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers citing frank</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Under the hood</span></p>
+<p class="caption" role="heading"><span class="caption-text">Under the hood</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
@@ -470,7 +474,7 @@ div.rendered_html tbody tr:hover {
 <p class="admonition-title">Note</p>
 <p>This tutorial is produced by the Jupyter notebook <a class="reference external" href="https://github.com/discsim/frank/blob/master/docs/tutorials/fitting_procedure.ipynb">here</a>.</p>
 </div>
-<div class="section" id="What’s-fit.py-doing?-The-fitting-procedure-in-detail">
+<section id="What’s-fit.py-doing?-The-fitting-procedure-in-detail">
 <h1>What’s fit.py doing? The fitting procedure in detail<a class="headerlink" href="#What’s-fit.py-doing?-The-fitting-procedure-in-detail" title="Permalink to this headline">¶</a></h1>
 <p>To give further insight into the fitting process in Frankenstein (<code class="docutils literal notranslate"><span class="pre">frank</span></code>) and how you can modify it, here we’ll use the code as a module and perform the same fit that’s in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>, just in more detail.</p>
 <p>So we’ll keep using the DSHARP continuum observations of AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract">Andrews et al. 2018</a>) as the input dataset, and frank will reconstruct the disc’s 1D radial brightness profile by nonparametrically fitting the real component of the visibility distribution.</p>
@@ -487,7 +491,7 @@ div.rendered_html tbody tr:hover {
 </li>
 </ol>
 <p>Let’s walk through these.</p>
-<div class="section" id="1.-Read-in-the-parameter-values-and-data">
+<section id="1.-Read-in-the-parameter-values-and-data">
 <h2>1. Read in the parameter values and data<a class="headerlink" href="#1.-Read-in-the-parameter-values-and-data" title="Permalink to this headline">¶</a></h2>
 <p>As in the second example in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a> - where we use frank as a module - we’ll import the internal classes <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> and <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryGaussian"><span class="std std-ref">FitGeometryGaussian</span></a> directly, in order to demonstrate their usage. Just note that <code class="docutils literal notranslate"><span class="pre">fit.py</span></code> uses the wrapper functions <code class="docutils literal notranslate"><span class="pre">deproject_disc</span></code> and <code class="docutils literal notranslate"><span class="pre">perform_fit</span></code> to call these, and more generally uses wrapper functions to do everything that
 we’ll walk through more verbosely here.</p>
@@ -506,6 +510,8 @@ we’ll walk through more verbosely here.</p>
 <span class="kn">from</span> <span class="nn">frank.fit</span> <span class="kn">import</span> <span class="n">load_default_parameters</span>
 <span class="kn">from</span> <span class="nn">frank.utilities</span> <span class="kn">import</span> <span class="n">convolve_profile</span>
 <span class="kn">from</span> <span class="nn">frank.make_figs</span> <span class="kn">import</span> <span class="n">make_deprojection_fig</span><span class="p">,</span> <span class="n">make_clean_comparison_fig</span>
+
+<span class="n">frank</span><span class="o">.</span><span class="n">enable_logging</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -522,17 +528,15 @@ we’ll walk through more verbosely here.</p>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="2.-Determinine-the-disc-geometry-and-deproject-the-visibilities">
+</section>
+<section id="2.-Determinine-the-disc-geometry-and-deproject-the-visibilities">
 <h2>2. Determinine the disc geometry and deproject the visibilities<a class="headerlink" href="#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities" title="Permalink to this headline">¶</a></h2>
 <p>Before fitting the radial brightness profile, we need to determine the disc’s geometry (inclination, position angle and phase center) in order to deproject the visibilities (recall that frank, fitting in 1D, assumes an axisymmetric source). To do this we pass an object specifying how the geometry is determined to the <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> class. <strong>The position angle (PA) is defined positive east of north, and the right ascension offset (dRA) is defined
 positive for offsets toward east.</strong></p>
 <p>frank has three classes for this: <a class="reference internal" href="../py_API.html#frank.geometry.FixedGeometry"><span class="std std-ref">FixedGeometry</span></a> just takes a geometry you provide, <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryGaussian"><span class="std std-ref">FitGeometryGaussian</span></a> determines the geometry by fitting a 2D Gaussian directly to the visibilities, and <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryFourierBessel"><span class="std std-ref">FitGeometryFourierBessel</span></a> determines the geometry by fitting a nonparametric form.</p>
-<p><strong>In practice we’ve found a determination of the disc geometry from an image (either from fitting a 2D Gaussian to the disc in the image plane, or fitting individual rings) to be more consistently accurate than</strong> <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> <strong>or</strong> <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code>. <strong>We thus recommend using a geometry determined from the image plane for the deprojection.</strong> If you are using <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> or <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code>, it’s good at minimum to check that the inclination and PA
-it finds are reasonable, given the disc image.</p>
-<p>If you want to use one of these two methods in <code class="docutils literal notranslate"><span class="pre">frank</span></code> to fit for the geometry using the visibilities, <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code> is a more robust approach than <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code>, as the former fits for the geometry without making any assumptions about the functional form of the visibilities. There is a significant tradeoff in speed though; even for large datasets (of order <span class="math notranslate nohighlight">\(10^7\)</span> visibilities), <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> takes only <span class="math notranslate nohighlight">\(\approx 30\)</span> sec, while
-<code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code> takes <span class="math notranslate nohighlight">\(&gt; 10\)</span> min. You can also supply your own geometry fitting routine (see Sec.2.1 below).</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> and <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code> you can choose to provide a known phase center if you <em>just</em> want to fit for the inclination and PA (if running frank from the terminal, set <code class="docutils literal notranslate"><span class="pre">geometry</span> <span class="pre">:</span> <span class="pre">fit_phase_offset</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code> in your parameter file and specify <code class="docutils literal notranslate"><span class="pre">dra</span></code> and <code class="docutils literal notranslate"><span class="pre">ddec</span></code> there).</p>
+<p><code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code> is a more robust approach than <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code>, as the former fits for the geometry without making any assumptions about the functional form of the visibilities. <strong>Note that as ``FitGeometryGaussian`` fits a 2D Gaussian to the visibilities to determine the geometry, it is not a good choice for a highly non-Gaussian disc (like a disc with an inner cavity).</strong> There is a tradeoff in speed for using <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code>; even for large datasets (of order
+<span class="math notranslate nohighlight">\(10^7\)</span> visibilities), <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> takes only <span class="math notranslate nohighlight">\(\approx 30\)</span> sec, while <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code> takes <span class="math notranslate nohighlight">\(&gt; 10\)</span> min. It’s also useful to determine the geometry in the image plane and compare to the result from <code class="docutils literal notranslate"><span class="pre">frank</span></code>. You can also supply your own geometry fitting routine (see Sec.2.1 below).</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code> and <code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code> you can choose to provide a known phase center if you <em>just</em> want to fit for the inclination and PA (if running frank from the terminal, set <code class="docutils literal notranslate"><span class="pre">geometry</span> <span class="pre">:</span> <span class="pre">fit_phase_offset</span></code> to <code class="docutils literal notranslate"><span class="pre">false</span></code> in your parameter file and specify <code class="docutils literal notranslate"><span class="pre">dra</span></code> and <code class="docutils literal notranslate"><span class="pre">ddec</span></code> there). You can conversely supply the phase center and just fit for inclination and PA.</p>
 <p>You can also supply an initial guess for the source geometry; if running frank from the terminal, setting <code class="docutils literal notranslate"><span class="pre">geometry</span> <span class="pre">:</span> <span class="pre">initial_guess</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in your parameter file will use the <code class="docutils literal notranslate"><span class="pre">inc</span></code>, <code class="docutils literal notranslate"><span class="pre">pa</span></code>, and optionally <code class="docutils literal notranslate"><span class="pre">dra</span></code> and <code class="docutils literal notranslate"><span class="pre">ddec</span></code> in that file as the initial guess for the geometry solver.</p>
 <p>Here let’s assume we don’t know or have a guess on any of the disc’s geometry parameters, and so fit for them all.</p>
 <div class="nbinput docutils container">
@@ -549,6 +553,14 @@ it finds are reasonable, given the disc image.</p>
                                                            <span class="n">geom</span><span class="o">.</span><span class="n">dDec</span><span class="o">*</span><span class="mf">1e3</span><span class="p">))</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+    Fitting Gaussian to determine geometry
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
@@ -581,7 +593,7 @@ Fitted geometry: inc  = 33.93 deg,
 <p>Using the published geometry, we’ll plot the deprojected (u, v) coordinates and visibilities - unbinned - just to see roughly how much the correction is affecting the (u,v) coordinates and visibility amplitudes. Note that <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> (which we’ll use below) deprojects the visibilities as a step in the fit; this figure will just redundantly deproject them (using <code class="docutils literal notranslate"><span class="pre">geom.apply_correction</span></code>) to make the plot.</p>
 <p>If running frank from the terminal, you can produce this figure by setting <code class="docutils literal notranslate"><span class="pre">deprojec_plot</span></code> to <code class="docutils literal notranslate"><span class="pre">true</span></code> in your parameter file.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -589,28 +601,36 @@ Fitted geometry: inc  = 33.93 deg,
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+    Making deprojection figure
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_fitting_procedure_13_0.png" src="../_images/tutorials_fitting_procedure_13_0.png" />
+<img alt="../_images/tutorials_fitting_procedure_13_1.png" src="../_images/tutorials_fitting_procedure_13_1.png" />
 </div>
 </div>
-<div class="section" id="2.1-Adding-your-own-geometry-fit-routine">
+<section id="2.1-Adding-your-own-geometry-fit-routine">
 <h3>2.1 Adding your own geometry fit routine<a class="headerlink" href="#2.1-Adding-your-own-geometry-fit-routine" title="Permalink to this headline">¶</a></h3>
 <p>You can extend frank’s geometry fitting capabilities with your own routines by writing a class that inherits from the <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry"><span class="std std-ref">SourceGeometry</span></a> base class. This base class provides the interface used by frank to deproject the visibilities, but you do need to implement your own <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.fit"><span class="std std-ref">fit()</span></a> method. This method will be called internally by <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> to determine the geometry.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">fit()</span></code> method should set the attributes <code class="docutils literal notranslate"><span class="pre">_inc</span></code>, <code class="docutils literal notranslate"><span class="pre">_PA</span></code>, <code class="docutils literal notranslate"><span class="pre">_dRA</span></code>, and <code class="docutils literal notranslate"><span class="pre">_dDec</span></code> – in respective units of [deg], [deg], [arcsec], [arcsec] – that are used by the <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.apply_correction"><span class="std std-ref">apply_correction()</span></a>, <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.undo_correction"><span class="std std-ref">undo_correction()</span></a>, <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.deproject"><span class="std std-ref">deproject()</span></a>, and <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.reproject"><span class="std std-ref">reproject()</span></a> methods.</p>
-</div>
-</div>
-<div class="section" id="3.-Fit-the-deprojected-visibilities-for-the-brightness-profile">
+</section>
+</section>
+<section id="3.-Fit-the-deprojected-visibilities-for-the-brightness-profile">
 <h2>3. Fit the deprojected visibilities for the brightness profile<a class="headerlink" href="#3.-Fit-the-deprojected-visibilities-for-the-brightness-profile" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have the deprojected visibilities, let’s fit them.</p>
 <p>Objects used to perform a fit are in the <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> class. In addition to the the <code class="docutils literal notranslate"><span class="pre">geom</span></code> object detailed in Sec.2, five hyperparameters affect the fit: <code class="docutils literal notranslate"><span class="pre">Rmax</span></code> and <code class="docutils literal notranslate"><span class="pre">N</span></code>, which set the disc radius out to which the fit is performed and the number of collocation points used in the fit; and <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">p_0</span></code> and <code class="docutils literal notranslate"><span class="pre">weights_smooth</span></code>, the hyperprior parameters on the power spectrum prior. See the frank methods paper for an explanation and interpretation of these five hyperparameters, and
 <a class="reference internal" href="prior_sensitivity.html"><span class="doc">this tutorial</span></a> for a demonstration of how to test their effect on a given fit.</p>
 <p>frank performs a fit with the <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> class’ <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter.fit"><span class="std std-ref">fit()</span></a> function. Let’s use this with the <code class="docutils literal notranslate"><span class="pre">geom</span></code> object we generated above using the published geometry values, <code class="docutils literal notranslate"><span class="pre">Rmax</span> <span class="pre">=</span> <span class="pre">1.6&quot;</span></code> appropriate for AS 209, <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">250</span></code> to ensure we resolve narrow features in the brightness profile, and the default values <code class="docutils literal notranslate"><span class="pre">p_0</span> <span class="pre">=</span> <span class="pre">1e-15</span></code> Jy<span class="math notranslate nohighlight">\(^2\)</span>, <code class="docutils literal notranslate"><span class="pre">alpha</span> <span class="pre">=</span> <span class="pre">1.05</span></code> and <code class="docutils literal notranslate"><span class="pre">weights_smooth</span> <span class="pre">=</span> <span class="pre">1e-4</span></code>. Recall that we’ll only fit the real component of the
 visibilities, as frank is assuming an axisymmetric source that has zero imaginary component.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -624,9 +644,42 @@ visibilities, as frank is assuming an axisymmetric source that has zero imaginar
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+  Fitting for brightness profile using FrankFitter
+    Building visibility matrices M and j
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+    FrankFitter iteration 692
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+    Convergence criterion met at iteration 692
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+
+</pre></div></div>
+</div>
 <p>Once the fit is complete, the brightness profile’s best fit parameters are returned and stored in the <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> class’ <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter.MAP_solution"><span class="std std-ref">MAP_solution</span></a> object (we called it <code class="docutils literal notranslate"><span class="pre">sol</span></code> above). This provides:</p>
 <ul class="simple">
-<li><p>the posterior <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.mean"><span class="std std-ref">mean</span></a> and <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.covariance"><span class="std std-ref">covariance</span></a> for the reconstructed brightness profile;</p></li>
+<li><p>the <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.mean"><span class="std std-ref">maximum a posteriori solution</span></a> and posterior <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.covariance"><span class="std std-ref">covariance</span></a> for the reconstructed brightness profile;</p></li>
 <li><p>the fit’s radius points <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.r"><span class="std std-ref">r</span></a> and corresponding frequency points <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.q"><span class="std std-ref">q</span></a>;</p></li>
 <li><p>methods to compute the best fit model’s visibilities at given (u, v) coordinates in either the sky plane with <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.predict"><span class="std std-ref">predict</span></a> or the deprojected plane with <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.predict_deprojected"><span class="std std-ref">predict_deprojected</span></a>;</p></li>
 <li><p>and a method to evaluate the best fit model’s <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.log_likelihood"><span class="std std-ref">log_likelihood</span></a>.</p></li>
@@ -635,14 +688,14 @@ visibilities, as frank is assuming an axisymmetric source that has zero imaginar
 <ul class="simple">
 <li><p>the maximum a posteriori power spectrum mean (<a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum"><span class="std std-ref">MAP_spectrum</span></a>) and covariance (<a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance"><span class="std std-ref">MAP_spectrum_covariance</span></a>).</p></li>
 </ul>
-</div>
-<div class="section" id="4.-Save-the-results-and-generate-plots">
+</section>
+<section id="4.-Save-the-results-and-generate-plots">
 <h2>4. Save the results and generate plots<a class="headerlink" href="#4.-Save-the-results-and-generate-plots" title="Permalink to this headline">¶</a></h2>
 <p>We could now save the fit results, including the <code class="docutils literal notranslate"><span class="pre">sol</span></code> object, with <code class="docutils literal notranslate"><span class="pre">save_fit(u,</span> <span class="pre">v,</span> <span class="pre">vis,</span> <span class="pre">weights,</span> <span class="pre">sol,</span> <span class="pre">prefix='AS209_continuum')</span></code>. We could also produce a full diagnostic figure and/or simplified figure of the fit. But since we’ve already done all this in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>, let’s instead use the <code class="docutils literal notranslate"><span class="pre">sol</span></code> object to make a figure comparing the frank fitted brightness profile to the published CLEAN image-extracted profile (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..42H/abstract">Huang et
 al. 2018</a>).</p>
 <p>If running frank from the terminal, you can produce this figure by setting, in your parameter file, <code class="docutils literal notranslate"><span class="pre">compare_profile</span></code> to the path to a file with a CLEAN profile (or any comparison profile) and <code class="docutils literal notranslate"><span class="pre">clean_beam</span></code> to the beam parameters (FWHM along both axes, position angle).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -657,10 +710,10 @@ al. 2018</a>).</p>
 <span class="n">clean_beam</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;bmaj&#39;</span><span class="p">:</span><span class="mf">0.03883</span><span class="p">,</span> <span class="s1">&#39;bmin&#39;</span><span class="p">:</span><span class="mf">0.03818</span><span class="p">,</span> <span class="s1">&#39;beam_pa&#39;</span><span class="p">:</span><span class="mf">85.82243</span><span class="p">}</span>
 <span class="n">mean_convolved</span> <span class="o">=</span> <span class="n">convolve_profile</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">sol</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">geom</span><span class="o">.</span><span class="n">inc</span><span class="p">,</span> <span class="n">geom</span><span class="o">.</span><span class="n">PA</span><span class="p">,</span> <span class="n">clean_beam</span><span class="p">)</span>
 
-<span class="c1"># For the visibility plot that we&#39;ll make, show the observations in 1 and 50 k\lambda bins</span>
+<span class="c1"># For the visibility plot, show the observations in 1 and 50 k\lambda bins</span>
 <span class="n">bin_widths</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e3</span><span class="p">,</span> <span class="mf">5e4</span><span class="p">]</span>
 
-<span class="c1"># And for the 2D representations of the 1D profiles that we&#39;ll show, use a colormap with an arcsinh</span>
+<span class="c1"># And for the 2D representations of the 1D profiles, use a colormap with an arcsinh</span>
 <span class="c1"># normalization, including a choice of the arcsinh scale parameter, &#39;asinh_a&#39;</span>
 <span class="n">stretch</span> <span class="o">=</span> <span class="s1">&#39;asinh&#39;</span>
 <span class="n">asinh_a</span> <span class="o">=</span> <span class="mf">0.02</span>
@@ -668,26 +721,37 @@ al. 2018</a>).</p>
 <span class="c1"># Distance to source [pc] (Andrews et al. 2018), just to show a second x-axis in AU</span>
 <span class="n">dist</span> <span class="o">=</span> <span class="mf">121.</span>
 
+<span class="c1"># Zoom in on the lower amplitude visibilities to better see the fit accuracies at long baselines</span>
+<span class="n">ylims</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">]</span>
+
 <span class="n">make_clean_comparison_fig</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">vis</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">clean_profile</span><span class="p">,</span>
                           <span class="n">bin_widths</span><span class="o">=</span><span class="n">bin_widths</span><span class="p">,</span> <span class="n">stretch</span><span class="o">=</span><span class="n">stretch</span><span class="p">,</span> <span class="n">mean_convolved</span><span class="o">=</span><span class="n">mean_convolved</span><span class="p">,</span>
-                          <span class="n">dist</span><span class="o">=</span><span class="n">dist</span><span class="p">,</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">));</span>
+                          <span class="n">dist</span><span class="o">=</span><span class="n">dist</span><span class="p">,</span> <span class="n">ylims</span><span class="o">=</span><span class="n">ylims</span><span class="p">,</span> <span class="n">force_style</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">16</span><span class="p">));</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+    Making CLEAN comparison figure
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_fitting_procedure_22_0.png" src="../_images/tutorials_fitting_procedure_22_0.png" />
+<img alt="../_images/tutorials_fitting_procedure_22_1.png" src="../_images/tutorials_fitting_procedure_22_1.png" />
 </div>
 </div>
-<p><strong>a)</strong> The frank profile, this profile convolved with the CLEAN beam, and the CLEAN profile. The frank profile when convolved with the CLEAN beam is pretty similar to the CLEAN profile, an indication that the unconvolved frank profile is correctly identifying sub-beam structure.</p>
+<p><strong>a)</strong> The frank profile, this profile convolved with the CLEAN beam, and the CLEAN profile. The frank profile when convolved with the CLEAN beam is pretty similar to the CLEAN profile, an indication that the unconvolved frank profile is correctly identifying sub-beam structure. The observartions are shown in <span class="math notranslate nohighlight">\(1\)</span> and <span class="math notranslate nohighlight">\(50\)</span> k<span class="math notranslate nohighlight">\(\lambda\)</span> bins.</p>
 <p><strong>b)</strong> The binned, observed visibilities, the frank visibility domain fit, and the discrete Hankel transform (DHT) of the CLEAN profile. Relative to the frank fit, the DHT of the CLEAN profile is low beyond <span class="math notranslate nohighlight">\(\approx 1\times 10^6 \lambda\)</span>, primarily because of beam convolution. This is another indication that the frank brightness profile is accurately recovering sub-beam structure.</p>
 <p><strong>c)</strong> The unconvolved frank profile swept over <span class="math notranslate nohighlight">\(2 \pi\)</span> to generate a face-on, 2D representation of the 1D profile. Note this <em>is not</em> an image generated by CLEANing the frank fitted visibilities. The colorscale is the same across (c) - (e) for comparison.</p>
 <p><strong>d)</strong> The frank profile convolved with the CLEAN beam, then swept over <span class="math notranslate nohighlight">\(2 \pi\)</span>. As expected, the 2D sweep has annular features that are less sharply defined that in (c) because convolving the frank profile effectively degrades its resolution.</p>
 <p><strong>e)</strong> The CLEAN profile swept over <span class="math notranslate nohighlight">\(2 \pi\)</span>. This is not the CLEANed observation, just a 2D representation of the CLEAN profile for comparison with (c) - (d).</p>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
@@ -705,7 +769,7 @@ al. 2018</a>).</p>
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Mar 15 at 16:15:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Sep 09 at 03:21:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

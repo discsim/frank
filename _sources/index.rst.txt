@@ -26,7 +26,7 @@ interpreting its results, and hosts the code's API.
     Installation <install>
     Quickstart <quickstart>
     Tutorials <tutorials>
-    Papers using frank <https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&sort=date%20desc%2C%20bibcode%20desc&p_=0>
+    Papers citing frank <https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&sort=date%20desc%2C%20bibcode%20desc&p_=0>
 
 .. toctree::
    :maxdepth: 1

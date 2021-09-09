@@ -6,7 +6,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Generating a UVTable from an MSTable for input to frank &mdash; frank 1.1.0 documentation</title>
@@ -15,6 +16,9 @@
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
   
@@ -32,6 +36,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
@@ -95,26 +100,22 @@
               
             
             
-              <p class="caption"><span class="caption-text">Using the code</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Using the code</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="../tutorials.html"> Tutorials</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../tutorials.html#text-and-jupyter-notebook-tutorials">Text and Jupyter Notebook tutorials</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l3"><a class="reference internal" href="prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
-<li class="toctree-l3"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials.html#video-tutorials">Video tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers citing frank</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers using frank</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Under the hood</span></p>
+<p class="caption" role="heading"><span class="caption-text">Under the hood</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../py_API.html"> API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html"> Index</a></li>
@@ -212,7 +213,7 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="generating-a-uvtable-from-an-mstable-for-input-to-frank">
+<section id="generating-a-uvtable-from-an-mstable-for-input-to-frank">
 <h1>Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code><a class="headerlink" href="#generating-a-uvtable-from-an-mstable-for-input-to-frank" title="Permalink to this headline">¶</a></h1>
 <p>As noted in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>, frank takes as input a UVTable with
 columns of <code class="code docutils literal notranslate"><span class="pre">u</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160; <span class="pre">v</span> <span class="pre">[\lambda]</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">Re(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Im(V)</span> <span class="pre">[Jy]</span>&#160;&#160;&#160;&#160; <span class="pre">Weight</span> <span class="pre">[Jy^-2]</span></code>.</p>
@@ -223,11 +224,11 @@ You can install it inside CASA with <code class="code docutils literal notransla
 Then use it to extract a UVTable by following <a class="reference external" href="https://github.com/mtazzari/uvplot#2-exporting-visibilities-from-ms-table-to-uvtable-ascii">these simple steps</a>.</p>
 <p>As noted there, we recommend performing a CASA <code class="code docutils literal notranslate"><span class="pre">split</span></code> command with <code class="code docutils literal notranslate"><span class="pre">keepflags=False</span></code> before exporting the UVTable,
 as this ensures that only valid visibilities are exported.</p>
-<p>In tests we’ve found that channel averaging an MSTable tends to have a weak effect on the frank fit,
-though it’s worth performing a fit on your dataset without any averaging to verify.
-The increased density of (u, v) points under no channel averaging may in some cases improve the data’s SNR
-at long baselines enough to increase the maximum baseline out to which frank fits.</p>
-</div>
+<p>It’s worth performing a fit for a given dataset with a UVTable extracted from an MSTable in which no
+or minimal time averaging and channel averaging have been applied.
+In some cases the increased density of (u, v) points can improve the data’s SNR
+at long baselines enough that frank fits the visibilities in this region more closely.</p>
+</section>
 
 
            </div>
@@ -245,7 +246,7 @@ at long baselines enough to increase the maximum baseline out to which frank fit
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Mar 15 at 16:15:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Sep 09 at 03:21:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

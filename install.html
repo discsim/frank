@@ -6,7 +6,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Installation &mdash; frank 1.1.0 documentation</title>
@@ -15,6 +16,9 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
@@ -32,6 +36,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -95,7 +100,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Using the code</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Using the code</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#with-pip">With pip</a></li>
@@ -107,9 +112,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials.html"> Tutorials</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers using frank</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers citing frank</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Under the hood</span></p>
+<p class="caption" role="heading"><span class="caption-text">Under the hood</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="py_API.html"> API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html"> Index</a></li>
@@ -205,18 +210,18 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="installation">
+<section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">frank</span></code> requires Python 3 and is tested for Python 3.7. Usage under Python 2.x is not supported.</p>
-<div class="section" id="with-pip">
+<section id="with-pip">
 <h2>With pip<a class="headerlink" href="#with-pip" title="Permalink to this headline">¶</a></h2>
 <p>Install the latest stable version of Frankenstein (<code class="docutils literal notranslate"><span class="pre">frank</span></code>) with <a class="reference external" href="https://pypi.org/project/frank/">pip</a>,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install frank
 </pre></div>
 </div>
 <p>Then play <a class="reference external" href="https://drive.google.com/file/d/1SEz8YqB2rRS1uMguXxI1RI7Jk27yQfLO/view?usp=sharing">this</a> loud.</p>
-</div>
-<div class="section" id="from-source">
+</section>
+<section id="from-source">
 <h2>From source<a class="headerlink" href="#from-source" title="Permalink to this headline">¶</a></h2>
 <p>Join us in our efforts to <span class="strike">revive the dead</span> do very moral science.
 Clone the source repository from <a class="reference external" href="https://github.com/discsim/frank">GitHub</a>,</p>
@@ -224,16 +229,16 @@ Clone the source repository from <a class="reference external" href="https://git
 </pre></div>
 </div>
 <p>(this is the same as <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/discsim/frank.git</span> <span class="pre">&amp;&amp;</span> <span class="pre">cd</span> <span class="pre">frank</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span></code>).</p>
-<div class="section" id="test-the-install">
+<section id="test-the-install">
 <h3>Test the install<a class="headerlink" href="#test-the-install" title="Permalink to this headline">¶</a></h3>
 <p>If you cloned the source repo and you have <a class="reference external" href="https://docs.pytest.org/en/latest/">py.test</a>,
 run it from the code’s root directory (it takes &lt;1 min),</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>py.test frank/tests.py
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
            </div>
@@ -251,7 +256,7 @@ run it from the code’s root directory (it takes &lt;1 min),</p>
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Mar 15 at 16:15:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Sep 09 at 03:21:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>

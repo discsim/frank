@@ -6,7 +6,8 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>Tutorials &mdash; frank 1.1.0 documentation</title>
@@ -15,6 +16,9 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
   
@@ -32,6 +36,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -95,26 +100,22 @@
               
             
             
-              <p class="caption"><span class="caption-text">Using the code</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Using the code</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="install.html"> Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html"> Quickstart</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> Tutorials</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#text-and-jupyter-notebook-tutorials">Text and Jupyter Notebook tutorials</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/fit_convergence.html">Testing a fit’s convergence</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/fitting_mock_data.html">Fitting mock data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="tutorials/model_limitations.html">Examining the model’s limitations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fitting_procedure.html">What’s fit.py doing? The fitting procedure in detail</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/prior_sensitivity.html">Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fit_convergence.html">Testing a fit’s convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/fitting_mock_data.html">Fitting mock data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#video-tutorials">Video tutorials</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers citing frank</a></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&amp;sort=date%20desc%2C%20bibcode%20desc&amp;p_=0"> Papers using frank</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Under the hood</span></p>
+<p class="caption" role="heading"><span class="caption-text">Under the hood</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="py_API.html"> API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html"> Index</a></li>
@@ -210,12 +211,10 @@
     text-align: unset;
 }
 </style>
-<div class="section" id="tutorials">
+<section id="tutorials">
 <h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
 <p>These tutorials demonstrate in more depth than the <a class="reference internal" href="quickstart.html"><span class="doc">Quickstart</span></a> how to
 use <code class="docutils literal notranslate"><span class="pre">frank</span></code> and interpret the results.</p>
-<div class="section" id="text-and-jupyter-notebook-tutorials">
-<h2>Text and Jupyter Notebook tutorials<a class="headerlink" href="#text-and-jupyter-notebook-tutorials" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/mstable_to_uvtable.html">Generating a UVTable from an MSTable for input to <code class="docutils literal notranslate"><span class="pre">frank</span></code></a></li>
@@ -226,14 +225,7 @@ use <code class="docutils literal notranslate"><span class="pre">frank</span></c
 <li class="toctree-l1"><a class="reference internal" href="tutorials/model_limitations.html">Examining the model’s limitations</a></li>
 </ul>
 </div>
-</div>
-<div class="section" id="video-tutorials">
-<h2>Video tutorials<a class="headerlink" href="#video-tutorials" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="https://www.youtube.com/watch?v=-2YpJycsGJ8&amp;ab_channel=JeffJennings">Demo: Installing the code and running a fit from the terminal</a></p></li>
-</ul>
-</div>
-</div>
+</section>
 
 
            </div>
@@ -251,7 +243,7 @@ use <code class="docutils literal notranslate"><span class="pre">frank</span></c
     <p>
         &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
       <span class="lastupdated">
-        Last updated on 2021 Mar 15 at 16:15:23 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+        Last updated on 2021 Sep 09 at 03:21:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span>
 
     </p>
