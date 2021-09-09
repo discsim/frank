@@ -125,6 +125,45 @@ def deproject(u, v, inc, PA, inverse=False):
     return up, vp
 
 
+def rescale_total_flux(V, weights, inc):
+    r"""
+    Scale the visibility amplitudes (and weights) according to the source
+    inclination.
+
+    Parameters
+    ----------
+    V : array of real, size = N, unit = Jy
+        Real component of the complex, deprojected visibilities
+    weights : array of real, size = N, unit = Jy
+        Weights on the visibilities
+    inc : float, unit = deg
+        Inclination of the disc
+
+    Returns
+    -------
+    V_scaled : array of real, size = N, unit = Jy
+        Rescaled real component of the complex visibilities
+    weights_scaled : array of real, size = N, unit = Jy
+        Rescaled weights on the visibilities
+
+    Notes
+    -----
+    This scaling accounts for the difference between the inclined (observed)
+    brightness and the assumed face-on brightness (this implicitly assumes the
+    emission is optically thick). The source's integrated (2D) flux is assumed
+    to be
+        :math:`F = \cos(i) \int_r^{r=R}{I(r) 2 \pi r dr}`.
+    """
+
+    # Ensure we're only altering the real component of the visibilities
+    V = V.real
+
+    V_scaled = V / np.cos(inc * deg_to_rad)
+    weights_scaled = weights * np.cos(inc * deg_to_rad) ** 2
+
+    return V_scaled, weights_scaled
+
+
 class SourceGeometry(object):
     """
     Base class for geometry corrections.
@@ -217,6 +256,9 @@ class SourceGeometry(object):
         """Convert uv-points from deprojected space to sky-plane"""
         return deproject(u, v, self._inc, self._PA, inverse=True)
 
+    def rescale_total_flux(self, V, weights):
+        return rescale_total_flux(V, weights, self._inc)
+
     def fit(self, u, v, V, weights):
         r"""
         Determine geometry using the provided uv-data
@@ -258,6 +300,11 @@ class SourceGeometry(object):
     def inc(self):
         """Inclination of the disc, unit = rad"""
         return self._inc
+
+    @property
+    def rescale_factor(self):
+        """Factor used to rescale the visibility amplitudes, unit = 1 / rad"""
+        return 1.0 / np.cos(self._inc * deg_to_rad)
 
 
 class FixedGeometry(SourceGeometry):
@@ -521,7 +568,6 @@ class FitGeometryFourierBessel(SourceGeometry):
     Process prior. For this reason, a small number of bins is
     recommended for fit stability.
 
-
     Parameters
     ----------
     Rmax : float, unit = arcsec
@@ -543,6 +589,7 @@ class FitGeometryFourierBessel(SourceGeometry):
     verbose : bool, default=False
         Determines whether to print the iteration progress.
     """
+
     def __init__(self, Rmax, N, inc_pa=None, phase_centre=None, guess=None,
                  verbose=False):
         self._N = N

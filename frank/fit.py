@@ -394,7 +394,8 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     weights_smooth=model['hyperparameters']['wsmooth'],
                                     tol=model['hyperparameters']['iter_tol'],
                                     max_iter=model['hyperparameters']['max_iter'],
-                                    store_iteration_diagnostics=need_iterations
+                                    store_iteration_diagnostics=need_iterations,
+                                    face_on_rescale=model['geometry']['rescale_flux']
                                     )
 
     sol = FF.fit(u, v, vis, weights)
@@ -523,7 +524,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
     axes : Matplotlib `~.axes.Axes` class
         Axes for each of the produced figures
     """
-
+    
     io.save_fit(u, v, vis, weights, sol,
                 model['input_output']['save_prefix'],
                 model['input_output']['save_solution'],

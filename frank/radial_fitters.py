@@ -364,7 +364,7 @@ class _HankelRegressor(object):
         Notes
         -----
         The visibility amplitudes are still reduced due to the projection,
-        for consistentcy with `uvplot`
+        for consistency with `uvplot`
         """
 
         if q is None:
@@ -452,12 +452,15 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
+    face_on_rescale : bool, default = True
+        Whether to correct the visibility amplitudes by a factor of
+        1 / cos(inclination); see frank.geometry.rescale_total_flux
     verbose : bool, default = False
         Whether to print notification messages
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5, verbose=True):
+                 block_size=10 ** 5, face_on_rescale=True, verbose=True):
 
         Rmax /= rad_to_arcsec
 
@@ -467,6 +470,8 @@ class FourierBesselFitter(object):
 
         self._blocking = block_data
         self._block_size = block_size
+
+        self._face_on_rescale = face_on_rescale
 
         self._verbose = verbose
 
@@ -493,11 +498,21 @@ class FourierBesselFitter(object):
         # Check consistency of the uv points with the model
         self._check_uv_range(q)
 
-        # Use only the real part of V. Also correct the total flux for the
-        # inclination. This is not done in apply_correction for consistency
-        # with `uvplot`
-        V = V.real / np.cos(self._geometry.inc * deg_to_rad)
-        weights = weights * np.cos(self._geometry.inc * deg_to_rad) ** 2
+        # Use only the real part of V
+        V = V.real
+
+        # Rescale visibility amplitudes to account for total flux
+        if self._face_on_rescale:
+            if self._verbose:
+                logging.info('    face_on_rescale=True (the default): Scaling '
+                             'the total flux to account for the source '
+                             'inclination')
+            V, weights = self._geometry.rescale_total_flux(V, weights)
+
+        else:
+            if self._verbose:
+                logging.info('    face_on_rescale=False: *Not* scaling the '
+                             'total flux to account for the source inclination')
 
         # If blocking is used, we will build up M and j chunk-by-chunk
         if self._blocking:
@@ -562,7 +577,6 @@ class FourierBesselFitter(object):
         self._build_matrices(u, v, V, weights)
 
         self._sol = _HankelRegressor(self._DHT, self._M, self._j,
-                                     geometry=self._geometry.clone(),
                                      noise_likelihood=self._H0)
 
         return self._sol
@@ -642,6 +656,9 @@ class FrankFitter(FourierBesselFitter):
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
+    face_on_rescale : bool, default = True
+        Whether to correct the visibility amplitudes by a factor of
+        1 / cos(inclination); see frank.geometry.rescale_total_flux
     verbose:
         Whether to print notification messages
 
@@ -656,10 +673,11 @@ class FrankFitter(FourierBesselFitter):
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
                  tol=1e-3, max_iter=2000, check_qbounds=True,
-                 store_iteration_diagnostics=False, verbose=True):
+                 store_iteration_diagnostics=False, face_on_rescale=True,
+                 verbose=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
-                                          block_size, verbose)
+                                          block_size, face_on_rescale, verbose)
 
         self._p0 = p_0
         self._ai = alpha

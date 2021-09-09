@@ -25,7 +25,8 @@
     "inc"              : "Inclination, unit=[deg]",
     "pa"               : "Position angle, defined east of north, unit=[deg]",
     "dra"              : "Delta (offset from 0) right ascension, defined positive for offsets toward east, unit=[arcsec]",
-    "ddec"             : "Delta declination, unit=[arcsec]"
+    "ddec"             : "Delta declination, unit=[arcsec]",
+    "rescale_flux"     : "Whether to rescale the total flux to account for the source's inclination (see frank.geometry.rescale_total_flux)"        
   },
 
   "hyperparameters" : {
