@@ -40,14 +40,18 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
     DHT : DiscreteHankelTransform
         A DHT object with N bins that defines H(p). The DHT is used to compute
         :math:`S(p)`
+    info: dict
+        Dictionary containing useful quantities for reproducing a fit
+        (such as the hyperparameters used)
     geometry: SourceGeometry object, optional
         Geometry used to correct the visibilities for the source
         inclination. If not provided, the geometry determined during the
         fit will be used.
     """
-    def __init__(self, DHT, geometry):
+    def __init__(self, DHT, info, geometry):
         self._DHT = DHT
         self._geometry = geometry
+        self._info = info
 
     def _predict(self, q, I, block_size):
         """Perform the visibility prediction"""
@@ -191,10 +195,16 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
     def size(self):
         """Number of points in reconstruction"""
         return self._DHT.size
-        
+
     @property
     def geometry(self):
+        """SourceGeometry object"""
         return self._geometry
+
+    @property
+    def info(self):
+        """Fit quantities for reference"""
+        return self._info
 
 
 class FrankGaussianFit(FrankRadialFit):
@@ -208,14 +218,17 @@ class FrankGaussianFit(FrankRadialFit):
         :math:`S(p)`
     fit : GaussianModel object
         Result of fitting with MAP power spectrum.
+    info: dict
+        Dictionary containing useful quantities for reproducing a fit
+        (such as the hyperparameters used)
     geometry: SourceGeometry object, optional
         Geometry used to correct the visibilities for the source
         inclination. If not provided, the geometry determined during the
         fit will be used.
     """
 
-    def __init__(self, DHT, fit, geometry=None):
-        FrankRadialFit.__init__(self, DHT, geometry)
+    def __init__(self, DHT, fit, info, geometry=None):
+        FrankRadialFit.__init__(self, DHT, info, geometry)
         self._fit = fit
 
     def draw(self, N):
@@ -309,14 +322,17 @@ class FrankLogNormalFit(FrankRadialFit):
         :math:`S(p)`
     fit : LogNormalMAPModel object
         Result of fitting with MAP power spectrum.
+    info: dict
+        Dictionary containing useful quantities for reproducing a fit
+        (such as the hyperparameters used)
     geometry: SourceGeometry object, optional
         Geometry used to correct the visibilities for the source
         inclination. If not provided, the geometry determined during the
         fit will be used.
     """
 
-    def __init__(self, DHT, fit, geometry=None):
-        FrankRadialFit.__init__(self, DHT, geometry)
+    def __init__(self, DHT, fit, info, geometry=None):
+        FrankRadialFit.__init__(self, DHT, info, geometry)
         self._fit = fit
 
     def log_likelihood(self, I=None):
@@ -408,13 +424,17 @@ class FourierBesselFitter(object):
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
 
+        self._info  = {'Rmax' : self._DHT.Rmax * rad_to_arcsec,
+                       'N' : self._DHT.size
+                       }
+
         self._blocking = block_data
         self._block_size = block_size
 
         self._verbose = verbose
 
     def _check_uv_range(self, uv):
-        """Don't check the bounds for FourierBesselFitterr"""
+        """Don't check the bounds for FourierBesselFitter"""
         pass
 
     def _build_matrices(self, u, v, V, weights):
@@ -504,11 +524,11 @@ class FourierBesselFitter(object):
 
         self._build_matrices(u, v, V, weights)
 
-        fit = GaussianModel(self._DHT, self._M, self._j,noise_likelihood=self._H0)
+        fit = GaussianModel(self._DHT, self._M, self._j,
+                            noise_likelihood=self._H0)
 
-        self._sol = FrankGaussianFit(self._DHT, fit,
+        self._sol = FrankGaussianFit(self._DHT, fit, self._info,
                                      geometry=self._geometry.clone())
-                                     
 
         return self._sol
 
@@ -635,6 +655,9 @@ class FrankFitter(FourierBesselFitter):
         self._check_qbounds = check_qbounds
         self._store_iteration_diagnostics = store_iteration_diagnostics
 
+        self._info = {'alpha' : alpha, 'wsmooth' : weights_smooth, 'p0' : p_0}
+
+
     def _check_uv_range(self, uv):
         """Check that the uv domain is properly covered"""
 
@@ -697,14 +720,14 @@ class FrankFitter(FourierBesselFitter):
 
         # Project the data to the signal space
         self._build_matrices(u, v, V, weights)
-     
+
         # Inital guess for power spectrum
         pI = np.ones([self.size])
 
         # Do an extra iteration based on a power-law guess
         fit = self._perform_fit(pI, fit_method='Normal')
-   
-        pI = np.max(self._DHT.transform( fit.MAP)**2)
+
+        pI = np.max(self._DHT.transform(fit.MAP)**2)
         pI *= (self.q / self.q[0])**-2
 
         fit = self._perform_fit(pI, fit_method='Normal')
@@ -757,10 +780,10 @@ class FrankFitter(FourierBesselFitter):
 
         # Save the best fit
         if self._method == "Normal":
-            self._sol = FrankGaussianFit(self._DHT, fit,
+            self._sol = FrankGaussianFit(self._DHT, fit, self._info,
                                          geometry=self._geometry.clone())
         else:
-            self._sol = FrankLogNormalFit(self._DHT, fit,
+            self._sol = FrankLogNormalFit(self._DHT, fit, self._info,
                                           geometry=self._geometry.clone())
 
         # Compute the power spectrum covariance at the maximum
