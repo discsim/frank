@@ -218,7 +218,7 @@ class FrankGaussianFit(FrankRadialFit):
         :math:`S(p)`
     fit : GaussianModel object
         Result of fitting with MAP power spectrum.
-    info: dict
+    info: dict, optional
         Dictionary containing useful quantities for reproducing a fit
         (such as the hyperparameters used)
     geometry: SourceGeometry object, optional
@@ -227,7 +227,7 @@ class FrankGaussianFit(FrankRadialFit):
         fit will be used.
     """
 
-    def __init__(self, DHT, fit, info, geometry=None):
+    def __init__(self, DHT, fit, info={}, geometry=None):
         FrankRadialFit.__init__(self, DHT, info, geometry)
         self._fit = fit
 
@@ -322,7 +322,7 @@ class FrankLogNormalFit(FrankRadialFit):
         :math:`S(p)`
     fit : LogNormalMAPModel object
         Result of fitting with MAP power spectrum.
-    info: dict
+    info: dict, optional
         Dictionary containing useful quantities for reproducing a fit
         (such as the hyperparameters used)
     geometry: SourceGeometry object, optional
@@ -331,7 +331,7 @@ class FrankLogNormalFit(FrankRadialFit):
         fit will be used.
     """
 
-    def __init__(self, DHT, fit, info, geometry=None):
+    def __init__(self, DHT, fit, info={}, geometry=None):
         FrankRadialFit.__init__(self, DHT, info, geometry)
         self._fit = fit
 
