@@ -530,129 +530,143 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
         Axes for each of the produced figures
     """
 
-    io.save_fit(u, v, vis, weights, sol,
-                model['input_output']['save_prefix'],
-                model['input_output']['save_solution'],
-                model['input_output']['save_profile_fit'],
-                model['input_output']['save_vis_fit'],
-                model['input_output']['save_uvtables'],
-                model['input_output']['iteration_diag'],
-                iteration_diagnostics,
-                model['input_output']['format']
-                )
+    if any([model['input_output']['save_solution'],
+            model['input_output']['save_profile_fit'],
+            model['input_output']['save_vis_fit'],
+            model['input_output']['save_uvtables']
+            ]):
+            
+        io.save_fit(u, v, vis, weights, sol,
+                    model['input_output']['save_prefix'],
+                    model['input_output']['save_solution'],
+                    model['input_output']['save_profile_fit'],
+                    model['input_output']['save_vis_fit'],
+                    model['input_output']['save_uvtables'],
+                    model['input_output']['iteration_diag'],
+                    iteration_diagnostics,
+                    model['input_output']['format']
+                    )
 
-    logging.info('  Plotting results')
 
     figs, axes = [], []
 
-    priors = {'alpha': model['hyperparameters']['alpha'],\
-              'wsmooth': model['hyperparameters']['wsmooth'],\
-              'Rmax': model['hyperparameters']['rout'],\
-              'N': model['hyperparameters']['n'],\
-              'p0': model['hyperparameters']['p0']
-              }
+    if any([model['plotting']['deprojec_plot'],
+            model['plotting']['quick_plot'],
+            model['plotting']['full_plot'],
+            model['plotting']['diag_plot'],
+            model['analysis']['compare_profile']
+            ]):
 
-    if model['plotting']['deprojec_plot']:
-        deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u=u, v=v,
-                                                         vis=vis, weights=weights,
-                                                         geom=geom,
-                                                         bin_widths=model['plotting']['bin_widths'],
-                                                         force_style=model['plotting']['force_style'],
-                                                         save_prefix=model['input_output']['save_prefix']
-                                                         )
+        logging.info('  Plotting results')
 
-        figs.append(deproj_fig)
-        axes.append(deproj_axes)
+        priors = {'alpha': model['hyperparameters']['alpha'],\
+                  'wsmooth': model['hyperparameters']['wsmooth'],\
+                  'Rmax': model['hyperparameters']['rout'],\
+                  'N': model['hyperparameters']['n'],\
+                  'p0': model['hyperparameters']['p0']
+                  }
 
-    if model['plotting']['quick_plot']:
-        quick_fig, quick_axes = make_figs.make_quick_fig(u=u, v=v, vis=vis,
-                                                         weights=weights, sol=sol,
-                                                         bin_widths=model['plotting']['bin_widths'],
-                                                         priors=priors,
-                                                         dist=model['plotting']['distance'],
-                                                         logx=model['plotting']['plot_in_logx'],
-                                                         force_style=model['plotting']['force_style'],
-                                                         save_prefix=model['input_output']['save_prefix'],
-                                                         stretch=model['plotting']['stretch'],
-                                                         gamma=model['plotting']['gamma'],
-                                                         asinh_a=model['plotting']['asinh_a']
-                                                         )
+        if model['plotting']['deprojec_plot']:
+            deproj_fig, deproj_axes = make_figs.make_deprojection_fig(u=u, v=v,
+                                                             vis=vis, weights=weights,
+                                                             geom=geom,
+                                                             bin_widths=model['plotting']['bin_widths'],
+                                                             force_style=model['plotting']['force_style'],
+                                                             save_prefix=model['input_output']['save_prefix']
+                                                             )
 
-        figs.append(quick_fig)
-        axes.append(quick_axes)
+            figs.append(deproj_fig)
+            axes.append(deproj_axes)
 
-    if model['plotting']['full_plot']:
-        full_fig, full_axes = make_figs.make_full_fig(u=u, v=v, vis=vis,
-                                                      weights=weights, sol=sol,
-                                                      bin_widths=model['plotting']['bin_widths'],
-                                                      priors=priors,
-                                                      dist=model['plotting']['distance'],
-                                                      logx=model['plotting']['plot_in_logx'],
-                                                      force_style=model['plotting']['force_style'],
-                                                      save_prefix=model['input_output']['save_prefix'],
-                                                      norm_residuals=model['plotting']['norm_residuals'],
-                                                      stretch=model['plotting']['stretch'],
-                                                      gamma=model['plotting']['gamma'],
-                                                      asinh_a=model['plotting']['asinh_a']
-                                                      )
+        if model['plotting']['quick_plot']:
+            quick_fig, quick_axes = make_figs.make_quick_fig(u=u, v=v, vis=vis,
+                                                             weights=weights, sol=sol,
+                                                             bin_widths=model['plotting']['bin_widths'],
+                                                             priors=priors,
+                                                             dist=model['plotting']['distance'],
+                                                             logx=model['plotting']['plot_in_logx'],
+                                                             force_style=model['plotting']['force_style'],
+                                                             save_prefix=model['input_output']['save_prefix'],
+                                                             stretch=model['plotting']['stretch'],
+                                                             gamma=model['plotting']['gamma'],
+                                                             asinh_a=model['plotting']['asinh_a']
+                                                             )
 
-        figs.append(full_fig)
-        axes.append(full_axes)
+            figs.append(quick_fig)
+            axes.append(quick_axes)
 
-    if model['plotting']['diag_plot']:
-        diag_fig, diag_axes, _ = make_figs.make_diag_fig(r=sol.r, q=sol.q,
-                                                         iteration_diagnostics=iteration_diagnostics,
-                                                         iter_plot_range=model['plotting']['iter_plot_range'],
-                                                         force_style=model['plotting']['force_style'],
-                                                         save_prefix=model['input_output']['save_prefix']
-                                                         )
+        if model['plotting']['full_plot']:
+            full_fig, full_axes = make_figs.make_full_fig(u=u, v=v, vis=vis,
+                                                          weights=weights, sol=sol,
+                                                          bin_widths=model['plotting']['bin_widths'],
+                                                          priors=priors,
+                                                          dist=model['plotting']['distance'],
+                                                          logx=model['plotting']['plot_in_logx'],
+                                                          force_style=model['plotting']['force_style'],
+                                                          save_prefix=model['input_output']['save_prefix'],
+                                                          norm_residuals=model['plotting']['norm_residuals'],
+                                                          stretch=model['plotting']['stretch'],
+                                                          gamma=model['plotting']['gamma'],
+                                                          asinh_a=model['plotting']['asinh_a']
+                                                          )
 
-        figs.append(diag_fig)
-        axes.append(diag_axes)
+            figs.append(full_fig)
+            axes.append(full_axes)
 
-    if model['analysis']['compare_profile']:
-        dat = np.genfromtxt(model['analysis']['compare_profile']).T
+        if model['plotting']['diag_plot']:
+            diag_fig, diag_axes, _ = make_figs.make_diag_fig(r=sol.r, q=sol.q,
+                                                             iteration_diagnostics=iteration_diagnostics,
+                                                             iter_plot_range=model['plotting']['iter_plot_range'],
+                                                             force_style=model['plotting']['force_style'],
+                                                             save_prefix=model['input_output']['save_prefix']
+                                                             )
 
-        if len(dat) not in [2,3,4]:
-            raise ValueError("The file in your .json's `analysis` --> "
-                             "`compare_profile` must have 2, 3 or 4 "
-                             "columns: r [arcsec], I [Jy / sr], "
-                             "negative uncertainty [Jy / sr] (optional), "
-                             "positive uncertainty [Jy / sr] (optional, "
-                             "assumed equal to negative uncertainty if not "
-                             "provided).")
+            figs.append(diag_fig)
+            axes.append(diag_axes)
 
-        r_clean, I_clean = dat[0], dat[1]
-        if len(dat) == 3:
-            lo_err_clean, hi_err_clean = dat[2], dat[2]
-        elif len(dat) == 4:
-            lo_err_clean, hi_err_clean = dat[2], dat[3]
-        else:
-            lo_err_clean, hi_err_clean = None, None
-        clean_profile = {'r': r_clean, 'I': I_clean, 'lo_err': lo_err_clean,
-                         'hi_err': hi_err_clean}
+        if model['analysis']['compare_profile']:
+            dat = np.genfromtxt(model['analysis']['compare_profile']).T
 
-        mean_convolved = None
-        if model['analysis']['clean_beam']['bmaj'] is not None:
-            mean_convolved = utilities.convolve_profile(sol.r, sol.I,
-                                                        geom.inc, geom.PA,
-                                                        model['analysis']['clean_beam'])
+            if len(dat) not in [2,3,4]:
+                raise ValueError("The file in your .json's `analysis` --> "
+                                 "`compare_profile` must have 2, 3 or 4 "
+                                 "columns: r [arcsec], I [Jy / sr], "
+                                 "negative uncertainty [Jy / sr] (optional), "
+                                 "positive uncertainty [Jy / sr] (optional, "
+                                 "assumed equal to negative uncertainty if not "
+                                 "provided).")
 
-        clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u=u, v=v, vis=vis,
-                                                                    weights=weights, sol=sol,
-                                                                    clean_profile=clean_profile,
-                                                                    bin_widths=model['plotting']['bin_widths'],
-                                                                    stretch=model['plotting']['stretch'],
-                                                                    gamma=model['plotting']['gamma'],
-                                                                    asinh_a=model['plotting']['asinh_a'],
-                                                                    mean_convolved=mean_convolved,
-                                                                    dist=model['plotting']['distance'],
-                                                                    force_style=model['plotting']['force_style'],
-                                                                    save_prefix=model['input_output']['save_prefix']
-                                                                    )
+            r_clean, I_clean = dat[0], dat[1]
+            if len(dat) == 3:
+                lo_err_clean, hi_err_clean = dat[2], dat[2]
+            elif len(dat) == 4:
+                lo_err_clean, hi_err_clean = dat[2], dat[3]
+            else:
+                lo_err_clean, hi_err_clean = None, None
+            clean_profile = {'r': r_clean, 'I': I_clean, 'lo_err': lo_err_clean,
+                             'hi_err': hi_err_clean}
 
-        figs.append(clean_fig)
-        axes.append(clean_axes)
+            mean_convolved = None
+            if model['analysis']['clean_beam']['bmaj'] is not None:
+                mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
+                                                            geom.inc, geom.PA,
+                                                            model['analysis']['clean_beam'])
+
+            clean_fig, clean_axes = make_figs.make_clean_comparison_fig(u=u, v=v, vis=vis,
+                                                                        weights=weights, sol=sol,
+                                                                        clean_profile=clean_profile,
+                                                                        bin_widths=model['plotting']['bin_widths'],
+                                                                        stretch=model['plotting']['stretch'],
+                                                                        gamma=model['plotting']['gamma'],
+                                                                        asinh_a=model['plotting']['asinh_a'],
+                                                                        mean_convolved=mean_convolved,
+                                                                        dist=model['plotting']['distance'],
+                                                                        force_style=model['plotting']['force_style'],
+                                                                        save_prefix=model['input_output']['save_prefix']
+                                                                        )
+
+            figs.append(clean_fig)
+            axes.append(clean_axes)
 
     return figs, axes, model
 
