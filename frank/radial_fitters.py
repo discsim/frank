@@ -452,7 +452,7 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
-    face_on_rescale : bool, default = True
+    assume_optically_thick : bool, default = True
         Whether to correct the visibility amplitudes by a factor of
         1 / cos(inclination); see frank.geometry.rescale_total_flux
     verbose : bool, default = False
@@ -460,7 +460,7 @@ class FourierBesselFitter(object):
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5, face_on_rescale=True, verbose=True):
+                 block_size=10 ** 5, assume_optically_thick=True, verbose=True):
 
         Rmax /= rad_to_arcsec
 
@@ -471,7 +471,7 @@ class FourierBesselFitter(object):
         self._blocking = block_data
         self._block_size = block_size
 
-        self._face_on_rescale = face_on_rescale
+        self._assume_optically_thick = assume_optically_thick
 
         self._verbose = verbose
 
@@ -502,16 +502,16 @@ class FourierBesselFitter(object):
         V = V.real
 
         # Rescale visibility amplitudes to account for total flux
-        if self._face_on_rescale:
+        if self._assume_optically_thick:
             if self._verbose:
-                logging.info('    face_on_rescale=True (the default): Scaling '
-                             'the total flux to account for the source '
+                logging.info('    assume_optically_thick=True (the default): '
+                             ' Scaling the total flux to account for the source '
                              'inclination')
             V, weights = self._geometry.rescale_total_flux(V, weights)
 
         else:
             if self._verbose:
-                logging.info('    face_on_rescale=False: *Not* scaling the '
+                logging.info('    assume_optically_thick=False: *Not* scaling the '
                              'total flux to account for the source inclination')
 
         # If blocking is used, we will build up M and j chunk-by-chunk
@@ -656,7 +656,7 @@ class FrankFitter(FourierBesselFitter):
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
-    face_on_rescale : bool, default = True
+    assume_optically_thick : bool, default = True
         Whether to correct the visibility amplitudes by a factor of
         1 / cos(inclination); see frank.geometry.rescale_total_flux
     verbose:
@@ -673,11 +673,11 @@ class FrankFitter(FourierBesselFitter):
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
                  tol=1e-3, max_iter=2000, check_qbounds=True,
-                 store_iteration_diagnostics=False, face_on_rescale=True,
+                 store_iteration_diagnostics=False, assume_optically_thick=True,
                  verbose=True):
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
-                                          block_size, face_on_rescale, verbose)
+                                          block_size, assume_optically_thick, verbose)
 
         self._p0 = p_0
         self._ai = alpha

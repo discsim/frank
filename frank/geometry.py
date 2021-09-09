@@ -149,10 +149,12 @@ def rescale_total_flux(V, weights, inc):
     Notes
     -----
     This scaling accounts for the difference between the inclined (observed)
-    brightness and the assumed face-on brightness (this implicitly assumes the
-    emission is optically thick). The source's integrated (2D) flux is assumed
+    brightness and the assumed face-on brightness, assuming the
+    emission is optically thick. The source's integrated (2D) flux is assumed
     to be
         :math:`F = \cos(i) \int_r^{r=R}{I(r) 2 \pi r dr}`.
+    No rescaling would be appropriate in the optically thin limit (e.g., for
+    a debris disc).
     """
 
     # Ensure we're only altering the real component of the visibilities
