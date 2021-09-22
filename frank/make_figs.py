@@ -564,7 +564,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         ax7.set_yscale('log')
         ax8.set_yscale('log')
 
-        ax7.set_yticks([1e-15, 1e-10, 1e-5, 1])
         ax8.set_yticks([1, 10, 1e2, 1e3])
 
         ax9.set_yscale('log')
