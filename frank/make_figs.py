@@ -39,7 +39,6 @@ from frank.plot import (
 
 # Suppress some benign warnings
 import warnings
-warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
 warnings.filterwarnings('ignore', '.*handles with labels found.*')
 
 
@@ -167,10 +166,9 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     ax0.legend(loc=0)
     ax1.legend(loc=0)
 
-    plt.tight_layout()
-
     if save_prefix:
-        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=300)
+        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=300,
+                    bbox_inches='tight')
         plt.close()
 
     return fig, axes
@@ -343,10 +341,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.setp(ax2.get_xticklabels(), visible=False)
 
-        plt.tight_layout()
-
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=300)
+            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
     return fig, axes
@@ -685,14 +682,12 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
                                 iter_plot_range_end, ax1,
                                 cmap=plt.cm.cividis)  # pylint: disable=no-member
 
-        plot_iterations(q, pwr_spec_iter, iter_plot_range, ax2,
-                        bbox_x=0.05, bbox_y=0.175)
+        plot_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
         # Plot the difference in the power spectrum between the last 100 iterations
         plot_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
                                  iter_plot_range_end, ax3,
-                                 cmap=plt.cm.cividis,  # pylint: disable=no-member
-                                 bbox_x=0.45, bbox_y=0.175)
+                                 cmap=plt.cm.cividis)  # pylint: disable=no-member
 
         plot_convergence_criterion(profile_iter_toplot, num_iter, ax4, c='k')
 
@@ -720,10 +715,9 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.setp(ax2.get_xticklabels(), visible=False)
 
-        plt.tight_layout()
-
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=300)
+            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
     return fig, axes, iter_plot_range
@@ -1185,10 +1179,9 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         ax2.set_ylim(bottom=1e-4)
         ax3.set_ylim(bottom=1e-4)
 
-        plt.tight_layout()
-
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=300)
+            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
     return fig, axes
