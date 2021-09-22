@@ -157,7 +157,7 @@ def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
         ax.legend(loc='best')
 
 
-def plot_vis_hist(binned_vis, ax, **kwargs):
+def plot_vis_hist(binned_vis, ax, rescale=None, **kwargs):
     r"""
     Plot a histogram of visibilities using a precomputed binning
 
@@ -167,10 +167,17 @@ def plot_vis_hist(binned_vis, ax, **kwargs):
         Pre-binned visibilities (see utilities.UVDataBinner)
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
+    rescale : float, default=None
+        Constant by which to rescale x-values
     """
 
     edges = np.concatenate([binned_vis.bin_edges[0].data,
                             binned_vis.bin_edges[1].data[-1:]])
+
+    # alter x-axis units
+    if rescale is not None:
+        edges /= rescale
+
     counts = binned_vis.bin_counts.data
 
     ax.hist(0.5 * (edges[1:] + edges[:-1]), edges, weights=counts, alpha=.5, **kwargs)

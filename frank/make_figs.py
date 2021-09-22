@@ -329,7 +329,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
             ax2.set_xscale('log')
             ax3.set_xscale('log')
 
-        ax2.set_xlim(right=max(baselines) / 1e6 * 1.2)
+            ax2.set_xlim(right=max(baselines) / 1e6 * 1.2)
+        else:
+            ax2.set_xlim(0, max(baselines) / 1e6 * 1.2)
         xlims = ax2.get_xlim()
         ax3.set_xlim(xlims)
 
@@ -490,37 +492,37 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             rmse = (np.mean(resid**2))**.5
 
             # Plot the observed, binned visibilities (with errorbars) and the residuals
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, c=cs[i],
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax3, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax4, c=cs[i],
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax4, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax6, c=cs[i],
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_im_kl, ax6, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
+            plot_vis_quantity(binned_vis.uv / 1e6, resid, ax5, c=cs[i], marker=ms[i], ls='None',
                            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
             # Plot a histogram of the observed visibilties to examine how the
             # visibility count varies with baseline
-            plot_vis_hist(binned_vis, ax8, color=hist_cs[i],
+            plot_vis_hist(binned_vis, ax8, rescale=1e6, color=hist_cs[i],
                           label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
             # Plot the binned data signal-to-noise as a function of baseline
-            plot_vis_quantity(binned_vis.uv,
+            plot_vis_quantity(binned_vis.uv / 1e6,
                           binned_vis.V.real**2 / binned_vis.error.real**2,
                           ax9, color=hist_cs[i], marker=ms[i], ls='None',
                           label=r'{:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         # Plot the visibility domain frank fit in log-y
-        plot_vis_quantity(grid, vis_fit_kl, ax3, c='r', label='frank')
-        plot_vis_quantity(grid, vis_fit_kl, ax4, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax4, c='r', label='frank')
 
         # Plot the frank inferred power spectrum
-        plot_vis_quantity(sol.q, sol.power_spectrum, ax7)
+        plot_vis_quantity(sol.q / 1e6, sol.power_spectrum, ax7)
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
@@ -552,8 +554,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         if logx:
             for aa in axs:
                 aa.set_xscale('log')
-
-        ax3.set_xlim(right=max(baselines) * 1.2)
+            ax3.set_xlim(right=max(baselines) / 1e6 * 1.2)
+        else:
+            ax3.set_xlim(0, max(baselines) / 1e6 * 1.2)
         xlims = ax3.get_xlim()
         for aa in axs:
             aa.set_xlim(xlims)
@@ -575,13 +578,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             ax5.set_ylabel('Norm. residual')
         else:
             ax5.set_ylabel('Residual [mJy]')
-        ax5.set_xlabel(r'Baseline [$\lambda$]')
+        ax5.set_xlabel(r'Baseline [M$\lambda$]')
 
         ax6.set_ylabel('Im(V) [mJy]')
         ax7.set_ylabel(r'Power [Jy$^2$]')
         ax8.set_ylabel('Count')
         ax9.set_ylabel(r'SNR=$\mu_{\rm bin}^2 / \sigma_{\rm bin}^2$')
-        ax9.set_xlabel(r'Baseline [$\lambda$]')
+        ax9.set_xlabel(r'Baseline [M$\lambda$]')
 
         axs = [ax0, ax3, ax4, ax6, ax7, ax8]
         for aa in axs:
