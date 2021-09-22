@@ -32,9 +32,8 @@ from frank.plot import (
     plot_brightness_profile,
     plot_vis_quantity,
     plot_vis_hist,
-    plot_profile_iterations,
+    plot_iterations,
     plot_2dsweep,
-    plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
 
@@ -674,23 +673,24 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
         pwr_spec_iter = iteration_diagnostics['power_spectrum']
         num_iter = iteration_diagnostics['num_iterations']
 
-        plot_profile_iterations(r, profile_iter_toplot, iter_plot_range, ax0)
+        plot_iterations(r, profile_iter_toplot, iter_plot_range, ax0)
 
         # Plot the difference in the profile between the last 100 iterations
         iter_plot_range_end = [max(iter_plot_range[1] - 100, 0),
                                iter_plot_range[1] - 1]
 
-        plot_profile_iterations(r, np.diff(profile_iter_toplot, axis=0),
+        plot_iterations(r, np.diff(profile_iter_toplot, axis=0),
                                 iter_plot_range_end, ax1,
                                 cmap=plt.cm.cividis)  # pylint: disable=no-member
 
-        plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
+        plot_iterations(q, pwr_spec_iter, iter_plot_range, ax2,
+                        bbox_x=0.05, bbox_y=0.175)
 
         # Plot the difference in the power spectrum between the last 100 iterations
-        plot_pwr_spec_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
+        plot_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
                                  iter_plot_range_end, ax3,
                                  cmap=plt.cm.cividis,  # pylint: disable=no-member
-                                 bbox_x=.45)
+                                 bbox_x=0.45, bbox_y=0.175)
 
         plot_convergence_criterion(profile_iter_toplot, num_iter, ax4, c='k')
 
