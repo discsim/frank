@@ -474,7 +474,7 @@ class FourierBesselFitter(object):
         if self._assume_optically_thick:
             if self._verbose:
                 logging.info('    assume_optically_thick=True (the default): '
-                             ' Scaling the total flux to account for the source '
+                             'Scaling the total flux to account for the source '
                              'inclination')
             # Rescale visibility amplitudes to account for total flux
             V, weights = self._geometry.rescale_total_flux(V, weights)
