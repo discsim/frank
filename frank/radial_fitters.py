@@ -77,7 +77,8 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
 
         return np.concatenate(V)
 
-    def predict(self, u, v, I=None, geometry=None, block_size=10**5):
+    def predict(self, u, v, I=None, geometry=None, block_size=10**5,
+                assume_optically_thick=True):
         r"""
         Predict the visibilities in the sky-plane
 
@@ -95,6 +96,9 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
             fit will be used
         block_size : int, default = 10**5
             Maximum matrix size used in the visibility calculation
+        assume_optically_thick : bool, default = True
+            Whether to correct the visibility amplitudes for the source
+            inclination
 
         Returns
         -------
@@ -112,7 +116,7 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         q = np.hypot(u, v)
         V = self._predict(q, I, block_size)
 
-        if geometry is not None:
+        if geometry is not None and assume_optically_thick:
             V *= np.cos(geometry.inc * deg_to_rad)
 
         # Undo phase centering
@@ -121,7 +125,7 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         return V
 
     def predict_deprojected(self, q=None, I=None, geometry=None,
-                            block_size=10**5):
+                            block_size=10**5, assume_optically_thick=True):
         r"""
         Predict the visibilities in the deprojected-plane
 
@@ -139,6 +143,9 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
             fit will be used
         block_size : int, default = 10**5
             Maximum matrix size used in the visibility calculation
+        assume_optically_thick : bool, default = True
+            Whether to correct the visibility amplitudes for the source
+            inclination
 
         Returns
         -------
@@ -151,14 +158,14 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         Notes
         -----
         The visibility amplitudes are still reduced due to the projection,
-        for consistentcy with `uvplot`
+        for consistency with `uvplot`
         """
         if geometry is None:
             geometry = self._geometry
 
         V = self._predict(q, I, block_size)
 
-        if geometry is not None:
+        if geometry is not None and assume_optically_thick:
             V *= np.cos(geometry.inc * deg_to_rad)
 
         return V
@@ -411,12 +418,15 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
+    assume_optically_thick : bool, default = True
+        Whether to correct the visibility amplitudes by a factor of
+        1 / cos(inclination); see frank.geometry.rescale_total_flux
     verbose : bool, default = False
         Whether to print notification messages
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5, verbose=True):
+                 block_size=10 ** 5, assume_optically_thick=True, verbose=True):
 
         Rmax /= rad_to_arcsec
 
@@ -430,6 +440,8 @@ class FourierBesselFitter(object):
 
         self._blocking = block_data
         self._block_size = block_size
+
+        self._assume_optically_thick = assume_optically_thick
 
         self._verbose = verbose
 
@@ -456,11 +468,21 @@ class FourierBesselFitter(object):
         # Check consistency of the uv points with the model
         self._check_uv_range(q)
 
-        # Use only the real part of V. Also correct the total flux for the
-        # inclination. This is not done in apply_correction for consistency
-        # with `uvplot`
-        V = V.real / np.cos(self._geometry.inc * deg_to_rad)
-        weights = weights * np.cos(self._geometry.inc * deg_to_rad) ** 2
+        # Use only the real part of V
+        V = V.real
+
+        if self._assume_optically_thick:
+            if self._verbose:
+                logging.info('    assume_optically_thick=True (the default): '
+                             ' Scaling the total flux to account for the source '
+                             'inclination')
+            # Rescale visibility amplitudes to account for total flux
+            V, weights = self._geometry.rescale_total_flux(V, weights)
+
+        else:
+            if self._verbose:
+                logging.info('    assume_optically_thick=False: *Not* scaling the '
+                             'total flux to account for the source inclination')
 
         # If blocking is used, we will build up M and j chunk-by-chunk
         if self._blocking:
@@ -614,6 +636,9 @@ class FrankFitter(FourierBesselFitter):
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
+    assume_optically_thick : bool, default = True
+        Whether to correct the visibility amplitudes by a factor of
+        1 / cos(inclination); see frank.geometry.rescale_total_flux
     verbose:
         Whether to print notification messages
 
@@ -628,7 +653,8 @@ class FrankFitter(FourierBesselFitter):
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
                  tol=1e-3, method='Normal', I_scale=1e5, max_iter=2000, check_qbounds=True,
-                 store_iteration_diagnostics=False, verbose=True):
+                 store_iteration_diagnostics=False, assume_optically_thick=True,
+                 verbose=True):
 
         if method not in {'Normal', 'LogNormal'}:
             raise ValueError('FrankFitter supports following mehods:\n\t'
@@ -636,7 +662,8 @@ class FrankFitter(FourierBesselFitter):
         self._method = method
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
-                                          block_size, verbose)
+                                          block_size, assume_optically_thick,
+                                          verbose)
 
         if p_0 is None:
             if method == 'Normal':
