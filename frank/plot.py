@@ -116,7 +116,8 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
 
         ax.axhline(0, c='c', ls='--', zorder=10)
 
-        ax.legend(loc='best')
+        if 'label' in kwargs:
+            ax.legend(loc='best')
 
 
 def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
@@ -152,7 +153,8 @@ def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
 
     ax.axhline(0, c='c', ls='--', zorder=10)
 
-    ax.legend(loc='best')
+    if 'label' in kwargs:
+        ax.legend(loc='best')
 
 
 def plot_vis_hist(binned_vis, ax, **kwargs):
@@ -173,7 +175,8 @@ def plot_vis_hist(binned_vis, ax, **kwargs):
 
     ax.hist(0.5 * (edges[1:] + edges[:-1]), edges, weights=counts, alpha=.5, **kwargs)
 
-    ax.legend(loc='best')
+    if 'label' in kwargs:
+        ax.legend(loc='best')
 
 
 def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
