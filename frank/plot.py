@@ -269,7 +269,7 @@ def plot_iterations(x, iters, n_iter, ax,
     bbox_x, bbox_y : float, default = -0.02 and -0.1
         x- and y-value where the colorbar is placed
     """
-    if n_iter[0] >= n_iter[1] or n_iter[1] > len(iterations):
+    if n_iter[0] >= n_iter[1] or n_iter[1] > len(iters):
         raise ValueError("Require: n_iter[0] < n_iter[1] and"
                          " n_iter[1] <= len(iters)")
 
