@@ -3,6 +3,39 @@
 Changelog
 +++++++++
 
+v.1.2.0
++++++++
+*Introduction of log-normal fits, large amount of code refactoring to support both 'Gaussian' and 'LogNormal' methods*
+
+- default_parameters.json, parameter_descriptions.json:
+    - Adds parameters: 'rescale_flux', 'method'
+- filter.py:
+    - New module that now hosts the routine for optimizing for power spectrum priors, 'CriticalFilter'
+- fit.py:
+    - Adds ability to run either a standard or log-normal fit
+- geometry.py:
+    - Adds routine to rescale the total flux according to the source geometry, 'rescale_total_flux'
+    - Adds 'rescale_factor' property to 'SourceGeometry'
+- minimizer.py:
+    - New module that hosts routines for solving non-linear minimization problems: 'BaseLineSearch', 'LineSearch', 'MinimizeNewton'
+- radial_fitters.py:
+    - Code refactoring:
+        * Removes '_HankelRegressor' class
+        * Adds 'FrankGaussianFit' and 'FrankLogNormalFit' classes
+        * Adds 'FrankRadialFit' class
+        * Moves some core functionalities to 'frank.filter' and 'frank.statistical_models'
+    - Adds 'MAP', 'I', 'info' properties, and 'assume_optically_thick' parameter, to 'FrankRadialFit'
+- statistical_models.py:
+   - New module that now hosts 'GaussianModel' class (containing much of the functionality of the now deprecated '_HankelRegressor'), and adds analogous 'LogNormalMAPModel' class
+- tests.py:
+    - Adds test for a log-normal fit
+- Docs:
+    - Adds tutorial for log-normal fits
+    - Updates API
+- Miscellaneous:
+    - Minor bug and typo fixes
+
+
 v.1.1.0
 +++++++
 
