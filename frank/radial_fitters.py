@@ -320,7 +320,7 @@ class _HankelRegressor(object):
             geometry = self._geometry
 
         if geometry is not None:
-            u, v = self._geometry.deproject(u, v)
+            u, v = geometry.deproject(u, v)
 
         q = np.hypot(u, v)
         V = self._predict(q, I, block_size)
