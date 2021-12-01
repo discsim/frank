@@ -120,7 +120,8 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
             V *= np.cos(geometry.inc * deg_to_rad)
 
         # Undo phase centering
-        _, _, V = geometry.undo_correction(u, v, V)
+        if geometry is not None:
+            _, _, V = geometry.undo_correction(u, v, V)
 
         return V
 
