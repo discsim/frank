@@ -129,6 +129,7 @@ def rescale_total_flux(V, weights, inc):
     r"""
     Scale the visibility amplitudes (and weights) according to the source
     inclination.
+
     Parameters
     ----------
     V : array of real, size = N, unit = Jy
@@ -137,12 +138,14 @@ def rescale_total_flux(V, weights, inc):
         Weights on the visibilities
     inc : float, unit = deg
         Inclination of the disc
+    
     Returns
     -------
     V_scaled : array of real, size = N, unit = Jy
         Rescaled real component of the complex visibilities
     weights_scaled : array of real, size = N, unit = Jy
         Rescaled weights on the visibilities
+    
     Notes
     -----
     This scaling accounts for the difference between the inclined (observed)
