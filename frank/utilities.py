@@ -404,7 +404,8 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
+def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
+                     verbose=True):
     r"""
     Estimate the weights using the variance of the binned visibilities.
 
@@ -435,6 +436,9 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
         If True all of the weights will be set to the median of the variance
         estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
+    verbose : bool, default = True
+        If true, the logger will record calls to this function, along with
+        whether the median estimate was used.
 
     Returns
     -------
@@ -458,7 +462,8 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
         second and third calls are equivalent to the first with u=0.
     """
 
-    logging.info('  Estimating visibility weights')
+    if verbose:
+        logging.info('  Estimating visibility weights')
 
     if V is None:
         if v is not None:
@@ -489,11 +494,14 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
         var = uvBin.error.real**2 * uvBin.bin_counts
 
     if use_median:
-        logging.info('    Setting all weights as median binned visibility variance')
+        if verbose:
+            logging.info('    Setting all weights as median binned visibility '
+                         'variance')
         return np.full(len(u), 1/np.ma.median(var[uvBin.bin_counts > 1]))
     else:
-        logging.info('    Setting weights according to baseline-dependent binned'
-                     ' visibility variance')
+        if verbose:
+            logging.info('    Setting weights according to baseline-dependent '
+                         'binned visibility variance')
         # For bins with 1 uv point, use the average of the adjacent bins
         no_var = np.argwhere(uvBin.bin_counts == 1).reshape(-1)
         if len(no_var) > 0:
