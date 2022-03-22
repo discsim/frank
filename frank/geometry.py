@@ -358,17 +358,15 @@ class SourceGeometry(object):
         """Inclination of the disc, unit = rad"""
         return self._inc
 
-<<<<<<< HEAD
     @property
     def rescale_factor(self):
         """Factor used to rescale the visibility amplitudes, unit = 1 / rad"""
         return 1.0 / np.cos(self._inc * deg_to_rad)
-=======
+        
     def __repr__(self):
         return "SourceGeometry(inc={}, PA={}, dRA={}, dDEC={})".format(
             self.inc, self.PA, self.dRA, self.dDec
         )
->>>>>>> Added debris disc fitting
 
 
 class FixedGeometry(SourceGeometry):
