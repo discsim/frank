@@ -480,6 +480,34 @@ class FourierBesselFitter(object):
 
         self._H0 = mapping['null_likelihood']
 
+    def fit_method(self):
+        """Name of the fit method"""
+        return type(self).__name__
+
+    def fit_preprocessed(self, preproc_vis):
+        r"""
+        Fit the pre-processed visibilties. The last step in the fitting 
+        procedure.
+
+        Parameters
+        ----------
+        preproc_vis : pre-processed visibilities
+            Visibilities to fit that have been processed by
+            `self.preprocess_visibilities`.
+
+        Returns
+        -------
+        sol : FrankRadialFit
+            Least-squares Fourier-Bessel series fit
+        """
+        if self._verbose:
+            logging.info('  Fitting pre-processed visibilities for brightness'
+                         ' profile using {}'.format(self.fit_method()))
+
+        self._build_matrices(preproc_vis)
+
+        return self._fit()
+
     def fit(self, u, v, V, weights=1):
         r"""
         Fit the visibilties
@@ -501,7 +529,7 @@ class FourierBesselFitter(object):
         """
         if self._verbose:
             logging.info('  Fitting for brightness profile using'
-                         ' {}'.format(type(self).__name__))
+                         ' {}'.format(self.fit_method()))
 
         self._geometry.fit(u, v, V, weights)
 
@@ -657,48 +685,16 @@ class FrankFitter(FourierBesselFitter):
 
         self._info.update({'alpha' : alpha, 'wsmooth' : weights_smooth, 'p0' : p_0})
 
-    def fit(self, u, v, V, weights=1):
-        r"""
-        Fit the visibilties
-
-        Parameters
-        ----------
-        u,v : 1D array, unit = :math:`\lambda`
-            uv-points of the visibilies
-        V : 1D array, unit = Jy
-            Visibility amplitudes at q
-        weights : 1D array, optional, unit = Jy^-2
-            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
-            the standard deviation
-        iteration_diagnostics : dict, optional,
-          size = N_iter x 2 x N_{collocation points}
-          Power spectrum parameters and posterior mean brightness profile at
-          each fit iteration, and number of iterations
-
-        Returns
-        -------
-        MAP_solution : FrankRadialFit
-            Reconstructed profile using maximum a posteriori power spectrum
-        """
-        if self._verbose:
-            logging.info('  Fitting for brightness profile using {}: '\
-                        '{} method'.format(type(self).__name__, self._method))
-
-        if self._store_iteration_diagnostics:
-            self._iteration_diagnostics = defaultdict(list)
-
-        # Fit geometry if needed
-        self._geometry.fit(u, v, V, weights)
-
-        # Project the data to the signal space
-        mapping = self.preprocess_visibilities(u, v, V, weights)
-        self._build_matrices(mapping)
-    
-        return self._fit()
+    def fit_method(self):
+        """Name of the fit method"""
+        return '{}: {} method'.format(type(self).__name__, self._method)
 
     def _fit(self):
         """Fit step. Computes the best fit given the pre-processed data"""
-   
+        
+        if self._store_iteration_diagnostics:
+            self._iteration_diagnostics = defaultdict(list)
+        
         # Inital guess for power spectrum
         pI = np.ones([self.size])
 

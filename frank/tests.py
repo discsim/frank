@@ -255,6 +255,26 @@ def test_frank_fitter():
     np.testing.assert_allclose(sol.I, expected,
                                err_msg="Testing Frank Fit to AS 209")
 
+def test_two_stage_fit():
+    """Check FrankFitter fitting routine with AS 209 dataset"""
+    AS209, geometry = load_AS209(uv_cut=1e6)
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6
+
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
+
+    # 1 step fit
+    sol = FF.fit(u, v, vis, weights)
+
+    # 2 step fit
+    preproc = FF.preprocess_visibilities(u, v, vis, weights)
+    sol2 = FF.fit_preprocessed(preproc)
+
+    np.testing.assert_equal(sol.I, sol2.I,
+                            err_msg="Testing two-step fit")
+
 
 def test_frank_fitter_log_normal():
     """Check FrankFitter fitting routine with AS 209 dataset"""
