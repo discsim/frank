@@ -30,6 +30,338 @@ from frank.constants import rad_to_arcsec, deg_to_rad
 
 from frank.minimizer import LineSearch, MinimizeNewton
 
+class VisibilityMapping:
+    r"""Builds the mapping between the visibility and image planes.
+
+    VisibilityMapping generates the transform matrices :math:`H(q)` such that
+    :math:`V_\nu(q) = H(q) I_\nu`. It also uses these to construct the design
+    matrices :math:`M` and :math:`j` used in the fitting. 
+    
+    VisibilityMapping supports following models:
+      1. An optically thick and geometrically thin disc
+      2. An optically thin and geometrically thin disc
+      3. An opticall thin disc with a known Gaussian verictal structure.
+    All models are axisymmetric.
+
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
+    geometry: SourceGeometry object, optional
+        Geometry used to correct the visibilities for the source inclination. 
+    vis_model : string,
+        One of ['opt_thick', 'opt_thin', 'debris'], corresponding to models
+        1-3 described above, respectively. 
+    scale_height : function H(R), units = arcsec
+        The vertical thickness of the disc in terms of its Guassian scale-height.
+        Only used if vis_model="debris".
+    block_data : bool, default = True
+        Large temporary matrices are needed to set up the data. If block_data
+        is True, we avoid this, limiting the memory requirement to block_size
+        elements.
+    block_size : int, default = 10**5
+        Size of the matrices if blocking is used
+    verbose : bool, default = False
+        Whether to print notification messages
+    """
+    def __init__(self, DHT, geometry,  
+                 vis_model='opt_thick', scale_height=None, block_data=True,
+                 block_size=10 ** 5, check_qbounds=True, verbose=True):
+        
+        _vis_models = ['opt_thick', 'opt_thin', 'debris']
+        if vis_model not in _vis_models:
+            raise ValueError(f"vis_model must be one of {_vis_models}")
+
+        # Store flags
+        self._vis_model = vis_model
+        self.check_qbounds = check_qbounds
+        self._verbose = verbose 
+
+        self._chunking = block_data
+        self._chunk_size = block_size
+
+        self._DHT = DHT
+        self._geometry = geometry
+
+        # Check for consistency and report the model choice.
+        if self._vis_model == 'opt_thick':
+            if self._verbose:
+                logging.info('    assuming an optically thick model (the default): '
+                             'Scaling the total flux to account for the source '
+                             'inclination')
+        elif self._vis_model == 'opt_thin':
+            if self._verbose:
+                logging.info('    assuming an optically thin model: *Not* scaling the '
+                             'total flux to account for the source inclination')
+        elif self._vis_model == 'debris':
+            if scale_height is None:
+                raise ValueError('You requested a model with a non-zero scale height'
+                                 ' but did not specify H(R) (scale_height=None)')
+            self._scale_height = scale_height
+            self._H2 = (scale_height(self.r) / rad_to_arcsec)**2
+            
+            if self._verbose:
+                logging.info('    assuming an optically thin model but geometrically: '
+                             'thick model: *Not* scaling the total flux to account for '
+                             'the source inclination')
+   
+    def map_visibilities(self, u, v, V, weights, frequencies=None, geometry=None):
+        r"""
+        Compute the matrices :math:`M` abd :math:`j` from the visibility data.
+
+        Also compute the null likelihood,
+        .. math:
+            `H0 = 0.5*\log[det(weights/(2*np.pi))]
+             - 0.5*np.sum(V * weights * V):math:`
+             
+        Parameters
+        ----------
+        u,v : 1D array, unit = :math:`\lambda`
+            uv-points of the visibilies
+        V : 1D array, unit = Jy
+            Visibility amplitudes at q
+        weights : 1D array, optional, unit = J^-2
+            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+            the standard deviation
+        frequencies : 1D array, optional, unit = Hz
+            Channel frequencies of each data point. If not provided, a single 
+            channel is assumed.
+        geometry : SourceGeometry object
+            Geometry used to deproject the visibilities before fitting. If not
+            provided the geometry passed in during construction will be used.
+        
+        Returns
+        -------
+        mapped visibilities : dict. 
+            The format will be depend whether a single channel was assumed 
+            (frequencies=None). The following data maybe present:
+               'multi_freq' : bool,
+                    Specifies if mult-frequency analysis was done
+               'channels' : array, 1D, mult-frequency analysis only
+                    The frequency of each channel.
+                'M' : array, 2D or 3D.
+                    The matrix :math:`M` of the mapping. This will have shape
+                    (num_channels, size, size) for multi_freq analysis and
+                    (size, size) for single channel analysis.
+                'j' : array, 1D or 2D.
+                    The matrix :math:`j` of the mapping. This will have shape
+                    (num_channels, size) for multi_freq analysis and (size,)
+                    for single channel analysis.
+                'null_likelihood' : float,
+                    The likelihood of a model with I=0. See above.
+                'hash' : list,
+                    Identifying data, used to ensure compatability between the
+                    mapped visibilies and fitting objects.
+        """
+
+        if geometry is None:
+            geometry = self._geometry
+
+        if self._verbose:
+            logging.info('    Building visibility matrices M and j')
+        
+        # Deproject the visibilities
+        u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
+        q = np.hypot(u, v)
+
+        # Check consistency of the uv points with the model
+        self._check_uv_range(q)
+
+        # Use only the real part of V. 
+        V = V.real
+        w = np.ones_like(V) * weights
+
+        multi_freq = True
+        if frequencies is None:
+            multi_freq = False
+            frequencies = np.ones_like(V)
+
+        channels = np.unique(frequencies)
+        Ms = np.zeros([len(channels), self.size, self.size], dtype='f8')
+        js = np.zeros([len(channels), self.size], dtype='f8')
+        for i, f in enumerate(channels):
+            idx = frequencies == f
+
+            qi = q[idx]
+            ki = k[idx]
+            wi = w[idx]
+            Vi = V[idx]
+        
+            # If chunking is used, we will build up M and j chunk-by-chunk
+            if self._chunking:
+                Nstep = int(self._chunk_size / self.size + 1)
+            else:
+                Nstep = len(Vi)
+
+            start = 0
+            end = Nstep
+            Ndata = len(Vi)
+            M = Ms[i]
+            j = js[i]
+            while start < Ndata:
+                qs = qi[start:end]
+                ks = ki[start:end]
+                ws = wi[start:end]
+                Vs = Vi[start:end]
+
+                X = self._get_mapping_coefficients(qs, ks)
+
+                wXT = np.array(X.T * ws, order='C')
+
+                M += np.dot(wXT, X)
+                j += np.dot(wXT, Vs)
+
+                start = end
+                end += Nstep
+
+        # Compute likelihood normalization H_0, i.e., the
+        # log-likelihood of a source with I=0.
+        H0 = 0.5 * np.sum(np.log(w / (2 * np.pi)) - V * w * V)
+
+        if multi_freq:
+            return {
+                'mult_freq' : True,
+                'channels' : channels,
+                'M' : Ms,
+                'j' : js,
+                'null_likelihood' : H0,
+                'hash' : [self._DHT, geometry, self._vis_model],
+            }
+        else: 
+            return {
+                'mult_freq' : False,
+                'M' : Ms[0],
+                'j' : js[0],
+                'null_likelihood' : H0,
+                'hash' : [self._DHT, geometry, self._vis_model],
+            }
+
+    def predict_visibilities(self, I, q, k=None, geometry=None):
+        """Compute the predicted visibilities given the brightness profile, I
+        
+        Parameters
+        ----------
+        I : array, unit = Jy
+            Brightness at the collocation points.
+        q : array, unit = :math:`\lambda`
+            Radial uv-distance to predict the visibility at
+        k : array, optional,  unit = :math:`\lambda`
+            Vertical uv-distance to predict the visibility. Only needed for a
+            geometrically thick model.
+        geometry : SourceGeometry object, optional
+            Geometry used to correct the visibilities for the source
+            inclination. Only needed for the optically thick model. If not 
+            provided, the geometry passed in during construction will be used. 
+        
+        Returns
+        -------
+        V(q, k) : array, unit = Jy
+            Predicted visibilties of a source with a radial flux distribution
+            given by :math:`I` and the position angle, inclination determined
+            by the geometry.
+        
+        Notes
+        -----
+        For an optically thick model the visibility amplitudes are reduced due
+        to the projection but phase centre corrections are not added.
+        """
+        # Chunk the visibility calulation for speed
+        if self._chunking:
+            Ni = int(self._chunk_size / self.size + 1)
+        else:
+            Ni = len(q)
+
+        end = 0
+        start = 0
+        V = []
+        while end < len(q):
+            start = end
+            end = start + Ni
+            qi = q[start:end]
+            
+            ki = None
+            if k is not None:
+                ki = k[start:end]
+
+            H = self._get_mapping_coefficients(qi, ki, geometry)
+
+            V.append(np.dot(H, I))
+        return np.concatenate(V)
+
+
+    def _get_mapping_coefficients(self, qs, ks, geometry=None):
+        """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
+        
+        if self._vis_model == 'opt_thick':
+            # Optically thick & geometrically thin
+            if geometry is None:
+                geometry = self._geometry
+            scale = np.cos(geometry.inc * deg_to_rad)
+        elif self._vis_model == 'opt_thin':
+            # Optically thin & geometrically thin
+            scale = 1
+        elif self._vis_model == 'debris':
+            # Optically thin & geometrically thick
+            scale = np.exp(-np.outer(ks*ks, self._H2))
+        else:
+            raise ValueError("model not supported. Should never occur.")
+
+        H = self._DHT.coefficients(qs) * scale
+
+        return H
+
+
+    def _check_uv_range(self, uv):
+        """Check that the uv domain is properly covered"""
+
+        # Check whether the first (last) collocation point is smaller (larger)
+        # than the shortest (longest) deprojected baseline in the dataset
+        if self.check_qbounds:
+            if self.q[0] < uv.min():
+                logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
+                                " is at a baseline shorter than the"
+                                " shortest deprojected baseline in the dataset,"
+                                r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
+                                " the fit's total flux may be biased"
+                                " low.".format(self.q[0], uv.min()))
+
+            if self.q[-1] < uv.max():
+                raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
+                                 " a shorter baseline than the longest deprojected"
+                                 r" baseline in the dataset, {:.3e} \lambda. Please"
+                                 " increase N in FrankMultFrequencyFitter (this is"
+                                 " `hyperparameters: n` if you're using a parameter"
+                                 " file). Or if you'd like to fit to shorter maximum baseline,"
+                                 " cut the (u, v) distribution before fitting"
+                                 " (`modify_data: baseline_range` in the"
+                                 " parameter file).".format(self.q[-1], uv.max()))
+
+    @property
+    def r(self):
+        """Radius points, unit = arcsec"""
+        return self._DHT.r * rad_to_arcsec
+
+    @property
+    def Rmax(self):
+        """Maximum radius, unit = arcsec"""
+        return self._DHT.Rmax * rad_to_arcsec
+
+    @property
+    def q(self):
+        r"""Frequency points, unit = :math:`\lambda`"""
+        return self._DHT.q
+
+    @property
+    def Qmax(self):
+        r"""Maximum frequency, unit = :math:`\lambda`"""
+        return self._DHT.Qmax
+
+    @property
+    def size(self):
+        """Number of points in reconstruction"""
+        return self._DHT.size
+
 
 class GaussianModel:
     r"""

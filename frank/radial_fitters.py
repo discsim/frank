@@ -28,8 +28,9 @@ import numpy as np
 from frank.constants import deg_to_rad, rad_to_arcsec
 from frank.filter import CriticalFilter
 from frank.hankel import DiscreteHankelTransform
-from frank.statistical_models import GaussianModel, LogNormalMAPModel
-
+from frank.statistical_models import (
+    GaussianModel, LogNormalMAPModel, VisibilityMapping
+)
 
 class FrankRadialFit(metaclass=abc.ABCMeta):
     """
@@ -37,9 +38,8 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
 
     Parameters
     ----------
-    DHT : DiscreteHankelTransform
-        A DHT object with N bins that defines H(p). The DHT is used to compute
-        :math:`S(p)`
+    vis_map : VisibilityMapping object
+        Mapping between image and visibility plane. 
     info: dict
         Dictionary containing useful quantities for reproducing a fit
         (such as the hyperparameters used)
@@ -48,37 +48,14 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         inclination. If not provided, the geometry determined during the
         fit will be used.
     """
-    def __init__(self, DHT, info, geometry):
-        self._DHT = DHT
+    def __init__(self, vis_map, info, geometry):
+        self._vis_map = vis_map
         self._geometry = geometry
         self._info = info
 
-    def _predict(self, q, I, block_size):
-        """Perform the visibility prediction"""
 
-        if q is None:
-            q = self.q
 
-        if I is None:
-            I = self.MAP
-        
-        # Block the visibility calulation for speed
-        Ni = int(block_size / len(I) + 1)
-
-        end = 0
-        start = 0
-        V = []
-        while end < len(q):
-            start = end
-            end = start + Ni
-            qi = q[start:end]
-
-            V.append(self._DHT.transform(I, qi))
-
-        return np.concatenate(V)
-
-    def predict(self, u, v, I=None, geometry=None, block_size=10**5,
-                assume_optically_thick=True):
+    def predict(self, u, v, I=None, geometry=None):
         r"""
         Predict the visibilities in the sky-plane
 
@@ -94,11 +71,6 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
             Geometry used to correct the visibilities for the source
             inclination. If not provided, the geometry determined during the
             fit will be used
-        block_size : int, default = 10**5
-            Maximum matrix size used in the visibility calculation
-        assume_optically_thick : bool, default = True
-            Whether to correct the visibility amplitudes for the source
-            inclination
 
         Returns
         -------
@@ -110,14 +82,14 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         if geometry is None:
             geometry = self._geometry
 
+        if I is None:
+            I = self.I
+
         if geometry is not None:
             u, v = geometry.deproject(u, v)
 
         q = np.hypot(u, v)
-        V = self._predict(q, I, block_size)
-
-        if geometry is not None and assume_optically_thick:
-            V *= np.cos(geometry.inc * deg_to_rad)
+        V = self._vis_map.predict_visibilities(I, q, geometry=geometry)
 
         # Undo phase centering
         if geometry is not None:
@@ -163,11 +135,11 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         """
         if geometry is None:
             geometry = self._geometry
+       
+        if I is None:
+            I = self.I
 
-        V = self._predict(q, I, block_size)
-
-        if geometry is not None and assume_optically_thick:
-            V *= np.cos(geometry.inc * deg_to_rad)
+        V = self._vis_map.predict_visibilities(I, q, geometry=geometry)
 
         return V
 
@@ -182,27 +154,26 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
     @property
     def r(self):
         """Radius points, unit = arcsec"""
-        return self._DHT.r * rad_to_arcsec
+        return self._vis_map.r
 
     @property
     def Rmax(self):
         """Maximum radius, unit = arcsec"""
-        return self._DHT.Rmax * rad_to_arcsec
-
+        return self._vis_map.Rmax
     @property
     def q(self):
         r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
+        return self._vis_map.q
 
     @property
     def Qmax(self):
         r"""Maximum frequency, unit = :math:`\lambda`"""
-        return self._DHT.Qmax
+        return self._vis_map.Qmax
 
     @property
     def size(self):
         """Number of points in reconstruction"""
-        return self._DHT.size
+        return self._vis_map.size
 
     @property
     def geometry(self):
@@ -435,20 +406,21 @@ class FourierBesselFitter(object):
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
 
+        if assume_optically_thick:
+            model = 'opt_thick'
+        else:
+            model = 'opt_thin'
+
+        self._vis_map = VisibilityMapping(self._DHT, geometry, model, 
+                                          block_data=block_data, block_size=block_size,
+                                          check_qbounds=False, verbose=verbose)
+
         self._info  = {'Rmax' : self._DHT.Rmax * rad_to_arcsec,
                        'N' : self._DHT.size
                        }
 
-        self._blocking = block_data
-        self._block_size = block_size
-
-        self._assume_optically_thick = assume_optically_thick
-
         self._verbose = verbose
 
-    def _check_uv_range(self, uv):
-        """Don't check the bounds for FourierBesselFitter"""
-        pass
 
     def _build_matrices(self, u, v, V, weights):
         r"""
@@ -459,66 +431,13 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
-        if self._verbose:
-            logging.info('    Building visibility matrices M and j')
+        mapping = self._vis_map.map_visibilities(u, v, V, weights)
 
-        # Deproject the visibilities
-        u, v, V = self._geometry.apply_correction(u, v, V)
-        q = np.hypot(u, v)
+  
+        self._M = mapping['M']
+        self._j = mapping['j']
 
-        # Check consistency of the uv points with the model
-        self._check_uv_range(q)
-
-        # Use only the real part of V
-        V = V.real
-
-        if self._assume_optically_thick:
-            if self._verbose:
-                logging.info('    assume_optically_thick=True (the default): '
-                             'Scaling the total flux to account for the source '
-                             'inclination')
-            # Rescale visibility amplitudes to account for total flux
-            V, weights = self._geometry.rescale_total_flux(V, weights)
-
-        else:
-            if self._verbose:
-                logging.info('    assume_optically_thick=False: *Not* scaling the '
-                             'total flux to account for the source inclination')
-
-        # If blocking is used, we will build up M and j chunk-by-chunk
-        if self._blocking:
-            Nstep = int(self._block_size / self.size + 1)
-        else:
-            Nstep = len(V)
-
-        # Ensure the weights are 1D
-        w = np.ones_like(V) * weights
-
-        start = 0
-        end = Nstep
-        Ndata = len(V)
-        M = 0
-        j = 0
-        while start < Ndata:
-            qs = q[start:end]
-            ws = w[start:end]
-            Vs = V[start:end]
-
-            X = self._DHT.coefficients(qs)
-
-            wXT = np.array(X.T * ws, order='C')
-
-            M += np.dot(wXT, X)
-            j += np.dot(wXT, Vs)
-
-            start = end
-            end += Nstep
-
-        self._M = M
-        self._j = j
-
-        # Compute likelihood normalization H_0
-        self._H0 = 0.5 * np.sum(np.log(w / (2 * np.pi)) - V * w * V)
+        self._H0 = mapping['null_likelihood']
 
     def fit(self, u, v, V, weights=1):
         r"""
@@ -550,7 +469,7 @@ class FourierBesselFitter(object):
         fit = GaussianModel(self._DHT, self._M, self._j,
                             noise_likelihood=self._H0)
 
-        self._sol = FrankGaussianFit(self._DHT, fit, self._info,
+        self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
                                      geometry=self._geometry.clone())
 
         return self._sol
@@ -666,6 +585,8 @@ class FrankFitter(FourierBesselFitter):
                                           block_size, assume_optically_thick,
                                           verbose)
 
+        self._vis_map.check_qbounds=check_qbounds
+
         if p_0 is None:
             if method == 'Normal':
                 p_0 = 1e-15
@@ -680,37 +601,9 @@ class FrankFitter(FourierBesselFitter):
 
         self._max_iter = max_iter
 
-        self._check_qbounds = check_qbounds
         self._store_iteration_diagnostics = store_iteration_diagnostics
 
-        self._info = {'alpha' : alpha, 'wsmooth' : weights_smooth, 'p0' : p_0}
-
-
-    def _check_uv_range(self, uv):
-        """Check that the uv domain is properly covered"""
-
-        # Check whether the first (last) collocation point is smaller (larger)
-        # than the shortest (longest) deprojected baseline in the dataset
-        if self._check_qbounds:
-            if self.q[0] < uv.min():
-                logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
-                                " is at a baseline shorter than the"
-                                " shortest deprojected baseline in the dataset,"
-                                r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
-                                " the fit's total flux may be biased"
-                                " low.".format(self.q[0], uv.min()))
-
-            if self.q[-1] < uv.max():
-                raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
-                                 " a shorter baseline than the longest deprojected"
-                                 r" baseline in the dataset, {:.3e} \lambda. Please"
-                                 " increase N in FrankFitter (this is"
-                                 " `hyperparameters: n` if you're using a parameter"
-                                 " file). Or if you'd like to fit to shorter maximum baseline,"
-                                 " cut the (u, v) distribution before fitting"
-                                 " (`modify_data: baseline_range` in the"
-                                 " parameter file).".format(self.q[-1], uv.max()))
-
+        self._info.update({'alpha' : alpha, 'wsmooth' : weights_smooth, 'p0' : p_0})
 
     def fit(self, u, v, V, weights=1):
         r"""
@@ -808,10 +701,10 @@ class FrankFitter(FourierBesselFitter):
 
         # Save the best fit
         if self._method == "Normal":
-            self._sol = FrankGaussianFit(self._DHT, fit, self._info,
+            self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
                                          geometry=self._geometry.clone())
         else:
-            self._sol = FrankLogNormalFit(self._DHT, fit, self._info,
+            self._sol = FrankLogNormalFit(self._vis_map, fit, self._info,
                                           geometry=self._geometry.clone())
 
         # Compute the power spectrum covariance at the maximum
