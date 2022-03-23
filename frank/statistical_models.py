@@ -85,24 +85,25 @@ class VisibilityMapping:
         self._geometry = geometry
 
         # Check for consistency and report the model choice.
+        self._scale_height = None
         if self._vis_model == 'opt_thick':
             if self._verbose:
-                logging.info('    assuming an optically thick model (the default): '
+                logging.info('  Assuming an optically thick model (the default): '
                              'Scaling the total flux to account for the source '
                              'inclination')
         elif self._vis_model == 'opt_thin':
             if self._verbose:
-                logging.info('    assuming an optically thin model: *Not* scaling the '
+                logging.info('  Assuming an optically thin model: *Not* scaling the '
                              'total flux to account for the source inclination')
         elif self._vis_model == 'debris':
             if scale_height is None:
                 raise ValueError('You requested a model with a non-zero scale height'
                                  ' but did not specify H(R) (scale_height=None)')
             self._scale_height = scale_height
-            self._H2 = (scale_height(self.r) / rad_to_arcsec)**2
+            self._H2 = 0.5*(2*np.pi*scale_height(self.r) / rad_to_arcsec)**2
             
             if self._verbose:
-                logging.info('    assuming an optically thin model but geometrically: '
+                logging.info('  Assuming an optically thin model but geometrically: '
                              'thick model: *Not* scaling the total flux to account for '
                              'the source inclination')
    
@@ -226,7 +227,7 @@ class VisibilityMapping:
                 'M' : Ms,
                 'j' : js,
                 'null_likelihood' : H0,
-                'hash' : [self._DHT, geometry, self._vis_model],
+                'hash' : [self._DHT, geometry, self._vis_model, self._scale_height],
             }
         else: 
             return {
@@ -234,8 +235,45 @@ class VisibilityMapping:
                 'M' : Ms[0],
                 'j' : js[0],
                 'null_likelihood' : H0,
-                'hash' : [self._DHT, geometry, self._vis_model],
+                'hash' : [self._DHT, geometry, self._vis_model, self._scale_height],
             }
+
+    def check_hash(self, hash, geometry=None):
+        """Checks whether the hash of some mapped visibilities are compatible
+        with this VisibilityMapping.
+        
+        Parameters
+        ----------
+        hash : list
+            Hash to compare
+        geometry : SourceGeometry object, optional
+            Geometry to use in the comparison.
+        """
+        if geometry is None:
+            geometry = self._geometry
+        
+        passed = (
+            self._DHT.Rmax  == hash[0].Rmax and
+            self._DHT.size  == hash[0].size and
+            self._DHT.order == hash[0].order and
+            geometry.inc  == hash[1].inc and
+            geometry.PA   == hash[1].PA and
+            geometry.dRA  == hash[1].dRA and
+            geometry.dDec == hash[1].dDec and
+            self._vis_model == hash[2]
+        )
+
+        if not passed:
+            return False
+
+        if self._scale_height is None:
+            return hash[3] is None
+        else:
+            if hash[3] is None:
+                return False
+            else:
+                np.alltrue(self._scale_height(self.r) == hash[3](self.r))
+
 
     def predict_visibilities(self, I, q, k=None, geometry=None):
         """Compute the predicted visibilities given the brightness profile, I
@@ -362,6 +400,13 @@ class VisibilityMapping:
         """Number of points in reconstruction"""
         return self._DHT.size
 
+    @property
+    def scale_height(self):
+        "Vertial thickness of the disc, unit = arcsec"
+        if self._scale_height is not None:
+            return self._scale_height(self.r)
+        else:
+            return None
 
 class GaussianModel:
     r"""

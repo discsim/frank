@@ -86,10 +86,10 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
             I = self.I
 
         if geometry is not None:
-            u, v = geometry.deproject(u, v)
+            u, v, wz = geometry.deproject(u, v, use3D=True)
 
         q = np.hypot(u, v)
-        V = self._vis_map.predict_visibilities(I, q, geometry=geometry)
+        V = self._vis_map.predict_visibilities(I, q, wz, geometry=geometry)
 
         # Undo phase centering
         if geometry is not None:
@@ -139,7 +139,7 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         if I is None:
             I = self.I
 
-        V = self._vis_map.predict_visibilities(I, q, geometry=geometry)
+        V = self._vis_map.predict_visibilities(I, q, q*0, geometry=geometry)
 
         return V
 
@@ -393,12 +393,17 @@ class FourierBesselFitter(object):
     assume_optically_thick : bool, default = True
         Whether to correct the visibility amplitudes by a factor of
         1 / cos(inclination); see frank.geometry.rescale_total_flux
+    scale_height : function R --> H, optional
+        Specifies the vertical thickness of disc as a function of radius. Both
+        R and H should be in arcsec. Assumes a Gaussian vertical structure. 
+        Only works with assume_optically_thick=False
     verbose : bool, default = False
         Whether to print notification messages
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5, assume_optically_thick=True, verbose=True):
+                 assume_optically_thick=True, scale_height=None,
+                 block_size=10 ** 5, verbose=True):
 
         Rmax /= rad_to_arcsec
 
@@ -407,11 +412,17 @@ class FourierBesselFitter(object):
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
 
         if assume_optically_thick:
+            if scale_height is not None:
+                raise ValueError("Optically thick models must have zero "
+                                 "scale-height")
             model = 'opt_thick'
+        elif scale_height is not None:
+            model = 'debris'
         else:
             model = 'opt_thin'
 
-        self._vis_map = VisibilityMapping(self._DHT, geometry, model, 
+        self._vis_map = VisibilityMapping(self._DHT, geometry, 
+                                          model, scale_height=scale_height,
                                           block_data=block_data, block_size=block_size,
                                           check_qbounds=False, verbose=verbose)
 
@@ -421,8 +432,39 @@ class FourierBesselFitter(object):
 
         self._verbose = verbose
 
+    def preprocess_visibilities(self, u, v, V, weights=1):
+        """Prepare the visibilities for fitting. 
+        
+        This step will be done by the automatically fit method, but it can be 
+        expensive. This method is provided to enable the pre-processing to be
+        done once when conducting multiple fits with different hyperprior 
+        parameters. 
 
-    def _build_matrices(self, u, v, V, weights):
+        Parameters
+        ----------
+        u,v : 1D array, unit = :math:`\lambda`
+            uv-points of the visibilies
+        V : 1D array, unit = Jy
+            Visibility amplitudes at q
+        weights : 1D array, optional, unit = Jy^-2
+            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+            the standard deviation
+        
+        Returns
+        -------
+        processed_visibilities : dict
+            Processed visibilities needed in subsequent steps of the fit
+
+        Notes
+        -----
+        Re-using the processed visibilities is only valid with certain parameter
+        changes. For example N, Rmax, geometry, nu, assume_optically_thick, and
+        scale_height cannot be changed. This will be checked before fits are 
+        conducted.
+        """
+        return self._vis_map.map_visibilities(u, v, V, weights)
+
+    def _build_matrices(self, mapping):
         r"""
         Compute the matrices M and j from the visibility data.
 
@@ -431,8 +473,7 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
-        mapping = self._vis_map.map_visibilities(u, v, V, weights)
-
+        self._vis_map.check_hash(mapping['hash'])
   
         self._M = mapping['M']
         self._j = mapping['j']
@@ -460,12 +501,17 @@ class FourierBesselFitter(object):
         """
         if self._verbose:
             logging.info('  Fitting for brightness profile using'
-                         ' FourierBesselFitter')
+                         ' {}'.format(type(self).__name__))
 
         self._geometry.fit(u, v, V, weights)
 
-        self._build_matrices(u, v, V, weights)
+        mapping = self.preprocess_visibilities(u, v, V, weights)
+        self._build_matrices(mapping)
 
+        return self._fit()
+
+    def _fit(self):
+        """Fit step. Computes the best fit given the pre-processed data"""
         fit = GaussianModel(self._DHT, self._M, self._j,
                             noise_likelihood=self._H0)
 
@@ -473,6 +519,7 @@ class FourierBesselFitter(object):
                                      geometry=self._geometry.clone())
 
         return self._sol
+
 
     @property
     def r(self):
@@ -559,6 +606,10 @@ class FrankFitter(FourierBesselFitter):
     assume_optically_thick : bool, default = True
         Whether to correct the visibility amplitudes by a factor of
         1 / cos(inclination); see frank.geometry.rescale_total_flux
+    scale_height : function R --> H, optional
+        Specifies the vertical thickness of disc as a function of radius. Both
+        R and H should be in arcsec. Assumes a Gaussian vertical structure. 
+        Only works with assume_optically_thick=False
     verbose:
         Whether to print notification messages
 
@@ -574,7 +625,7 @@ class FrankFitter(FourierBesselFitter):
                  block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
                  tol=1e-3, method='Normal', I_scale=1e5, max_iter=2000, check_qbounds=True,
                  store_iteration_diagnostics=False, assume_optically_thick=True,
-                 verbose=True):
+                 scale_height=None, verbose=True):
 
         if method not in {'Normal', 'LogNormal'}:
             raise ValueError('FrankFitter supports following mehods:\n\t'
@@ -582,9 +633,10 @@ class FrankFitter(FourierBesselFitter):
         self._method = method
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
-                                          block_size, assume_optically_thick,
-                                          verbose)
+                                          assume_optically_thick, scale_height,
+                                          block_size, verbose)
 
+        # Reinstate the bounds check: FourierBesselFitter does not check bounds
         self._vis_map.check_qbounds=check_qbounds
 
         if p_0 is None:
@@ -629,8 +681,8 @@ class FrankFitter(FourierBesselFitter):
             Reconstructed profile using maximum a posteriori power spectrum
         """
         if self._verbose:
-            logging.info('  Fitting for brightness profile using FrankFitter: '\
-                        '{} method'.format(self._method))
+            logging.info('  Fitting for brightness profile using {}: '\
+                        '{} method'.format(type(self).__name__, self._method))
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics = defaultdict(list)
@@ -638,10 +690,15 @@ class FrankFitter(FourierBesselFitter):
         # Fit geometry if needed
         self._geometry.fit(u, v, V, weights)
 
-
         # Project the data to the signal space
-        self._build_matrices(u, v, V, weights)
+        mapping = self.preprocess_visibilities(u, v, V, weights)
+        self._build_matrices(mapping)
+    
+        return self._fit()
 
+    def _fit(self):
+        """Fit step. Computes the best fit given the pre-processed data"""
+   
         # Inital guess for power spectrum
         pI = np.ones([self.size])
 
@@ -671,7 +728,7 @@ class FrankFitter(FourierBesselFitter):
                count <= self._max_iter):
 
             if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
-                print('\r    FrankFitter iteration {}'.format(count),
+                print('\r    {} iteration {}'.format(type(self).__name__, count),
                       end='', flush=True)
 
             pi_old = pI.copy()
