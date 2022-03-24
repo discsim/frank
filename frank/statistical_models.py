@@ -227,7 +227,7 @@ class VisibilityMapping:
                 'M' : Ms,
                 'j' : js,
                 'null_likelihood' : H0,
-                'hash' : [self._DHT, geometry, self._vis_model, self._scale_height],
+                'hash' : [True, self._DHT, geometry, self._vis_model, self._scale_height],
             }
         else: 
             return {
@@ -235,10 +235,10 @@ class VisibilityMapping:
                 'M' : Ms[0],
                 'j' : js[0],
                 'null_likelihood' : H0,
-                'hash' : [self._DHT, geometry, self._vis_model, self._scale_height],
+                'hash' : [False, self._DHT, geometry, self._vis_model, self._scale_height],
             }
 
-    def check_hash(self, hash, geometry=None):
+    def check_hash(self, hash, multi_freq=False, geometry=None):
         """Checks whether the hash of some mapped visibilities are compatible
         with this VisibilityMapping.
         
@@ -246,6 +246,8 @@ class VisibilityMapping:
         ----------
         hash : list
             Hash to compare
+        multi_freq : bool
+            Whether we are expected a multi-frequncy fit
         geometry : SourceGeometry object, optional
             Geometry to use in the comparison.
         """
@@ -253,26 +255,27 @@ class VisibilityMapping:
             geometry = self._geometry
         
         passed = (
-            self._DHT.Rmax  == hash[0].Rmax and
-            self._DHT.size  == hash[0].size and
-            self._DHT.order == hash[0].order and
-            geometry.inc  == hash[1].inc and
-            geometry.PA   == hash[1].PA and
-            geometry.dRA  == hash[1].dRA and
-            geometry.dDec == hash[1].dDec and
-            self._vis_model == hash[2]
+            multi_freq == hash[0] and
+            self._DHT.Rmax  == hash[1].Rmax and
+            self._DHT.size  == hash[1].size and
+            self._DHT.order == hash[1].order and
+            geometry.inc  == hash[2].inc and
+            geometry.PA   == hash[2].PA and
+            geometry.dRA  == hash[2].dRA and
+            geometry.dDec == hash[2].dDec and
+            self._vis_model == hash[3]
         )
 
         if not passed:
             return False
 
         if self._scale_height is None:
-            return hash[3] is None
+            return hash[4] is None
         else:
-            if hash[3] is None:
+            if hash[4] is None:
                 return False
             else:
-                np.alltrue(self._scale_height(self.r) == hash[3](self.r))
+                np.alltrue(self._scale_height(self.r) == hash[4](self.r))
 
 
     def predict_visibilities(self, I, q, k=None, geometry=None):

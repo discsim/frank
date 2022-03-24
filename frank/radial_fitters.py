@@ -53,8 +53,6 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         self._geometry = geometry
         self._info = info
 
-
-
     def predict(self, u, v, I=None, geometry=None):
         r"""
         Predict the visibilities in the sky-plane
