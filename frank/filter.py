@@ -77,6 +77,50 @@ class CriticalFilter:
 
         return Tij 
 
+    def update_power_spectrum_multiple(self, fit):
+        """Estimate the best fit power spectrum given the current model fit.
+        This version works when there are multiple fields being fit simultaneously.
+        """
+        Np = len(fit.power_spectrum)
+        Ns = len(fit.MAP)
+        if (Ns % Np) != 0:
+            raise ValueError("Fields and power spectrum are not compatible")
+        Nfields = Ns//Np
+
+        Ykm = self._DHT.coefficients()
+        Tij_pI = self._Tij + scipy.sparse.identity(self._DHT.size)
+        
+        ds = fit.MAP - fit.s_0
+       
+        # Project mu to Fourier-space
+        #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
+        #       = (Ykm mu)**2
+        Tr1 = 0
+        Y = np.zeros([Ns, Ns]) 
+        for f in range(Nfields):
+            s = f*Np
+            e = s+Np
+
+            Tr1 += np.dot(Ykm, ds[s:e]) ** 2
+            Y[s:e, s:e] = Ykm 
+        # Project D to Fourier-space
+        #   Drr^-1 = Ykm^T Dqq^-1 Ykm
+        #   Drr = Ykm^-1 Dqq Ykm^-T
+        #   Dqq = Ykm Drr Ykm^T
+        # Tr2 = Trace(Dqq)
+        Tr2 = np.einsum('ij,ji->i', Y, fit.Dsolve(Y.T)) 
+        Tr2 = np.sum(Tr2.reshape(Nfields, Np), axis=0) 
+
+        pi = fit.power_spectrum
+
+        beta = (self._p_0 + 0.5 * (Tr1 + Tr2)) / pi - \
+               (self._alpha - 1.0 + 0.5 * self._rho * Nfields)
+                
+        tau = scipy.sparse.linalg.spsolve(Tij_pI, beta + np.log(pi))
+
+        return np.exp(tau)
+
+
     def update_power_spectrum(self, fit):
         """Estimate the best fit power spectrum given the current model fit"""
         Ykm = self._DHT.coefficients()

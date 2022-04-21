@@ -18,6 +18,7 @@
 #
 
 
+from tkinter import N
 import numpy as np
 import scipy.linalg
 import scipy.sparse
@@ -503,7 +504,21 @@ class GaussianModel:
                                  " that it is large, >~300.")
 
             Ykm = self._DHT.coefficients()
-            self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
+            Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
+            if len(j) == len(p):
+                self._Sinv = Sinv
+            elif (len(j) % len(p)) == 0: 
+                # We have multiple fields being with the same prior so
+                # tile the matrix
+                self._Sinv = np.zeros_like(M)
+                N = len(p)
+                for i in range(len(j)//N):
+                    s = i*N 
+                    e = s+N
+                    self._Sinv[s:e, s:e] = Sinv
+            else:
+                raise ValueError("The prior matrix is incompatible with "
+                                 "M and j.")
         else:
             self._Sinv = None
 
@@ -752,25 +767,52 @@ class LogNormalMAPModel:
         missing constant
     """ 
 
-    def __init__(self, DHT, M, j, p=None, scale=1.0, s0=0, guess=None, noise_likelihood=0):
+    def __init__(self, DHT, M, j, p=None, scale=None, s0=None, guess=None, noise_likelihood=0):
 
         self._DHT = DHT
 
-        # Correct shape of design matrix etc.
-        scale = np.atleast_1d(scale)
-        if len(scale) == 1:
-            if len(M.shape) == 2:
-                M = [M,]
-            if len(j.shape) == 1:
-                j = [j,]
+        # Correct shape of design matrix etc.        
+        if len(M.shape) == 2:
+            M = M.reshape(1, *M.shape)
+        if len(j.shape) == 1:
+            j = j.reshape(1, *j.shape)
 
         self._M = M
         self._j = j
-        self._scale = scale
-        self._s0 = s0
 
-
+        # Number of frequencies / radial points
+        Nf, Nr = j.shape
+        # Number of signal fields:
+        Ns = 1
+        if guess is not None:
+            guess = guess.reshape(-1, Nr)
+            Ns = guess.shape[0]
+        
+        # Create the correct shape for the power spectrum and scale factors
+        if p is not None:
+            p = p.reshape(-1, Nr)
+            if p.shape[0] == 1 and Ns > 1:
+                p = np.repeat(p, Ns, axis=0)
         self._p = p
+
+                
+        if scale is None:
+            self._scale = np.ones([Nf, Ns], dtype='f8')
+        else:
+            self._scale = np.empty([Nf, Ns], dtype='f8')
+            self._scale[:] = scale.reshape(Nf, -1)        
+
+        if s0 is None:
+            self._s0 = np.ones(Ns, dtype='f8')
+        else:
+            s0 = np.atleast_1d(s0)
+            if len(s0) == 1:
+                s0 = np.repeat(s0, Ns)
+            elif len(s0) != Ns:
+                raise ValueError("Signal zero-point (s0) must have the same "
+                                 "length as the number of fields or length 1")
+        self._s0 = s0.reshape(Ns, 1)
+
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
                 raise ValueError("Bad value in power spectrum. The power"
@@ -783,9 +825,9 @@ class LogNormalMAPModel:
                                  " that it is large, >~300.")
 
             Ykm = self._DHT.coefficients()
-            self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
+            self._Sinv = np.einsum('ji,lj,jk->lik', Ykm, 1/p, Ykm)
         else:
-            self._Sinv = None
+            self._Sinv = np.zeros([Ns, Nr, Nr], dtype='f8')
 
         self._like_noise = noise_likelihood
 
@@ -794,18 +836,25 @@ class LogNormalMAPModel:
     def _fit(self, guess):
         """Find the maximum likelihood solution and variance"""
         Sinv = self._Sinv
-        if Sinv is None:
-            Sinv = 0 * self._M
+        Ns, Nr = Sinv.shape[:2]
+        
+        Sflat = np.zeros([Ns*Nr, Ns*Nr])
+        for i in range(Ns):
+            s = i*Nr
+            e = (i+1)*Nr
+            Sflat[s:e,s:e] = Sinv[i]
+
 
         scale = self._scale
         s0 = self._s0
 
         def H(s):
             """Log-likelihood function"""
-            I = np.exp(np.einsum('i,j->ij', scale,s+s0))
+            s = s.reshape(Ns, Nr)
+            I = np.exp(np.dot(scale,s+s0)) # shape Nf, Nr
 
-            f = 0.5*np.dot(s, np.dot(Sinv, s))
-            
+            f  = 0.5*np.einsum('ij,ijk,ik->', s, Sinv, s)
+
             f += 0.5*np.einsum('ij,ijk,ik',I,self._M,I)
             f -= np.sum(I*self._j)
             
@@ -813,28 +862,33 @@ class LogNormalMAPModel:
         
         def jac(s):  
             """1st Derivative of log-likelihood"""
-            I = np.exp(np.einsum('i,j->ij', scale, s+s0))
-            sI = (I.T*scale).T
+            s = s.reshape(Ns, Nr)
+            I = np.exp(np.dot(scale,s+s0)) # shape Nf, Nr
 
-            S1_s = np.dot(Sinv, s) 
-            MI = np.einsum('ij,ijk,ik->j', sI, self._M, I)
-            jI = np.einsum('ij,ij->j', sI, self._j)
+            sI = np.einsum('ij,ik->ijk',scale, I) # shape Nf, Ns, Nr
+
+            S1_s = np.einsum('ijk,ik->ij', Sinv, s)  # shape Ns, Nr
+            MI = np.einsum('isj,ijk,ik->sj', sI, self._M, I)
+            jI = np.einsum('isj,ij->sj', sI, self._j)
             
-            return S1_s + (MI - jI)
+            return (S1_s + (MI - jI)).reshape(Ns*Nr)
         
         def hess(s):
             """2nd derivative of log-likelihood"""
-            I = np.exp(np.einsum('i,j->ij', scale, s+s0))
-            s2I = (I.T*scale**2).T
+            s = s.reshape(Ns, Nr)
+            I = np.exp(np.dot(scale,s+s0)) # shape Nf, Nr
             
-            Mjk = np.einsum('ij,ijk,ik->jk',s2I, self._M, I)
-            MI = np.einsum('ij,ijk,ik->j', s2I, self._M, I)
-            jI = np.einsum('ij,ij->j', s2I, self._j)
+            sI = np.einsum('ij,ik->ijk',scale, I) # shape Nf, Ns, Nr
+            s2I = np.einsum('ij,ik->ijk',scale**2, I) # shape Nf, Ns, Nr
+            
+            Mjk = np.einsum('isj,ijk,itk->sjtk',sI, self._M, sI).reshape(Ns*Nr, Ns*Nr)
+            MI = np.einsum('isj,ijk,ik->sj', s2I, self._M, I).reshape(Ns*Nr)
+            jI = np.einsum('isj,ij->sj', s2I, self._j).reshape(Ns*Nr)
             
             term = (Mjk + np.diag(MI - jI))
-            return Sinv + term
+            return Sflat + term
         
-        x = guess - s0
+        x = (guess - s0).reshape(Ns*Nr)
 
         def limit_step(dx, x):
             alpha = 1.1*np.min(np.abs(x/dx))
@@ -847,16 +901,9 @@ class LogNormalMAPModel:
         search = LineSearch(reduce_step=limit_step)
         s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-6)
  
-        self._s_MAP = s + s0
-        I = np.exp(np.einsum('i,j->ij', scale, s+s0))
-        s2I = (I.T*scale**2).T
+        self._s_MAP = s.reshape(Ns, Nr) + s0
 
-        # Now compute the inverse information propogator  
-        Dinv = Sinv.copy()
-        Dinv += np.einsum('ki,kij,kj->ij', s2I, self._M, I)
-        Dinv += np.diag(np.einsum('ij,ijk,ik->j', s2I, self._M, I))
-        Dinv -= np.diag(np.einsum('ij,ij->j', s2I, self._j))
-        
+        Dinv = hess(s)
         try:
             self._Dchol = scipy.linalg.cho_factor(Dinv)
             self._Dsvd  = None
@@ -950,7 +997,10 @@ class LogNormalMAPModel:
     @property
     def MAP(self):
         """Posterior maximum, unit = Jy / sr"""
-        return self._s_MAP
+        MAP = self._s_MAP
+        if MAP.shape[0] == 1:
+            return MAP.reshape(self.size)
+        return MAP
 
     @property
     def covariance(self):
@@ -962,15 +1012,24 @@ class LogNormalMAPModel:
     @property
     def power_spectrum(self):
         """Power spectrum coefficients"""
-        return self._p
+        p = self._p
+        if p.shape[0] == 1:
+            return p.reshape(self.size)
+        return p
 
     @property 
     def scale(self):
+        scale = self._scale
+        if scale.shape[1] == 1:
+            return scale[:,0]
         return self._scale
     
     @property 
     def s_0(self):
-        return self._s0
+        s0 = self._s0
+        if s0.shape[0] == 1:
+            return s0[0]
+        return s0
 
     @property
     def size(self):
