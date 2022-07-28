@@ -23,6 +23,7 @@
 import abc
 from collections import defaultdict
 import logging
+from sre_parse import REPEAT_CHARS
 import numpy as np
 
 from frank.constants import deg_to_rad, rad_to_arcsec
@@ -85,7 +86,9 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
 
         if geometry is not None:
             u, v, wz = geometry.deproject(u, v, use3D=True)
-
+        else:
+            wz = np.zeros_like(u)
+            
         q = np.hypot(u, v)
         V = self._vis_map.predict_visibilities(I, q, wz, geometry=geometry)
 
@@ -140,6 +143,46 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         V = self._vis_map.predict_visibilities(I, q, q*0, geometry=geometry)
 
         return V
+
+    def interpolate_brightness(self, Rpts, I=None):
+        r"""
+        Interpolate the brightness profile to the requested set of points.
+
+        The interpolation is done using the Fourier-Bessel series. 
+        
+        Parameters
+        ----------
+        Rpts : array, unit = arcsec
+            The points to interpolate the brightness to.
+        I : array, optional, unit = Jy / Sr
+            Intensity points to interpolate. If not specified, the MAP/mean
+            will be used. The intensity should be specified at the collocation
+            points, I[k] = I(r_k).
+
+        Returns
+        -------
+        I(Rpts) : array, unit = Jy / Sr
+            Brightness at the radial points.
+
+        Notes
+        -----
+        The resulting brightness will be consistent with higher-resolution fits
+        as long as the original fit has sufficient resolution. By sufficient
+        resolution we simply mean that the missing terms in the Fourier-Bessel
+        series are negligible, which will typically be the case if the
+        brightness was obtained from a frank fit with 100 points or more.
+        """
+        Rpts = np.array(Rpts)
+        if I is None:
+            I = self.I
+        
+        V = self._vis_map.transform(I, direction='forward')
+        I = self._vis_map.transform(V, Rpts, direction='backward')
+        
+        if np.any(Rpts > self.Rmax):
+            I[Rpts > self.Rmax] = 0
+
+        return I 
 
     @abc.abstractproperty
     def MAP(self):
@@ -354,7 +397,7 @@ class FrankLogNormalFit(FrankRadialFit):
     @property
     def MAP(self):
         """Posterior maximum, unit = Jy / sr"""
-        return np.exp((self._fit.MAP) * self._fit.scale)
+        return np.exp((self._fit.MAP + self._fit.s_0) * self._fit.scale)
 
     @property
     def covariance(self):
@@ -697,7 +740,7 @@ class FrankFitter(FourierBesselFitter):
         pI = np.ones([self.size])
 
         # Do an extra iteration based on a power-law guess
-        fit = self._perform_fit(pI, fit_method='Normal')
+        fit = self._perform_fit(pI, guess=np.ones_like(pI), fit_method='Normal')
 
         pI = np.max(self._DHT.transform(fit.MAP)**2)
         pI *= (self.q / self.q[0])**-2
@@ -708,6 +751,7 @@ class FrankFitter(FourierBesselFitter):
         # log-normal power spectrum estimate
         if self._method == 'LogNormal':
             s = np.log(np.maximum(fit.MAP, 1e-3 * fit.MAP.max())) 
+            s -= self._s_scale
             
             pI = np.max(self._DHT.transform(s)**2)
             pI *= (self.q / self.q[0])**-4

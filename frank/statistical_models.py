@@ -18,7 +18,6 @@
 #
 
 
-from tkinter import N
 import numpy as np
 import scipy.linalg
 import scipy.sparse
@@ -276,7 +275,7 @@ class VisibilityMapping:
             if hash[4] is None:
                 return False
             else:
-                np.alltrue(self._scale_height(self.r) == hash[4](self.r))
+                return np.alltrue(self._scale_height(self.r) == hash[4](self.r))
 
 
     def predict_visibilities(self, I, q, k=None, geometry=None):
@@ -330,6 +329,34 @@ class VisibilityMapping:
 
             V.append(np.dot(H, I))
         return np.concatenate(V)
+
+    def transform(self, f, q=None, direction='forward'):
+        """Apply a DHT directly to data provided
+        
+        Parameters
+        ----------
+        f : array, size = N
+            Function to Hankel transform, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k)
+        q : array or None
+            The frequency points at which to evaluate the Hankel
+            transform. If not specified, the conjugate points of the
+            DHT will be used. For the backwards transform, q should be
+            the radius points in arcsec
+        direction : { 'forward', 'backward' }, optional
+            Direction of the transform. If not supplied, the forward
+            transform is used
+
+        Returns
+        -------
+        H[f] : array, size = N or len(q) if supplied
+            The Hankel transform of the array f
+
+        """
+        if direction == 'backward' and q is not None:
+            q = q / rad_to_arcsec
+            
+        return self._DHT.transform(f, q, direction)
 
 
     def _get_mapping_coefficients(self, qs, ks, geometry=None):
@@ -485,15 +512,46 @@ class GaussianModel:
         missing constant
     """
 
-    def __init__(self, DHT, M, j, p=None, guess=None, noise_likelihood=0):
+    def __init__(self, DHT, Ms, js, p=None, scale=None, guess=None, Nfields=None, noise_likelihood=0):
 
         self._DHT = DHT
-        self._M = M
-        self._j = j
 
+        # Correct shape of design matrix etc.        
+        if len(Ms.shape) == 2:
+            Ms = Ms.reshape(1, *Ms.shape)
+        if len(js.shape) == 1:
+            js = js.reshape(1, *js.shape)
+
+        # Number of frequencies / radial points
+        Nf, Nr = js.shape
+        
+        # Get the number of fields
+        if Nfields is None:
+            if guess is None:
+                Nfields = 1
+            else:
+                guess = guess.reshape(-1, Nr)
+                Nfields = guess.shape[0]
+        elif guess is not None:
+            guess = guess.reshape(Nfields, Nr)
+        self._Nfields = Nfields
+        
+        # Create the correct shape for the power spectrum and scale factors
+        if p is not None:
+            p = p.reshape(-1, Nr)
+            if p.shape[0] == 1 and Nfields > 1:
+                p = np.repeat(p, Nfields, axis=0)
         self._p = p
+                
+        if scale is None:
+            self._scale = np.ones([Nf, Nfields], dtype='f8')
+        else:
+            self._scale = np.empty([Nf, Nfields], dtype='f8')
+            self._scale[:] = scale.reshape(Nf, -1)       
+
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
+                print(p)
                 raise ValueError("Bad value in power spectrum. The power"
                                  " spectrum must be positive and not contain"
                                  " any NaN values. This is likely due to"
@@ -504,23 +562,32 @@ class GaussianModel:
                                  " that it is large, >~300.")
 
             Ykm = self._DHT.coefficients()
-            Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
-            if len(j) == len(p):
-                self._Sinv = Sinv
-            elif (len(j) % len(p)) == 0: 
-                # We have multiple fields being with the same prior so
-                # tile the matrix
-                self._Sinv = np.zeros_like(M)
-                N = len(p)
-                for i in range(len(j)//N):
-                    s = i*N 
-                    e = s+N
-                    self._Sinv[s:e, s:e] = Sinv
-            else:
-                raise ValueError("The prior matrix is incompatible with "
-                                 "M and j.")
+            Sj = np.einsum('ji,lj,jk->lik', Ykm, 1/p, Ykm)
+
+            self._Sinv = np.zeros([Nr*Nfields, Nr*Nfields], dtype='f8')
+            for n in range(0, Nfields):
+                sn = n*Nr
+                en = (n+1)*Nr 
+
+                self._Sinv[sn:en, sn:en] += Sj[n]
         else:
-            self._Sinv = None
+            self._Sinv =  None
+
+        # Compute the design matrix
+        self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='f8')
+        self._j = np.zeros(Nr*Nfields, dtype='f8')
+        for si, Mi, ji in zip(self._scale, Ms, js):
+            
+            for n in range(0, Nfields):
+                sn = n*Nr
+                en = (n+1)*Nr 
+
+                self._j[sn:en] += si[n] * ji
+                for m in range(0, Nfields):
+                    sm = m*Nr
+                    em = (m+1)*Nr 
+
+                    self._M[sn:en, sm:em] += si[n]*si[m] * Mi
 
         self._like_noise = noise_likelihood
 
@@ -552,6 +619,8 @@ class GaussianModel:
             self._mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
 
         # Reset the covariance matrix - we will compute it when needed
+        if self._Nfields > 1:
+            self._mu = self._mu.reshape(self._Nfields, self.size)
         self._cov = None
 
     def Dsolve(self, b):
@@ -577,7 +646,10 @@ class GaussianModel:
 
     def draw(self, N):
         """Compute N draws from the posterior"""
-        return np.random.multivariate_normal(self.mean, self.covariance, N)
+        draws = np.random.multivariate_normal(self.mean.reshape(-1), self.covariance, N)
+        if self.num_fields > 1:
+            draws = draws.reshape(N, self.num_fields, self.size)
+        return draws
 
     def log_likelihood(self, I=None):
         r"""
@@ -671,7 +743,7 @@ class GaussianModel:
     def covariance(self):
         """Posterior covariance, unit = (Jy / sr)**2"""
         if self._cov is None:
-            self._cov = self.Dsolve(np.eye(self.size))
+            self._cov = self.Dsolve(np.eye(self.size*self.num_fields))
         return self._cov
 
     @property
@@ -681,8 +753,15 @@ class GaussianModel:
     @property
     def power_spectrum(self):
         """Power spectrum coefficients"""
+        if self.num_fields == 1 and self._p is not None:
+            return self._p.reshape(self.size)
         return self._p
     
+    @property
+    def num_fields(self):
+        """Number of fields fit for"""
+        return self._Nfields
+
     @property
     def size(self):
         """Number of points in reconstruction"""
@@ -767,9 +846,11 @@ class LogNormalMAPModel:
         missing constant
     """ 
 
-    def __init__(self, DHT, M, j, p=None, scale=None, s0=None, guess=None, noise_likelihood=0):
+    def __init__(self, DHT, M, j, p=None, scale=None, s0=None, guess=None, 
+                 Nfields=None, full_hessian=1, noise_likelihood=0):
 
         self._DHT = DHT
+        self._full_hess = full_hessian
 
         # Correct shape of design matrix etc.        
         if len(M.shape) == 2:
@@ -783,35 +864,42 @@ class LogNormalMAPModel:
         # Number of frequencies / radial points
         Nf, Nr = j.shape
         # Number of signal fields:
-        Ns = 1
-        if guess is not None:
-            guess = guess.reshape(-1, Nr)
-            Ns = guess.shape[0]
+        # Get the number of fields
+        if Nfields is None:
+            if guess is None:
+                Nfields = 1
+            else:
+                guess = guess.reshape(-1, Nr)
+                Nfields = guess.shape[0]
+        elif guess is not None:
+            guess = guess.reshape(Nfields, Nr)
+        self._Nfields = Nfields
+
         
         # Create the correct shape for the power spectrum and scale factors
         if p is not None:
             p = p.reshape(-1, Nr)
-            if p.shape[0] == 1 and Ns > 1:
-                p = np.repeat(p, Ns, axis=0)
+            if p.shape[0] == 1 and Nfields > 1:
+                p = np.repeat(p, Nfields, axis=0)
         self._p = p
 
                 
         if scale is None:
-            self._scale = np.ones([Nf, Ns], dtype='f8')
+            self._scale = np.ones([Nf, Nfields], dtype='f8')
         else:
-            self._scale = np.empty([Nf, Ns], dtype='f8')
+            self._scale = np.empty([Nf, Nfields], dtype='f8')
             self._scale[:] = scale.reshape(Nf, -1)        
 
         if s0 is None:
-            self._s0 = np.ones(Ns, dtype='f8')
+            self._s0 = np.ones(Nfields, dtype='f8')
         else:
             s0 = np.atleast_1d(s0)
             if len(s0) == 1:
-                s0 = np.repeat(s0, Ns)
-            elif len(s0) != Ns:
+                s0 = np.repeat(s0, Nfields)
+            elif len(s0) != Nfields:
                 raise ValueError("Signal zero-point (s0) must have the same "
                                  "length as the number of fields or length 1")
-        self._s0 = s0.reshape(Ns, 1)
+        self._s0 = s0.reshape(Nfields, 1)
 
         if p is not None:
             if np.any(p <= 0) or np.any(np.isnan(p)):
@@ -827,7 +915,7 @@ class LogNormalMAPModel:
             Ykm = self._DHT.coefficients()
             self._Sinv = np.einsum('ji,lj,jk->lik', Ykm, 1/p, Ykm)
         else:
-            self._Sinv = np.zeros([Ns, Nr, Nr], dtype='f8')
+            self._Sinv = np.zeros([Nfields, Nr, Nr], dtype='f8')
 
         self._like_noise = noise_likelihood
 
@@ -853,7 +941,7 @@ class LogNormalMAPModel:
             s = s.reshape(Ns, Nr)
             I = np.exp(np.dot(scale,s+s0)) # shape Nf, Nr
 
-            f  = 0.5*np.einsum('ij,ijk,ik->', s, Sinv, s)
+            f  = 0.5*np.einsum('ij,ijk,ik', s, Sinv, s)
 
             f += 0.5*np.einsum('ij,ijk,ik',I,self._M,I)
             f -= np.sum(I*self._j)
@@ -865,9 +953,9 @@ class LogNormalMAPModel:
             s = s.reshape(Ns, Nr)
             I = np.exp(np.dot(scale,s+s0)) # shape Nf, Nr
 
-            sI = np.einsum('ij,ik->ijk',scale, I) # shape Nf, Ns, Nr
+            sI = np.einsum('is,ij->isj',scale, I) # shape Nf, Ns, Nr
 
-            S1_s = np.einsum('ijk,ik->ij', Sinv, s)  # shape Ns, Nr
+            S1_s = np.einsum('sjk,sk->sj', Sinv, s)  # shape Ns, Nr
             MI = np.einsum('isj,ijk,ik->sj', sI, self._M, I)
             jI = np.einsum('isj,ij->sj', sI, self._j)
             
@@ -878,17 +966,23 @@ class LogNormalMAPModel:
             s = s.reshape(Ns, Nr)
             I = np.exp(np.dot(scale,s+s0)) # shape Nf, Nr
             
-            sI = np.einsum('ij,ik->ijk',scale, I) # shape Nf, Ns, Nr
-            s2I = np.einsum('ij,ik->ijk',scale**2, I) # shape Nf, Ns, Nr
+            sI = np.einsum('is,ij->isj',scale, I) # shape Nf, Ns, Nr
+            s2I = np.einsum('is,ij->isj',scale**2, I) # shape Nf, Ns, Nr
             
-            Mjk = np.einsum('isj,ijk,itk->sjtk',sI, self._M, sI).reshape(Ns*Nr, Ns*Nr)
-            MI = np.einsum('isj,ijk,ik->sj', s2I, self._M, I).reshape(Ns*Nr)
-            jI = np.einsum('isj,ij->sj', s2I, self._j).reshape(Ns*Nr)
+            Mjk = np.einsum('isj,ijk,itk->sjtk',sI, self._M, sI)
+
+            resid = 0
+            if self._full_hess > 0:
+                MI = Mjk.sum(3) 
+                jI = np.einsum('is,itj,ij->sjt', scale, sI, self._j)
+
+                resid = np.einsum('sjt,jk->sjtk', MI-jI, np.eye(Nr)).reshape(Ns*Nr, Ns*Nr)
+                if self._full_hess < 1:
+                    resid *= self._full_hess    
             
-            term = (Mjk + np.diag(MI - jI))
-            return Sflat + term
+            return Mjk.reshape(Ns*Nr, Ns*Nr) + resid + Sflat
         
-        x = (guess - s0).reshape(Ns*Nr)
+        x = guess.reshape(Ns*Nr)
 
         def limit_step(dx, x):
             alpha = 1.1*np.min(np.abs(x/dx))
@@ -899,9 +993,11 @@ class LogNormalMAPModel:
         # Ignore convergence because it will often fail due to round off when
         # we're super close to the minimum
         search = LineSearch(reduce_step=limit_step)
-        s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-6)
- 
-        self._s_MAP = s.reshape(Ns, Nr) + s0
+        s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-7)
+        self._s_MAP = s.reshape(Ns, Nr)
+
+        #print("\n", _, self._approx_hess)
+        #print(H(s), np.max(np.abs(s*jac(s))), np.max(np.abs((s*hess(s).T).T*s)))
 
         Dinv = hess(s)
         try:
@@ -937,7 +1033,13 @@ class LogNormalMAPModel:
         else:
             U, s1, V = self._Dsvd
             return np.dot(V.T, np.multiply(np.dot(U.T, b), s1))
-    
+
+    def draw(self, N):
+        """Compute N draws from the (approximate) posterior"""
+        draws = np.random.multivariate_normal(self.MAP.reshape(-1), self.covariance, N)
+        if self.num_fields > 1:
+            draws = draws.reshape(N, self.num_fields, self.size)
+        return draws    
 
     def log_likelihood(self, s=None):
         r"""
@@ -1006,7 +1108,7 @@ class LogNormalMAPModel:
     def covariance(self):
         """Posterior covariance at MAP, unit = (Jy / sr)**2"""
         if self._cov is None:
-            self._cov = self.Dsolve(np.eye(self.size))
+            self._cov = self.Dsolve(np.eye(self.size*self.num_fields))
         return self._cov
 
     @property
@@ -1030,7 +1132,12 @@ class LogNormalMAPModel:
         if s0.shape[0] == 1:
             return s0[0]
         return s0
-
+    
+    @property
+    def num_fields(self):
+        """Number of fields fit for"""
+        return self._Nfields
+        
     @property
     def size(self):
         """Number of points in reconstruction"""

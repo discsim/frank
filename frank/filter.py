@@ -77,48 +77,61 @@ class CriticalFilter:
 
         return Tij 
 
-    def update_power_spectrum_multiple(self, fit):
+    def update_power_spectrum_multiple(self, fit, binning=None):
         """Estimate the best fit power spectrum given the current model fit.
         This version works when there are multiple fields being fit simultaneously.
         """
-        Np = len(fit.power_spectrum)
-        Ns = len(fit.MAP)
-        if (Ns % Np) != 0:
-            raise ValueError("Fields and power spectrum are not compatible")
-        Nfields = Ns//Np
+
+        Nfields, Np = fit.power_spectrum.shape
+
+        if binning is None:
+            binning = np.zeros(Nfields, dtype='i4')
+        Nbins = binning.max()+1
 
         Ykm = self._DHT.coefficients()
         Tij_pI = self._Tij + scipy.sparse.identity(self._DHT.size)
         
-        ds = fit.MAP - fit.s_0
+        ds = fit.MAP
        
         # Project mu to Fourier-space
         #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
         #       = (Ykm mu)**2
-        Tr1 = 0
-        Y = np.zeros([Ns, Ns]) 
+        Tr1 = np.zeros([Nbins, Np])
+        Y = np.zeros([Np*Nfields, Np*Nfields]) 
         for f in range(Nfields):
             s = f*Np
             e = s+Np
 
-            Tr1 += np.dot(Ykm, ds[s:e]) ** 2
+            Tr1[binning[f]] += np.dot(Ykm, ds[f]) ** 2
             Y[s:e, s:e] = Ykm 
         # Project D to Fourier-space
         #   Drr^-1 = Ykm^T Dqq^-1 Ykm
         #   Drr = Ykm^-1 Dqq Ykm^-T
         #   Dqq = Ykm Drr Ykm^T
         # Tr2 = Trace(Dqq)
-        Tr2 = np.einsum('ij,ji->i', Y, fit.Dsolve(Y.T)) 
-        Tr2 = np.sum(Tr2.reshape(Nfields, Np), axis=0) 
+        tmp = np.einsum('ij,ji->i', Y, fit.Dsolve(Y.T)).reshape(Nfields, Np)
 
-        pi = fit.power_spectrum
+        Tr2 = np.zeros([Nbins, Np])
+        ps  = np.zeros([Nbins, Np])
+        count = np.zeros(Nbins)
+        for f in range(Nfields):
+            Tr2[binning[f]] += tmp[f]
+            ps[binning[f]] += fit.power_spectrum[f]
+            count[binning[f]] += 1
+        ps /= count.reshape(Nbins, 1)
 
-        beta = (self._p_0 + 0.5 * (Tr1 + Tr2)) / pi - \
-               (self._alpha - 1.0 + 0.5 * self._rho * Nfields)
+        for i in range(Nbins):
+            beta = (self._p_0 + 0.5 * (Tr1[i] + Tr2[i])) / ps[i] - \
+               (self._alpha - 1.0 + 0.5 * self._rho * count[i])
                 
-        tau = scipy.sparse.linalg.spsolve(Tij_pI, beta + np.log(pi))
+            tau = scipy.sparse.linalg.spsolve(Tij_pI, beta + np.log(ps[i]))
+            ps[i] = np.exp(tau)
 
-        return np.exp(tau)
+        p = np.empty_like(fit.power_spectrum)
+        for f in range(Nfields):
+            p[f] = ps[binning[f]]
+
+        return p
 
 
     def update_power_spectrum(self, fit):
@@ -129,7 +142,7 @@ class CriticalFilter:
         # Project mu to Fourier-space
         #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
         #       = (Ykm mu)**2
-        Tr1 = np.dot(Ykm, fit.MAP-fit.s_0) ** 2
+        Tr1 = np.dot(Ykm, fit.MAP) ** 2
         # Project D to Fourier-space
         #   Drr^-1 = Ykm^T Dqq^-1 Ykm
         #   Drr = Ykm^-1 Dqq Ykm^-T
@@ -172,7 +185,7 @@ class CriticalFilter:
         """
         Ykm = self._DHT.coefficients()
 
-        mq = np.dot(Ykm, fit.MAP-fit.s_0)
+        mq = np.dot(Ykm, fit.MAP)
 
         mqq = np.outer(mq, mq)
         Dqq = np.dot(Ykm, fit.Dsolve(Ykm.T))

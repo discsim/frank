@@ -303,7 +303,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
         if stretch == 'asinh':
             vmin = max(0, min(sol.I))
             from astropy.visualization.mpl_normalize import simple_norm
-            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, 
+                               min_cut=vmin, max_cut=vmax)
         elif stretch == 'power':
             vmin = 0
             norm = PowerNorm(gamma, vmin, vmax)
@@ -312,10 +313,10 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
             raise err
 
         plot_2dsweep(sol.r, sol.I, ax=ax4, cmap='inferno', norm=norm,
-                    vmin=vmin, vmax=vmax, project=False)
+                     project=False)
         plot_2dsweep(sol.r, sol.I, ax=ax5, cmap='inferno', norm=norm,
-                    vmin=vmin, vmax=vmax, project=True,
-                    geom=sol.geometry)
+                     project=True,
+                     geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -531,7 +532,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         if stretch == 'asinh':
             vmin = max(0, min(sol.I))
             from astropy.visualization.mpl_normalize import simple_norm
-            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, 
+                               min_cut=vmin, max_cut=vmax)
         elif stretch == 'power':
             vmin = 0
             norm = PowerNorm(gamma, vmin, vmax)
@@ -540,8 +542,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             raise err
 
         plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm,
-                    vmin=vmin, vmax=vmax, project=True,
-                    geom=sol.geometry)
+                     project=True,
+                     geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -895,7 +897,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         if stretch == 'asinh':
             vmin = max(0, min(sol.I))
             from astropy.visualization.mpl_normalize import simple_norm
-            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, min_cut=vmin)
+            norm = simple_norm(sol.I, stretch='asinh', asinh_a=asinh_a, 
+                               min_cut=vmin, max_cut=vmax)
         elif stretch == 'power':
             vmin = 0
             norm = PowerNorm(gamma, vmin, vmax)
@@ -903,12 +906,12 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm, vmin=0,
-                    vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
+        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm, 
+                     xmax=sol.Rmax, plot_colorbar=True)
 
         if mean_convolved is not None:
             plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
-                        vmin=0, vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
+                         xmax=sol.Rmax, plot_colorbar=True)
 
         # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
         # swept 'image' has the same pixel resolution as the frank swept 'images'
@@ -916,7 +919,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         interp = interp1d(clean_profile['r'], clean_profile['I'])
         regrid_I_clean = interp(sol.r)
         plot_2dsweep(sol.r, regrid_I_clean, ax=ax4, cmap='inferno', norm=norm,
-                    vmin=0, vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
+                     xmax=sol.Rmax, plot_colorbar=True)
 
         ax0.legend(loc='best')
         ax1.legend(loc='best', ncol=2)

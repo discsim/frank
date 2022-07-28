@@ -216,13 +216,14 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
         3 : Too many hessian evaluations
     """
     need_hess = True
+    nfev = 1
     nhess = 0
     x = guess
     fx = fun(x)
-    for _ in range(max_step):
+    for nstep in range(max_step):
         if need_hess:
             if nhess == max_hev: 
-                return x, 3
+                return x, (3, nstep, nfev, nhess)
             
             j_sol = (scipy.linalg.lu_factor(hess(x)),  scipy.linalg.lu_solve)
             nhess += 1
@@ -231,13 +232,16 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
         dx = j_sol[1](j_sol[0], -jx)
 
         if np.dot(jx, dx) < 0:
-            x, fx, _, failed = line_search(fun, jx, x, dx, fx, False)
+            x, fx, fev, failed = line_search(fun, jx, x, dx, fx, False)
+            nfev += fev
         else:
             failed = True
             
         # Use gradient descent when Newton's method fails
         if failed:
-            x, fx, _, failed_descent = line_search(fun, jx, x, -jx, fx, False)
+            x, fx, fev, failed_descent = line_search(fun, jx, x, -jx, fx, False)
+            nfev += fev
+
 
             # Try again once more with a different back tracking algorithm                
             if failed_descent:
@@ -246,6 +250,7 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
                 for _ in range(10):
                     xn = x + dx
                     fn = fun(xn)
+                    nfev += 1
                     if fn < fx:
                         break
                     else:
@@ -253,7 +258,7 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
                 else:
                     # Neither gradient descent nor Newton's method can improve
                     # the solution
-                    return x, 1
+                    return x, (1, nstep, nfev, nhess)
                     
                 fx = fn
                 x = xn
@@ -261,7 +266,9 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
         need_hess = failed or (line_search.reduction != 1.0)
 
         # Small enough gradient
-        if np.sqrt(np.mean(jac(x)**2)) < tol:
-            return x, 0
+        #if np.sqrt(np.mean(jac(x)**2)) < tol:
+        #    return x, 0
+        if (np.abs(jac(x))*np.abs(x)).max() < tol * max(np.abs(fx), 1):
+            return x, (0, nstep, nfev, nhess)
 
-    return x, 2
+    return x, (2, nstep, nfev, nhess)

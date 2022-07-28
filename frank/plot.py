@@ -312,7 +312,7 @@ def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
 
 def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
                  vmax=None, xmax=None, ymax=None, dr=None,
-                 rescale_brightness=True, plot_colorbar=True,
+                 rescale_brightness=False, plot_colorbar=True,
                  project=False, phase_shift=False, geom=None, **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
@@ -368,14 +368,13 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         ymax = ymax_computed
 
     if rescale_brightness:
+        raise NotImplemented("rescale_brightness no longer works with new "
+                             "versions of matplotlib")
         I2D /= 1e10
         vmin /= 1e10
         vmax /= 1e10
 
-    if vmin is None:
-        vmin = I2D.min()
-    if vmax is None:
-        vmax = I2D.max()
+
 
     ax.imshow(I2D, origin='lower', extent=(xmax, -xmax, -ymax, ymax), vmin=vmin,
               vmax=vmax, cmap=cmap, norm=norm, **kwargs
