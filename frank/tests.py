@@ -256,6 +256,35 @@ def test_frank_fitter():
                                err_msg="Testing Frank Fit to AS 209")
 
 
+
+def test_geom_deproject():
+    """Check predict works properly with a different geometry"""
+    AS209, geometry = load_AS209(uv_cut=1e6)
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6
+
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)
+
+    geom2 = FixedGeometry(0,0,0,0)
+
+    q = np.hypot(u,v)
+    q = np.geomspace(q.min(), q.max(), 20)
+    
+    V = sol.predict(q, 0*q, geometry=geom2)
+    Vexpected = [ 
+        0.3152656,   0.31260669,  0.30831366,  0.30143546,
+        0.29055445,  0.27369896,  0.24848676,  0.2129406,
+        0.1677038,   0.11989993,  0.08507635,  0.07491307,
+        0.06555019,  0.01831576, -0.00173855,  0.00042803,
+       -0.00322264,  0.00278782, -0.00978981,  0.00620292,
+    ]
+    
+    np.testing.assert_allclose(V, Vexpected, rtol=2e-5, atol=1e-8,
+                               err_msg="Testing predict with different geometry")
+
 def test_fit_geometry_inside():
     """Check the geometry fit embedded in a call to FrankFitter"""
     AS209, _ = load_AS209(uv_cut=1e6)

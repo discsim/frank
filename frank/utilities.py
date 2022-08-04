@@ -23,7 +23,7 @@ import logging
 import numpy as np
 from scipy.interpolate import interp1d
 
-from frank.constants import deg_to_rad
+from frank.constants import deg_to_rad, sterad_to_arcsec
 
 def arcsec_baseline(x):
     """
@@ -43,6 +43,61 @@ def arcsec_baseline(x):
     """
 
     converted = 1 / (x / 60 / 60 * np.pi / 180)
+
+    return converted
+
+
+def jy_convert(x, conversion, bmaj=None, bmin=None):
+    """
+    Provide x as a brightness in one of the units [Jy / beam], [Jy / arcsec^2],
+    [Jy / sterad] to convert x to another of these units
+
+    Parameters
+    ----------
+    x : float
+        Brightness in one of: [Jy / beam], [Jy / arcsec^2], [Jy / sterad]
+    conversion : { 'beam_sterad', 'beam_arcsec2', 'arcsec2_beam',
+                   'arcsec2_sterad', 'sterad_beam', 'sterad_arcsec2'}
+        The unit conversion to perform, e.g., 'beam_sterad' converts
+        [Jy / beam] to [Jy / sterad]
+    bmaj : float, optional
+        Beam FWHM along the major axis [arcsec]
+    bmin : float, optional
+        Beam FWHM along the minor axis [arcsec]
+
+    Returns
+    -------
+    converted : float
+        Brightness in converted units
+
+    """
+    if (bmaj is None or bmin is None) and conversion in ['beam_sterad',
+                                                       'beam_arcsec2',
+                                                       'arcsec2_beam',
+                                                       'sterad_beam']:
+        raise ValueError('bmaj and bmin must be specified to perform the'
+        ' conversion {}'.format(conversion))
+
+    if bmaj is not None and bmin is not None:
+        beam_solid_angle = np.pi * bmaj  * bmin / (4 * np.log(2))
+
+    if conversion == 'beam_arcsec2':
+        converted = x / beam_solid_angle
+    elif conversion == 'arcsec2_beam':
+        converted = x * beam_solid_angle
+    elif conversion == 'arcsec2_sterad':
+        converted = x * sterad_to_arcsec
+    elif conversion == 'sterad_arcsec2':
+        converted = x / sterad_to_arcsec
+    elif conversion == 'beam_sterad':
+        converted = x / beam_solid_angle * sterad_to_arcsec
+    elif conversion == 'sterad_beam':
+        converted = x * beam_solid_angle / sterad_to_arcsec
+    else:
+        raise AttributeError("conversion must be one of {}"
+                             "".format(['beam_sterad', 'beam_arcsec',
+                             'arcsec_beam', 'arcsec_sterad',
+                             'sterad_beam', 'sterad_arcsec']))
 
     return converted
 
