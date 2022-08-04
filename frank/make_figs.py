@@ -32,15 +32,13 @@ from frank.plot import (
     plot_brightness_profile,
     plot_vis_quantity,
     plot_vis_hist,
-    plot_profile_iterations,
+    plot_iterations,
     plot_2dsweep,
-    plot_pwr_spec_iterations,
     plot_convergence_criterion
 )
 
 # Suppress some benign warnings
 import warnings
-warnings.filterwarnings('ignore', '.*compatible with tight_layout.*')
 warnings.filterwarnings('ignore', '.*handles with labels found.*')
 
 
@@ -168,10 +166,9 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     ax0.legend(loc=0)
     ax1.legend(loc=0)
 
-    plt.tight_layout()
-
     if save_prefix:
-        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=300)
+        plt.savefig(save_prefix + '_frank_deprojection.png', dpi=300,
+                    bbox_inches='tight')
         plt.close()
 
     return fig, axes
@@ -332,7 +329,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
             ax2.set_xscale('log')
             ax3.set_xscale('log')
 
-        ax2.set_xlim(right=max(baselines) / 1e6 * 1.2)
+            ax2.set_xlim(right=max(baselines) / 1e6 * 1.2)
+        else:
+            ax2.set_xlim(0, max(baselines) / 1e6 * 1.2)
         xlims = ax2.get_xlim()
         ax3.set_xlim(xlims)
 
@@ -344,10 +343,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.setp(ax2.get_xticklabels(), visible=False)
 
-        plt.tight_layout()
-
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=300)
+            plt.savefig(save_prefix + '_frank_fit_quick.png', dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
     return fig, axes
@@ -494,37 +492,37 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             rmse = (np.mean(resid**2))**.5
 
             # Plot the observed, binned visibilities (with errorbars) and the residuals
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax3, c=cs[i],
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax3, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_re_kl, ax4, c=cs[i],
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax4, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, vis_im_kl, ax6, c=cs[i],
+            plot_vis_quantity(binned_vis.uv / 1e6, vis_im_kl, ax6, c=cs[i],
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv, resid, ax5, c=cs[i], marker=ms[i], ls='None',
+            plot_vis_quantity(binned_vis.uv / 1e6, resid, ax5, c=cs[i], marker=ms[i], ls='None',
                            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
             # Plot a histogram of the observed visibilties to examine how the
             # visibility count varies with baseline
-            plot_vis_hist(binned_vis, ax8, color=hist_cs[i],
+            plot_vis_hist(binned_vis, ax8, rescale=1e6, color=hist_cs[i],
                           label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
             # Plot the binned data signal-to-noise as a function of baseline
-            plot_vis_quantity(binned_vis.uv,
+            plot_vis_quantity(binned_vis.uv / 1e6,
                           binned_vis.V.real**2 / binned_vis.error.real**2,
                           ax9, color=hist_cs[i], marker=ms[i], ls='None',
                           label=r'{:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         # Plot the visibility domain frank fit in log-y
-        plot_vis_quantity(grid, vis_fit_kl, ax3, c='r', label='frank')
-        plot_vis_quantity(grid, vis_fit_kl, ax4, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank')
+        plot_vis_quantity(grid / 1e6, vis_fit_kl, ax4, c='r', label='frank')
 
         # Plot the frank inferred power spectrum
-        plot_vis_quantity(sol.q, sol.power_spectrum, ax7)
+        plot_vis_quantity(sol.q / 1e6, sol.power_spectrum, ax7)
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
@@ -557,8 +555,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         if logx:
             for aa in axs:
                 aa.set_xscale('log')
-
-        ax3.set_xlim(right=max(baselines) * 1.2)
+            ax3.set_xlim(right=max(baselines) / 1e6 * 1.2)
+        else:
+            ax3.set_xlim(0, max(baselines) / 1e6 * 1.2)
         xlims = ax3.get_xlim()
         for aa in axs:
             aa.set_xlim(xlims)
@@ -566,7 +565,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         ax7.set_yscale('log')
         ax8.set_yscale('log')
 
-        ax7.set_yticks([1e-15, 1e-10, 1e-5, 1])
         ax8.set_yticks([1, 10, 1e2, 1e3])
 
         ax9.set_yscale('log')
@@ -580,13 +578,13 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             ax5.set_ylabel('Norm. residual')
         else:
             ax5.set_ylabel('Residual [mJy]')
-        ax5.set_xlabel(r'Baseline [$\lambda$]')
+        ax5.set_xlabel(r'Baseline [M$\lambda$]')
 
         ax6.set_ylabel('Im(V) [mJy]')
         ax7.set_ylabel(r'Power [Jy$^2$]')
         ax8.set_ylabel('Count')
         ax9.set_ylabel(r'SNR=$\mu_{\rm bin}^2 / \sigma_{\rm bin}^2$')
-        ax9.set_xlabel(r'Baseline [$\lambda$]')
+        ax9.set_xlabel(r'Baseline [M$\lambda$]')
 
         axs = [ax0, ax3, ax4, ax6, ax7, ax8]
         for aa in axs:
@@ -678,23 +676,22 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
         pwr_spec_iter = iteration_diagnostics['power_spectrum']
         num_iter = iteration_diagnostics['num_iterations']
 
-        plot_profile_iterations(r, profile_iter_toplot, iter_plot_range, ax0)
+        plot_iterations(r, profile_iter_toplot, iter_plot_range, ax0)
 
         # Plot the difference in the profile between the last 100 iterations
         iter_plot_range_end = [max(iter_plot_range[1] - 100, 0),
                                iter_plot_range[1] - 1]
 
-        plot_profile_iterations(r, np.diff(profile_iter_toplot, axis=0),
+        plot_iterations(r, np.diff(profile_iter_toplot, axis=0),
                                 iter_plot_range_end, ax1,
                                 cmap=plt.cm.cividis)  # pylint: disable=no-member
 
-        plot_pwr_spec_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
+        plot_iterations(q, pwr_spec_iter, iter_plot_range, ax2)
 
         # Plot the difference in the power spectrum between the last 100 iterations
-        plot_pwr_spec_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
+        plot_iterations(q, abs(np.diff(pwr_spec_iter, axis=0)),
                                  iter_plot_range_end, ax3,
-                                 cmap=plt.cm.cividis,  # pylint: disable=no-member
-                                 bbox_x=.45)
+                                 cmap=plt.cm.cividis)  # pylint: disable=no-member
 
         plot_convergence_criterion(profile_iter_toplot, num_iter, ax4, c='k')
 
@@ -722,10 +719,9 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
         plt.setp(ax0.get_xticklabels(), visible=False)
         plt.setp(ax2.get_xticklabels(), visible=False)
 
-        plt.tight_layout()
-
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=300)
+            plt.savefig(save_prefix + '_frank_fit_diag.png', dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
     return fig, axes, iter_plot_range
@@ -1189,10 +1185,9 @@ def make_bootstrap_fig(r, profiles, force_style=True,
         ax2.set_ylim(bottom=1e-4)
         ax3.set_ylim(bottom=1e-4)
 
-        plt.tight_layout()
-
         if save_prefix:
-            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=300)
+            plt.savefig(save_prefix + '_frank_bootstrap.png', dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
     return fig, axes

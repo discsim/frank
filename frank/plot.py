@@ -116,7 +116,8 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
 
         ax.axhline(0, c='c', ls='--', zorder=10)
 
-        ax.legend(loc='best')
+        if 'label' in kwargs:
+            ax.legend(loc='best')
 
 
 def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
@@ -152,10 +153,11 @@ def plot_vis_quantity(baselines, vis_quantity, ax, vis_quantity_err=None,
 
     ax.axhline(0, c='c', ls='--', zorder=10)
 
-    ax.legend(loc='best')
+    if 'label' in kwargs:
+        ax.legend(loc='best')
 
 
-def plot_vis_hist(binned_vis, ax, **kwargs):
+def plot_vis_hist(binned_vis, ax, rescale=None, **kwargs):
     r"""
     Plot a histogram of visibilities using a precomputed binning
 
@@ -165,15 +167,23 @@ def plot_vis_hist(binned_vis, ax, **kwargs):
         Pre-binned visibilities (see utilities.UVDataBinner)
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
+    rescale : float, default=None
+        Constant by which to rescale x-values
     """
 
     edges = np.concatenate([binned_vis.bin_edges[0].data,
                             binned_vis.bin_edges[1].data[-1:]])
+
+    # alter x-axis units
+    if rescale is not None:
+        edges /= rescale
+
     counts = binned_vis.bin_counts.data
 
     ax.hist(0.5 * (edges[1:] + edges[:-1]), edges, weights=counts, alpha=.5, **kwargs)
 
-    ax.legend(loc='best')
+    if 'label' in kwargs:
+        ax.legend(loc='best')
 
 
 def plot_convergence_criterion(profile_iter, N_iter, ax, **kwargs):
@@ -235,23 +245,23 @@ def make_colorbar(ax, vmin, vmax, cmap, label, loc=3, bbox_x=.05, bbox_y=.175):
     axins1.xaxis.set_ticks_position("bottom")
 
 
-def plot_profile_iterations(r, profile_iter, n_iter, ax,
+def plot_iterations(x, iters, n_iter, ax,
                             cmap=plt.cm.cool,  # pylint: disable=no-member
                             bbox_x=-.02, bbox_y=-.1, **kwargs):
     r"""
-    Plot a fit's brightness profile reconstruction over a chosen range of
-    the fit's iterations
+    Plot a fit quantity (e.g., the brightness profile or power spectrum) over a
+    range of the fit's iterations
 
     Parameters
     ----------
-    r : array
-        Radial data coordinates at which the brightness profile is defined.
-        The assumed unit (for the x-label) is arcsec
-    profile_iter : list, shape = (n_iter, N_coll)
-        Brightness profile reconstruction at each of n_iter iterations. The
-        assumed unit (for the y-label) is Jy / sr
+    x : array
+        x-values at which to plot (e.g., radii for a brightness profile or
+        baselines for a power spectrum)
+    iters : list, shape = (n_iter, N_coll)
+        Iterations to plot (e.g., brightness profiles or power spectra at each
+        of n_iter iterations)
     n_iter : list, of the form [start_iteration, stop_iteration]
-        Chosen range of iterations in the fit over which to plot profile_iter
+        Range of iterations in the fit over which to plot iters
     ax : Matplotlib `~.axes.Axes` class
         Axis on which to plot
     cmap : plt.cm colormap, default=plt.cm.cool
@@ -259,53 +269,17 @@ def plot_profile_iterations(r, profile_iter, n_iter, ax,
     bbox_x, bbox_y : float, default = -0.02 and -0.1
         x- and y-value where the colorbar is placed
     """
-    if n_iter[0] >= n_iter[1] or n_iter[1] > len(profile_iter):
+    if n_iter[0] >= n_iter[1] or n_iter[1] > len(iters):
         raise ValueError("Require: n_iter[0] < n_iter[1] and"
-                         " n_iter[1] <= len(profile_iter)")
+                         " n_iter[1] <= len(iters)")
 
     iter_range = range(n_iter[0], n_iter[1])
     for i in iter_range:
-        ax.plot(r, profile_iter[i], c=cmap(i / len(iter_range)), **kwargs)
-    ax.plot(r, profile_iter[-1], ':', c='k', label='Last iteration', **kwargs)
+        ax.plot(x, iters[i], c=cmap(i / len(iter_range)), **kwargs)
+    ax.plot(x, iters[-1], ':', c='k', label='Last iteration', **kwargs)
 
     make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
                   label='Iteration', loc=1, bbox_x=bbox_x, bbox_y=bbox_y)
-
-    ax.legend(loc='best')
-
-
-def plot_pwr_spec_iterations(q, pwr_spec_iter, n_iter, ax,
-                             cmap=plt.cm.cool,  # pylint: disable=no-member
-                             bbox_x=.05, bbox_y=.175, **kwargs):
-    r"""
-    Plot a fit's power spectrum reconstruction over a chosen range of
-    the fit's iterations
-
-    Parameters
-    ----------
-    q : array
-        Baselines at which the power spectrum is defined.
-        The assumed unit (for the x-label) is :math:`\lambda`
-    pwr_spec_iter : list, shape = (n_iter, N_coll)
-        Power spectrum reconstruction at each of n_iter iterations. The
-        assumed unit (for the y-label) is Jy^2
-    n_iter : list, of the form [start_iteration, stop_iteration]
-        Chosen range of iterations in the fit over which to plot pwr_spec_iter
-    ax : Matplotlib `~.axes.Axes` class
-        Axis on which to plot
-    cmap : plt.cm colormap, default=plt.cm.cool
-        Colormap to apply to the overplotted power spectra
-    bbox_x, bbox_y : float, default = 0.05 and 0.175
-        x- and y-value where the colorbar is placed
-    """
-
-    iter_range = range(n_iter[0], n_iter[1])
-    for i in iter_range:
-        ax.plot(q, pwr_spec_iter[i], c=cmap(i / len(iter_range)), **kwargs)
-    ax.plot(q, pwr_spec_iter[-1], ':', c='k', label='Last iteration', **kwargs)
-
-    make_colorbar(ax, vmin=n_iter[0], vmax=n_iter[1], cmap=cmap,
-                  label='Iteration', loc=3, bbox_x=bbox_x, bbox_y=bbox_y)
 
     ax.legend(loc='best')
 

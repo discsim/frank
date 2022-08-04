@@ -87,13 +87,13 @@ def jy_convert(x, conversion, bmaj=None, bmin=None):
     elif conversion == 'arcsec2_beam':
         converted = x * beam_solid_angle
     elif conversion == 'arcsec2_sterad':
-        converted = x * sterad_to_arsec
+        converted = x * sterad_to_arcsec
     elif conversion == 'sterad_arcsec2':
-        converted = x / sterad_to_arsec
+        converted = x / sterad_to_arcsec
     elif conversion == 'beam_sterad':
-        converted = x / beam_solid_angle * sterad_to_arsec
+        converted = x / beam_solid_angle * sterad_to_arcsec
     elif conversion == 'sterad_beam':
-        converted = x * beam_solid_angle / sterad_to_arsec
+        converted = x * beam_solid_angle / sterad_to_arcsec
     else:
         raise AttributeError("conversion must be one of {}"
                              "".format(['beam_sterad', 'beam_arcsec',
