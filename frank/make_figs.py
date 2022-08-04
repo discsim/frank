@@ -1041,7 +1041,8 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
         # Alter the lists of varied parameters for the plot legend
-        if np.shape(varied_vals) == (2,2):
+        varied_vals = np.array(varied_vals, dtype=object)
+        if len(varied_vals[0]) == 2 and len(varied_vals[1]) == 2:
             varied_vals[0] = np.repeat(varied_vals[0], 2)
             varied_vals[1] = np.repeat(varied_vals[1], 2)
         elif len(varied_vals[0]) == 1:
