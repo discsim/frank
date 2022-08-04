@@ -456,6 +456,7 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
         In each case the variance of V in the uv-bins is used to estimate the
         weights. The first call will use q = np.hypot(u, v) in the uv-bins. The
         second and third calls are equivalent to the first with u=0.
+        
     """
 
     logging.info('  Estimating visibility weights')
