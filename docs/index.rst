@@ -72,7 +72,7 @@ If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 
 
 Authors
 -------
-|br| `Richard 'Dr. Frankenstein' Booth <https://github.com/rbooth200>`_
+`Richard 'Dr. Frankenstein' Booth <https://github.com/rbooth200>`_
 |br| `Jeff 'The Monster' Jennings <https://github.com/jeffjennings>`_
 |br| `Marco 'It's Alive!!!' Tazzari <https://github.com/mtazzari>`_
 
