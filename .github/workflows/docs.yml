@@ -1,12 +1,12 @@
 name: Docs
 
-# Run this workflow every time a new commit pushed to your repository
+# Run this workflow for every commit
 on: push
 
 jobs:
   build:
     name: Build docs
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
