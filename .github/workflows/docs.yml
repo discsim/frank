@@ -1,11 +1,22 @@
 name: Docs
 
-# Run this workflow for every commit
-on: push
+
+on:
+# Run this workflow only for commits to master
+  # push:
+  #   branches: [master]
+# Run this workflow only when a pull request is closed
+  pull_request:
+    types:
+      - closed
 
 jobs:
   build:
     name: Build docs
+    # Only proceed if the closed PR was also merged
+    # (see https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#running-your-workflow-when-a-pull-request-merges)
+    if_merged:
+        if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
