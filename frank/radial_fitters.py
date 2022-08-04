@@ -23,7 +23,6 @@
 import abc
 from collections import defaultdict
 import logging
-from sre_parse import REPEAT_CHARS
 import numpy as np
 
 from frank.constants import deg_to_rad, rad_to_arcsec
