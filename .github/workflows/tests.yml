@@ -1,10 +1,7 @@
 name: Tests
 
-# Run this workflow for every commit or PR to master
-on:
-  push:
-  pull_request:
-    branches: [master]
+# Run this workflow for every commit
+on: push
 
 jobs:
   test:
