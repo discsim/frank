@@ -1,12 +1,15 @@
 name: Tests
 
-# Run this workflow every time a new commit pushed to your repository
-on: push
+# Run this workflow for every commit or PR to master
+on:
+  push:
+  pull_request:
+    branches: [master]
 
 jobs:
   test:
     name: Run tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
