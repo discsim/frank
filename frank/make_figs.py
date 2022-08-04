@@ -289,7 +289,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
 
         # Make a guess of good y-bounds for zooming in on the visibility fit
         # in linear-y
-        zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
+        zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
         zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
         ax3.set_ylim(zoom_bounds)
 
