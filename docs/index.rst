@@ -72,13 +72,12 @@ If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 
 
 Authors
 -------
-
-    - `Richard 'Dr. Frankenstein' Booth <https://github.com/rbooth200>`_
-    - `Jeff 'The Monster' Jennings <https://github.com/jeffjennings>`_
-    - `Marco 'It's Alive!!!' Tazzari <https://github.com/mtazzari>`_
+|br| `Richard 'Dr. Frankenstein' Booth <https://github.com/rbooth200>`_
+|br| `Jeff 'The Monster' Jennings <https://github.com/jeffjennings>`_
+|br| `Marco 'It's Alive!!!' Tazzari <https://github.com/mtazzari>`_
 
 Contact
-#######
+-------
 Submit a bug report or feature request on the
 `issues page <https://github.com/discsim/frank/issues>`_. For anything else,
 feel free to `email Jeff <jjennings1519@gmail.com>`_.
