@@ -308,10 +308,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
             raise err
 
         plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm,
-                    vmin=vmin, vmax=vmax, project=False)
+                    project=False)
         plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm,
-                    vmin=vmin, vmax=vmax, project=True,
-                    geom=sol.geometry)
+                    project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -467,7 +466,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
 
         # Make a guess of good y-bounds for zooming in on the visibility fit
         # in linear-y
-        zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
+        zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
         zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
         ax4.set_ylim(zoom_bounds)
 
