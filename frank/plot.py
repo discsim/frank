@@ -285,7 +285,7 @@ def plot_iterations(x, iters, n_iter, ax,
 
 
 def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, xmax=None, ymax=None,
-                 dr=None, plot_colorbar=True,  project=False, phase_shift=False,
+                 dr=None, plot_colorbar=True, project=False, phase_shift=False,
                  geom=None, cbar_label=r'I [Jy sr$^{-1}$]', **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
