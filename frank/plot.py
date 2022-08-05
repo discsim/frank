@@ -351,3 +351,4 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         m.set_array([])
 
         cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=.7)
+        cbar.set_label(cbar_label)
