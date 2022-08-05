@@ -47,14 +47,13 @@ Frankenstein (**frank**) is a library that fits the 1D radial brightness profile
 
 Get the code
 ------------
-**frank**'s on [PyPI](https://pypi.org/project/frank), so you can just use pip,
 ```
 pip install frank
 ```
 
 Documentation
 -------------
-The [docs](https://discsim.github.io/frank/) have it all.
+Check out the [docs](https://discsim.github.io/frank/).
 
 Attribution
 -----------
@@ -83,25 +82,23 @@ archivePrefix = {arXiv},
 }
 ```
 
-**[These papers](https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&sort=date%20desc%2C%20bibcode%20desc&p_=0)** cite **frank**.
+[These papers](https://ui.adsabs.harvard.edu/search/q=citations(doi%3A10.1093%2Fmnras%2Fstaa1365)%20&sort=date%20desc%2C%20bibcode%20desc&p_=0) cite **frank**.
 
 Authors
 -------
-- [Richard 'Dr. Frankenstein' Booth (University of Cambridge)](https://github.com/rbooth200)
+- [Richard 'Dr. Frankenstein' Booth](https://github.com/rbooth200)
 
-- [Jeff 'The Monster' Jennings (University of Cambridge)](https://github.com/jeffjennings)
+- [Jeff 'The Monster' Jennings](https://github.com/jeffjennings)
 
-- [Marco 'It's Alive!!!' Tazzari (University of Cambridge)](https://github.com/mtazzari)
+- [Marco 'It's Alive!!!' Tazzari](https://github.com/mtazzari)
 
 ### Contact ###
-Interested in collaborating to improve, extend or apply **frank**?
-Or just have questions about the code that don't require submitting an issue?
-[Email Jeff!](mailto:jmj51@ast.cam.ac.uk)
+Submit a bug report or feature request on the [issues page](https://github.com/discsim/frank/issues). For anything else, feel free to [email Jeff](mailto:jjennings1519@gmail.com).
 
 License
 -------
 **frank** is free software licensed under the LGPLv3 License. For more details see the [LICENSE](https://github.com/discsim/frank/blob/master/LICENSE.txt).
 
-© Copyright 2019-2020 Richard Booth, Jeff Jennings, Marco Tazzari.
+© Copyright 2019-2022 Richard Booth, Jeff Jennings, Marco Tazzari.
 
 Image: Universal Studios, NBCUniversal [Public domain]

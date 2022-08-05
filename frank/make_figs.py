@@ -290,7 +290,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
 
         # Make a guess of good y-bounds for zooming in on the visibility fit
         # in linear-y
-        zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
+        zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
         zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
         ax3.set_ylim(zoom_bounds)
 
@@ -309,11 +309,10 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.I, ax=ax4, cmap='inferno', norm=norm,
-                     project=False)
-        plot_2dsweep(sol.r, sol.I, ax=ax5, cmap='inferno', norm=norm,
-                     project=True,
-                     geom=sol.geometry)
+        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm,
+                    project=False)
+        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm,
+                    project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -470,7 +469,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
 
         # Make a guess of good y-bounds for zooming in on the visibility fit
         # in linear-y
-        zoom_ylim_guess = abs(vis_fit_kl[np.int(.5 * len(vis_fit_kl)):]).max()
+        zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
         zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
         ax4.set_ylim(zoom_bounds)
 
@@ -539,9 +538,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm,
-                     project=True,
-                     geom=sol.geometry)
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
+                    project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -902,12 +900,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm, 
-                     xmax=sol.Rmax, plot_colorbar=True)
-
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
+                    xmax=sol.Rmax, plot_colorbar=True)
         if mean_convolved is not None:
             plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
-                         xmax=sol.Rmax, plot_colorbar=True)
+                        xmax=sol.Rmax, plot_colorbar=True)
 
         # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
         # swept 'image' has the same pixel resolution as the frank swept 'images'
@@ -915,7 +912,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         interp = interp1d(clean_profile['r'], clean_profile['I'])
         regrid_I_clean = interp(sol.r)
         plot_2dsweep(sol.r, regrid_I_clean, ax=ax4, cmap='inferno', norm=norm,
-                     xmax=sol.Rmax, plot_colorbar=True)
+                    xmax=sol.Rmax, plot_colorbar=True)
 
         ax0.legend(loc='best')
         ax1.legend(loc='best', ncol=2)
@@ -957,8 +954,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
     return fig, axes
 
 
-def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
-                      varied_vals, dist=None, logx=False, force_style=True,
+def make_multifit_fig(u, v, vis, weights, sols, bin_widths, dist=None,
+                      logx=False, force_style=True,
                       save_prefix=None, figsize=(8, 8)
                      ):
     r"""
@@ -978,10 +975,6 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
         (see frank.radial_fitters.FrankFitter), for each of multiple fits
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    varied_pars : list of strings
-        Names of the `hyperparameters` that were varied over multiple fits
-    varied_vals : nested list of floats
-        Values for the `hyperparameters` that were varied over multiple fits
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = False
@@ -1046,19 +1039,10 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, varied_pars,
                      marker=ms[i], ls='None',
                      label=r'Obs.<0, {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        # Alter the lists of varied parameters for the plot legend
-        if np.shape(varied_vals) == (2,2):
-            varied_vals[0] = np.repeat(varied_vals[0], 2)
-            varied_vals[1] = np.repeat(varied_vals[1], 2)
-        elif len(varied_vals[0]) == 1:
-            varied_vals[0] = np.repeat(varied_vals[0], 2)
-        else:
-            varied_vals[1] = np.repeat(varied_vals[0], 2)
-
         # Overplot the multiple fits
         for ii in range(len(sols)):
-            plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii],
-                label='{} = {}, {} = {}'.format(varied_pars[0], varied_vals[0][ii], varied_pars[1], varied_vals[1][ii]))
+            plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii])#,
+                # label='alpha = {}, wsmooth = {}'.format(sols[ii].info['alpha'], sols[ii].info['wsmooth'])
             if dist and ii == len(sols) - 1:
                 ax0_5 = plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, dist=dist, c=multifit_cs[ii])
                 xlims = ax0.get_xlim()

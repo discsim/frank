@@ -34,7 +34,7 @@ interpreting its results, and hosts the code's API.
 
     API <py_API>
     Index <genindex>
-    Changelog <https://github.com/discsim/frank/blob/master/HISTORY.rst>    
+    Changelog <https://github.com/discsim/frank/blob/master/HISTORY.rst>
     Github <https://github.com/discsim/frank>
     Submit an issue <https://github.com/discsim/frank/issues>
 
@@ -72,13 +72,12 @@ If you use frank for your research, please cite Jennings, Booth, Tazzari et al. 
 
 Authors
 -------
-
-    - `Richard 'Dr. Frankenstein' Booth (University of Cambridge) <https://github.com/rbooth200>`_
-    - `Jeff 'The Monster' Jennings (University of Cambridge) <https://github.com/jeffjennings>`_
-    - `Marco 'It's Alive!!!' Tazzari (University of Cambridge) <https://github.com/mtazzari>`_
+`Richard 'Dr. Frankenstein' Booth <https://github.com/rbooth200>`_
+|br| `Jeff 'The Monster' Jennings <https://github.com/jeffjennings>`_
+|br| `Marco 'It's Alive!!!' Tazzari <https://github.com/mtazzari>`_
 
 Contact
-#######
-Interested in collaborating to improve, extend or apply frank?
-Or just have questions about the code that don't require submitting an issue on GitHub?
-`Email Jeff! <jmj51@ast.cam.ac.uk>`_
+-------
+Submit a bug report or feature request on the
+`issues page <https://github.com/discsim/frank/issues>`_. For anything else,
+feel free to `email Jeff <jjennings1519@gmail.com>`_.
