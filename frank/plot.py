@@ -284,10 +284,9 @@ def plot_iterations(x, iters, n_iter, ax,
     ax.legend(loc='best')
 
 
-def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
-                 vmax=None, xmax=None, ymax=None, dr=None,
-                 rescale_brightness=True, plot_colorbar=True,
-                 project=False, phase_shift=False, geom=None, **kwargs):
+def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, xmax=None, ymax=None,
+                 dr=None, plot_colorbar=True, project=False, phase_shift=False,
+                 geom=None, cbar_label=r'I [Jy sr$^{-1}$]', **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -303,11 +302,7 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
     cmap : Matplotlib colormap, default = 'inferno'
         Colormap to apply to the 2D image
     norm : Matplotlib `colors.Normalize` class
-        Colormap normalization for the image and colorbar
-    vmin, vmax : float or None (default)
-        Lower and upper brightness values (assumed in Jy / sr) for the 2D
-        image and colorbar plot's y-axis. If None, they will be set by
-        Matplotlib
+        Colormap normalization for the image and colorbar.
     xmax, ymax : float or None (default)
         Value setting the x- and y-bounds of the image (same units as r). The
         positive and negative bounds are both set to this value (modulo sign).
@@ -315,8 +310,6 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
     dr : float, optional, default = None
         Pixel size (same units as r). If not provided, it will be set at the
         same spatial scale as r
-    rescale_brightness : bool, default = True
-        Whether to rescale the image and colorbar brightness by a factor of 10^{10}
     plot_colorbar: bool, default = True
         Whether to plot a colorbar beside the image
     project : bool, default = False
@@ -328,6 +321,8 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         Fitted geometry (see frank.geometry.SourceGeometry). Here we use
         geom.inc [deg], geom.PA [deg], geom.dRA [arcsec], geom.dDec [arcsec] if
         project=True
+    cbar_label : string, default = r'I [Jy sr$^{-1}$]'
+        Colorbar axis label
     """
 
     I2D, xmax_computed, ymax_computed = sweep_profile(r, I,
@@ -336,36 +331,25 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
                                                     project=project,
                                                     phase_shift=phase_shift,
                                                     geom=geom)
+
     if xmax is None:
         xmax = xmax_computed
     if ymax is None:
         ymax = ymax_computed
 
-    if rescale_brightness:
-        I2D /= 1e10
-        vmin /= 1e10
-        vmax /= 1e10
+    if norm is None:
+        import matplotlib.colors as mpl_cs
+        norm = mpl_cs.Normalize(vmin=I2D.min(), vmax=I2D.max())
 
-    if vmin is None:
-        vmin = I2D.min()
-    if vmax is None:
-        vmax = I2D.max()
-
-    ax.imshow(I2D, origin='lower', extent=(xmax, -xmax, -ymax, ymax), vmin=vmin,
-              vmax=vmax, cmap=cmap, norm=norm, **kwargs
+    ax.imshow(I2D, origin='lower', extent=(xmax, -1.0 * xmax, -1.0 * ymax, ymax),
+              cmap=cmap, norm=norm, **kwargs
               )
 
     # Set a normalization and colormap for the colorbar
     if plot_colorbar:
-        import matplotlib.colors as mpl_cs
         from matplotlib import cm
-        if norm is None:
-            norm = mpl_cs.Normalize(vmin=vmin, vmax=vmax)
         m = cm.ScalarMappable(norm=norm, cmap=cmap)
         m.set_array([])
 
         cbar = plt.colorbar(m, ax=ax, orientation='vertical', shrink=.7)
-        if rescale_brightness:
-            cbar.set_label(r'I [$10^{10}$ Jy sr$^{-1}$]')
-        else:
-            cbar.set_label(r'I [Jy sr$^{-1}$]')
+        cbar.set_label(cbar_label)
