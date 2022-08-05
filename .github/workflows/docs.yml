@@ -1,14 +1,12 @@
 name: Docs
 
-
 on:
 # Run this workflow only for commits to master
   # push:
-  #   branches: [master]
+    # branches: [master]
 # Run this workflow only when a pull request is closed
   pull_request:
-    types:
-      - closed
+    types: [closed]
 
 jobs:
   build:
