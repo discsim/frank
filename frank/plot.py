@@ -284,10 +284,9 @@ def plot_iterations(x, iters, n_iter, ax,
     ax.legend(loc='best')
 
 
-def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
-                 vmax=None, xmax=None, ymax=None, dr=None,
-                 plot_colorbar=True,
-                 project=False, phase_shift=False, geom=None, **kwargs):
+def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, xmax=None, ymax=None,
+                 dr=None, plot_colorbar=True,  project=False, phase_shift=False,
+                 geom=None, cbar_label=r'I [Jy sr$^{-1}$]', **kwargs):
     r"""
     Plot a radial profile swept over :math:`2 \pi` to produce an image
 
@@ -322,6 +321,8 @@ def plot_2dsweep(r, I, ax, cmap='inferno', norm=None, vmin=None,
         Fitted geometry (see frank.geometry.SourceGeometry). Here we use
         geom.inc [deg], geom.PA [deg], geom.dRA [arcsec], geom.dDec [arcsec] if
         project=True
+    cbar_label : string, default = r'I [Jy sr$^{-1}$]'
+        Colorbar axis label
     """
 
     I2D, xmax_computed, ymax_computed = sweep_profile(r, I,
