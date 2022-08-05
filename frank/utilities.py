@@ -24,7 +24,7 @@ import numpy as np
 from scipy.fft import fftfreq
 from scipy.interpolate import interp1d
 
-from frank.constants import deg_to_rad, sterad_to_arsec, rad_to_arcsec
+from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec
 
 def arcsec_baseline(x):
     """
@@ -460,8 +460,7 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
             `estimate_weights(u, V=V)`
         In each case the variance of V in the uv-bins is used to estimate the
         weights. The first call will use q = np.hypot(u, v) in the uv-bins. The
-        second and third calls are equivalent to the first with u=0.
-        
+        second and third calls are equivalent to the first with u=0. 
     """
 
     if verbose:

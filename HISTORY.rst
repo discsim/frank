@@ -9,6 +9,8 @@ v.1.2.0
 
 - default_parameters.json, parameter_descriptions.json:
     - Adds parameters: 'rescale_flux', 'method'
+- debris_fitters.py
+    - Adds support for fitting optically thin but geometrically thick disks with a known Gaussian scale height.
 - filter.py:
     - New module that now hosts the routine for optimizing for power spectrum priors, 'CriticalFilter'
 - fit.py:
@@ -16,6 +18,7 @@ v.1.2.0
 - geometry.py:
     - Adds routine to rescale the total flux according to the source geometry, 'rescale_total_flux'
     - Adds 'rescale_factor' property to 'SourceGeometry'
+    - Adds the option to keep all three Fourier components (u,v,w) when deprojecting
 - minimizer.py:
     - New module that hosts routines for solving non-linear minimization problems: 'BaseLineSearch', 'LineSearch', 'MinimizeNewton'
 - radial_fitters.py:
@@ -27,6 +30,7 @@ v.1.2.0
     - Adds 'MAP', 'I', 'info' properties, and 'assume_optically_thick' parameter, to 'FrankRadialFit'
 - statistical_models.py:
    - New module that now hosts 'GaussianModel' class (containing much of the functionality of the now deprecated '_HankelRegressor'), and adds analogous 'LogNormalMAPModel' class
+   - Adds a VisibilityMapping that abstracts the mapping between the brightness profile and visibilities. Handles optically thick (default), optically thin, and debris disk models.
 - tests.py:
     - Adds test for a log-normal fit
 - Docs:
