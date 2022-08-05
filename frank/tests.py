@@ -465,16 +465,16 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
 
 def test_pipeline_full_geom():
     """Check the full fit pipeline when fitting for the disc's inc, PA, dRA, dDec"""
-    _run_pipeline('gaussian', True)
+    _run_pipeline('gaussian', fit_phase_offset=True)
 
 
 def test_pipeline_no_phase():
-    """Check the full fit pipeline when fitting for the disc's inc, PA"""
-    _run_pipeline('gaussian', False)
+    """Check the full fit pipeline when only fitting for the disc's inc, PA"""
+    _run_pipeline('gaussian', fit_phase_offset=False)
 
 def test_pipeline_no_inc_no_pa():
-    """Check the full fit pipeline when fitting for the disc's inc, PA"""
-    _run_pipeline('gaussian', True, False)
+    """Check the full fit pipeline when only fitting for the disc's phase center"""
+    _run_pipeline('gaussian', fit_phase_offset=True, fit_inc_pa=False)
 
 
 def test_pipeline_known_geom():
@@ -488,10 +488,10 @@ def test_pipeline_figure_generation():
 
 
 def test_pipeline_multifit():
-    """Check the full fit pipeline when producing all figures"""
+    """Check the full fit pipeline when producing all figures and running multiple fits"""
     _run_pipeline('known', multifit=True)
 
 
 def test_pipeline_bootstrap():
-    """Check the full fit pipeline when producing all figures"""
+    """Check the full fit pipeline when producing all figures and running bootstrap"""
     _run_pipeline('known', bootstrap=True)
