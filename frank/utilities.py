@@ -699,7 +699,7 @@ def make_image(fit, Npix, xmax=None, ymax=None, project=True):
         Vis = fit.predict(u.reshape(-1), v.reshape(-1)).reshape(*u.shape)
     else:
         q = np.hypot(u,v)
-        Vis = fit.predict_derpojected(q.reshape(-1)).reshape(*u.shape)
+        Vis = fit.predict_deprojected(q.reshape(-1)).reshape(*u.shape)
         
     # Convert to the image plane
     I = np.fft.ifft(np.fft.ifft(Vis, axis=0), axis=1).real
