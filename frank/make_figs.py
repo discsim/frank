@@ -535,8 +535,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             raise err
 
         plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
-                    vmin=vmin, vmax=vmax, project=True,
-                    geom=sol.geometry)
+                    project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
@@ -896,11 +895,11 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm, vmin=0,
-                    vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
+        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
+                    xmax=sol.Rmax, plot_colorbar=True)
         if mean_convolved is not None:
             plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
-                        vmin=0, vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
+                        xmax=sol.Rmax, plot_colorbar=True)
 
         # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
         # swept 'image' has the same pixel resolution as the frank swept 'images'
@@ -908,7 +907,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         interp = interp1d(clean_profile['r'], clean_profile['I'])
         regrid_I_clean = interp(sol.r)
         plot_2dsweep(sol.r, regrid_I_clean, ax=ax4, cmap='inferno', norm=norm,
-                    vmin=0, vmax=vmax, xmax=sol.Rmax, plot_colorbar=True)
+                    xmax=sol.Rmax, plot_colorbar=True)
 
         ax0.legend(loc='best')
         ax1.legend(loc='best', ncol=2)
