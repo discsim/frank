@@ -477,8 +477,6 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
         multifit_fig, multifit_axes = make_figs.make_multifit_fig(u=u, v=v, vis=vis,
                                                                weights=weights, sols=sols,
                                                                bin_widths=model['plotting']['bin_widths'],
-                                                               varied_pars=['alpha', 'wsmooth'],
-                                                               varied_vals=[alphas, ws],
                                                                dist=model['plotting']['distance'],
                                                                force_style=model['plotting']['force_style'],
                                                                save_prefix=model['input_output']['save_prefix'],
@@ -529,7 +527,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
             model['input_output']['save_vis_fit'],
             model['input_output']['save_uvtables']
             ]):
-            
+
         io.save_fit(u, v, vis, weights, sol,
                     model['input_output']['save_prefix'],
                     model['input_output']['save_solution'],
