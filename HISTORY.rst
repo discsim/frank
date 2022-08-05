@@ -30,7 +30,6 @@ v.1.2.0
 - tests.py:
     - Adds test for a log-normal fit
 - Docs:
-    - Adds tutorial for log-normal fits
     - Updates API
 - Miscellaneous:
     - Minor bug and typo fixes
