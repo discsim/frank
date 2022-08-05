@@ -30,8 +30,8 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'frank'
-authors = u'R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings).'
-copyright = '2019-%d, %s' % (datetime.now().year, authors)
+authors = u'R. Booth, J. Jennings, M. Tazzari'
+copyright = '2019-%d, %s.' % (datetime.now().year, authors)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
