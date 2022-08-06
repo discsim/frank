@@ -2,8 +2,8 @@ name: docs
 
 on: push
   # Run this workflow when a review is requested on a PR, or the PR is closed
-  pull_request:
-    types: [review_requested, closed]
+  # pull_request:
+  #   types: [review_requested, closed]
 
 jobs:
   build:
@@ -40,11 +40,11 @@ jobs:
           coverage-badge -f -o docs/_build/html/coverage/badge.svg
 
       # if the PR is not just closed, but also merged
-      if: github.event.pull_request.merged == false
-        # deploy docs (push to gh-pages branch, which in turn updates github.io)
-        - name: Push docs
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # destination branch
-          branch: gh-pages
+      # if: github.event.pull_request.merged == false
+      # deploy docs (push to gh-pages branch, which in turn updates github.io)
+      - name: Push docs
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        # destination branch
+        branch: gh-pages
