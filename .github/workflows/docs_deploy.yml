@@ -7,7 +7,8 @@ on:
 
 jobs:
   deploy:
-    name: Deploy docs to gh-pages branch (and thus github.io)
+    # Deploy docs to gh-pages branch (and thus github.io)
+    name: Deploy docs
     runs-on: ubuntu-latest
 
     steps:
