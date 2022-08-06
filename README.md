@@ -11,8 +11,8 @@
   <!-- current version on pypi -->
   <a href="https://pypi.python.org/pypi/frank">
       <img src="https://img.shields.io/pypi/v/frank.svg">
-  </a>
 
+  <br/>
   <!-- changelog -->
   <a href="https://github.com/discsim/frank/blob/master/HISTORY.rst">
     <img src="https://img.shields.io/badge/Changelog-detailed-blue"/>
