@@ -18,9 +18,9 @@ jobs:
           python-version: 3.7
       - name: Checkout repo
         uses: actions/checkout@master
-          with:
-            # fetch all history for all branches and tags
-            fetch-depth: 0
+        with:
+          # fetch all history for all branches and tags
+          fetch-depth: 0
       - name: Build and commit
         uses: sphinx-notes/pages@v2
       - name: Push changes
