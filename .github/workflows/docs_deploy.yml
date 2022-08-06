@@ -9,7 +9,7 @@ jobs:
   deploy:
     # Deploy docs to gh-pages branch (and thus github.io)
     name: Deploy docs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: Set up Python
@@ -22,7 +22,7 @@ jobs:
           # fetch all history for all branches and tags
           fetch-depth: 0
       - name: Build and commit
-        uses: sphinx-notes/pages@v2
+        uses: sphinx-notes/pages@2.1
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
