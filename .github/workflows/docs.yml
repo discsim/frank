@@ -1,11 +1,9 @@
 name: docs
 
-on:
+on: push
   # Run this workflow when a review is requested on a PR, or the PR is closed
   pull_request:
     types: [review_requested, closed]
-  push:
-    branches: [ci_github_actions]
 
 jobs:
   build:
