@@ -1,4 +1,4 @@
-name: Docs deploy
+name: Docs (deploy)
 
 on:
   # Run this workflow only for commits to master
