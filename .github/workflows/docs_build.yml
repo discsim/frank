@@ -2,7 +2,7 @@ name: Docs build
 
 on:
   # Run this workflow only when a review on a PR is requested
-  pull_request_target:
+  pull_request:
     types: [review_requested]
 
 jobs:
