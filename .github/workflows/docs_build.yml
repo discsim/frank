@@ -1,4 +1,4 @@
-name: Docs
+name: docs
 
 on:
   # Run this workflow only when a review on a PR is requested

@@ -15,7 +15,7 @@
   <br/>
   <!-- changelog -->
   <a href="https://github.com/discsim/frank/blob/master/HISTORY.rst">
-    <img src="https://img.shields.io/badge/Changelog-detailed-blue"/>
+    <img src="https://img.shields.io/badge/changelog-detailed-blue"/>
   </a>
 
   <!-- zenodo -->
@@ -46,7 +46,7 @@
   <br/>
   <!-- license -->
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
-      <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
+      <img src="https://img.shields.io/badge/license-LGPL%20v3-blue.svg"
       [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">   
 </p>
 
