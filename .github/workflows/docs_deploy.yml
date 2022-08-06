@@ -1,0 +1,30 @@
+name: Docs deploy
+
+on:
+  # Run this workflow only for commits to master
+  push:
+    branches: [ci_github_actions]
+
+jobs:
+  deploy:
+    name: Deploy docs to gh-pages branch (and thus github.io)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Checkout repo
+        uses: actions/checkout@master
+          with:
+            # fetch all history for all branches and tags
+            fetch-depth: 0
+      - name: Build and commit
+        uses: sphinx-notes/pages@v2
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # destination branch
+          branch: gh-pages
