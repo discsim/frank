@@ -1,9 +1,9 @@
 name: docs
 
 on:
-  # Run this workflow only when a review on a PR is requested
+  # Run this workflow when a review is requested on a PR, or the PR is closed
   pull_request:
-    types: [review_requested]
+    types: [review_requested, closed]
 
 jobs:
   build:
@@ -24,11 +24,13 @@ jobs:
           sudo apt-get install pandoc
           pip install setuptools --upgrade
           pip install .[test,docs-build]
+      # build docs
       - name: Install and build docs
         run: |
           pip install .
           cd docs
           make html
+      # check code coverage
       - name: Coverage
         run: |
           coverage run --source=frank -m pytest frank/tests.py
@@ -36,3 +38,13 @@ jobs:
           mkdir -p docs/_build/html/coverage
           coverage html -d docs/_build/html/coverage
           coverage-badge -f -o docs/_build/html/coverage/badge.svg
+
+      # if the PR is not just closed, but also merged
+      if: github.event.pull_request.merged == true
+        # deploy docs (push to gh-pages branch, which in turn updates github.io)
+        - name: Push docs
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # destination branch
+          branch: gh-pages
