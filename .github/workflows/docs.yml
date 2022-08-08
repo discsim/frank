@@ -70,7 +70,7 @@ jobs:
         run: ls -R
         working-directory: docs/_build
       - name: Disable jekyll builds
-        run: touch docs/_build/html/.nojekyll
+        run: touch docs/_build/.nojekyll
       - name: Install and configure dependencies
         run: |
           npm install -g --silent gh-pages@2.0.1
