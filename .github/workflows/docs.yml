@@ -6,7 +6,7 @@ on: push
   #   types: [review_requested, closed]
 
 jobs:
-  build:
+  docs-build:
     name: Build docs
     runs-on: ubuntu-latest
     steps:
@@ -48,8 +48,9 @@ jobs:
           path: docs/_build/html
           retention-days: 1
 
-  deploy:
+  docs-deploy:
     name: Deploy docs
+    needs: docs-build
     # if the PR is not just closed, but also merged
     # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
