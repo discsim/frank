@@ -1,88 +1,46 @@
 
 
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>Examining the model’s limitations &mdash; frank 1.1.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+        <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The Frankenstein Python API" href="../py_API.html" />
     <link rel="prev" title="Fitting mock data" href="fitting_mock_data.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> frank
-          
-
-          
-            
             <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
                 1.1.0
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -90,18 +48,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Using the code</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../install.html"> Installation</a></li>
@@ -131,71 +78,30 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/discsim/frank/issues"> Submit an issue</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">frank</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../tutorials.html">Tutorials</a> &raquo;</li>
-        
       <li>Examining the model’s limitations</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   
 <style>
 /* CSS overrides for sphinx_rtd_theme */
@@ -221,9 +127,9 @@
 }
 </style>
 <section id="examining-the-model-s-limitations">
-<h1>Examining the model’s limitations<a class="headerlink" href="#examining-the-model-s-limitations" title="Permalink to this headline">¶</a></h1>
+<h1>Examining the model’s limitations<a class="headerlink" href="#examining-the-model-s-limitations" title="Permalink to this heading"></a></h1>
 <section id="noisy-oscillations-imprinted-on-the-brightness-profile">
-<h2>Noisy oscillations imprinted on the brightness profile<a class="headerlink" href="#noisy-oscillations-imprinted-on-the-brightness-profile" title="Permalink to this headline">¶</a></h2>
+<h2>Noisy oscillations imprinted on the brightness profile<a class="headerlink" href="#noisy-oscillations-imprinted-on-the-brightness-profile" title="Permalink to this heading"></a></h2>
 <p>Regions in the visibilities with sparse and/or sufficiently noisy sampling can cause a lack of constraint on the local spatial frequency scale,
 inducing oscillations in the reconstructed brightness profile on the corresponding spatial scale.
 This can potentially mimic real structure.
@@ -234,7 +140,7 @@ Varying the hyperparameter values for a fit as detailed in <a class="reference i
 is useful to assess and potentially suppress this behavior.</p>
 </section>
 <section id="allowed-regions-of-negative-brightness">
-<h2>Allowed regions of negative brightness<a class="headerlink" href="#allowed-regions-of-negative-brightness" title="Permalink to this headline">¶</a></h2>
+<h2>Allowed regions of negative brightness<a class="headerlink" href="#allowed-regions-of-negative-brightness" title="Permalink to this heading"></a></h2>
 <p>The fitted brightness profile can have negative regions corresponding to spatial scales un- or underconstrained by the visibilities.
 You can perform a fit in which the solution is forced to be positive (given the maximum a posteriori power spectrum) by using the <a class="reference internal" href="../py_API.html#frank.radial_fitters._HankelRegressor.solve_non_negative"><span class="std std-ref">solve_non_negative</span></a> method provided by the solution returned by <code class="code docutils literal notranslate"><span class="pre">FrankFitter</span></code> (if running frank from the terminal, set <code class="code docutils literal notranslate"><span class="pre">hyperparameters</span> <span class="pre">:</span> <span class="pre">nonnegative</span></code> to <code class="code docutils literal notranslate"><span class="pre">true</span></code> in your parameter file).
 In tests we’ve seen the effect on the recovered brightness profile to typically be localized to the regions of negative flux,
@@ -244,7 +150,7 @@ the non-negative fit can be more strongly affected by the hyperparameter choices
 Therefore it’s always best to compare the non-negative fit to the standard fit and check the sensitivity of both to the hyperparameter values.</p>
 </section>
 <section id="an-underestimated-brightness-profile-uncertainty">
-<h2>An underestimated brightness profile uncertainty<a class="headerlink" href="#an-underestimated-brightness-profile-uncertainty" title="Permalink to this headline">¶</a></h2>
+<h2>An underestimated brightness profile uncertainty<a class="headerlink" href="#an-underestimated-brightness-profile-uncertainty" title="Permalink to this heading"></a></h2>
 <p>The uncertainty on the fitted brightness profile is typically underestimated.
 For this reason we do not show the uncertainty on the reconstructed brightness profile by default.
 The model framework produces an estimate of the uncertainty on the brightness profile,
@@ -271,53 +177,35 @@ If it is highly resolved, the local brightness uncertainty can be expected to be
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="../py_API.html" class="btn btn-neutral float-right" title="The Frankenstein Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="fitting_mock_data.html" class="btn btn-neutral float-left" title="Fitting mock data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../py_API.html" class="btn btn-neutral float-right" title="The Frankenstein Python API" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2019-2021, R. Booth, J. Jennings, M. Tazzari (docs by J. Jennings)..
-      <span class="lastupdated">
-        Last updated on 2021 Sep 09 at 03:21:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
-      </span>
-
-    </p>
+    <p>&#169; Copyright 2019-2022, R. Booth, J. Jennings, M. Tazzari..
+      <span class="lastupdated">Last updated on 2022 Aug 08 at 21:59:26 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      </span></p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
