@@ -1,9 +1,9 @@
 name: docs
 
 # Run this workflow when a review is requested on a PR, or the PR is closed
-on:
-  pull_request:
-    types: [review_requested, closed]
+on: push
+  # pull_request:
+  #   types: [review_requested, closed]
 
 jobs:
   docs-build:
@@ -41,7 +41,7 @@ jobs:
       # only store the artifact for 'retention-days'
       - name: Upload docs
         # only continue if the PR is not just closed, but also merged
-        if: github.event.pull_request.merged == true
+        # if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
           name: built_docs
@@ -52,7 +52,7 @@ jobs:
     name: Deploy docs
     needs: docs-build
     # if the PR is not just closed, but also merged
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -64,7 +64,7 @@ jobs:
         with:
           name: built_docs
           path: docs/_build
-      - name: 'Echo download path'
+      - name: Echo download path
         run: echo ${{steps.download.outputs.download-path}}
       - name: Display structure of downloaded files
         run: ls -R
