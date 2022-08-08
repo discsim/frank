@@ -63,7 +63,7 @@ jobs:
         id: download
         with:
           name: built_docs
-          path: docs/_build
+          path: docs/_build/html
       - name: Echo download path
         run: echo ${{steps.download.outputs.download-path}}
       - name: Display structure of downloaded files
@@ -73,7 +73,7 @@ jobs:
         run: touch docs/_build/html/.nojekyll
       - name: Install and configure dependencies
         run: |
-          npm install -g --silent gh-pages@4.0.0
+          npm install -g --silent gh-pages@2.0.1
           git config user.email "github-actions@ast.cam.ac.uk"
           git config user.name "github-actions"
       - name: Deploy docs to gh-pages branch
