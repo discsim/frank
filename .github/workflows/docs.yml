@@ -66,6 +66,9 @@ jobs:
           path: docs/_build
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
+      - name: Display structure of downloaded files
+        run: ls -R
+        working-directory: docs/_build
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
       - name: Install and configure dependencies
