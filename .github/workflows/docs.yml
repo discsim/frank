@@ -73,7 +73,7 @@ jobs:
         run: touch docs/_build/html/.nojekyll
       - name: Install and configure dependencies
         run: |
-          npm install -g --silent gh-pages@2.0.1
+          npm install -g --silent gh-pages@4.0.0
           git config user.email "github-actions@ast.cam.ac.uk"
           git config user.name "github-actions"
       - name: Deploy docs to gh-pages branch
