@@ -66,18 +66,18 @@ jobs:
           path: docs/_build/html
       - name: Echo download path
         run: echo ${{steps.download.outputs.download-path}}
-      - name: Display structure of downloaded files
-        run: ls -R
-        working-directory: docs/_build
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
       - name: Install and configure dependencies
         run: |
           npm install -g --silent gh-pages@3.0.0
+      - name: Display structure of docs files
+        run: ls -R
+        working-directory: docs/_build
       - name: Deploy docs to gh-pages branch
         # run: gh-pages --dotfiles --message "[skip actions] Updates" --dist docs/_build/html
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages -d docs/_build/html -u "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
+          npx gh-pages --dist docs/_build/html --user "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
