@@ -74,7 +74,10 @@ jobs:
       - name: Install and configure dependencies
         run: |
           npm install -g --silent gh-pages@4.0.0
-          git config user.email "github-actions@ast.cam.ac.uk"
-          git config user.name "github-actions"
       - name: Deploy docs to gh-pages branch
-        run: gh-pages --dotfiles --message "[skip actions] Updates" --dist docs/_build/html
+        # run: gh-pages --dotfiles --message "[skip actions] Updates" --dist docs/_build/html
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages -d build -u "github-actions-bot <support+actions@github.com>"
+         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
