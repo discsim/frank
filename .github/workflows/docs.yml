@@ -1,9 +1,9 @@
 name: docs
 
-on: push
-  # Run this workflow when a review is requested on a PR, or the PR is closed
-  # pull_request:
-  #   types: [review_requested, closed]
+# Run this workflow when a review is requested on a PR, or the PR is closed
+on:
+  pull_request:
+    types: [review_requested, closed]
 
 jobs:
   docs-build:
@@ -40,8 +40,8 @@ jobs:
       # by a subsequent job in the workflow.
       # only store the artifact for 'retention-days'
       - name: Upload docs
-        # if the PR is not just closed, but also merged
-        # if: github.event.pull_request.merged == true
+        # only continue if the PR is not just closed, but also merged
+        if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
           name: built_docs
@@ -52,7 +52,7 @@ jobs:
     name: Deploy docs
     needs: docs-build
     # if the PR is not just closed, but also merged
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -60,9 +60,12 @@ jobs:
       # download the previously uploaded 'built_docs' artifact to docs/_build
       - name: Download docs
         uses: actions/download-artifact@v3
+        id: download
         with:
           name: built_docs
           path: docs/_build
+      - name: 'Echo download path'
+        run: echo ${{steps.download.outputs.download-path}}
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
       - name: Install and configure dependencies
