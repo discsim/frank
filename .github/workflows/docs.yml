@@ -1,6 +1,7 @@
 name: docs
 
-# Run this workflow when a review is requested on a PR, or the PR is closed
+# Run this workflow when a review is requested on a PR that targets the master
+# branch, or the PR is closed
 on:
   pull_request:
     types: [review_requested, closed]
@@ -29,20 +30,12 @@ jobs:
           pip install .
           cd docs
           make html
-      # check code coverage, store results in the built docs
-      - name: Coverage
-        run: |
-          coverage run --source=frank -m pytest frank/tests.py
-          coverage report
-          mkdir -p docs/_build/html/coverage
-          coverage html -d docs/_build/html/coverage
-          coverage-badge -f -o docs/_build/html/coverage/badge.svg
       # upload the built docs as an artifact so the files can be accessed
       # by a subsequent job in the workflow.
       # only store the artifact for 'retention-days'
       - name: Upload docs artifact
         # only continue if the PR is not just closed, but also merged
-        # if: github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
           name: built_docs
@@ -53,7 +46,7 @@ jobs:
     name: Deploy docs
     needs: docs-build
     # only continue if the PR is not just closed, but also merged
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -69,7 +62,7 @@ jobs:
       #   run: echo ${{steps.download.outputs.download-path}}
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
-      # - name: Display structure of docs files
+      # - name: Display docs file structure
       #   run: ls -aR
       #   working-directory: docs/_build/html
       - name: Install and configure dependencies

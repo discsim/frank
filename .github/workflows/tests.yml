@@ -31,3 +31,12 @@ jobs:
         run: |
           mkdir -p test-reports
           py.test --junitxml=test-reports/junit.xml frank/tests.py
+      - name: Store coverage data
+        # if this commit is to master
+        # if: github.event.push
+        run: coverage > lcov.info
+      - name: Post coverage data to coveralls.io
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: lcov.info
