@@ -69,11 +69,11 @@ jobs:
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
       - name: Display structure of docs files
-        run: ls -R
+        run: ls -aR
+        working-directory: docs/_build/html
       - name: Install and configure dependencies
         run: |
           npm install -g --silent gh-pages@2.0.1
-        # working-directory: docs/_build
       - name: Deploy docs to gh-pages branch
         # run: gh-pages --dotfiles --message "[skip actions] Updates" --dist docs/_build/html
         run: |
