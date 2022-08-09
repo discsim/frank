@@ -4,7 +4,7 @@ name: docs
 on:
   pull_request:
     types: [review_requested, closed]
-    # branches: [main]
+    # branches: [master]
 
 jobs:
   docs-build:
@@ -71,7 +71,7 @@ jobs:
         run: touch docs/_build/html/.nojekyll
       # - name: Display structure of docs files
       #   run: ls -aR
-        working-directory: docs/_build/html
+      #   working-directory: docs/_build/html
       - name: Install and configure dependencies
         run: |
           npm install -g --silent gh-pages@2.0.1
