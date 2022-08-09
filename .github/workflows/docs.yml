@@ -4,7 +4,7 @@ name: docs
 on:
   pull_request:
     types: [review_requested, closed]
-    # branches: [master]
+    branches: [master]
 
 jobs:
   docs-build:
