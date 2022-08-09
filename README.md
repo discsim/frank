@@ -29,8 +29,8 @@
   </a>    
 
   <!-- docs build -->
-  <a href="https://github.com/discsim/frank/actions/workflows/docs_build.yml">
-    <img src="https://github.com/discsim/frank/actions/workflows/docs_build.yml/badge.svg"/>
+  <a href="https://github.com/discsim/frank/actions/workflows/docs.yml">
+    <img src="https://github.com/discsim/frank/actions/workflows/docs.yml/badge.svg"/>
   </a>   
 
   <!-- coverage -->
