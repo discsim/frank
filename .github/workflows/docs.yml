@@ -4,6 +4,7 @@ name: docs
 on:
   pull_request:
     types: [review_requested, closed]
+    branches: [main]
 
 jobs:
   docs-build:
@@ -40,8 +41,8 @@ jobs:
       # by a subsequent job in the workflow.
       # only store the artifact for 'retention-days'
       - name: Upload docs artifact
-        only continue if the PR is not just closed, but also merged
-        if: github.event.pull_request.merged == true
+        # only continue if the PR is not just closed, but also merged
+        # if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
           name: built_docs
@@ -51,8 +52,8 @@ jobs:
   docs-deploy:
     name: Deploy docs
     needs: docs-build
-    only continue if the PR is not just closed, but also merged
-    if: github.event.pull_request.merged == true
+    # only continue if the PR is not just closed, but also merged
+    # if: github.event.pull_request.merged == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
