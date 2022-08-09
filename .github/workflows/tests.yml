@@ -36,7 +36,7 @@ jobs:
         # if: github.event.push
         run: coverage > lcov.info
       - name: Post coverage data to coveralls.io
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: lcov.info
