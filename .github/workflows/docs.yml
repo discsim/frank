@@ -84,9 +84,9 @@ jobs:
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
 
-      # - name: Display docs file structure
-      #   run: ls -aR
-      #   working-directory: docs/_build/html
+      - name: Display docs file structure
+        run: ls -aR
+        working-directory: docs/_build/html
 
       - name: Install and configure dependencies
         run: |
