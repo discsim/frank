@@ -43,9 +43,9 @@ jobs:
         run: |
           coverage run --source=frank -m pytest frank/tests.py
           coverage report
-          mkdir -p docs/_build/html/cc
-          coverage html -d docs/_build/html/cc
-          coverage-badge -f -o docs/_build/html/cc/badge.svg
+          mkdir -p docs/_build/html/coverage
+          coverage html -d docs/_build/html/coverage
+          coverage-badge -f -o docs/_build/html/coverage/badge.svg
 
       # upload the built docs as an artifact so the files can be accessed
       # by a subsequent job in the workflow.
@@ -95,6 +95,6 @@ jobs:
       - name: Deploy docs to gh-pages branch
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages --dotfiles --dist docs/_build/html --user "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
+          npx gh-pages --dist docs/_build/html --user "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

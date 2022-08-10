@@ -34,8 +34,8 @@
   </a>   
 
   <!-- coverage -->
-  <a href="https://discsim.github.io/frank/cc/index.html">
-      <img src="https://discsim.github.io/frank/cc/badge.svg">
+  <a href="https://discsim.github.io/frank/coverage/index.html">
+      <img src="https://discsim.github.io/frank/coverage/badge.svg">
 
   <br/>
   <!-- paper -->
