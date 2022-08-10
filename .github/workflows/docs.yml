@@ -2,40 +2,57 @@ name: docs
 
 # Run this workflow when a review is requested on a PR that targets the master
 # branch, or the PR is closed
-on:
-  pull_request:
-    types: [review_requested, closed]
-    branches: [master]
+on: push
+  # pull_request:
+  #   types: [review_requested, closed]
+  #   branches: [master]
 
 jobs:
   docs-build:
     name: Build docs
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
+
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
+
       - name: Install docs dependencies
         run: |
           sudo apt-get install pandoc
           pip install setuptools --upgrade
           pip install .[test,docs-build]
+
       - name: Make docs
         run: |
           pip install .
           cd docs
           make html
+
+      # check code coverage, store results in the built docs
+      - name: Coverage
+        # only continue if the PR is not just closed, but also merged
+        # if: github.event.pull_request.merged == true
+        run: |
+          coverage run --source=frank -m pytest frank/tests.py
+          coverage report
+          mkdir -p docs/_build/html/coverage
+          coverage html -d docs/_build/html/coverage
+          coverage-badge -f -o docs/_build/html/coverage/badge.svg
+
       # upload the built docs as an artifact so the files can be accessed
       # by a subsequent job in the workflow.
       # only store the artifact for 'retention-days'
       - name: Upload docs artifact
         # only continue if the PR is not just closed, but also merged
-        if: github.event.pull_request.merged == true
+        # if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
           name: built_docs
@@ -46,11 +63,13 @@ jobs:
     name: Deploy docs
     needs: docs-build
     # only continue if the PR is not just closed, but also merged
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+
       # download the previously uploaded 'built_docs' artifact
       - name: Download docs artifact
         uses: actions/download-artifact@v3
@@ -58,16 +77,21 @@ jobs:
         with:
           name: built_docs
           path: docs/_build/html
+
       # - name: Echo download path
       #   run: echo ${{steps.download.outputs.download-path}}
+
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
+
       # - name: Display docs file structure
       #   run: ls -aR
       #   working-directory: docs/_build/html
+
       - name: Install and configure dependencies
         run: |
           npm install -g --silent gh-pages@2.0.1
+
       - name: Deploy docs to gh-pages branch
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git

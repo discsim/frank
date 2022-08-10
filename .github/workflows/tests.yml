@@ -15,28 +15,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
+
       - name: Install test dependencies
         run: |
           pip install setuptools --upgrade
           pip install .[test]
+
       - name: Install
         run: pip install .
+        
       - name: Run unit tests
         run: |
           mkdir -p test-reports
-          python -m pytest frank/tests.py -v --junitxml=test-reports/junit.xml
-          coverage run frank/tests.py
-          coverage lcov -o test-reports/lcov.info
-      - name: Send coverage data to coveralls.io
-        # if this commit is to master
-        # if: github.event.push
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: test-reports/lcov.info
+          py.test -v --junitxml=test-reports/junit.xml frank/tests.py
