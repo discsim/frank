@@ -95,6 +95,6 @@ jobs:
       - name: Deploy docs to gh-pages branch
         run: |
           git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          npx gh-pages --dist docs/_build/html --user "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
+          npx gh-pages --dotfiles --dist docs/_build/html --user "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
