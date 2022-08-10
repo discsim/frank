@@ -45,6 +45,7 @@ jobs:
           coverage report
           mkdir -p docs/_build/html/coverage
           coverage html -d docs/_build/html/coverage
+          echo "!(badge.svg)" > docs/_build/html/coverage/.gitignore
           coverage-badge -f -o docs/_build/html/coverage/badge.svg
 
       # upload the built docs as an artifact so the files can be accessed
@@ -84,9 +85,9 @@ jobs:
       - name: Disable jekyll builds
         run: touch docs/_build/html/.nojekyll
 
-      - name: Display docs file structure
-        run: ls -aR
-        working-directory: docs/_build/html
+      # - name: Display docs file structure
+      #   run: ls -aR
+      #   working-directory: docs/_build/html
 
       - name: Install and configure dependencies
         run: |
