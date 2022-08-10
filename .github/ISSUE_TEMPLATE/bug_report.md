@@ -1,30 +1,27 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[BUG] "
-labels: bug [e.g.: 'bug', 'enhancement', 'question']
-assignees: '' [Leave blank unless you want to suggest specifically @rbooth200, @jeffjennings and/or @mtazzari.]
+title: ''
+labels: bug
+assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe the bug -**
+1. A clear and concise description of what the bug is.
+2. Include the full Traceback of the error.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. provide input parameters (or attach parameters file)
-2. report the failing command [e.g., `python -m frank.fit uvtdata.npz`]
+**To reproduce -**
+1. Include a simple, standalone code snippet that demonstrates the issue.
+2. If relevant, provide the input parameters for the frank fit (or attach the .json parameter file).
 
-**Expected behavior**
+**Expected behavior -**
 A clear and concise description of what you expected to happen.
 
-**Screenshots/Logs**
-If applicable, add screenshots to help explain your problem.
-Even better, paste the full Traceback of the error.
+**Your setup -**
+ - frank version (check with `python -c 'import frank; print(frank.__version__)'`):
+ - Python version:
+ - Operating system:
 
-**Desktop (please complete the following information):**
- - OS: [e.g. MacOS] 
- - frank version [run `python -c 'import frank; print(frank.__version__)'` and paste here the output]
-
-**Additional context**
-Add any other context about the problem here (e.g., any peculiarity of the data or of the problem you're trying to solve?)
+**Additional context -**
+Add any other context about the problem (e.g., any peculiarity of the data or of the problem you're trying to solve?).
