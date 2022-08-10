@@ -1,0 +1,105 @@
+name: docs
+
+# Run this workflow when a review is requested on a PR that targets the master
+# branch, or the PR is closed
+on:
+  pull_request:
+    types: [review_requested, closed]
+    branches: [master]
+
+# Prevent multiple PRs from building/deploying the docs at the same time
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  docs-build:
+    name: Build docs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install docs dependencies
+        run: |
+          sudo apt-get install pandoc
+          pip install setuptools --upgrade
+          pip install .[test,docs-build]
+
+      - name: Make docs
+        run: |
+          pip install .
+          cd docs
+          make html
+
+      # check code coverage, store results in the built docs.
+      # coverage.py creates a .gitignore with '*' where it's run; remove it
+      # to keep the cooverage report and badge on gh-pages
+      - name: Coverage
+        # only continue if the PR is not just closed, but also merged
+        if: github.event.pull_request.merged == true
+        run: |
+          coverage run --source=frank -m pytest frank/tests.py
+          coverage report
+          mkdir -p docs/_build/html/coverage
+          coverage html -d docs/_build/html/coverage
+          rm docs/_build/html/coverage/.gitignore
+          coverage-badge -f -o docs/_build/html/coverage/badge.svg
+
+      # upload the built docs as an artifact so the files can be accessed
+      # by a subsequent job in the workflow.
+      # only store the artifact for 'retention-days'
+      - name: Upload docs artifact
+        if: github.event.pull_request.merged == true
+        uses: actions/upload-artifact@v3
+        with:
+          name: built_docs
+          path: docs/_build/html
+          retention-days: 1
+
+  docs-deploy:
+    name: Deploy docs
+    needs: docs-build
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      # download the previously uploaded 'built_docs' artifact
+      - name: Download docs artifact
+        uses: actions/download-artifact@v3
+        id: download
+        with:
+          name: built_docs
+          path: docs/_build/html
+
+      # - name: Echo download path
+      #   run: echo ${{steps.download.outputs.download-path}}
+
+      - name: Disable jekyll builds
+        run: touch docs/_build/html/.nojekyll
+
+      # - name: Display docs file structure
+      #   run: ls -aR
+      #   working-directory: docs/_build/html
+
+      - name: Install and configure dependencies
+        run: |
+          npm install -g --silent gh-pages@2.0.1
+
+      - name: Deploy docs to gh-pages branch
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          npx gh-pages --dotfiles --dist docs/_build/html --user "github-actions-bot <support+actions@github.com>" --message "Update docs [skip ci]"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
