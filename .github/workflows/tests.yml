@@ -30,11 +30,12 @@ jobs:
       - name: Run unit tests
         run: |
           mkdir -p test-reports
-          py.test -v --junitxml=test-reports/junit.xml frank/tests.py --cov=frank
-      - name: Post coverage data to coveralls.io
+          python -m pytest frank/tests.py -v --junitxml=test-reports/junit.xml
+          coverage lcov -o test-reports/lcov.info
+      - name: Send coverage data to coveralls.io
         # if this commit is to master
         # if: github.event.push
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: test-reports/junit.xml
+          path-to-lcov: test-reports/lcov.info
