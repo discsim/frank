@@ -2,10 +2,10 @@ name: docs
 
 # Run this workflow when a review is requested on a PR that targets the master
 # branch, or the PR is closed
-on: push
-  # pull_request:
-  #   types: [review_requested, closed]
-  #   branches: [master]
+on:
+  pull_request:
+    types: [review_requested, closed]
+    branches: [master]
 
 jobs:
   docs-build:
@@ -41,7 +41,7 @@ jobs:
       # to keep the cooverage report and badge on gh-pages
       - name: Coverage
         # only continue if the PR is not just closed, but also merged
-        # if: github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true
         run: |
           coverage run --source=frank -m pytest frank/tests.py
           coverage report
@@ -54,7 +54,7 @@ jobs:
       # by a subsequent job in the workflow.
       # only store the artifact for 'retention-days'
       - name: Upload docs artifact
-        # if: github.event.pull_request.merged == true
+        if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
           name: built_docs
@@ -64,7 +64,7 @@ jobs:
   docs-deploy:
     name: Deploy docs
     needs: docs-build
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
