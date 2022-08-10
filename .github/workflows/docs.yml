@@ -90,7 +90,7 @@ jobs:
 
       - name: Install and configure dependencies
         run: |
-          npm install -g --silent gh-pages@2.0.1
+          npm install -g --silent gh-pages@4.0.0
 
       - name: Deploy docs to gh-pages branch
         run: |
