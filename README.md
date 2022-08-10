@@ -3,51 +3,44 @@
  </p>
 
 <p align="center">
-  <!-- current release -->
   <a href="https://github.com/discsim/frank/releases">
       <img src="https://img.shields.io/github/release/discsim/frank/all.svg">
   </a>
 
-  <!-- current version on pypi -->
   <a href="https://pypi.python.org/pypi/frank">
       <img src="https://img.shields.io/pypi/v/frank.svg">
-
-  <br/>
-  <!-- changelog -->
-  <a href="https://github.com/discsim/frank/blob/master/HISTORY.rst">
-    <img src="https://img.shields.io/badge/changelog-detailed-blue"/>
   </a>
 
-  <!-- zenodo -->
-  <a href="https://doi.org/10.5281/zenodo.3832064">
-      <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3832064.svg" alt="DOI">
+  <a href="https://discsim.github.io/frank/blob/master/HISTORY.rst">
+    <img src="https://img.shields.io/badge/Changelog-detailed-blue"/>
 
   <br/>
-  <!-- tests -->
-  <a href="https://github.com/discsim/frank/actions/workflows/tests.yml">
-      <img src="https://github.com/discsim/frank/actions/workflows/tests.yml/badge.svg">
-  </a>    
-
-  <!-- docs build -->
-  <a href="https://github.com/discsim/frank/actions/workflows/docs.yml">
-    <img src="https://github.com/discsim/frank/actions/workflows/docs.yml/badge.svg"/>
-  </a>   
-
-  <!-- coverage -->
-  <a href="https://discsim.github.io/frank/coverage/index.html">
-      <img src="https://discsim.github.io/frank/coverage/badge.svg">
+  <a href="https://discsim.github.io/frank/">
+    <img src="https://img.shields.io/badge/docs-Read%20em!-blue.svg?style=flat"/>
 
   <br/>
-  <!-- paper -->
   <a href="https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b">
       <img src="https://img.shields.io/badge/paper-MNRAS-blue.svg">
   </a>
 
+  <a href="https://doi.org/10.5281/zenodo.3832064">
+      <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3832064.svg" alt="DOI">
+  </a>
+
   <br/>
-  <!-- license -->
+  <a href="https://circleci.com/gh/discsim/frank">
+      <img src="https://circleci.com/gh/discsim/frank.svg?style=shield">
+  </a>    
+
+  <a href="https://discsim.github.io/frank/cc/index.html">
+      <img src="https://discsim.github.io/frank/cc/badge.svg">
+  </a>   
+
+  <br/>
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
-      <img src="https://img.shields.io/badge/license-LGPL%20v3-blue.svg"
-      [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">   
+      <img src="https://img.shields.io/badge/License-LGPL%20v3-blue.svg"
+      [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg">
+  </a>      
 </p>
 
 Frankenstein (**frank**) is a library that fits the 1D radial brightness profile of an interferometric source given a set of visibilities. It uses a Gaussian process that performs the fit in <1 minute for a typical protoplanetary disc continuum dataset.

@@ -43,9 +43,9 @@ jobs:
         run: |
           coverage run --source=frank -m pytest frank/tests.py
           coverage report
-          mkdir -p docs/_build/html/coverage
-          coverage html -d docs/_build/html/coverage
-          coverage-badge -f -o docs/_build/html/coverage/badge.svg
+          mkdir -p docs/_build/html/cc
+          coverage html -d docs/_build/html/cc
+          coverage-badge -f -o docs/_build/html/cc/badge.svg
 
       # upload the built docs as an artifact so the files can be accessed
       # by a subsequent job in the workflow.
@@ -90,7 +90,7 @@ jobs:
 
       - name: Install and configure dependencies
         run: |
-          npm install -g --silent gh-pages@4.0.0
+          npm install -g --silent gh-pages@2.0.1
 
       - name: Deploy docs to gh-pages branch
         run: |
