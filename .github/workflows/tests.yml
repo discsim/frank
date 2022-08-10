@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir -p test-reports
           python -m pytest frank/tests.py -v --junitxml=test-reports/junit.xml
+          coverage run frank/tests.py
           coverage lcov -o test-reports/lcov.info
       - name: Send coverage data to coveralls.io
         # if this commit is to master
