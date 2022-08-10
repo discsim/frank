@@ -473,7 +473,7 @@ class FourierBesselFitter(object):
         self._verbose = verbose
 
     def preprocess_visibilities(self, u, v, V, weights=1):
-        """Prepare the visibilities for fitting. 
+        r"""Prepare the visibilities for fitting. 
         
         This step will be done by the automatically fit method, but it can be 
         expensive. This method is provided to enable the pre-processing to be

@@ -279,7 +279,7 @@ class VisibilityMapping:
 
 
     def predict_visibilities(self, I, q, k=None, geometry=None):
-        """Compute the predicted visibilities given the brightness profile, I
+        r"""Compute the predicted visibilities given the brightness profile, I
         
         Parameters
         ----------
