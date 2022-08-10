@@ -47,6 +47,7 @@
   <!-- license -->
   <a href="https://www.gnu.org/licenses/lgpl-3.0">
       <img src="https://img.shields.io/badge/license-LGPL%20v3-blue.svg">   
+  </a>      
 </p>
 
 Frankenstein (**frank**) is a library that fits the 1D radial brightness profile of an interferometric source given a set of visibilities. It uses a Gaussian process that performs the fit in <1 minute for a typical protoplanetary disc continuum dataset.
