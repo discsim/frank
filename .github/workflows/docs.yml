@@ -36,7 +36,9 @@ jobs:
           cd docs
           make html
 
-      # check code coverage, store results in the built docs
+      # check code coverage, store results in the built docs.
+      # coverage.py creates a .gitignore with '*' where it's run; remove it
+      # to keep the cooverage report and badge on gh-pages
       - name: Coverage
         # only continue if the PR is not just closed, but also merged
         # if: github.event.pull_request.merged == true
@@ -45,14 +47,13 @@ jobs:
           coverage report
           mkdir -p docs/_build/html/coverage
           coverage html -d docs/_build/html/coverage
-          echo "!(badge.svg)" > docs/_build/html/coverage/.gitignore
+          rm docs/_build/html/coverage/.gitignore
           coverage-badge -f -o docs/_build/html/coverage/badge.svg
 
       # upload the built docs as an artifact so the files can be accessed
       # by a subsequent job in the workflow.
       # only store the artifact for 'retention-days'
       - name: Upload docs artifact
-        # only continue if the PR is not just closed, but also merged
         # if: github.event.pull_request.merged == true
         uses: actions/upload-artifact@v3
         with:
@@ -63,7 +64,6 @@ jobs:
   docs-deploy:
     name: Deploy docs
     needs: docs-build
-    # only continue if the PR is not just closed, but also merged
     # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
