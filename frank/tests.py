@@ -295,7 +295,7 @@ def test_frank_fitter_log_normal():
         4.13155298e+09, 2.00246824e+09, 6.07773834e+08, 5.34020982e+08,
         1.80820913e+08, 7.71858927e+07, 2.89354816e+07, 2.45967370e+06,])
 
-    np.testing.assert_allclose(sol.MAP, expected, rtol=1e-5,
+    np.testing.assert_allclose(sol.MAP, expected, rtol=7e-5,
                                err_msg="Testing Frank Log-Normal Fit to AS 209")
                                
 def test_geom_deproject():
