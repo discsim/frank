@@ -67,11 +67,11 @@ def load_uvtable(data_file):
             raise ValueError("You provided a UVTable with the extension {}."
                              " This extension requires the UVTable's variable 'V' to be"
                              " complex (of the form Re(V) + Im(V) * 1j).".format(extension))
-                
+
     else:
         raise ValueError("You provided a UVTable with the extension {}."
-                         " Please provide it as a `.txt`, `.dat`, `.npy`, or"
-                         " `.npz`. Formats .txt and .dat may optionally be"
+                         " Please provide it as a `.txt`, `.dat`, or `.npz`."
+                         " Formats .txt and .dat may optionally be"
                          " compressed (`.gz`, `.bz2`).".format(extension))
 
     return u, v, vis, weights
