@@ -32,8 +32,12 @@ def load_uvtable(data_file):
     Parameters
     ----------
     data_file : string
-          UVTable with data to be fit, with columns:
-          u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
+          UVTable with data to be fit.
+          If in ASCII format, the table should have columns:
+            u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]
+          If in .npz format, the file should have arrays:
+            "u" [lambda], "v" [lambda], "V" [Jy; complex: real + imag * 1j],
+            "weights" [Jy^-2]
 
     Returns
     -------
