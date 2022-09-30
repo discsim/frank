@@ -344,10 +344,9 @@ def determine_geometry(u, v, vis, weights, model):
                          " 'known', 'gaussian' or 'nonparametric'.")
 
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
-                 '           dRA  = {:.2e} mas,\n'
-                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
-                                                       geom.dRA*1e3,
-                                                       geom.dDec*1e3))
+                 '           dRA  = {:.2e} arcsec,\n'
+                 '           dDec = {:.2e} arcsec'.format(geom.inc, geom.PA,
+                                                       geom.dRA, geom.dDec))
 
     # Store geometry
     geom = geom.clone()
