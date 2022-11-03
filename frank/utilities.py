@@ -42,6 +42,7 @@ def baselines(u, v):
     """
 
     baselines = np.hypot(u, v)
+
     return baselines
 
 
@@ -749,6 +750,38 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     I_smooth /= counts
 
     return I_smooth
+
+
+def get_vis_deprojection(u, v, V, sol):
+    r"""
+    Quick access to a deprojected visibility distribution, given the projected
+    distribution and a source geometry stored in a frank 'sol' object
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        Projected (u, v) coordinates
+    V : array, unit = Jy
+        Complex, projected visibility amplitudes
+    sol : _HankelRegressor object
+        frank solution object
+        (see frank.radial_fitters.FrankFitter)
+
+    Returns
+    -------
+    ud, vd : array, unit = lambda
+        Deprojected (u, v) coordinates
+    Vd : array, unit = Jy
+        Complex, deprojected visibility amplitudes
+
+    """
+
+    geom = sol.geometry
+
+    # deproject and phase center the visibilities
+    ud, vd, Vd = geom.apply_correction(u, v, V)
+
+    return ud, vd, Vd
 
 
 def get_vis_fit(sol, q=None):
