@@ -67,7 +67,7 @@ def load_uvtable(data_file):
             raise ValueError("You provided a UVTable with the extension {}."
                              " This extension requires the UVTable's variable 'V' to be"
                              " complex (of the form Re(V) + Im(V) * 1j).".format(extension))
-                
+
     else:
         raise ValueError("You provided a UVTable with the extension {}."
                          " Please provide it as a `.txt`, `.dat`, `.npy`, or"
@@ -110,6 +110,25 @@ def save_uvtable(filename, u, v, vis, weights):
                  u=u, v=v, V=vis, weights=weights,
                  units={'u': 'lambda', 'v': 'lambda',
                         'V': 'Jy', 'weights': "Jy^-2"})
+
+
+def load_sol(sol_file):
+    """Load a frank solution object
+
+    Parameters
+    ----------
+    sol_file : string
+        Filename for frank solution object, '*.obj'
+
+    Returns
+    ----------
+    sol : _HankelRegressor object
+        frank solution object
+    """
+
+    sol = np.load(sol_file, allow_pickle=True)
+
+    return sol
 
 
 def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
