@@ -731,6 +731,40 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     return I_smooth
 
 
+def get_vis_fit(sol, q=None):
+    r"""
+    Quick access to a frank visibility fit - the discrete Hankel transform of
+    a frank brightness profile - using a frank 'sol' object.
+
+    Parameters
+    ----------
+    sol : _HankelRegressor object
+        frank solution object
+        (see frank.radial_fitters.FrankFitter)
+    q : array, default = sol.q, unit = :math:`\lambda`
+        Baseline points (in the deprojected plane) at which to sample the
+        visibility fit
+
+    Returns
+    -------
+    q : array, unit = [lambda]
+        Baseline points at which the visibility fit is sampled
+    vis_fit : array, unit = [Jansky]
+        Visibility fit amplitudes at points 'q'
+
+    Notes
+    -----
+    The visibility amplitudes are returned in the deprojected plane.
+    """
+
+    if q is None:
+        q = sol.q
+
+    vis_fit = sol.predict_deprojected(q)
+
+    return q, vis_fit
+
+
 def generic_dht(x, f, Rmax=2.0, N=1000, direction='forward', inc=None):
     """
     Compute the forward or backward Hankel transform of a function f(x)
