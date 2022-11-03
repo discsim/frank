@@ -124,6 +124,7 @@ def load_sol(sol_file):
     ----------
     sol : _HankelRegressor object
         frank solution object
+        (see frank.radial_fitters.FrankFitter)
     """
 
     sol = np.load(sol_file, allow_pickle=True)
