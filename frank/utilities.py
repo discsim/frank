@@ -348,7 +348,7 @@ def normalize_uv(u, v, wle):
     logging.info('  Normalizing u and v coordinates by provided'
                  ' observing wavelength of {} m'.format(wle))
 
-    if type(wle) is not float:
+    if type(wle) is not float or int:
         if len(wle) != len(u):
             raise ValueError("len(wle) = {}. It should be"
                              "equal to len(u) = {}".format(len(wle), len(u)))
