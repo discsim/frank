@@ -152,10 +152,18 @@ def parse_parameters(*args):
         err = ValueError("method should be 'Normal' or 'LogNormal'")
         raise err
 
-    if model['hyperparameters']['nonnegative'] and model['hyperparameters']['method'] != 'Normal':
-        err = ValueError("nonnegative should only be 'true' if method is 'Normal'")
+    if model['hyperparameters']['nonnegative'] and \
+       model['hyperparameters']['method'] != 'Normal':
+        err = ValueError("nonnegative should only be 'true' if method is"
+                         "'Normal'")
         raise err
 
+    if model['hyperparameters']['method'] == 'LogNormal' and \
+       model['hyperparameters']['p0'] > 1e-30:
+        err = ValueError("p0 = {}. If method is 'LogNormal', p0 should be"
+                         "<~ 1e-35 (we recommend 1e-35)"
+                         ".".format(model['hyperparameters']['p0']))
+        raise err
 
     if model['plotting']['diag_plot']:
         if model['plotting']['iter_plot_range'] is not None:
