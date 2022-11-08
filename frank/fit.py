@@ -650,9 +650,9 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
             clean_profile = {'r': r_clean, 'I': I_clean, 'lo_err': lo_err_clean,
                              'hi_err': hi_err_clean}
 
-            mean_convolved = None
+            MAP_convolved = None
             if model['analysis']['clean_beam']['bmaj'] is not None:
-                mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
+                MAP_convolved = utilities.convolve_profile(sol.r, sol.I,
                                                             geom.inc, geom.PA,
                                                             model['analysis']['clean_beam'])
 
@@ -663,7 +663,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                                         stretch=model['plotting']['stretch'],
                                                                         gamma=model['plotting']['gamma'],
                                                                         asinh_a=model['plotting']['asinh_a'],
-                                                                        mean_convolved=mean_convolved,
+                                                                        MAP_convolved=MAP_convolved,
                                                                         dist=model['plotting']['distance'],
                                                                         force_style=model['plotting']['force_style'],
                                                                         save_prefix=model['input_output']['save_prefix']
@@ -710,7 +710,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     if model['hyperparameters']['nonnegative']:
         logging.info('  `nonnegative` is `true` in your parameter file --> '
-                     'The best fit nonnegative profile (rather than the mean '
+                     'The best fit nonnegative profile (rather than the MAP '
                      'profile) will be saved and used to generate the bootstrap '
                      'figure')
 

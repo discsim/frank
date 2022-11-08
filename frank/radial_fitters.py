@@ -775,7 +775,7 @@ class FrankFitter(FourierBesselFitter):
 
             if self._store_iteration_diagnostics:
                 self._iteration_diagnostics['power_spectrum'].append(pI)
-                self._iteration_diagnostics['mean'].append(fit.MAP)
+                self._iteration_diagnostics['MAP'].append(fit.MAP)
 
             count += 1
 

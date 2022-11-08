@@ -309,9 +309,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax4, cmap='inferno', norm=norm,
+        plot_2dsweep(sol.r, sol.I, ax=ax4, cmap='inferno', norm=norm,
                     project=False)
-        plot_2dsweep(sol.r, sol.mean, ax=ax5, cmap='inferno', norm=norm,
+        plot_2dsweep(sol.r, sol.I, ax=ax5, cmap='inferno', norm=norm,
                     project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
@@ -538,7 +538,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
+        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm,
                     project=True, geom=sol.geometry)
 
         ax1.set_xlabel('r ["]')
@@ -669,7 +669,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
 
         axes = [ax0, ax1, ax2, ax3, ax4]
 
-        profile_iter = iteration_diagnostics['mean']
+        profile_iter = iteration_diagnostics['MAP']
         profile_iter_toplot = [x / 1e10 for x in profile_iter]
         pwr_spec_iter = iteration_diagnostics['power_spectrum']
         num_iter = iteration_diagnostics['num_iterations']
@@ -727,7 +727,7 @@ def make_diag_fig(r, q, iteration_diagnostics, iter_plot_range=None, logx=False,
 
 def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
                               bin_widths, stretch='power',
-                              gamma=1.0, asinh_a=0.02, mean_convolved=None,
+                              gamma=1.0, asinh_a=0.02, MAP_convolved=None,
                               dist=None, logx=False, logy=False, ylims=None,
                               force_style=True, save_prefix=None,
                               figsize=(8, 10)):
@@ -766,7 +766,7 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         gamma=1.0 yields a linear colormap
     asinh_a : float, default = 0.02
         Scale parameter for an asinh stretch
-    mean_convolved : None (default) or array, unit = Jy / sr
+    MAP_convolved : None (default) or array, unit = Jy / sr
         frank brightness profile convolved with a CLEAN beam
         (see utilities.convolve_profile).
         The assumed unit is for the x-label
@@ -824,8 +824,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
 
         plot_brightness_profile(sol.r, sol.I / 1e10, ax0, c='r', ls=':', label='frank')
 
-        if mean_convolved is not None:
-            plot_brightness_profile(sol.r, mean_convolved / 1e10, ax0, c='k', ls='-',
+        if MAP_convolved is not None:
+            plot_brightness_profile(sol.r, MAP_convolved / 1e10, ax0, c='k', ls='-',
                                     label='frank, convolved')
 
         if dist:
@@ -884,8 +884,8 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
         if ylims:
             ax1.set_ylim(ylims)
 
-        if mean_convolved is not None:
-            vmax = max(sol.I.max(), mean_convolved.max(), clean_profile['I'].max())
+        if MAP_convolved is not None:
+            vmax = max(sol.I.max(), MAP_convolved.max(), clean_profile['I'].max())
         else:
             vmax = max(sol.I.max(), clean_profile['I'].max())
         if stretch == 'asinh':
@@ -900,10 +900,10 @@ def make_clean_comparison_fig(u, v, vis, weights, sol, clean_profile,
             err = ValueError("Unknown 'stretch'. Should be one of 'power' or 'asinh'")
             raise err
 
-        plot_2dsweep(sol.r, sol.mean, ax=ax2, cmap='inferno', norm=norm,
+        plot_2dsweep(sol.r, sol.I, ax=ax2, cmap='inferno', norm=norm,
                     xmax=sol.Rmax, plot_colorbar=True)
-        if mean_convolved is not None:
-            plot_2dsweep(sol.r, mean_convolved, ax=ax3, cmap='inferno', norm=norm,
+        if MAP_convolved is not None:
+            plot_2dsweep(sol.r, MAP_convolved, ax=ax3, cmap='inferno', norm=norm,
                         xmax=sol.Rmax, plot_colorbar=True)
 
         # Interpolate the CLEAN profile onto the frank grid to ensure the CLEAN
@@ -1041,14 +1041,14 @@ def make_multifit_fig(u, v, vis, weights, sols, bin_widths, dist=None,
 
         # Overplot the multiple fits
         for ii in range(len(sols)):
-            plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, c=multifit_cs[ii])#,
+            plot_brightness_profile(sols[ii].r, sols[ii].I / 1e10, ax0, c=multifit_cs[ii])#,
                 # label='alpha = {}, wsmooth = {}'.format(sols[ii].info['alpha'], sols[ii].info['wsmooth'])
             if dist and ii == len(sols) - 1:
-                ax0_5 = plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax0, dist=dist, c=multifit_cs[ii])
+                ax0_5 = plot_brightness_profile(sols[ii].r, sols[ii].I / 1e10, ax0, dist=dist, c=multifit_cs[ii])
                 xlims = ax0.get_xlim()
                 ax0_5.set_xlim(np.multiply(xlims, dist))
 
-            plot_brightness_profile(sols[ii].r, sols[ii].mean / 1e10, ax1, c=multifit_cs[ii])
+            plot_brightness_profile(sols[ii].r, sols[ii].I / 1e10, ax1, c=multifit_cs[ii])
 
             vis_fit_kl = sols[ii].predict_deprojected(grid).real * 1e3
             plot_vis_quantity(grid, vis_fit_kl, ax2, c=multifit_cs[ii])
