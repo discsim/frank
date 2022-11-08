@@ -761,3 +761,50 @@ def get_vis_deprojection(u, v, V, sol):
     ud, vd, Vd = geom.apply_correction(u, v, V)
 
     return ud, vd, Vd
+
+
+def get_vis_fit(sol, q=None, upsample=None):
+    r"""
+    Quick access to a frank visibility fit - the discrete Hankel transform of
+    a frank brightness profile - using a frank 'sol' object.
+
+    Parameters
+    ----------
+    sol : _HankelRegressor object
+        frank solution object
+        (see frank.radial_fitters.FrankFitter)
+    q : array, default = sol.q, unit = :math:`\lambda`
+        Baseline points (in the deprojected plane) at which to sample the
+        visibility fit
+    upsample : int, default = None
+        Number of points to upsample q to (for plotting a 'smoother' fit).
+        The upsampled q will not likely retain the original values.
+
+    Returns
+    -------
+    q : array, unit = [lambda]
+        Baseline points at which the visibility fit is sampled
+    vis_fit : array, unit = [Jansky]
+        Visibility fit amplitudes at points 'q'
+
+    Notes
+    -----
+    The visibility amplitudes are returned in the deprojected plane.
+    """
+
+    if q is None:
+        q = sol.q
+
+    if upsample is not None:
+        print("len(q) = {}. q will be upsampled to contain"
+              " {} points.".format(len(q), upsample))
+
+        # we'll upsample in log space
+        if q[0] == 0:
+            q[0] = 1e-6
+
+        q = np.logspace(np.log10(min(q)), np.log10(max(q)), upsample)
+
+    vis_fit = sol.predict_deprojected(q)
+
+    return q, vis_fit
