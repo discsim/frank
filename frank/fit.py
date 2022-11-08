@@ -391,6 +391,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     N=model['hyperparameters']['n'],
                                     geometry=geom,
                                     alpha=model['hyperparameters']['alpha'],
+                                    p_0=model['hyperparameters']['p_0'],
                                     weights_smooth=model['hyperparameters']['wsmooth'],
                                     tol=model['hyperparameters']['iter_tol'],
                                     max_iter=model['hyperparameters']['max_iter'],
