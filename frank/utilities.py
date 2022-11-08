@@ -729,3 +729,63 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     I_smooth /= counts
 
     return I_smooth
+
+
+def generic_dht(x, f, Rmax=2.0, N=1000, direction='forward', inc=None):
+    """
+    Compute the forward or backward Hankel transform of a function f(x)
+
+    Parameters
+    ----------
+    x : array, unit = [arcsec] or [lambda]
+        Radial or spatial frequency coordinates of f(x)
+    f : array, unit = [Jy / sr] or [Jy]
+        Amplitude values of f(x)
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which the real space function is zero
+    N : integer, default=1000
+        Number of terms to use in the Fourier-Bessel series
+    direction : { 'forward', 'backward' }, default='forward'
+        Direction of the transform. 'forward' is real space -> Fourier space.
+    inc : float, optional, unit = [deg]
+        Source inclination. If provided, the total flux of the transform of f(x)
+        will be scaled by cos(inc)
+
+    Returns
+    -------
+    grid : array, size=N, unit = [arcsec] or [lambda]
+        Radial or spatial frequency coordinates of the Hankel transform of f(x)
+    f_transform : array, size=N, unit = [Jy / sr] or [Jy]
+        Hankel transform of f(x)
+
+    """
+
+    if direction not in ['forward', 'backward']:
+        raise AttributeError("direction must be one of {}"
+                            "".format(['forward', 'backward']))
+
+    DHT = DiscreteHankelTransform(Rmax=Rmax / rad_to_arcsec, N=N, nu=0)
+
+    # sample the profile f(x) at the DHT collocation points
+    if direction == 'forward':
+        y = np.interp(DHT.r * rad_to_arcsec, x, f)
+        grid = DHT.q
+    else:
+        y = np.interp(DHT.q, x, f)
+        grid = DHT.r
+
+    # take the DHT
+    f_transform = DHT.transform(f=y, q=grid, direction=direction)
+
+    # adjust the total flux for the source inclination
+    if inc is not None:
+        factor = np.cos(inc * deg_to_rad)
+        if direction == 'forward':
+            f_transform *= factor
+        else:
+            f_transform /= factor
+
+    if direction == 'forward':
+        return grid, f_transform
+    else:
+        return grid * rad_to_arcsec, f_transform
