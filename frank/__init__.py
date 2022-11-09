@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 
 from frank import constants
 from frank import geometry
 from frank import hankel
 from frank import io
 from frank import radial_fitters
+from frank import debris_fitters
 from frank import utilities
 
 def enable_logging(log_file=None):

@@ -25,7 +25,8 @@
     "inc"              : 0.0,
     "pa"               : 0.0,
     "dra"              : 0.0,
-    "ddec"             : 0.0
+    "ddec"             : 0.0,
+    "rescale_flux"     : true
   },
 
   "hyperparameters" : {
@@ -36,7 +37,8 @@
     "wsmooth"          : 1e-4,
     "iter_tol"         : 1e-3,
     "max_iter"         : 2000,
-    "nonnegative"      : false
+    "nonnegative"      : false,
+    "method"           : "Normal"
   },
 
   "plotting" : {

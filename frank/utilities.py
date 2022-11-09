@@ -21,9 +21,10 @@ results.
 """
 import logging
 import numpy as np
+from scipy.fft import fftfreq
 from scipy.interpolate import interp1d
 
-from frank.constants import deg_to_rad, sterad_to_arcsec
+from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec
 
 def arcsec_baseline(x):
     """
@@ -404,7 +405,8 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     return u_cut, v_cut, vis_cut, weights_cut
 
-def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
+def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
+                     verbose=True):
     r"""
     Estimate the weights using the variance of the binned visibilities.
 
@@ -435,6 +437,9 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
         If True all of the weights will be set to the median of the variance
         estimated across the bins. Otherwise, the baseline dependent variance
         will be used.
+    verbose : bool, default = True
+        If true, the logger will record calls to this function, along with
+        whether the median estimate was used.
 
     Returns
     -------
@@ -459,7 +464,8 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
 
     """
 
-    logging.info('  Estimating visibility weights')
+    if verbose:
+        logging.info('  Estimating visibility weights')
 
     if V is None:
         if v is not None:
@@ -490,11 +496,14 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False):
         var = uvBin.error.real**2 * uvBin.bin_counts
 
     if use_median:
-        logging.info('    Setting all weights as median binned visibility variance')
+        if verbose:
+            logging.info('    Setting all weights as median binned visibility '
+                         'variance')
         return np.full(len(u), 1/np.ma.median(var[uvBin.bin_counts > 1]))
     else:
-        logging.info('    Setting weights according to baseline-dependent binned'
-                     ' visibility variance')
+        if verbose:
+            logging.info('    Setting weights according to baseline-dependent '
+                         'binned visibility variance')
         # For bins with 1 uv point, use the average of the adjacent bins
         no_var = np.argwhere(uvBin.bin_counts == 1).reshape(-1)
         if len(no_var) > 0:
@@ -636,6 +645,81 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
     I2D = interp(r1D.ravel()).reshape(*im_shape)
 
     return I2D, xmax, ymax
+
+
+def make_image(fit, Npix, xmax=None, ymax=None, project=True):
+    """Make an image of a model fit.
+    
+    Parameters
+    ----------
+    fit : FrankFitter result object
+        Fitted profile to make an image of
+    Npix : int or list
+        Number of pixels in the x-direction, or [x-,y-] direction
+    xmax: float or None, unit=arcsec
+        Size of the image is [-xmax, xmax]. By default this is twice
+        fit.Rmax to avoid aliasing.
+    ymax: float or None, unit=arcsec
+        Size of the image is [-ymax,ymax]. Defaults to xmax if ymax=None
+    project: bool, default=True
+        Whether to produce a projected image.
+
+    Returns
+    -------
+    x : array, 1D; unit=arcsec
+        Locations of the x-points in the image.
+    y : array, 1D; unit=arcsec
+        Locations of the y-points in the image.
+    I : array, 2D; unit=Jy/Sr
+        Image of the surface brightness.
+    """
+    if xmax is None:
+        xmax = 2*fit.Rmax
+    if ymax is None:
+        ymax = xmax
+    
+    try:
+        Nx, Ny = Npix
+    except TypeError:
+        Nx = Npix
+        Ny = int(Nx*(ymax/xmax))
+
+    dx = 2*xmax/(Nx*rad_to_arcsec)
+    dy = 2*ymax/(Ny*rad_to_arcsec)
+
+    
+    # The easiest way to produce an image is to predict the visibilities
+    # on a regular grid in the Fourier plane and then transform it back.
+    # All frank models must be able to compute the visibilities so this
+    # method is completely general.
+    u = np.fft.fftfreq(Nx)/dx
+    v = np.fft.fftfreq(Ny)/dy
+    u, v = np.meshgrid(u,v, indexing='ij')
+    
+    # Get the visibilities:
+    if project:
+        Vis = fit.predict(u.reshape(-1), v.reshape(-1)).reshape(*u.shape)
+    else:
+        q = np.hypot(u,v)
+        Vis = fit.predict_deprojected(q.reshape(-1)).reshape(*u.shape)
+        
+    # Convert to the image plane
+    I = np.fft.ifft(np.fft.ifft(Vis, axis=0), axis=1).real
+    I /= dx*dy
+
+    # numpy's fft has zero in the corner. We want it in the middle so we need
+    # to wrap:
+    tmp = I.copy()
+    tmp[:Nx//2,], tmp[Nx//2:] = I[Nx//2:], I[:Nx//2]
+    I[:,:Ny//2], I[:,Ny//2:] = tmp[:,Ny//2:], tmp[:,:Ny//2]
+
+    xe = np.linspace(-xmax, xmax, Nx+1)
+    x = 0.5*(xe[1:] + xe[:-1])
+    ye = np.linspace(-ymax, ymax, Ny+1)
+    y = 0.5*(ye[1:] + ye[:-1])
+
+    return x, y, I
+    
 
 
 def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
