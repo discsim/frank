@@ -914,7 +914,6 @@ def generic_dht(x, f, Rmax=2.0, N=1000, direction='forward', grid=None,
 
         if grid is None:
             grid = DHT.r * rad_to_arcsec
-            unit_convert = True
 
         f_transform = VM.transform(y, grid, 'backward')
 
@@ -922,7 +921,4 @@ def generic_dht(x, f, Rmax=2.0, N=1000, direction='forward', grid=None,
         if direction == 'backward':
             f_transform /= np.cos(inc * deg_to_rad)
 
-    if unit_convert is True:
-        return grid * rad_to_arcsec, f_transform
-    else:
-        return grid, f_transform
+    return grid, f_transform
