@@ -855,7 +855,7 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     return I_smooth
 
 
-def generic_dht(x, f, Rmax=2.0, N=1000, direction='forward', grid=None,
+def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
                 inc=0.0):
     """
     Compute the forward or backward Hankel transform of a function f(x)
