@@ -153,6 +153,7 @@ def parse_parameters(*args):
         raise err
 
     if model['hyperparameters']['method'] == 'LogNormal' and \
+       model['hyperparameters']['p0'] is not None and \
        model['hyperparameters']['p0'] > 1e-30:
         err = ValueError("p0 = {}. If method is 'LogNormal', p0 should be "
                          "<~ 1e-35 (we recommend 1e-35)"
@@ -402,6 +403,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     N=model['hyperparameters']['n'],
                                     geometry=geom,
                                     alpha=model['hyperparameters']['alpha'],
+                                    p_0=model['hyperparameters']['p0'],
                                     weights_smooth=model['hyperparameters']['wsmooth'],
                                     tol=model['hyperparameters']['iter_tol'],
                                     method=model['hyperparameters']['method'],
@@ -566,11 +568,11 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
         logging.info('  Plotting results')
 
-        priors = {'alpha': model['hyperparameters']['alpha'],\
-                  'wsmooth': model['hyperparameters']['wsmooth'],\
-                  'Rmax': model['hyperparameters']['rout'],\
-                  'N': model['hyperparameters']['n'],\
-                  'p0': model['hyperparameters']['p0']
+        priors = {'alpha': sol.info['alpha'],\
+                  'wsmooth': sol.info['wsmooth'],\
+                  'Rmax': sol.info['Rmax'],\
+                  'N': sol.info['N'],\
+                  'p0': sol.info['p0']
                   }
 
         if model['plotting']['deprojec_plot']:
