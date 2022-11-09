@@ -495,9 +495,9 @@ class GaussianModel:
     DHT : DiscreteHankelTransform
         A DHT object with N bins that defines H(p). The DHT is used to compute
         :math:`S(p)`
-    M : 2D array, size = (N, N)
+    Ms : 2D array, size = (N, N)
         The design matrix, see above
-    j : 1D array, size = N
+    js : 1D array, size = N
         Information source, see above
     p : 1D array, size = N, optional
         Power spectrum used to generate the covarience matrix :math:`S(p)`
@@ -512,7 +512,8 @@ class GaussianModel:
         missing constant
     """
 
-    def __init__(self, DHT, Ms, js, p=None, scale=None, guess=None, Nfields=None, noise_likelihood=0):
+    def __init__(self, DHT, Ms, js, p=None, scale=None, guess=None, Nfields=None,
+                 noise_likelihood=0):
 
         self._DHT = DHT
 
