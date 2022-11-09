@@ -50,6 +50,8 @@ class LineSearch(BaseLineSearch):
     Parameters
     ----------
     armijo : float.
+    min_step_frac :
+    reduce_step :
 
     Notes
     -----
@@ -79,6 +81,7 @@ class LineSearch(BaseLineSearch):
         f0 : array, optional.
             Evaluation of func at x0, i.e. func(x0). If not provided then this
             will be evaluated internally.
+        root : 
 
         Returns
         -------

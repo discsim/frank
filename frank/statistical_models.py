@@ -504,6 +504,9 @@ class GaussianModel:
         Information source, see above
     p : 1D array, size = N, optional
         Power spectrum used to generate the covarience matrix :math:`S(p)`
+    scale :
+    guess :
+    Nfields :
     noise_likelihood : float, optional
         An optional parameter needed to compute the full likelihood, which
         should be equal to
@@ -839,6 +842,10 @@ class LogNormalMAPModel:
         Scale factors s0 (see above). These factors can be a constant, one
         per brightness point or per band (optionally per collocation point)
         to enable multi-frequency fitting.
+    s0 :
+    guess :
+    Nfields :
+    full_hessian : 
     noise_likelihood : float, optional
         An optional parameter needed to compute the full likelihood, which
         should be equal to
