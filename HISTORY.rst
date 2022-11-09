@@ -3,6 +3,42 @@
 Changelog
 +++++++++
 
+v.1.2.0
++++++++
+*Introduction of log-normal fits, large amount of code refactoring to support both 'Gaussian' and 'LogNormal' methods*
+
+- default_parameters.json, parameter_descriptions.json:
+    - Adds parameters: 'rescale_flux', 'method'
+- debris_fitters.py
+    - Adds support for fitting optically thin but geometrically thick disks with a known Gaussian scale height.
+- filter.py:
+    - New module that now hosts the routine for optimizing for power spectrum priors, 'CriticalFilter'
+- fit.py:
+    - Adds ability to run either a standard or log-normal fit
+- geometry.py:
+    - Adds routine to rescale the total flux according to the source geometry, 'rescale_total_flux'
+    - Adds 'rescale_factor' property to 'SourceGeometry'
+    - Adds the option to keep all three Fourier components (u,v,w) when deprojecting
+- minimizer.py:
+    - New module that hosts routines for solving non-linear minimization problems: 'BaseLineSearch', 'LineSearch', 'MinimizeNewton'
+- radial_fitters.py:
+    - Code refactoring:
+        * Removes '_HankelRegressor' class
+        * Adds 'FrankGaussianFit' and 'FrankLogNormalFit' classes
+        * Adds 'FrankRadialFit' class
+        * Moves some core functionalities to 'frank.filter' and 'frank.statistical_models'
+    - Adds 'MAP', 'I', 'info' properties, and 'assume_optically_thick' parameter, to 'FrankRadialFit'
+- statistical_models.py:
+   - New module that now hosts 'GaussianModel' class (containing much of the functionality of the now deprecated '_HankelRegressor'), and adds analogous 'LogNormalMAPModel' class
+   - Adds a VisibilityMapping that abstracts the mapping between the brightness profile and visibilities. Handles optically thick (default), optically thin, and debris disk models.
+- tests.py:
+    - Adds test for a log-normal fit
+- Docs:
+    - Updates API
+- Miscellaneous:
+    - Minor bug and typo fixes
+
+
 v.1.1.0
 +++++++
 

@@ -20,171 +20,235 @@
 """This module contains methods for fitting a radial brightness profile to a set
   of deprojected visibities.
 """
-
-import numpy as np
-import scipy.linalg
-import scipy.sparse
-import scipy.optimize
+import abc
 from collections import defaultdict
 import logging
+import numpy as np
 
+from frank.constants import deg_to_rad, rad_to_arcsec
+from frank.filter import CriticalFilter
 from frank.hankel import DiscreteHankelTransform
-from frank.constants import rad_to_arcsec, deg_to_rad
+from frank.statistical_models import (
+    GaussianModel, LogNormalMAPModel, VisibilityMapping
+)
+
+class FrankRadialFit(metaclass=abc.ABCMeta):
+    """
+    Base class for results of frank fits.
+
+    Parameters
+    ----------
+    vis_map : VisibilityMapping object
+        Mapping between image and visibility plane. 
+    info: dict
+        Dictionary containing useful quantities for reproducing a fit
+        (such as the hyperparameters used)
+    geometry: SourceGeometry object, optional
+        Geometry used to correct the visibilities for the source
+        inclination. If not provided, the geometry determined during the
+        fit will be used.
+    """
+    def __init__(self, vis_map, info, geometry):
+        self._vis_map = vis_map
+        self._geometry = geometry
+        self._info = info
+
+    def predict(self, u, v, I=None, geometry=None):
+        r"""
+        Predict the visibilities in the sky-plane
+
+        Parameters
+        ----------
+        u, v : array, unit = :math:`\lambda`
+            uv-points to predict the visibilities at
+        I : array, optional, unit = Jy
+            Intensity points to predict the vibilities of. If not specified,
+            the mean will be used. The intensity should be specified at the
+            collocation points, I[k] = :math:`I(r_k)`
+        geometry: SourceGeometry object, optional
+            Geometry used to correct the visibilities for the source
+            inclination. If not provided, the geometry determined during the
+            fit will be used
+
+        Returns
+        -------
+        V(u,v) : array, unit = Jy
+            Predicted visibilties of a source with a radial flux distribution
+            given by :math:`I` and the position angle, inclination and phase
+            centre determined by the geometry object
+        """
+        if geometry is None:
+            geometry = self._geometry
+
+        if I is None:
+            I = self.I
+
+        if geometry is not None:
+            u, v, wz = geometry.deproject(u, v, use3D=True)
+        else:
+            wz = np.zeros_like(u)
+            
+        q = np.hypot(u, v)
+        V = self._vis_map.predict_visibilities(I, q, wz, geometry=geometry)
+
+        # Undo phase centering
+        if geometry is not None:
+            _, _, V = geometry.undo_correction(u, v, V)
+
+        return V
+
+    def predict_deprojected(self, q=None, I=None, geometry=None,
+                            block_size=10**5, assume_optically_thick=True):
+        r"""
+        Predict the visibilities in the deprojected-plane
+
+        Parameters
+        ----------
+        q : array, default = self.q, unit = :math:`\lambda`
+            1D uv-points to predict the visibilities at
+        I : array, optional, unit = Jy / sr
+            Intensity points to predict the vibilities of. If not specified,
+            the mean will be used. The intensity should be specified at the
+            collocation points, I[k] = I(r_k)
+        geometry: SourceGeometry object, optional
+            Geometry used to correct the visibilities for the source
+            inclination. If not provided, the geometry determined during the
+            fit will be used
+        block_size : int, default = 10**5
+            Maximum matrix size used in the visibility calculation
+        assume_optically_thick : bool, default = True
+            Whether to correct the visibility amplitudes for the source
+            inclination
+
+        Returns
+        -------
+        V(q) : array, unit = Jy
+            Predicted visibilties of a source with a radial flux distribution
+            given by :math:`I`. The amplitude of the visibilities are reduced
+            according to the inclination of the source, for consistency with
+            `uvplot`
+
+        Notes
+        -----
+        The visibility amplitudes are still reduced due to the projection,
+        for consistency with `uvplot`
+        """
+        if geometry is None:
+            geometry = self._geometry
+       
+        if I is None:
+            I = self.I
+
+        V = self._vis_map.predict_visibilities(I, q, q*0, geometry=geometry)
+
+        return V
+
+    def interpolate_brightness(self, Rpts, I=None):
+        r"""
+        Interpolate the brightness profile to the requested set of points.
+
+        The interpolation is done using the Fourier-Bessel series. 
+        
+        Parameters
+        ----------
+        Rpts : array, unit = arcsec
+            The points to interpolate the brightness to.
+        I : array, optional, unit = Jy / Sr
+            Intensity points to interpolate. If not specified, the MAP/mean
+            will be used. The intensity should be specified at the collocation
+            points, I[k] = I(r_k).
+
+        Returns
+        -------
+        I(Rpts) : array, unit = Jy / Sr
+            Brightness at the radial points.
+
+        Notes
+        -----
+        The resulting brightness will be consistent with higher-resolution fits
+        as long as the original fit has sufficient resolution. By sufficient
+        resolution we simply mean that the missing terms in the Fourier-Bessel
+        series are negligible, which will typically be the case if the
+        brightness was obtained from a frank fit with 100 points or more.
+        """
+        Rpts = np.array(Rpts)
+        if I is None:
+            I = self.I
+        
+        V = self._vis_map.transform(I, direction='forward')
+        I = self._vis_map.transform(V, Rpts, direction='backward')
+        
+        if np.any(Rpts > self.Rmax):
+            I[Rpts > self.Rmax] = 0
+
+        return I 
+
+    @abc.abstractproperty
+    def MAP(self):
+        pass
+
+    @property
+    def I(self):
+        return self.MAP
+
+    @property
+    def r(self):
+        """Radius points, unit = arcsec"""
+        return self._vis_map.r
+
+    @property
+    def Rmax(self):
+        """Maximum radius, unit = arcsec"""
+        return self._vis_map.Rmax
+    @property
+    def q(self):
+        r"""Frequency points, unit = :math:`\lambda`"""
+        return self._vis_map.q
+
+    @property
+    def Qmax(self):
+        r"""Maximum frequency, unit = :math:`\lambda`"""
+        return self._vis_map.Qmax
+
+    @property
+    def size(self):
+        """Number of points in reconstruction"""
+        return self._vis_map.size
+
+    @property
+    def geometry(self):
+        """SourceGeometry object"""
+        return self._geometry
+
+    @property
+    def info(self):
+        """Fit quantities for reference"""
+        return self._info
 
 
-class _HankelRegressor(object):
-    r"""
-    Solves the linear regression problem to compute the posterior,
-
-    .. math::
-       P(I|q,V,p) \propto G(I-\mu, D),
-
-    where :math:`I` is the intensity to be predicted, :math:`q` are the
-    baselines and :math:`V` the visibility data. :math:`\mu` and :math:`D` are
-    the mean and covariance of the posterior distribution.
-
-    If :math:`p` is provided, the covariance matrix of the prior is included,
-    with
-
-    .. math::
-        P(I|p) \propto G(I, S(p)),
-
-    and the Bayesian Linear Regression problem is solved. :math:`S` is computed
-    from the power spectrum, :math:`p`, if provided. Otherwise the traditional
-    (frequentist) linear regression is used.
-
-    The problem is framed in terms of the design matrix :math:`M` and
-    information source :math:`j`.
-
-    :math:`H(q)` is the matrix that projects the intensity :math:`I` to
-    visibility space. :math:`M` is defined by
-
-    .. math::
-        M = H(q)^T w H(q),
-
-    where :math:`w` is the weights matrix and
-
-    .. math::
-        j = H(q)^T w V.
-
-    The mean and covariance of the posterior are then given by
-
-    .. math::
-        \mu = D j
-
-    and
-
-    .. math::
-        D = [ M + S(p)^{-1}]^{-1},
-
-    if the prior is provided, otherwise
-
-    .. math::
-        D = M^{-1}.
-
+class FrankGaussianFit(FrankRadialFit):
+    """
+    Result of a frank fit with a Gaussian brightness model.
 
     Parameters
     ----------
     DHT : DiscreteHankelTransform
         A DHT object with N bins that defines H(p). The DHT is used to compute
         :math:`S(p)`
-    M : 2D array, size = (N, N)
-        The design matrix, see above
-    j : 1D array, size = N
-        Information source, see above
-    p : 1D array, size = N, optional
-        Power spectrum used to generate the covarience matrix :math:`S(p)`
+    fit : GaussianModel object
+        Result of fitting with MAP power spectrum.
+    info: dict, optional
+        Dictionary containing useful quantities for reproducing a fit
+        (such as the hyperparameters used)
     geometry: SourceGeometry object, optional
-        If provided, this geometry will be used to deproject the visibilities
-        in self.predict
-    noise_likelihood : float, optional
-        An optional parameter needed to compute the full likelihood, which
-        should be equal to
-
-        .. math::
-            -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2 \pi)].
-
-        If not  provided, the likelihood can still be computed up to this
-        missing constant
+        Geometry used to correct the visibilities for the source
+        inclination. If not provided, the geometry determined during the
+        fit will be used.
     """
 
-    def __init__(self, DHT, M, j, p=None, geometry=None, noise_likelihood=0):
-
-        self._geometry = geometry
-
-        self._DHT = DHT
-        self._M = M
-        self._j = j
-
-        self._p = p
-        if p is not None:
-            if np.any(p <= 0) or np.any(np.isnan(p)):
-                raise ValueError("Bad value in power spectrum. The power"
-                                 " spectrum must be positive and not contain"
-                                 " any NaN values. This is likely due to"
-                                 " your UVtable (incorrect units or weights), "
-                                 " or the deprojection being applied (incorrect"
-                                 " geometry and/or phase center). Else you may"
-                                 " want to increase `rout` by 10-20% or `n` so"
-                                 " that it is large, >~300.")
-
-            Ykm = self._DHT.coefficients()
-            self._Sinv = np.einsum('ji,j,jk->ik', Ykm, 1/p, Ykm)
-        else:
-            self._Sinv = None
-
-        self._like_noise = noise_likelihood
-
-        self._fit()
-
-    def _fit(self):
-        """Compute the mean and variance"""
-        # Compute the inverse prior covariance, S(p)^-1
-        Sinv = self._Sinv
-        if Sinv is None:
-            Sinv = 0
-
-        Dinv = self._M + Sinv
-
-        try:
-            self._Dchol = scipy.linalg.cho_factor(Dinv)
-            self._Dsvd = None
-
-            self._mu = scipy.linalg.cho_solve(self._Dchol, self._j)
-
-        except np.linalg.LinAlgError:
-            U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
-
-            s1 = np.where(s > 0, 1. / s, 0)
-
-            self._Dchol = None
-            self._Dsvd = U, s1, V
-
-            self._mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
-
-        # Reset the covariance matrix - we will compute it when needed
-        self._cov = None
-
-    def Dsolve(self, b):
-        r"""
-        Compute :math:`D \cdot b` by solving :math:`D^{-1} x = b`.
-
-        Parameters
-        ----------
-        b : array, size = (N,...)
-            Right-hand side to solve for
-
-        Returns
-        -------
-        x : array, shape = np.shape(b)
-            Solution to the equation D x = b
-
-        """
-        if self._Dchol is not None:
-            return scipy.linalg.cho_solve(self._Dchol, b)
-        else:
-            U, s1, V = self._Dsvd
-            return np.dot(V.T, np.multiply(np.dot(U.T, b), s1))
+    def __init__(self, DHT, fit, info={}, geometry=None):
+        FrankRadialFit.__init__(self, DHT, info, geometry)
+        self._fit = fit
 
     def draw(self, N):
         """Compute N draws from the posterior"""
@@ -237,198 +301,112 @@ class _HankelRegressor(object):
 
         is the noise likelihood.
         """
+        return self._fit.log_likelihood(I)
 
-        if I is None:
-            like = 0.5 * np.sum(self._j * self._mu)
-
-            if self._Sinv is not None:
-                Q = self.Dsolve(self._Sinv)
-                like += 0.5 * np.linalg.slogdet(Q)[1]
-        else:
-            Sinv = self._Sinv
-            if Sinv is None:
-                Sinv = 0
-
-            Dinv = self._M + Sinv
-
-            like = 0.5 * np.sum(self._j * I) - 0.5 * np.dot(I, np.dot(Dinv, I))
-
-            if self._Sinv is not None:
-                like += 0.5 * np.linalg.slogdet(2 * np.pi * Sinv)[1]
-
-        return like + self._like_noise
 
     def solve_non_negative(self):
         """Compute the best fit solution with non-negative intensities"""
-        Sinv = self._Sinv
-        if Sinv is None:
-            Sinv = 0
-
-        Dinv = self._M + Sinv
-        return scipy.optimize.nnls(Dinv, self._j,
-                                   maxiter=100*len(self._j))[0]
-
-    def _predict(self, q, I, block_size):
-        """Perform the visibility prediction"""
-
-        # Block the visibility calulation for speed
-        Ni = int(block_size / len(I) + 1)
-
-        end = 0
-        start = 0
-        V = []
-        while end < len(q):
-            start = end
-            end = start + Ni
-            qi = q[start:end]
-
-            V.append(self._DHT.transform(I, qi))
-
-        return np.concatenate(V)
-
-    def predict(self, u, v, I=None, geometry=None, block_size=10**5):
-        r"""
-        Predict the visibilities in the sky-plane
-
-        Parameters
-        ----------
-        u, v : array, unit = :math:`\lambda`
-            uv-points to predict the visibilities at
-        I : array, optional, unit = Jy
-            Intensity points to predict the vibilities of. If not specified,
-            the mean will be used. The intensity should be specified at the
-            collocation points, I[k] = :math:`I(r_k)`
-        geometry: SourceGeometry object, optional
-            Geometry used to correct the visibilities for the source
-            inclination. If not provided, the geometry determined during the
-            fit will be used
-        block_size : int, default = 10**5
-            Maximum matrix size used in the visibility calculation
-
-        Returns
-        -------
-        V(u,v) : array, unit = Jy
-            Predicted visibilties of a source with a radial flux distribution
-            given by :math:`I` and the position angle, inclination and phase
-            centre determined by the geometry object
-        """
-
-        if I is None:
-            I = self.mean
-
-        if geometry is None:
-            geometry = self._geometry
-
-        if geometry is not None:
-            u, v = geometry.deproject(u, v)
-
-        q = np.hypot(u, v)
-        V = self._predict(q, I, block_size)
-
-        if geometry is not None:
-            V *= np.cos(geometry.inc * deg_to_rad)
-
-        # Undo phase centering
-        _, _, V = geometry.undo_correction(u, v, V)
-
-        return V
-
-    def predict_deprojected(self, q=None, I=None, geometry=None,
-                            block_size=10**5):
-        r"""
-        Predict the visibilities in the deprojected-plane
-
-        Parameters
-        ----------
-        q : array, default = self.q, unit = :math:`\lambda`
-            1D uv-points to predict the visibilities at
-        I : array, optional, unit = Jy / sr
-            Intensity points to predict the vibilities of. If not specified,
-            the mean will be used. The intensity should be specified at the
-            collocation points, I[k] = I(r_k)
-        geometry: SourceGeometry object, optional
-            Geometry used to correct the visibilities for the source
-            inclination. If not provided, the geometry determined during the
-            fit will be used
-        block_size : int, default = 10**5
-            Maximum matrix size used in the visibility calculation
-
-        Returns
-        -------
-        V(q) : array, unit = Jy
-            Predicted visibilties of a source with a radial flux distribution
-            given by :math:`I`. The amplitude of the visibilities are reduced
-            according to the inclination of the source, for consistency with
-            `uvplot`
-
-        Notes
-        -----
-        The visibility amplitudes are still reduced due to the projection,
-        for consistentcy with `uvplot`
-        """
-
-        if q is None:
-            q = self.q
-
-        if I is None:
-            I = self.mean
-
-        if geometry is None:
-            geometry = self._geometry
-
-        V = self._predict(q, I, block_size)
-
-        if geometry is not None:
-            V *= np.cos(geometry.inc * deg_to_rad)
-
-        return V
+        return self._fit.solve_non_negative()
 
     @property
     def mean(self):
         """Posterior mean, unit = Jy / sr"""
-        return self._mu
+        return self._fit.mean
+
+    @property
+    def MAP(self):
+        """Posterior maximum, unit = Jy / sr"""
+        return self.mean
 
     @property
     def covariance(self):
         """Posterior covariance, unit = (Jy / sr)**2"""
-        if self._cov is None:
-            self._cov = self.Dsolve(np.eye(self.size))
-        return self._cov
+        return self._fit.covariance
 
     @property
     def power_spectrum(self):
         """Power spectrum coefficients"""
-        return self._p
+        return self._fit.power_spectrum
+
+
+
+class FrankLogNormalFit(FrankRadialFit):
+    """
+    Result of a frank fit with a Gaussian brightness model.
+
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
+    fit : LogNormalMAPModel object
+        Result of fitting with MAP power spectrum.
+    info: dict, optional
+        Dictionary containing useful quantities for reproducing a fit
+        (such as the hyperparameters used)
+    geometry: SourceGeometry object, optional
+        Geometry used to correct the visibilities for the source
+        inclination. If not provided, the geometry determined during the
+        fit will be used.
+    """
+
+    def __init__(self, DHT, fit, info={}, geometry=None):
+        FrankRadialFit.__init__(self, DHT, info, geometry)
+        self._fit = fit
+
+    def log_likelihood(self, I=None):
+        r"""
+        Compute the likelihood,
+
+        .. math:
+            \log[P(I,V|S)].
+
+        Parameters
+        ----------
+        I : array, size = N, optional
+            Intensity :math:`I(r)=exp(s0*s)` to compute the likelihood of
+
+        Returns
+        -------
+        log_P : float
+            Log likelihood, :math:`\log[P(I,V|p)]`
+
+        Notes
+        -----
+        1. The prior probability P(S) is not included.
+        2. The likelihood takes the form:
+
+        .. math::
+              \log[P(I,V|p)] = j^T I - \frac{1}{2} I^T D^{-1} I
+                 - \frac{1}{2} \log[\det(2 \pi S)] + H_0
+
+        where
+
+        .. math::
+            H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)
+
+        is the noise likelihood.
+        """
+        
+        if I is not None:
+            return self._fit.log_likelihood(np.log(I))
+        else:
+            return self._fit.log_likelihood()
 
     @property
-    def r(self):
-        """Radius points, unit = arcsec"""
-        return self._DHT.r * rad_to_arcsec
+    def MAP(self):
+        """Posterior maximum, unit = Jy / sr"""
+        return np.exp((self._fit.MAP + self._fit.s_0) * self._fit.scale)
 
     @property
-    def Rmax(self):
-        """Maximum radius, unit = arcsec"""
-        return self._DHT.Rmax * rad_to_arcsec
+    def covariance(self):
+        """Posterior covariance, unit = log[(Jy / sr)**2]"""
+        return self._fit.covariance
 
     @property
-    def q(self):
-        r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
-
-    @property
-    def Qmax(self):
-        r"""Maximum frequency, unit = :math:`\lambda`"""
-        return self._DHT.Qmax
-
-    @property
-    def size(self):
-        """Number of points in reconstruction"""
-        return self._DHT.size
-
-    @property
-    def geometry(self):
-        """Geometry object"""
-        return self._geometry
+    def power_spectrum(self):
+        """Power spectrum coefficients"""
+        return self._fit.power_spectrum
 
 
 class FourierBesselFitter(object):
@@ -452,11 +430,19 @@ class FourierBesselFitter(object):
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
+    assume_optically_thick : bool, default = True
+        Whether to correct the visibility amplitudes by a factor of
+        1 / cos(inclination); see frank.geometry.rescale_total_flux
+    scale_height : function R --> H, optional
+        Specifies the vertical thickness of disc as a function of radius. Both
+        R and H should be in arcsec. Assumes a Gaussian vertical structure. 
+        Only works with assume_optically_thick=False
     verbose : bool, default = False
         Whether to print notification messages
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
+                 assume_optically_thick=True, scale_height=None,
                  block_size=10 ** 5, verbose=True):
 
         Rmax /= rad_to_arcsec
@@ -465,16 +451,60 @@ class FourierBesselFitter(object):
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
 
-        self._blocking = block_data
-        self._block_size = block_size
+        if assume_optically_thick:
+            if scale_height is not None:
+                raise ValueError("Optically thick models must have zero "
+                                 "scale-height")
+            model = 'opt_thick'
+        elif scale_height is not None:
+            model = 'debris'
+        else:
+            model = 'opt_thin'
+
+        self._vis_map = VisibilityMapping(self._DHT, geometry, 
+                                          model, scale_height=scale_height,
+                                          block_data=block_data, block_size=block_size,
+                                          check_qbounds=False, verbose=verbose)
+
+        self._info  = {'Rmax' : self._DHT.Rmax * rad_to_arcsec,
+                       'N' : self._DHT.size
+                       }
 
         self._verbose = verbose
 
-    def _check_uv_range(self, uv):
-        """Don't check the bounds for FourierBesselFitterr"""
-        pass
+    def preprocess_visibilities(self, u, v, V, weights=1):
+        r"""Prepare the visibilities for fitting. 
+        
+        This step will be done by the automatically fit method, but it can be 
+        expensive. This method is provided to enable the pre-processing to be
+        done once when conducting multiple fits with different hyperprior 
+        parameters. 
 
-    def _build_matrices(self, u, v, V, weights):
+        Parameters
+        ----------
+        u,v : 1D array, unit = :math:`\lambda`
+            uv-points of the visibilies
+        V : 1D array, unit = Jy
+            Visibility amplitudes at q
+        weights : 1D array, optional, unit = Jy^-2
+            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+            the standard deviation
+        
+        Returns
+        -------
+        processed_visibilities : dict
+            Processed visibilities needed in subsequent steps of the fit
+
+        Notes
+        -----
+        Re-using the processed visibilities is only valid with certain parameter
+        changes. For example N, Rmax, geometry, nu, assume_optically_thick, and
+        scale_height cannot be changed. This will be checked before fits are 
+        conducted.
+        """
+        return self._vis_map.map_visibilities(u, v, V, weights)
+
+    def _build_matrices(self, mapping):
         r"""
         Compute the matrices M and j from the visibility data.
 
@@ -483,56 +513,40 @@ class FourierBesselFitter(object):
             `H0 = 0.5*\log[det(weights/(2*np.pi))]
              - 0.5*np.sum(V * weights * V):math:`
         """
+        self._vis_map.check_hash(mapping['hash'])
+  
+        self._M = mapping['M']
+        self._j = mapping['j']
+
+        self._H0 = mapping['null_likelihood']
+
+    def fit_method(self):
+        """Name of the fit method"""
+        return type(self).__name__
+
+    def fit_preprocessed(self, preproc_vis):
+        r"""
+        Fit the pre-processed visibilties. The last step in the fitting 
+        procedure.
+
+        Parameters
+        ----------
+        preproc_vis : pre-processed visibilities
+            Visibilities to fit that have been processed by
+            `self.preprocess_visibilities`.
+
+        Returns
+        -------
+        sol : FrankRadialFit
+            Least-squares Fourier-Bessel series fit
+        """
         if self._verbose:
-            logging.info('    Building visibility matrices M and j')
+            logging.info('  Fitting pre-processed visibilities for brightness'
+                         ' profile using {}'.format(self.fit_method()))
 
-        # Deproject the visibilities
-        u, v, V = self._geometry.apply_correction(u, v, V)
-        q = np.hypot(u, v)
+        self._build_matrices(preproc_vis)
 
-        # Check consistency of the uv points with the model
-        self._check_uv_range(q)
-
-        # Use only the real part of V. Also correct the total flux for the
-        # inclination. This is not done in apply_correction for consistency
-        # with `uvplot`
-        V = V.real / np.cos(self._geometry.inc * deg_to_rad)
-        weights = weights * np.cos(self._geometry.inc * deg_to_rad) ** 2
-
-        # If blocking is used, we will build up M and j chunk-by-chunk
-        if self._blocking:
-            Nstep = int(self._block_size / self.size + 1)
-        else:
-            Nstep = len(V)
-
-        # Ensure the weights are 1D
-        w = np.ones_like(V) * weights
-
-        start = 0
-        end = Nstep
-        Ndata = len(V)
-        M = 0
-        j = 0
-        while start < Ndata:
-            qs = q[start:end]
-            ws = w[start:end]
-            Vs = V[start:end]
-
-            X = self._DHT.coefficients(qs)
-
-            wXT = np.array(X.T * ws, order='C')
-
-            M += np.dot(wXT, X)
-            j += np.dot(wXT, Vs)
-
-            start = end
-            end += Nstep
-
-        self._M = M
-        self._j = j
-
-        # Compute likelihood normalization H_0
-        self._H0 = 0.5 * np.sum(np.log(w / (2 * np.pi)) - V * w * V)
+        return self._fit()
 
     def fit(self, u, v, V, weights=1):
         r"""
@@ -550,22 +564,30 @@ class FourierBesselFitter(object):
 
         Returns
         -------
-        sol : _HankelRegressor
+        sol : FrankRadialFit
             Least-squares Fourier-Bessel series fit
         """
         if self._verbose:
             logging.info('  Fitting for brightness profile using'
-                        ' FourierBesselFitter')
+                         ' {}'.format(self.fit_method()))
 
         self._geometry.fit(u, v, V, weights)
 
-        self._build_matrices(u, v, V, weights)
+        mapping = self.preprocess_visibilities(u, v, V, weights)
+        self._build_matrices(mapping)
 
-        self._sol = _HankelRegressor(self._DHT, self._M, self._j,
-                                     geometry=self._geometry.clone(),
-                                     noise_likelihood=self._H0)
+        return self._fit()
+
+    def _fit(self):
+        """Fit step. Computes the best fit given the pre-processed data"""
+        fit = GaussianModel(self._DHT, self._M, self._j,
+                            noise_likelihood=self._H0)
+
+        self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
+                                     geometry=self._geometry.clone())
 
         return self._sol
+
 
     @property
     def r(self):
@@ -627,13 +649,20 @@ class FrankFitter(FourierBesselFitter):
     alpha : float >= 1, default = 1.05
         Order parameter of the inverse gamma prior for the power spectrum
         coefficients
-    p_0 : float >= 0, default = 1e-15, unit=Jy^2
+    p_0 : float >= 0, default = None, unit=Jy^2
         Scale parameter of the inverse gamma prior for the power spectrum
-        coefficients
+        coefficients. If not provided p_0 = 1e-15 (method="Normal") or 
+        1e-35 (method="LogNormal") will be used.
     weights_smooth : float >= 0, default = 1e-4
         Spectral smoothness prior parameter. Zero is no smoothness prior
     tol : float > 0, default = 1e-3
         Tolerence for convergence of the power spectrum iteration
+    method : string, default="Normal"
+        Model used for the brightness reconstrution. This must be one of
+        "Normal" of "LogNormal".
+    I_scale : float, default = 1e5, unit= Jy/Sr
+        Brightness scale. Only used in the LogNormal model. Note the
+        LogNormal model produces I(Rmax) =  I_scale.
     max_iter: int, default = 2000
         Maximum number of fit iterations
     check_qbounds: bool, default = True
@@ -642,6 +671,13 @@ class FrankFitter(FourierBesselFitter):
     store_iteration_diagnostics: bool, default = False
         Whether to store the power spectrum parameters and brightness profile
         for each fit iteration
+    assume_optically_thick : bool, default = True
+        Whether to correct the visibility amplitudes by a factor of
+        1 / cos(inclination); see frank.geometry.rescale_total_flux
+    scale_height : function R --> H, optional
+        Specifies the vertical thickness of disc as a function of radius. Both
+        R and H should be in arcsec. Assumes a Gaussian vertical structure. 
+        Only works with assume_optically_thick=False
     verbose:
         Whether to print notification messages
 
@@ -654,168 +690,92 @@ class FrankFitter(FourierBesselFitter):
     """
 
     def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
-                 block_size=10 ** 5, alpha=1.05, p_0=1e-15, weights_smooth=1e-4,
-                 tol=1e-3, max_iter=2000, check_qbounds=True,
-                 store_iteration_diagnostics=False, verbose=True):
+                 block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
+                 tol=1e-3, method='Normal', I_scale=1e5, max_iter=2000, check_qbounds=True,
+                 store_iteration_diagnostics=False, assume_optically_thick=True,
+                 scale_height=None, verbose=True):
+
+        if method not in {'Normal', 'LogNormal'}:
+            raise ValueError('FrankFitter supports following mehods:\n\t'
+                             '{ "Normal", "LogNormal"}"')
+        self._method = method
 
         super(FrankFitter, self).__init__(Rmax, N, geometry, nu, block_data,
+                                          assume_optically_thick, scale_height,
                                           block_size, verbose)
 
-        self._p0 = p_0
-        self._ai = alpha
-        self._smooth = weights_smooth
+        # Reinstate the bounds check: FourierBesselFitter does not check bounds
+        self._vis_map.check_qbounds=check_qbounds
 
-        self._tol = tol
+        if p_0 is None:
+            if method == 'Normal':
+                p_0 = 1e-15
+            else:
+                p_0 = 1e-35
+
+        self._s_scale = np.log(I_scale)
+
+        self._filter = CriticalFilter(
+            self._DHT, alpha, p_0, weights_smooth, tol
+        )
+
         self._max_iter = max_iter
 
-        self._check_qbounds = check_qbounds
         self._store_iteration_diagnostics = store_iteration_diagnostics
 
-    def _build_smoothing_matrix(self):
-        log_q = np.log(self.q)
-        dc = (log_q[2:] - log_q[:-2]) / 2
-        de = np.diff(log_q)
+        self._info.update({'alpha' : alpha, 'wsmooth' : weights_smooth, 'p0' : p_0})
 
-        Delta = np.zeros([3, self.size])
-        Delta[0, :-2] = 1 / (dc * de[:-1])
-        Delta[1, 1:-1] = - (1 / de[1:] + 1 / de[:-1]) / dc
-        Delta[2, 2:] = 1 / (dc * de[1:])
+    def fit_method(self):
+        """Name of the fit method"""
+        return '{}: {} method'.format(type(self).__name__, self._method)
 
-        Delta = scipy.sparse.dia_matrix((Delta, [-1, 0, 1]),
-                                        shape=(self.size, self.size))
-
-        dce = np.zeros_like(log_q)
-        dce[1:-1] = dc
-        dce = scipy.sparse.dia_matrix((dce.reshape(1, -1), 0),
-                                      shape=(self.size, self.size))
-
-        Tij = Delta.T.dot(dce.dot(Delta))
-
-        return Tij * self._smooth
-
-    def _check_uv_range(self, uv):
-        """Check that the uv domain is properly covered"""
-
-        # Check whether the first (last) collocation point is smaller (larger)
-        # than the shortest (longest) deprojected baseline in the dataset
-        if self._check_qbounds:
-            if self.q[0] < uv.min():
-                logging.warning(r"WARNING: First collocation point, q[0] = {:.3e} \lambda,"
-                                " is at a baseline shorter than the"
-                                " shortest deprojected baseline in the dataset,"
-                                r" min(uv) = {:.3e} \lambda. For q[0] << min(uv),"
-                                " the fit's total flux may be biased"
-                                " low.".format(self.q[0], uv.min()))
-
-            if self.q[-1] < uv.max():
-                raise ValueError(r"ERROR: Last collocation point, {:.3e} \lambda, is at"
-                                 " a shorter baseline than the longest deprojected"
-                                 r" baseline in the dataset, {:.3e} \lambda. Please"
-                                 " increase N in FrankFitter (this is"
-                                 " `hyperparameters: n` if you're using a parameter"
-                                 " file). Or if you'd like to fit to shorter maximum baseline,"
-                                 " cut the (u, v) distribution before fitting"
-                                 " (`modify_data: baseline_range` in the"
-                                 " parameter file).".format(self.q[-1], uv.max()))
-
-
-    def fit(self, u, v, V, weights=1):
-        r"""
-        Fit the visibilties
-
-        Parameters
-        ----------
-        u,v : 1D array, unit = :math:`\lambda`
-            uv-points of the visibilies
-        V : 1D array, unit = Jy
-            Visibility amplitudes at q
-        weights : 1D array, optional, unit = Jy^-2
-            Weights of the visibilities, weight = 1 / sigma^2, where sigma is
-            the standard deviation
-        iteration_diagnostics : dict, optional,
-          size = N_iter x 2 x N_{collocation points}
-          Power spectrum parameters and posterior mean brightness profile at
-          each fit iteration, and number of iterations
-
-        Returns
-        -------
-        MAP_solution : _HankelRegressor
-            Reconstructed profile using maximum a posteriori power spectrum
-        """
-        if self._verbose:
-            logging.info('  Fitting for brightness profile using FrankFitter')
-
+    def _fit(self):
+        """Fit step. Computes the best fit given the pre-processed data"""
+        
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics = defaultdict(list)
+        
+        # Inital guess for power spectrum
+        pI = np.ones([self.size])
 
-        # Fit geometry if needed
-        self._geometry.fit(u, v, V, weights)
+        # Do an extra iteration based on a power-law guess
+        fit = self._perform_fit(pI, guess=np.ones_like(pI), fit_method='Normal')
 
+        pI = np.max(self._DHT.transform(fit.MAP)**2)
+        pI *= (self.q / self.q[0])**-2
 
-        # Project the data to the signal space
-        self._build_matrices(u, v, V, weights)
-        # Compute the smoothing matrix
-        Tij = self._build_smoothing_matrix()
+        fit = self._perform_fit(pI, fit_method='Normal')
 
-        # Get the forward projection matrix
-        Ykm = self._DHT.coefficients()
+        # Now that we've got a reasonable initial brightness, setup the
+        # log-normal power spectrum estimate
+        if self._method == 'LogNormal':
+            s = np.log(np.maximum(fit.MAP, 1e-3 * fit.MAP.max())) 
+            s -= self._s_scale
+            
+            pI = np.max(self._DHT.transform(s)**2)
+            pI *= (self.q / self.q[0])**-4
 
-        # Weights of each power spectrum component
-        rho = 1.0
+            fit = self._perform_fit(pI, guess=s)
 
-        # Setup kernel parameters
-        pi = np.ones([self.size])
-
-        fit = self.fit_powerspectrum(pi)
-
-        pi[:] = np.max(np.dot(Ykm, fit.mean)) ** 2 / \
-            (self._ai + 0.5 * rho - 1.0)
-        pi[:] *= (self.q / self.q[0]) ** -2
-
-        fit = self.fit_powerspectrum(pi)
-
-        # Do one unsmoothed iteration
-        Tr1 = np.dot(Ykm, fit.mean) ** 2
-        Tr2 = np.einsum('ij,ji->i', Ykm, fit.Dsolve(Ykm.T))
-        pi = (self._p0 + 0.5 * (Tr1 + Tr2)) / (self._ai - 1.0 + 0.5 * rho)
-
-        fit = self.fit_powerspectrum(pi)
-
-        Tij_pI = scipy.sparse.identity(self.size) + Tij
-        sparse_solve = scipy.sparse.linalg.spsolve
+        
 
         count = 0
         pi_old = 0
-        while (np.any(np.abs(pi - pi_old) > self._tol * pi) and
+        while (not self._filter.check_convergence(pI, pi_old) and
                count <= self._max_iter):
 
             if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
-                print('\r    FrankFitter iteration {}'.format(count),
+                print('\r    {} iteration {}'.format(type(self).__name__, count),
                       end='', flush=True)
 
-            # Project mu to Fourier-space
-            #   Tr1 = Trace(mu mu_T . Ykm_T Ykm) = Trace( Ykm mu . (Ykm mu)^T)
-            #       = (Ykm mu)**2
-            Tr1 = np.dot(Ykm, fit.mean) ** 2
-            # Project D to Fourier-space
-            #   Drr^-1 = Ykm^T Dqq^-1 Ykm
-            #   Drr = Ykm^-1 Dqq Ykm^-T
-            #   Dqq = Ykm Dqq Ykm^T
-            # Tr2 = Trace(Dqq)
-            Tr2 = np.einsum('ij,ji->i', Ykm, fit.Dsolve(Ykm.T))
+            pi_old = pI.copy()
+            pI = self._filter.update_power_spectrum(fit)
 
-            beta = (self._p0 + 0.5 * (Tr1 + Tr2)) / pi - \
-                   (self._ai - 1.0 + 0.5 * rho)
-            pi_new = np.exp(sparse_solve(Tij_pI, beta + np.log(pi)))
-
-            pi_old = pi.copy()
-            pi = pi_new
-
-            fit = self.fit_powerspectrum(pi)
+            fit = self._perform_fit(pI, guess=fit.MAP)
 
             if self._store_iteration_diagnostics:
-                self._iteration_diagnostics['power_spectrum'].append(pi)
-                self._iteration_diagnostics['mean'].append(fit.mean)
+                self._iteration_diagnostics['power_spectrum'].append(pI)
+                self._iteration_diagnostics['MAP'].append(fit.MAP)
 
             count += 1
 
@@ -834,58 +794,18 @@ class FrankFitter(FourierBesselFitter):
             self._iteration_diagnostics['num_iterations'] = count
 
         # Save the best fit
-        self._sol = fit
+        if self._method == "Normal":
+            self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
+                                         geometry=self._geometry.clone())
+        else:
+            self._sol = FrankLogNormalFit(self._vis_map, fit, self._info,
+                                          geometry=self._geometry.clone())
 
         # Compute the power spectrum covariance at the maximum
-        self._ps = pi
+        self._ps = pI
         self._ps_cov = None
-        self._ps_cov_params = (fit, Tij, rho)
 
         return self._sol
-
-    def _ps_covariance(self, fit, Tij, rho):
-        """
-        Covariance of the power spectrum
-
-        Parameters
-        ----------
-        fit : _HankelRegressor
-            Solution at maximum likelihood
-        Tij : matrix
-            Smoothing matrix
-        rho : float
-            Power spectrum weighting function
-
-        Returns
-        -------
-        ps_cov : 2D array
-            Covariance matrix of the power spectrum at maximum likelihood
-
-        Notes
-        -----
-        Only valid at the location of maximum likelihood
-
-        """
-        Ykm = self._DHT.coefficients()
-
-        mq = np.dot(Ykm, fit.mean)
-
-        mqq = np.outer(mq, mq)
-        Dqq = np.dot(Ykm, fit.Dsolve(Ykm.T))
-
-        p = fit.power_spectrum
-        tau = np.log(p)
-
-        hess = \
-            + np.diag(self._ai - 1.0 + 0.5 * rho + Tij.dot(tau)) \
-            + Tij.todense() \
-            - 0.5 * np.outer(1 / p, 1 / p) * (2 * mqq + Dqq) * Dqq
-
-        # Invert the Hessian
-        hess_chol = scipy.linalg.cho_factor(hess)
-        ps_cov = scipy.linalg.cho_solve(hess_chol, np.eye(self.size))
-
-        return ps_cov
 
     def draw_powerspectrum(self, Ndraw=1):
         """
@@ -911,7 +831,7 @@ class FrankFitter(FourierBesselFitter):
 
         return np.exp(log_p)
 
-    def fit_powerspectrum(self, p):
+    def _perform_fit(self, p, guess=None, fit_method=None):
         """
         Find the posterior mean and covariance given p
 
@@ -919,16 +839,31 @@ class FrankFitter(FourierBesselFitter):
         ----------
         p : array, size = N
             Power spectrum parameters
+        guess : array, size = N, option
+            Initial guess for brightness used in the fit.
+        fit_method : string, optional.
+            One of {"Normal", "LogNormal"}. Brightness profile
+            method used in fit.
 
         Returns
         -------
-        sol : _HankelRegressor
+        sol : FrankRadialFit
             Posterior solution object for P(I|V,p)
         """
+        if fit_method is None:
+            fit_method = self._method
 
-        return _HankelRegressor(self._DHT, self._M, self._j, p,
-                                geometry=self._geometry.clone(),
-                                noise_likelihood=self._H0)
+        if fit_method == 'Normal':
+            return GaussianModel(self._DHT, self._M, self._j, p,
+                                 guess=guess,
+                                 noise_likelihood=self._H0)
+        elif fit_method == 'LogNormal':
+            return LogNormalMAPModel(self._DHT, self._M, self._j, p,
+                                     guess=guess, s0=self._s_scale,
+                                     noise_likelihood=self._H0)
+        else:
+            raise ValueError('fit_method must be one of the following:\n\t'
+                             '{"Normal", "LogNormal"}')
 
     def log_prior(self, p=None):
         """
@@ -957,17 +892,8 @@ class FrankFitter(FourierBesselFitter):
         if p is None:
             p = self._ps
 
-        Tij = self._build_smoothing_matrix()
+        return self._filter.log_prior(p)
 
-        # Add the power spectrum prior term
-        xi = self._p0 / p
-        like = np.sum(xi - self._ai * np.log(xi))
-
-        # Extra term due to spectral smoothness
-        tau = np.log(p)
-        like -= 0.5 * np.dot(tau, Tij.dot(tau))
-
-        return like
 
     def log_likelihood(self, sol=None):
         r"""
@@ -979,9 +905,9 @@ class FrankFitter(FourierBesselFitter):
 
         Parameters
         ----------
-        sol : _HankelRegressor object, optional
+        sol : FrankRadialFit object, optional
            Posterior solution given a set power spectrum parameters, :math:`p`.
-           If not provided, the MAP solution will be provided
+           If not provided, the MAP solution will be used
 
         Returns
         -------
@@ -1012,8 +938,7 @@ class FrankFitter(FourierBesselFitter):
     def MAP_spectrum_covariance(self):
         """Covariance matrix of the maximum a posteriori power spectrum"""
         if self._ps_cov is None:
-            self._ps_cov = self._ps_covariance(*self._ps_cov_params)
-            self._ps_cov_params = None
+            self._ps_cov = self._filter.covariance_MAP(self._sol)
 
         return self._ps_cov
 
