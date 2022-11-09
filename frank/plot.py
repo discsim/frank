@@ -86,8 +86,8 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
     dist : float, optional, default = None, unit = [AU]
         Distance to source. If not None, a new `ax` will be created to
         show an upper x-axis in [AU] for the plot on the current `ax`
-    low_uncer : Negative (i.e., below mean) uncertainty on fit_i
-    high_uncer : Positive (i.e., above mean) uncertainty on fit_i
+    low_uncer : Negative (i.e., below MAP) uncertainty on fit_i
+    high_uncer : Positive (i.e., above MAP) uncertainty on fit_i
 
     Returns
     -------
