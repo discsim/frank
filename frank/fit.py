@@ -153,6 +153,7 @@ def parse_parameters(*args):
         raise err
 
     if model['hyperparameters']['method'] == 'LogNormal' and \
+       model['hyperparameters']['p0'] is not None and \
        model['hyperparameters']['p0'] > 1e-30:
         err = ValueError("p0 = {}. If method is 'LogNormal', p0 should be "
                          "<~ 1e-35 (we recommend 1e-35)"
