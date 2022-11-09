@@ -25,27 +25,6 @@ from scipy.interpolate import interp1d
 
 from frank.constants import deg_to_rad, sterad_to_arcsec
 
-def baselines(u, v):
-    """
-    Obtain baselines from (u, v) coordinates
-
-    Parameters
-    ----------
-    u, v : array, unit = lambda
-        (u, v) coordinates
-
-    Returns
-    -------
-    baselines : array, unit = lambda
-        1D baselines
-
-    """
-
-    baselines = np.hypot(u, v)
-
-    return baselines
-
-
 def arcsec_baseline(x):
     """
     Provide x as a radial scale [arcsec] to return the corresponding baseline
