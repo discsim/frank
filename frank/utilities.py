@@ -348,11 +348,10 @@ def normalize_uv(u, v, wle):
     logging.info('  Normalizing u and v coordinates by provided'
                  ' observing wavelength of {} m'.format(wle))
 
-    if type(wle) is not float or int:
-        if len(wle) != len(u):
-            raise ValueError("len(wle) = {}. It should be"
-                             "equal to len(u) = {}".format(len(wle), len(u)))
-
+    wle = np.array(wle, dtype='f8')
+    if  len(wle) != 1 and len(wle) != len(u):
+        raise ValueError("len(wle) = {}. It should be equal to "
+                         "len(u) = {} (or 1 if all wavelengths are the same)".format(len(wle), len(u)))
     u_normed = u / wle
     v_normed = v / wle
 
