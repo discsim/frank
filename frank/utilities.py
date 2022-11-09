@@ -335,8 +335,9 @@ def normalize_uv(u, v, wle):
     ----------
     u, v : array, unit = [m]
         u and v coordinates of observations
-    wle : float, unit = [m]
-        Observing wavelength of observations
+    wle : float or array, unit = [m]
+        Observing wavelength of observations. If an array, it should be the
+        pointwise wavelength for each (u,v) point
 
     Returns
     -------
@@ -348,6 +349,10 @@ def normalize_uv(u, v, wle):
     logging.info('  Normalizing u and v coordinates by provided'
                  ' observing wavelength of {} m'.format(wle))
 
+    wle = np.atleast_1d(wle, dtype='f8')
+    if  len(wle) != 1 and len(wle) != len(u):
+        raise ValueError("len(wle) = {}. It should be equal to "
+                         "len(u) = {} (or 1 if all wavelengths are the same)".format(len(wle), len(u)))
     u_normed = u / wle
     v_normed = v / wle
 
