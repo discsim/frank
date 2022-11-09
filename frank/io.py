@@ -32,8 +32,12 @@ def load_uvtable(data_file):
     Parameters
     ----------
     data_file : string
-          UVTable with data to be fit, with columns:
-          u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy] Weight [Jy^-2]
+          UVTable with data to be fit.
+          If in ASCII format, the table should have columns:
+            u [lambda]  v [lambda]  Re(V) [Jy]  Im(V) [Jy]  Weight [Jy^-2]
+          If in .npz format, the file should have arrays:
+            "u" [lambda], "v" [lambda], "V" [Jy; complex: real + imag * 1j],
+            "weights" [Jy^-2]
 
     Returns
     -------
@@ -67,11 +71,11 @@ def load_uvtable(data_file):
             raise ValueError("You provided a UVTable with the extension {}."
                              " This extension requires the UVTable's variable 'V' to be"
                              " complex (of the form Re(V) + Im(V) * 1j).".format(extension))
-                
+
     else:
         raise ValueError("You provided a UVTable with the extension {}."
-                         " Please provide it as a `.txt`, `.dat`, `.npy`, or"
-                         " `.npz`. Formats .txt and .dat may optionally be"
+                         " Please provide it as a `.txt`, `.dat`, or `.npz`."
+                         " Formats .txt and .dat may optionally be"
                          " compressed (`.gz`, `.bz2`).".format(extension))
 
     return u, v, vis, weights
