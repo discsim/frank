@@ -48,6 +48,39 @@ def arcsec_baseline(x):
     return converted
 
 
+def radius_convert(x, dist, conversion='arcsec_au'):
+    """
+    Provide x as a radius/radii in [arcsec] to convert to [au] (or vice-versa),
+    assuming a distance in [pc]
+
+    Parameters
+    ----------
+    x : float or array
+        Radius or radii ([arcsec] or [au])
+    dist : float
+        Distance to source [pc]
+    conversion : {'arcsec_au', 'au_arcsec'}, default = 'arcsec_au'
+        The unit conversion to perform, e.g. 'arcsec_au' converts from [arcsec]
+        to [au]
+
+    Returns
+    -------
+    converted : float or array
+        Radius or radii ([au] or [arcsec])
+
+    """
+
+    if conversion == 'arcsec_au':
+        converted = x * dist
+    elif conversion == 'au_arcsec':
+        converted = x / dist
+    else:
+        raise AttributeError("conversion must be one of {}"
+                             "".format(['arcsec_au', 'au_arcsec']))
+
+    return converted
+
+
 def jy_convert(x, conversion, bmaj=None, bmin=None):
     """
     Provide x as a brightness in one of the units [Jy / beam], [Jy / arcsec^2],

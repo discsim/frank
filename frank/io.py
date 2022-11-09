@@ -116,6 +116,26 @@ def save_uvtable(filename, u, v, vis, weights):
                         'V': 'Jy', 'weights': "Jy^-2"})
 
 
+def load_sol(sol_file):
+    """Load a frank solution object
+
+    Parameters
+    ----------
+    sol_file : string
+        Filename for frank solution object, '*.obj'
+
+    Returns
+    ----------
+    sol : _HankelRegressor object
+        frank solution object
+        (see frank.radial_fitters.FrankFitter)
+    """
+
+    sol = np.load(sol_file, allow_pickle=True)
+
+    return sol
+
+
 def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
              save_profile_fit=True, save_vis_fit=True, save_uvtables=True,
              save_iteration_diag=False, iteration_diag=None,
