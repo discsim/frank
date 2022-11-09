@@ -62,6 +62,9 @@ class VisibilityMapping:
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
+    check_qbounds : bool, default = True
+        Whether to check that the first (last) DHT collocation point is smaller
+        (larger) than the shortest (longest) deprojected baseline in the dataset
     verbose : bool, default = False
         Whether to print notification messages
     """
