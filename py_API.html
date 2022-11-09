@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Frankenstein Python API &mdash; frank 1.1.0 documentation</title>
+  <title>The Frankenstein Python API &mdash; frank 1.2.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -20,6 +20,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -39,7 +40,7 @@
             <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.1.0
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -59,9 +60,115 @@
 <p class="caption" role="heading"><span class="caption-text">Under the hood</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#geometry-classes">Geometry classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#fitting-classes">Fitting classes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#utility-functions-and-classes">Utility functions and classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#geometry-classes">Geometry classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frank.geometry.FixedGeometry"><code class="docutils literal notranslate"><span class="pre">FixedGeometry</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.geometry.FitGeometryGaussian"><code class="docutils literal notranslate"><span class="pre">FitGeometryGaussian</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.geometry.FitGeometryFourierBessel"><code class="docutils literal notranslate"><span class="pre">FitGeometryFourierBessel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.geometry.SourceGeometry"><code class="docutils literal notranslate"><span class="pre">SourceGeometry</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.geometry.SourceGeometry.apply_correction"><code class="docutils literal notranslate"><span class="pre">SourceGeometry.apply_correction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.geometry.SourceGeometry.deproject"><code class="docutils literal notranslate"><span class="pre">SourceGeometry.deproject()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.geometry.SourceGeometry.fit"><code class="docutils literal notranslate"><span class="pre">SourceGeometry.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.geometry.SourceGeometry.reproject"><code class="docutils literal notranslate"><span class="pre">SourceGeometry.reproject()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.geometry.SourceGeometry.undo_correction"><code class="docutils literal notranslate"><span class="pre">SourceGeometry.undo_correction()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#fitting-classes">Fitting classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frank.radial_fitters.FrankFitter"><code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.MAP_solution"><code class="docutils literal notranslate"><span class="pre">FrankFitter.MAP_solution</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.MAP_spectrum"><code class="docutils literal notranslate"><span class="pre">FrankFitter.MAP_spectrum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance"><code class="docutils literal notranslate"><span class="pre">FrankFitter.MAP_spectrum_covariance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.Qmax"><code class="docutils literal notranslate"><span class="pre">FrankFitter.Qmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.Rmax"><code class="docutils literal notranslate"><span class="pre">FrankFitter.Rmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.fit"><code class="docutils literal notranslate"><span class="pre">FrankFitter.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.geometry"><code class="docutils literal notranslate"><span class="pre">FrankFitter.geometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.q"><code class="docutils literal notranslate"><span class="pre">FrankFitter.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.r"><code class="docutils literal notranslate"><span class="pre">FrankFitter.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankFitter.size"><code class="docutils literal notranslate"><span class="pre">FrankFitter.size</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.Qmax"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.Qmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.Rmax"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.Rmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.geometry"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.geometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.predict"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.predict_deprojected"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.predict_deprojected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.q"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.r"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit.size"><code class="docutils literal notranslate"><span class="pre">FrankRadialFit.size</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.MAP"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.MAP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.Qmax"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.Qmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.Rmax"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.Rmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.covariance"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.covariance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.geometry"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.geometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.log_likelihood"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.log_likelihood()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.mean"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.power_spectrum"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.power_spectrum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.predict"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.predict_deprojected"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.predict_deprojected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.q"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.r"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.size"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankGaussianFit.solve_non_negative"><code class="docutils literal notranslate"><span class="pre">FrankGaussianFit.solve_non_negative()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.MAP"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.MAP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.Qmax"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.Qmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.Rmax"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.Rmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.covariance"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.covariance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.geometry"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.geometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.log_likelihood"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.log_likelihood()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.power_spectrum"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.power_spectrum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.predict"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.predict()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.predict_deprojected"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.predict_deprojected()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.q"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.r"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.radial_fitters.FrankLogNormalFit.size"><code class="docutils literal notranslate"><span class="pre">FrankLogNormalFit.size</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.MAP_solution"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.MAP_solution</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.MAP_spectrum"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.MAP_spectrum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.MAP_spectrum_covariance"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.MAP_spectrum_covariance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.Qmax"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.Qmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.Rmax"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.Rmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.fit"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.fit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.geometry"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.geometry</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.q"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.r"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.debris_fitters.FrankDebrisFitter.size"><code class="docutils literal notranslate"><span class="pre">FrankDebrisFitter.size</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#utility-functions-and-classes">Utility functions and classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.Qmax"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.Qmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.Rmax"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.Rmax</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.coefficients"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.coefficients()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.order"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.q"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.r"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.r</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.size"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#frank.hankel.DiscreteHankelTransform.transform"><code class="docutils literal notranslate"><span class="pre">DiscreteHankelTransform.transform()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.arcsec_baseline"><code class="docutils literal notranslate"><span class="pre">arcsec_baseline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.convolve_profile"><code class="docutils literal notranslate"><span class="pre">convolve_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.cut_data_by_baseline"><code class="docutils literal notranslate"><span class="pre">cut_data_by_baseline()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.draw_bootstrap_sample"><code class="docutils literal notranslate"><span class="pre">draw_bootstrap_sample()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.estimate_weights"><code class="docutils literal notranslate"><span class="pre">estimate_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.make_image"><code class="docutils literal notranslate"><span class="pre">make_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.normalize_uv"><code class="docutils literal notranslate"><span class="pre">normalize_uv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.sweep_profile"><code class="docutils literal notranslate"><span class="pre">sweep_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#frank.utilities.UVDataBinner"><code class="docutils literal notranslate"><span class="pre">UVDataBinner</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="genindex.html"> Index</a></li>
@@ -83,8 +190,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>The Frankenstein Python API</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">The Frankenstein Python API</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -157,7 +264,7 @@ inc_pa should be provided as a tuple</p></li>
 <li><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p></li>
-<li><p><strong>guess</strong> (<em>list of len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
+<li><p><strong>guess</strong> (<em>list</em><em> of </em><em>len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
 right ascension offset [arcsec], declination offset [arcsec].</p></li>
 </ul>
 </dd>
@@ -193,7 +300,7 @@ inc_pa should be provided as a tuple</p></li>
 <li><p><strong>phase_centre</strong> (<em>tuple =</em><em> (</em><em>dRA</em><em>, </em><em>dDec</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = arcsec</em>) – Determine whether to fit for the source’s phase centre. If
 phase_centre = None, the phase centre is fit for. Else the phase
 centre should be provided as a tuple</p></li>
-<li><p><strong>guess</strong> (<em>list of len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
+<li><p><strong>guess</strong> (<em>list</em><em> of </em><em>len</em><em>(</em><em>4</em><em>)</em><em>, </em><em>default = None</em>) – Initial guess for the source’s inclination [deg], position angle [deg],
 right ascension offset [arcsec], and declination offset [arcsec]</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Determines whether to print the iteration progress.</p></li>
 </ul>
@@ -221,20 +328,23 @@ right ascension offset [arcsec], and declination offset [arcsec]</p></li>
 from the phase centre.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="frank.geometry.SourceGeometry.apply_correction">
-<span class="sig-name descname"><span class="pre">apply_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">apply_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use3D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition"></a></dt>
 <dd><p>Correct the phase centre and deproject the visibilities</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>V</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>units = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>V</strong> (<em>array</em><em> of </em><em>real</em><em>, </em><em>size = N</em><em>, </em><em>units = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>use3D</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, also return the 3rd compoent of the
+de-projected visibilities, wp.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
 <li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
+<li><p><strong>wp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – [Optional] Corrected w-points of the visibilities</p></li>
 <li><p><strong>Vp</strong> (<em>array of real, size = N, unit = Jy</em>) – Corrected complex visibilites</p></li>
 </ul>
 </p>
@@ -244,8 +354,26 @@ from the phase centre.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="frank.geometry.SourceGeometry.deproject">
-<span class="sig-name descname"><span class="pre">deproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition"></a></dt>
-<dd><p>Convert uv-points from sky-plane to deprojected space</p>
+<span class="sig-name descname"><span class="pre">deproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use3D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition"></a></dt>
+<dd><p>Convert uv-points from sky-plane to deprojected space (u,v)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
+<li><p><strong>use3D</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, also return the 3rd compoent of the
+de-projected visibilities, wp.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
+<li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
+<li><p><strong>wp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – [Optional] Corrected w-points of the visibilities</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -257,8 +385,8 @@ from the phase centre.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>V</strong> (<em>array of complex</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
-<li><p><strong>weights</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Weights on the visibilities</p></li>
+<li><p><strong>V</strong> (<em>array</em><em> of </em><em>complex</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>weights</strong> (<em>array</em><em> of </em><em>real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Weights on the visibilities</p></li>
 </ul>
 </dd>
 </dl>
@@ -268,6 +396,21 @@ from the phase centre.</p>
 <dt class="sig sig-object py" id="frank.geometry.SourceGeometry.reproject">
 <span class="sig-name descname"><span class="pre">reproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition"></a></dt>
 <dd><p>Convert uv-points from deprojected space to sky-plane</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
+<li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
+<li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -279,7 +422,7 @@ from the phase centre.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
-<li><p><strong>V</strong> (<em>array of real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
+<li><p><strong>V</strong> (<em>array</em><em> of </em><em>real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -302,7 +445,7 @@ from the phase centre.</p>
 the deprojected visibilities.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="frank.radial_fitters.FrankFitter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-15</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_qbounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_iteration_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_qbounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_iteration_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter" title="Permalink to this definition"></a></dt>
 <dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
 Baddour &amp; Chouinard (2015).</p>
 <p>The GP model is based upon Oppermann et al. (2013), which use a maximum
@@ -322,15 +465,25 @@ elements</p></li>
 <li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Size of the matrices if blocking is used</p></li>
 <li><p><strong>alpha</strong> (<em>float &gt;= 1</em><em>, </em><em>default = 1.05</em>) – Order parameter of the inverse gamma prior for the power spectrum
 coefficients</p></li>
-<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-15</em><em>, </em><em>unit=Jy^2</em>) – Scale parameter of the inverse gamma prior for the power spectrum
-coefficients</p></li>
+<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = None</em><em>, </em><em>unit=Jy^2</em>) – Scale parameter of the inverse gamma prior for the power spectrum
+coefficients. If not provided p_0 = 1e-15 (method=”Normal”) or
+1e-35 (method=”LogNormal”) will be used.</p></li>
 <li><p><strong>weights_smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-4</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
 <li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration</p></li>
+<li><p><strong>method</strong> (<em>string</em><em>, </em><em>default=&quot;Normal&quot;</em>) – Model used for the brightness reconstrution. This must be one of
+“Normal” of “LogNormal”.</p></li>
+<li><p><strong>I_scale</strong> (<em>float</em><em>, </em><em>default = 1e5</em><em>, </em><em>unit= Jy/Sr</em>) – Brightness scale. Only used in the LogNormal model. Note the
+LogNormal model produces I(Rmax) =  I_scale.</p></li>
 <li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 2000</em>) – Maximum number of fit iterations</p></li>
 <li><p><strong>check_qbounds</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to check if the first (last) collocation point is smaller
 (larger) than the shortest (longest) deprojected baseline in the dataset</p></li>
 <li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
 for each fit iteration</p></li>
+<li><p><strong>assume_optically_thick</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to correct the visibility amplitudes by a factor of
+1 / cos(inclination); see frank.geometry.rescale_total_flux</p></li>
+<li><p><strong>scale_height</strong> (<em>function R --&gt; H</em><em>, </em><em>optional</em>) – Specifies the vertical thickness of disc as a function of radius. Both
+R and H should be in arcsec. Assumes a Gaussian vertical structure.
+Only works with assume_optically_thick=False</p></li>
 <li><p><strong>verbose</strong> – Whether to print notification messages</p></li>
 </ul>
 </dd>
@@ -382,18 +535,15 @@ for each fit iteration</p></li>
 <li><p><strong>u</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
 <li><p><strong>v</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
 <li><p><strong>V</strong> (<em>1D array</em><em>, </em><em>unit = Jy</em>) – Visibility amplitudes at q</p></li>
-<li><p><strong>weights</strong> (<em>1D array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy^-2</em>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+<li><p><strong>weights</strong> (<em>1D array</em><em>, </em><em>optional</em><em>, </em><em>unit = J^-2</em>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
 the standard deviation</p></li>
-<li><p><strong>iteration_diagnostics</strong> (<em>dict</em><em>, </em><em>optional</em><em>,</em>) – size = N_iter x 2 x N_{collocation points}
-Power spectrum parameters and posterior mean brightness profile at
-each fit iteration, and number of iterations</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>MAP_solution</strong> – Reconstructed profile using maximum a posteriori power spectrum</p>
+<dd class="field-even"><p><strong>sol</strong> – Least-squares Fourier-Bessel series fit</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters._HankelRegressor" title="frank.radial_fitters._HankelRegressor">_HankelRegressor</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit" title="frank.radial_fitters.FrankRadialFit">FrankRadialFit</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -425,86 +575,172 @@ each fit iteration, and number of iterations</p></li>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">_HankelRegressor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DHT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_likelihood</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor" title="Permalink to this definition"></a></dt>
-<dd><p>Solves the linear regression problem to compute the posterior,</p>
-<div class="math notranslate nohighlight">
-\[P(I|q,V,p) \propto G(I-\mu, D),\]</div>
-<p>where <span class="math notranslate nohighlight">\(I\)</span> is the intensity to be predicted, <span class="math notranslate nohighlight">\(q\)</span> are the
-baselines and <span class="math notranslate nohighlight">\(V\)</span> the visibility data. <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(D\)</span> are
-the mean and covariance of the posterior distribution.</p>
-<p>If <span class="math notranslate nohighlight">\(p\)</span> is provided, the covariance matrix of the prior is included,
-with</p>
-<div class="math notranslate nohighlight">
-\[P(I|p) \propto G(I, S(p)),\]</div>
-<p>and the Bayesian Linear Regression problem is solved. <span class="math notranslate nohighlight">\(S\)</span> is computed
-from the power spectrum, <span class="math notranslate nohighlight">\(p\)</span>, if provided. Otherwise the traditional
-(frequentist) linear regression is used.</p>
-<p>The problem is framed in terms of the design matrix <span class="math notranslate nohighlight">\(M\)</span> and
-information source <span class="math notranslate nohighlight">\(j\)</span>.</p>
-<p><span class="math notranslate nohighlight">\(H(q)\)</span> is the matrix that projects the intensity <span class="math notranslate nohighlight">\(I\)</span> to
-visibility space. <span class="math notranslate nohighlight">\(M\)</span> is defined by</p>
-<div class="math notranslate nohighlight">
-\[M = H(q)^T w H(q),\]</div>
-<p>where <span class="math notranslate nohighlight">\(w\)</span> is the weights matrix and</p>
-<div class="math notranslate nohighlight">
-\[j = H(q)^T w V.\]</div>
-<p>The mean and covariance of the posterior are then given by</p>
-<div class="math notranslate nohighlight">
-\[\mu = D j\]</div>
-<p>and</p>
-<div class="math notranslate nohighlight">
-\[D = [ M + S(p)^{-1}]^{-1},\]</div>
-<p>if the prior is provided, otherwise</p>
-<div class="math notranslate nohighlight">
-\[D = M^{-1}.\]</div>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankRadialFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vis_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit" title="Permalink to this definition"></a></dt>
+<dd><p>Base class for results of frank fits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>DHT</strong> (<em>DiscreteHankelTransform</em>) – A DHT object with N bins that defines H(p). The DHT is used to compute
-<span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
-<li><p><strong>M</strong> (<em>2D array</em><em>, </em><em>size =</em><em> (</em><em>N</em><em>, </em><em>N</em><em>)</em>) – The design matrix, see above</p></li>
-<li><p><strong>j</strong> (<em>1D array</em><em>, </em><em>size = N</em>) – Information source, see above</p></li>
-<li><p><strong>p</strong> (<em>1D array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em>) – Power spectrum used to generate the covarience matrix <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – If provided, this geometry will be used to deproject the visibilities
-in self.predict</p></li>
-<li><p><strong>noise_likelihood</strong> (<em>float</em><em>, </em><em>optional</em>) – <p>An optional parameter needed to compute the full likelihood, which
-should be equal to</p>
-<div class="math notranslate nohighlight">
-\[-\frac{1}{2} V^T w V + \frac{1}{2} \sum \log[w/(2 \pi)].\]</div>
-<p>If not  provided, the likelihood can still be computed up to this
-missing constant</p>
-</p></li>
+<li><p><strong>vis_map</strong> (<em>VisibilityMapping object</em>) – Mapping between image and visibility plane.</p></li>
+<li><p><strong>info</strong> (<em>dict</em>) – Dictionary containing useful quantities for reproducing a fit
+(such as the hyperparameters used)</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.Qmax">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Qmax</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Qmax" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.Qmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Qmax</span></span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.Qmax" title="Permalink to this definition"></a></dt>
 <dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.Rmax">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Rmax</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.Rmax" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.Rmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Rmax</span></span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.Rmax" title="Permalink to this definition"></a></dt>
 <dd><p>Maximum radius, unit = arcsec</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.covariance">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.covariance" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.geometry">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.geometry" title="Permalink to this definition"></a></dt>
+<dd><p>SourceGeometry object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the visibilities in the sky-plane</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
+<li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy</em>) – Intensity points to predict the vibilities of. If not specified,
+the mean will be used. The intensity should be specified at the
+collocation points, I[k] = <span class="math notranslate nohighlight">\(I(r_k)\)</span></p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>V(u,v)</strong> – Predicted visibilties of a source with a radial flux distribution
+given by <span class="math notranslate nohighlight">\(I\)</span> and the position angle, inclination and phase
+centre determined by the geometry object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, unit = Jy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.predict_deprojected">
+<span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.predict_deprojected" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the visibilities in the deprojected-plane</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
+the mean will be used. The intensity should be specified at the
+collocation points, I[k] = I(r_k)</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
+<li><p><strong>assume_optically_thick</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to correct the visibility amplitudes for the source
+inclination</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>V(q)</strong> – Predicted visibilties of a source with a radial flux distribution
+given by <span class="math notranslate nohighlight">\(I\)</span>. The amplitude of the visibilities are reduced
+according to the inclination of the source, for consistency with
+<code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, unit = Jy</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The visibility amplitudes are still reduced due to the projection,
+for consistency with <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.q" title="Permalink to this definition"></a></dt>
+<dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.r">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.r" title="Permalink to this definition"></a></dt>
+<dd><p>Radius points, unit = arcsec</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankRadialFit.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.size" title="Permalink to this definition"></a></dt>
+<dd><p>Number of points in reconstruction</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankGaussianFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DHT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit" title="Permalink to this definition"></a></dt>
+<dd><p>Result of a frank fit with a Gaussian brightness model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DHT</strong> (<a class="reference internal" href="#frank.hankel.DiscreteHankelTransform" title="frank.hankel.DiscreteHankelTransform"><em>DiscreteHankelTransform</em></a>) – A DHT object with N bins that defines H(p). The DHT is used to compute
+<span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
+<li><p><strong>fit</strong> (<em>GaussianModel object</em>) – Result of fitting with MAP power spectrum.</p></li>
+<li><p><strong>info</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary containing useful quantities for reproducing a fit
+(such as the hyperparameters used)</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.MAP">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MAP</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.MAP" title="Permalink to this definition"></a></dt>
+<dd><p>Posterior maximum, unit = Jy / sr</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.Qmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Qmax</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.Qmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.Rmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Rmax</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.Rmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum radius, unit = arcsec</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.covariance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.covariance" title="Permalink to this definition"></a></dt>
 <dd><p>Posterior covariance, unit = (Jy / sr)**2</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.geometry">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.geometry" title="Permalink to this definition"></a></dt>
-<dd><p>Geometry object</p>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.geometry">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.geometry" title="Permalink to this definition"></a></dt>
+<dd><p>SourceGeometry object</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.log_likelihood">
-<span class="sig-name descname"><span class="pre">log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.log_likelihood" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.log_likelihood">
+<span class="sig-name descname"><span class="pre">log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.log_likelihood" title="Permalink to this definition"></a></dt>
 <dd><p>Compute one of two types of likelihood.</p>
 <p>If <span class="math notranslate nohighlight">\(I\)</span> is provided, this computes</p>
 <p>Otherwise the marginalized likelihood is computed,</p>
@@ -538,20 +774,20 @@ missing constant</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.mean">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.mean" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.mean">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mean</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.mean" title="Permalink to this definition"></a></dt>
 <dd><p>Posterior mean, unit = Jy / sr</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.power_spectrum">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">power_spectrum</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.power_spectrum" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.power_spectrum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">power_spectrum</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.power_spectrum" title="Permalink to this definition"></a></dt>
 <dd><p>Power spectrum coefficients</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.predict">
-<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.predict" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -564,7 +800,6 @@ collocation points, I[k] = <span class="math notranslate nohighlight">\(I(r_k)\)
 <li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
 inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
-<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -579,8 +814,8 @@ centre determined by the geometry object</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.predict_deprojected">
-<span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.predict_deprojected" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.predict_deprojected">
+<span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.predict_deprojected" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the deprojected-plane</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -593,6 +828,8 @@ collocation points, I[k] = I(r_k)</p></li>
 inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
 <li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
+<li><p><strong>assume_optically_thick</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to correct the visibility amplitudes for the source
+inclination</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -607,31 +844,326 @@ according to the inclination of the source, for consistency with
 </dl>
 <p class="rubric">Notes</p>
 <p>The visibility amplitudes are still reduced due to the projection,
-for consistentcy with <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+for consistency with <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.q">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.q" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.q" title="Permalink to this definition"></a></dt>
 <dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.r">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.r" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.r">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.r" title="Permalink to this definition"></a></dt>
 <dd><p>Radius points, unit = arcsec</p>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.size">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.size" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.size" title="Permalink to this definition"></a></dt>
 <dd><p>Number of points in reconstruction</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="frank.radial_fitters._HankelRegressor.solve_non_negative">
-<span class="sig-name descname"><span class="pre">solve_non_negative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters._HankelRegressor.solve_non_negative" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankGaussianFit.solve_non_negative">
+<span class="sig-name descname"><span class="pre">solve_non_negative</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.solve_non_negative" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the best fit solution with non-negative intensities</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankLogNormalFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DHT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit" title="Permalink to this definition"></a></dt>
+<dd><p>Result of a frank fit with a Gaussian brightness model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DHT</strong> (<a class="reference internal" href="#frank.hankel.DiscreteHankelTransform" title="frank.hankel.DiscreteHankelTransform"><em>DiscreteHankelTransform</em></a>) – A DHT object with N bins that defines H(p). The DHT is used to compute
+<span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
+<li><p><strong>fit</strong> (<em>LogNormalMAPModel object</em>) – Result of fitting with MAP power spectrum.</p></li>
+<li><p><strong>info</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary containing useful quantities for reproducing a fit
+(such as the hyperparameters used)</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.MAP">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MAP</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.MAP" title="Permalink to this definition"></a></dt>
+<dd><p>Posterior maximum, unit = Jy / sr</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.Qmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Qmax</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.Qmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.Rmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Rmax</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.Rmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum radius, unit = arcsec</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.covariance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.covariance" title="Permalink to this definition"></a></dt>
+<dd><p>Posterior covariance, unit = log[(Jy / sr)**2]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.geometry">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.geometry" title="Permalink to this definition"></a></dt>
+<dd><p>SourceGeometry object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.log_likelihood">
+<span class="sig-name descname"><span class="pre">log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.log_likelihood" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the likelihood,</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em>) – Intensity <span class="math notranslate nohighlight">\(I(r)=exp(s0*s)\)</span> to compute the likelihood of</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>log_P</strong> – Log likelihood, <span class="math notranslate nohighlight">\(\log[P(I,V|p)]\)</span></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ol class="arabic simple">
+<li><p>The prior probability P(S) is not included.</p></li>
+<li><p>The likelihood takes the form:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\log[P(I,V|p)] = j^T I - \frac{1}{2} I^T D^{-1} I
+   - \frac{1}{2} \log[\det(2 \pi S)] + H_0\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[H_0 = -\frac{1}{2} V^T w V + \frac{1}{2} \sum \log(w /2 \pi)\]</div>
+<p>is the noise likelihood.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.power_spectrum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">power_spectrum</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.power_spectrum" title="Permalink to this definition"></a></dt>
+<dd><p>Power spectrum coefficients</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.predict" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the visibilities in the sky-plane</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
+<li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy</em>) – Intensity points to predict the vibilities of. If not specified,
+the mean will be used. The intensity should be specified at the
+collocation points, I[k] = <span class="math notranslate nohighlight">\(I(r_k)\)</span></p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>V(u,v)</strong> – Predicted visibilties of a source with a radial flux distribution
+given by <span class="math notranslate nohighlight">\(I\)</span> and the position angle, inclination and phase
+centre determined by the geometry object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, unit = Jy</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.predict_deprojected">
+<span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.predict_deprojected" title="Permalink to this definition"></a></dt>
+<dd><p>Predict the visibilities in the deprojected-plane</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
+<li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
+the mean will be used. The intensity should be specified at the
+collocation points, I[k] = I(r_k)</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Geometry used to correct the visibilities for the source
+inclination. If not provided, the geometry determined during the
+fit will be used</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Maximum matrix size used in the visibility calculation</p></li>
+<li><p><strong>assume_optically_thick</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to correct the visibility amplitudes for the source
+inclination</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>V(q)</strong> – Predicted visibilties of a source with a radial flux distribution
+given by <span class="math notranslate nohighlight">\(I\)</span>. The amplitude of the visibilities are reduced
+according to the inclination of the source, for consistency with
+<code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, unit = Jy</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The visibility amplitudes are still reduced due to the projection,
+for consistency with <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.q" title="Permalink to this definition"></a></dt>
+<dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.r">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.r" title="Permalink to this definition"></a></dt>
+<dd><p>Radius points, unit = arcsec</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.radial_fitters.FrankLogNormalFit.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.size" title="Permalink to this definition"></a></dt>
+<dd><p>Number of points in reconstruction</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.debris_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankDebrisFitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights_smooth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Normal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_qbounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_iteration_diagnostics</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter" title="Permalink to this definition"></a></dt>
+<dd><p>Fit a Gaussian process model using the Discrete Hankel Transform of
+Baddour &amp; Chouinard (2015).</p>
+<p>The brightness model is <span class="math notranslate nohighlight">\(I(R, z) = I(R) exp(-z^2/2H(R)^2)\)</span>, where
+<span class="math notranslate nohighlight">\(H(R)\)</span> is the (known) scale-height.</p>
+<p>The GP model is based upon Oppermann et al. (2013), which use a maximum
+a posteriori estimate for the power spectrum as the GP prior for the
+real-space coefficients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Radius of support for the functions to transform, i.e., f(r) = 0 for
+R &gt;= Rmax.</p></li>
+<li><p><strong>N</strong> (<em>int</em>) – Number of collaction points</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em>) – Geometry used to deproject the visibilities before fitting</p></li>
+<li><p><strong>scale_height</strong> (<em>function R --&gt; H</em>) – Specifies the thickness of disc as a function of radius. Both
+units should be in arcsec.</p></li>
+<li><p><strong>nu</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Order of the discrete Hankel transform, given by J_nu(r)</p></li>
+<li><p><strong>block_data</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Large temporary matrices are needed to set up the data. If block_data
+is True, we avoid this, limiting the memory requirement to block_size
+elements</p></li>
+<li><p><strong>block_size</strong> (<em>int</em><em>, </em><em>default = 10**5</em>) – Size of the matrices if blocking is used</p></li>
+<li><p><strong>alpha</strong> (<em>float &gt;= 1</em><em>, </em><em>default = 1.05</em>) – Order parameter of the inverse gamma prior for the power spectrum
+coefficients</p></li>
+<li><p><strong>p_0</strong> (<em>float &gt;= 0</em><em>, </em><em>default = None</em><em>, </em><em>unit=Jy^2</em>) – Scale parameter of the inverse gamma prior for the power spectrum
+coefficients. If not provided p_0 = 1e-15 (method=”Normal”) or
+1e-35 (method=”LogNormal”) will be used.</p></li>
+<li><p><strong>weights_smooth</strong> (<em>float &gt;= 0</em><em>, </em><em>default = 1e-4</em>) – Spectral smoothness prior parameter. Zero is no smoothness prior</p></li>
+<li><p><strong>tol</strong> (<em>float &gt; 0</em><em>, </em><em>default = 1e-3</em>) – Tolerence for convergence of the power spectrum iteration</p></li>
+<li><p><strong>method</strong> (<em>string</em><em>, </em><em>default=&quot;Normal&quot;</em>) – Model used for the brightness reconstrution. This must be one of
+“Normal” of “LogNormal”.</p></li>
+<li><p><strong>I_scale</strong> (<em>float</em><em>, </em><em>default = 1e5</em><em>, </em><em>unit= Jy/Sr</em>) – Brightness scale. Only used in the LogNormal model. Notet the
+LogNormal model produces I(Rmax) =  I_scale.</p></li>
+<li><p><strong>max_iter</strong> (<em>int</em><em>, </em><em>default = 2000</em>) – Maximum number of fit iterations</p></li>
+<li><p><strong>check_qbounds</strong> (<em>bool</em><em>, </em><em>default = True</em>) – Whether to check if the first (last) collocation point is smaller
+(larger) than the shortest (longest) deprojected baseline in the dataset</p></li>
+<li><p><strong>store_iteration_diagnostics</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to store the power spectrum parameters and brightness profile
+for each fit iteration</p></li>
+<li><p><strong>verbose</strong> – Whether to print notification messages</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="simple">
+<dt>Baddour &amp; Chouinard (2015)</dt><dd><p>DOI: <a class="reference external" href="https://doi.org/10.1364/JOSAA.32.000611">https://doi.org/10.1364/JOSAA.32.000611</a></p>
+</dd>
+<dt>Oppermann et al. (2013)</dt><dd><p>DOI:  <a class="reference external" href="https://doi.org/10.1103/PhysRevE.87.032136">https://doi.org/10.1103/PhysRevE.87.032136</a></p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.MAP_solution">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MAP_solution</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.MAP_solution" title="Permalink to this definition"></a></dt>
+<dd><p>Reconstruction for the maximum a posteriori power spectrum</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.MAP_spectrum">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MAP_spectrum</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.MAP_spectrum" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum a posteriori power spectrum</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.MAP_spectrum_covariance">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">MAP_spectrum_covariance</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.MAP_spectrum_covariance" title="Permalink to this definition"></a></dt>
+<dd><p>Covariance matrix of the maximum a posteriori power spectrum</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.Qmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Qmax</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.Qmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum frequency, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.Rmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Rmax</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.Rmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum radius, unit = arcsec</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.fit" title="Permalink to this definition"></a></dt>
+<dd><p>Fit the visibilties</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>u</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
+<li><p><strong>v</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
+<li><p><strong>V</strong> (<em>1D array</em><em>, </em><em>unit = Jy</em>) – Visibility amplitudes at q</p></li>
+<li><p><strong>weights</strong> (<em>1D array</em><em>, </em><em>optional</em><em>, </em><em>unit = J^-2</em>) – Weights of the visibilities, weight = 1 / sigma^2, where sigma is
+the standard deviation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>sol</strong> – Least-squares Fourier-Bessel series fit</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit" title="frank.radial_fitters.FrankRadialFit">FrankRadialFit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.geometry">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">geometry</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.geometry" title="Permalink to this definition"></a></dt>
+<dd><p>Geometry object</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.q" title="Permalink to this definition"></a></dt>
+<dd><p>Frequency points, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.r">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.r" title="Permalink to this definition"></a></dt>
+<dd><p>Radius points, unit = arcsec</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.debris_fitters.FrankDebrisFitter.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.size" title="Permalink to this definition"></a></dt>
+<dd><p>Number of points in reconstruction</p>
 </dd></dl>
 
 </dd></dl>
@@ -640,6 +1172,127 @@ for consistentcy with <code class="code docutils literal notranslate"><span clas
 <section id="utility-functions-and-classes">
 <h2>Utility functions and classes<a class="headerlink" href="#utility-functions-and-classes" title="Permalink to this heading"></a></h2>
 <p>These are some useful functions and classes for various aspects of fitting and analysis.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.hankel.</span></span><span class="sig-name descname"><span class="pre">DiscreteHankelTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform" title="Permalink to this definition"></a></dt>
+<dd><p>Utilities for computing the discrete Hankel transform.</p>
+<p>This class provides the necessary interface to compute
+a discrete version of the Hankel transform (DHT):</p>
+<blockquote>
+<div><p>H[f](q) = int_0^R_{max} f(r) J_nu(2*pi*q*r) * 2*pi*r dr.</p>
+</div></blockquote>
+<p>The DHT is based on [1].</p>
+<p>Additionally this class provides coefficients of the DHT [1] transform
+matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Rmax</strong> (<em>float</em>) – Maximum radius beyond which f(r) is zero</p></li>
+<li><p><strong>N</strong> (<em>integer</em>) – Number of terms to use in the series</p></li>
+<li><p><strong>nu</strong> (<em>integer</em><em>, </em><em>default = 0</em>) – Order of the Bessel function, J_nu(r)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="simple">
+<dt>[1] Baddour &amp; Chouinard (2015)</dt><dd><p>DOI: <a class="reference external" href="https://doi.org/10.1364/JOSAA.32.000611">https://doi.org/10.1364/JOSAA.32.000611</a>
+Note: the definition of the DHT used here differs by factors
+of 2*pi.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.Qmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Qmax</span></span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.Qmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum frequency</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.Rmax">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Rmax</span></span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.Rmax" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum radius</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.coefficients">
+<span class="sig-name descname"><span class="pre">coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.coefficients" title="Permalink to this definition"></a></dt>
+<dd><dl class="simple">
+<dt>Coefficients of the transform matrix, defined by</dt><dd><p>H[f](q) = np.dot(Y, f)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>q</strong> (<em>array</em><em> or </em><em>None</em>) – Frequency points at which to evaluate the transform. If q = None,
+the points of the DHT are used. If direction=’backward’, these
+points should instead be the radius points</p></li>
+<li><p><strong>direction</strong> (<em>{ 'forward'</em><em>, </em><em>'backward' }</em><em>, </em><em>optional</em>) – Direction of the transform. If not supplied, the forward transform
+is used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>Y</strong> – The transformation matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, size = (len(q), N)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.order">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">order</span></span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.order" title="Permalink to this definition"></a></dt>
+<dd><p>Order of the Bessel function</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.q">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">q</span></span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.q" title="Permalink to this definition"></a></dt>
+<dd><p>Frequency points</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.r">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">r</span></span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.r" title="Permalink to this definition"></a></dt>
+<dd><p>Radius points</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.size" title="Permalink to this definition"></a></dt>
+<dd><p>Number of points used in the DHT</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="frank.hankel.DiscreteHankelTransform.transform">
+<span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.transform" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Hankel transform of an array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>array</em><em>, </em><em>size = N</em>) – <dl class="simple">
+<dt>Function to Hankel transform, evaluated at the collocation points:</dt><dd><p>f[k] = f(r_k) or f[k] = f(q_k)</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>q</strong> (<em>array</em><em> or </em><em>None</em>) – The frequency points at which to evaluate the Hankel
+transform. If not specified, the conjugate points of the
+DHT will be used. For the backwards transform, q should be
+the radius points</p></li>
+<li><p><strong>direction</strong> (<em>{ 'forward'</em><em>, </em><em>'backward' }</em><em>, </em><em>optional</em>) – Direction of the transform. If not supplied, the forward
+transform is used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>H[f]</strong> – The Hankel transform of the array f</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array, size = N or len(q) if supplied</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="frank.utilities.arcsec_baseline">
 <span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">arcsec_baseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.arcsec_baseline" title="Permalink to this definition"></a></dt>
@@ -701,7 +1354,7 @@ provided.</p>
 <li><p><strong>vis</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Observed visibilities (complex: real + imag * 1j)</p></li>
 <li><p><strong>weights</strong> (<em>array</em><em>, </em><em>unit = Jy^-2</em>) – Weights assigned to observed visibilities, of the form
 <span class="math notranslate nohighlight">\(1 / \sigma^2\)</span></p></li>
-<li><p><strong>cut_range</strong> (<em>list of float</em><em>, </em><em>length = 2</em><em>, </em><em>unit =</em><em> [</em><em>lambda</em><em>]</em>) – Lower and upper baseline bounds outside of which visibilities are
+<li><p><strong>cut_range</strong> (<em>list</em><em> of </em><em>float</em><em>, </em><em>length = 2</em><em>, </em><em>unit =</em><em> [</em><em>lambda</em><em>]</em>) – Lower and upper baseline bounds outside of which visibilities are
 truncated</p></li>
 <li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Fitted geometry (see frank.geometry.SourceGeometry).</p></li>
 </ul>
@@ -745,7 +1398,7 @@ a length N dataset</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="frank.utilities.estimate_weights">
-<span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">estimate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_median</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.estimate_weights" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">estimate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nbins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_median</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.estimate_weights" title="Permalink to this definition"></a></dt>
 <dd><p>Estimate the weights using the variance of the binned visibilities.</p>
 <p>The estimation is done assuming that the variation in each bin is dominated
 by the noise. This will be true if:
@@ -772,6 +1425,8 @@ spaced bins will be used.</p></li>
 <li><p><strong>use_median</strong> (<em>bool</em><em>, </em><em>default = False</em>) – If True all of the weights will be set to the median of the variance
 estimated across the bins. Otherwise, the baseline dependent variance
 will be used.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default = True</em>) – If true, the logger will record calls to this function, along with
+whether the median estimate was used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -797,6 +1452,32 @@ the mean of the variance in the two adjacent bins is used instead.</p></li>
 <p>In each case the variance of V in the uv-bins is used to estimate the
 weights. The first call will use q = np.hypot(u, v) in the uv-bins. The
 second and third calls are equivalent to the first with u=0.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="frank.utilities.make_image">
+<span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">make_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Npix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ymax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.make_image" title="Permalink to this definition"></a></dt>
+<dd><p>Make an image of a model fit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fit</strong> (<em>FrankFitter result object</em>) – Fitted profile to make an image of</p></li>
+<li><p><strong>Npix</strong> (<em>int</em><em> or </em><em>list</em>) – Number of pixels in the x-direction, or [x-,y-] direction</p></li>
+<li><p><strong>xmax</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>unit=arcsec</em>) – Size of the image is [-xmax, xmax]. By default this is twice
+fit.Rmax to avoid aliasing.</p></li>
+<li><p><strong>ymax</strong> (<em>float</em><em> or </em><em>None</em><em>, </em><em>unit=arcsec</em>) – Size of the image is [-ymax,ymax]. Defaults to xmax if ymax=None</p></li>
+<li><p><strong>project</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to produce a projected image.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>x</strong> (<em>array, 1D; unit=arcsec</em>) – Locations of the x-points in the image.</p></li>
+<li><p><strong>y</strong> (<em>array, 1D; unit=arcsec</em>) – Locations of the y-points in the image.</p></li>
+<li><p><strong>I</strong> (<em>array, 2D; unit=Jy/Sr</em>) – Image of the surface brightness.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -897,7 +1578,7 @@ components will be binned. Else only the real part will be binned.</p></li>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2022, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2022 Aug 10 at 15:15:05 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2022 Nov 09 at 10:07:40 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; frank 1.1.0 documentation</title>
+  <title>Index &mdash; frank 1.2.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -19,6 +19,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
@@ -34,7 +35,7 @@
             <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.1.0
+                1.2.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -73,8 +74,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Index</li>
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Index</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -87,8 +88,7 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
- <a href="#_"><strong>_</strong></a>
- | <a href="#A"><strong>A</strong></a>
+ <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
@@ -97,21 +97,15 @@
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  
 </div>
-<h2 id="_">_</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor">_HankelRegressor (class in frank.radial_fitters)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -127,12 +121,18 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.coefficients">coefficients() (frank.hankel.DiscreteHankelTransform method)</a>
+</li>
       <li><a href="py_API.html#frank.utilities.convolve_profile">convolve_profile() (in module frank.utilities)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.covariance">covariance (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.covariance">covariance (frank.radial_fitters.FrankGaussianFit property)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.covariance">(frank.radial_fitters.FrankLogNormalFit property)</a>
 </li>
+      </ul></li>
       <li><a href="py_API.html#frank.utilities.cut_data_by_baseline">cut_data_by_baseline() (in module frank.utilities)</a>
 </li>
   </ul></td>
@@ -145,6 +145,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform">DiscreteHankelTransform (class in frank.hankel)</a>
+</li>
       <li><a href="py_API.html#frank.utilities.draw_bootstrap_sample">draw_bootstrap_sample() (in module frank.utilities)</a>
 </li>
   </ul></td>
@@ -161,21 +163,31 @@
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.geometry.SourceGeometry.fit">fit() (frank.geometry.SourceGeometry method)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.fit">fit() (frank.debris_fitters.FrankDebrisFitter method)</a>
 
       <ul>
+        <li><a href="py_API.html#frank.geometry.SourceGeometry.fit">(frank.geometry.SourceGeometry method)</a>
+</li>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.fit">(frank.radial_fitters.FrankFitter method)</a>
 </li>
       </ul></li>
       <li><a href="py_API.html#frank.geometry.FitGeometryFourierBessel">FitGeometryFourierBessel (class in frank.geometry)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="py_API.html#frank.geometry.FitGeometryGaussian">FitGeometryGaussian (class in frank.geometry)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="py_API.html#frank.geometry.FixedGeometry">FixedGeometry (class in frank.geometry)</a>
 </li>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter">FrankDebrisFitter (class in frank.debris_fitters)</a>
+</li>
       <li><a href="py_API.html#frank.radial_fitters.FrankFitter">FrankFitter (class in frank.radial_fitters)</a>
+</li>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit">FrankGaussianFit (class in frank.radial_fitters)</a>
+</li>
+      <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit">FrankLogNormalFit (class in frank.radial_fitters)</a>
+</li>
+      <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit">FrankRadialFit (class in frank.radial_fitters)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -183,10 +195,16 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.geometry">geometry (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.geometry">geometry (frank.debris_fitters.FrankDebrisFitter property)</a>
 
       <ul>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.geometry">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.geometry">(frank.radial_fitters.FrankGaussianFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.geometry">(frank.radial_fitters.FrankLogNormalFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.geometry">(frank.radial_fitters.FrankRadialFit property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -195,23 +213,47 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.log_likelihood">log_likelihood() (frank.radial_fitters._HankelRegressor method)</a>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.log_likelihood">log_likelihood() (frank.radial_fitters.FrankGaussianFit method)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.log_likelihood">(frank.radial_fitters.FrankLogNormalFit method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters.FrankFitter.MAP_solution">MAP_solution (frank.radial_fitters.FrankFitter property)</a>
+      <li><a href="py_API.html#frank.utilities.make_image">make_image() (in module frank.utilities)</a>
 </li>
-      <li><a href="py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum">MAP_spectrum (frank.radial_fitters.FrankFitter property)</a>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.MAP">MAP (frank.radial_fitters.FrankGaussianFit property)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.MAP">(frank.radial_fitters.FrankLogNormalFit property)</a>
 </li>
+      </ul></li>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.MAP_solution">MAP_solution (frank.debris_fitters.FrankDebrisFitter property)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankFitter.MAP_solution">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance">MAP_spectrum_covariance (frank.radial_fitters.FrankFitter property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.MAP_spectrum">MAP_spectrum (frank.debris_fitters.FrankDebrisFitter property)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum">(frank.radial_fitters.FrankFitter property)</a>
 </li>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.mean">mean (frank.radial_fitters._HankelRegressor property)</a>
+      </ul></li>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.MAP_spectrum_covariance">MAP_spectrum_covariance (frank.debris_fitters.FrankDebrisFitter property)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankFitter.MAP_spectrum_covariance">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+      </ul></li>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.mean">mean (frank.radial_fitters.FrankGaussianFit property)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -224,35 +266,75 @@
   </ul></td>
 </tr></table>
 
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.order">order (frank.hankel.DiscreteHankelTransform property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.power_spectrum">power_spectrum (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.power_spectrum">power_spectrum (frank.radial_fitters.FrankGaussianFit property)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.power_spectrum">(frank.radial_fitters.FrankLogNormalFit property)</a>
 </li>
+      </ul></li>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.predict">predict() (frank.radial_fitters.FrankGaussianFit method)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.predict">(frank.radial_fitters.FrankLogNormalFit method)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.predict">(frank.radial_fitters.FrankRadialFit method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.predict">predict() (frank.radial_fitters._HankelRegressor method)</a>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.predict_deprojected">predict_deprojected() (frank.radial_fitters.FrankGaussianFit method)</a>
+
+      <ul>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.predict_deprojected">(frank.radial_fitters.FrankLogNormalFit method)</a>
 </li>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.predict_deprojected">predict_deprojected() (frank.radial_fitters._HankelRegressor method)</a>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.predict_deprojected">(frank.radial_fitters.FrankRadialFit method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.q">q (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.q">q (frank.debris_fitters.FrankDebrisFitter property)</a>
 
       <ul>
+        <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.q">(frank.hankel.DiscreteHankelTransform property)</a>
+</li>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.q">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.q">(frank.radial_fitters.FrankGaussianFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.q">(frank.radial_fitters.FrankLogNormalFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.q">(frank.radial_fitters.FrankRadialFit property)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.Qmax">Qmax (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.Qmax">Qmax (frank.debris_fitters.FrankDebrisFitter property)</a>
 
       <ul>
+        <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.Qmax">(frank.hankel.DiscreteHankelTransform property)</a>
+</li>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.Qmax">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.Qmax">(frank.radial_fitters.FrankGaussianFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.Qmax">(frank.radial_fitters.FrankLogNormalFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.Qmax">(frank.radial_fitters.FrankRadialFit property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -261,20 +343,36 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.r">r (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.r">r (frank.debris_fitters.FrankDebrisFitter property)</a>
 
       <ul>
+        <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.r">(frank.hankel.DiscreteHankelTransform property)</a>
+</li>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.r">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.r">(frank.radial_fitters.FrankGaussianFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.r">(frank.radial_fitters.FrankLogNormalFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.r">(frank.radial_fitters.FrankRadialFit property)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="py_API.html#frank.geometry.SourceGeometry.reproject">reproject() (frank.geometry.SourceGeometry method)</a>
 </li>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.Rmax">Rmax (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.Rmax">Rmax (frank.debris_fitters.FrankDebrisFitter property)</a>
 
       <ul>
+        <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.Rmax">(frank.hankel.DiscreteHankelTransform property)</a>
+</li>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.Rmax">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.Rmax">(frank.radial_fitters.FrankGaussianFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.Rmax">(frank.radial_fitters.FrankLogNormalFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.Rmax">(frank.radial_fitters.FrankRadialFit property)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -283,19 +381,35 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.size">size (frank.radial_fitters._HankelRegressor property)</a>
+      <li><a href="py_API.html#frank.debris_fitters.FrankDebrisFitter.size">size (frank.debris_fitters.FrankDebrisFitter property)</a>
 
       <ul>
+        <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.size">(frank.hankel.DiscreteHankelTransform property)</a>
+</li>
         <li><a href="py_API.html#frank.radial_fitters.FrankFitter.size">(frank.radial_fitters.FrankFitter property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.size">(frank.radial_fitters.FrankGaussianFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankLogNormalFit.size">(frank.radial_fitters.FrankLogNormalFit property)</a>
+</li>
+        <li><a href="py_API.html#frank.radial_fitters.FrankRadialFit.size">(frank.radial_fitters.FrankRadialFit property)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="py_API.html#frank.radial_fitters._HankelRegressor.solve_non_negative">solve_non_negative() (frank.radial_fitters._HankelRegressor method)</a>
+      <li><a href="py_API.html#frank.radial_fitters.FrankGaussianFit.solve_non_negative">solve_non_negative() (frank.radial_fitters.FrankGaussianFit method)</a>
 </li>
       <li><a href="py_API.html#frank.geometry.SourceGeometry">SourceGeometry (class in frank.geometry)</a>
 </li>
       <li><a href="py_API.html#frank.utilities.sweep_profile">sweep_profile() (in module frank.utilities)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="py_API.html#frank.hankel.DiscreteHankelTransform.transform">transform() (frank.hankel.DiscreteHankelTransform method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -322,7 +436,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2022, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2022 Aug 10 at 15:15:05 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2022 Nov 09 at 10:07:40 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
