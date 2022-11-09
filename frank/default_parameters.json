@@ -33,7 +33,7 @@
     "n"                : 300,
     "rout"             : 2.0,
     "alpha"            : 1.05,
-    "p0"               : 1e-15,
+    "p0"               : null,
     "wsmooth"          : 1e-4,
     "iter_tol"         : 1e-3,
     "max_iter"         : 2000,
