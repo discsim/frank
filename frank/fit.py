@@ -568,11 +568,11 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
         logging.info('  Plotting results')
 
-        priors = {'alpha': model['hyperparameters']['alpha'],\
-                  'wsmooth': model['hyperparameters']['wsmooth'],\
-                  'Rmax': model['hyperparameters']['rout'],\
-                  'N': model['hyperparameters']['n'],\
-                  'p0': model['hyperparameters']['p0']
+        priors = {'alpha': sol.info['alpha'],\
+                  'wsmooth': sol.info['wsmooth'],\
+                  'Rmax': sol.info['Rmax'],\
+                  'N': sol.info['N'],\
+                  'p0': sol.info['p0']
                   }
 
         if model['plotting']['deprojec_plot']:
