@@ -25,13 +25,26 @@ the deprojected visibilities.
 .. autoclass:: frank.radial_fitters.FrankFitter
   :members: fit, MAP_solution, MAP_spectrum, MAP_spectrum_covariance, r, Rmax, q, Qmax, size, geometry
 
-.. autoclass:: frank.radial_fitters._HankelRegressor
-  :members: mean, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, predict_deprojected, log_likelihood, solve_non_negative
+.. autoclass:: frank.radial_fitters.FrankRadialFit
+  :members: I, MAP, r, q, Rmax, Qmax, size, geometry, predict, predict_deprojected
+
+.. autoclass:: frank.radial_fitters.FrankGaussianFit
+  :members: I, mean, MAP, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, predict_deprojected, log_likelihood, solve_non_negative
+
+.. autoclass:: frank.radial_fitters.FrankLogNormalFit
+  :members: I, MAP, covariance, power_spectrum, r, q, Rmax, Qmax, size, geometry, predict, predict_deprojected, log_likelihood
+
+.. autoclass:: frank.debris_fitters.FrankDebrisFitter
+  :members: fit, MAP_solution, MAP_spectrum, MAP_spectrum_covariance, r, Rmax, q, Qmax, size, geometry
+
 
 Utility functions and classes
 -----------------------------
 
 These are some useful functions and classes for various aspects of fitting and analysis.
+
+.. autoclass:: frank.hankel.DiscreteHankelTransform
+  :members: r, Rmax, q, Qmax, size, order, transform, coefficients
 
 .. autofunction:: frank.utilities.arcsec_baseline
 
@@ -42,6 +55,8 @@ These are some useful functions and classes for various aspects of fitting and a
 .. autofunction:: frank.utilities.draw_bootstrap_sample
 
 .. autofunction:: frank.utilities.estimate_weights
+
+.. autofunction:: frank.utilities.make_image
 
 .. autofunction:: frank.utilities.normalize_uv
 

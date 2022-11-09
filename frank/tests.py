@@ -224,7 +224,7 @@ def test_fourier_bessel_fitter():
                          3.33260713e+07
                          ])
 
-    np.testing.assert_allclose(sol.mean, expected,
+    np.testing.assert_allclose(sol.I, expected,
                                err_msg="Testing FourierBessel Fit to AS 209")
 
 
@@ -240,23 +240,64 @@ def test_frank_fitter():
 
     sol = FF.fit(u, v, vis, weights)
     expected = np.array([
-         2.007565323969626999e+10,  1.843519801944299698e+10,
-         1.349007486432532310e+10,  1.272366226872675896e+10,
-         1.034881390038976860e+10,  2.579120285502616405e+09,
-         6.974036526280273199e+08,  4.127651298085847378e+09,
-         2.502142350921279907e+09, -2.756869487129538059e+08,
-         2.823359106868867278e+08,  8.706525814211348295e+08,
-         3.257354471853072166e+09,  3.112075096447698593e+09,
-        -5.146053743384782672e+08,  1.491212688054856777e+09,
-        -5.191258159130128026e+08,  5.100511550974740982e+08,
-        -1.922647420605963767e+08,  8.068002451905013621e+07,
+         2.007570578977623749e+10,  1.843513239499150085e+10,
+         1.349013094584499741e+10,  1.272363099855433273e+10,
+         1.034881472041586494e+10,  2.579145371666701317e+09,
+         6.973651829234187603e+08,  4.127687040627769947e+09,
+         2.502124003048851490e+09, -2.756950827897560596e+08,
+         2.823720459944381118e+08,  8.705940396227477789e+08,
+         3.257425109322027683e+09,  3.112003905406182289e+09,
+        -5.145431577819123268e+08,  1.491165153547247887e+09,
+        -5.190942564982021451e+08,  5.100334030941848755e+08,
+        -1.922568182176418006e+08,  8.067782715878820419e+07,
     ])
 
-    np.testing.assert_allclose(sol.mean, expected,
+    np.testing.assert_allclose(sol.I, expected,
                                err_msg="Testing Frank Fit to AS 209")
 
+def test_two_stage_fit():
+    """Check FrankFitter fitting routine with AS 209 dataset"""
+    AS209, geometry = load_AS209(uv_cut=1e6)
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6
+
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
+
+    # 1 step fit
+    sol = FF.fit(u, v, vis, weights)
+
+    # 2 step fit
+    preproc = FF.preprocess_visibilities(u, v, vis, weights)
+    sol2 = FF.fit_preprocessed(preproc)
+
+    np.testing.assert_equal(sol.I, sol2.I,
+                            err_msg="Testing two-step fit")
 
 
+def test_frank_fitter_log_normal():
+    """Check FrankFitter fitting routine with AS 209 dataset"""
+    AS209, geometry = load_AS209(uv_cut=1e6)
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+    
+    Rmax = 1.6
+
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.3, weights_smooth=1e-2,
+                     method='LogNormal')
+
+    sol = FF.fit(u, v, vis, weights)
+    expected = np.array([
+        2.36087004e+10, 1.36923798e+10, 1.82805612e+10, 8.72975548e+09,
+        1.30516037e+10, 1.28158462e+09, 8.14949172e+08, 4.74472433e+09,
+        1.66592277e+09, 3.39438704e+08, 1.56219080e+08, 4.42345087e+08,
+        4.13155298e+09, 2.00246824e+09, 6.07773834e+08, 5.34020982e+08,
+        1.80820913e+08, 7.71858927e+07, 2.89354816e+07, 2.45967370e+06,])
+
+    np.testing.assert_allclose(sol.MAP, expected, rtol=7e-5,
+                               err_msg="Testing Frank Log-Normal Fit to AS 209")
+                               
 def test_geom_deproject():
     """Check predict works properly with a different geometry"""
     AS209, geometry = load_AS209(uv_cut=1e6)
@@ -279,7 +320,7 @@ def test_geom_deproject():
         0.29055445,  0.27369896,  0.24848676,  0.2129406,
         0.1677038,   0.11989993,  0.08507635,  0.07491307,
         0.06555019,  0.01831576, -0.00173855,  0.00042803,
-       -0.00322264,  0.00278782, -0.00978981,  0.00620292,
+       -0.00322264,  0.00278782, -0.00978981,  0.00620259,
     ]
     
     np.testing.assert_allclose(V, Vexpected, rtol=2e-5, atol=1e-8,
@@ -318,7 +359,7 @@ def test_throw_error_on_bad_q_range():
                      alpha=1.05, weights_smooth=1e-2)
 
     try:
-        sol = FF.fit(u, v, vis, weights)
+        FF.fit(u, v, vis, weights)
         raise RuntimeError("Expected ValueError due to bad range")
     except ValueError:
         pass
@@ -424,16 +465,16 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
 
 def test_pipeline_full_geom():
     """Check the full fit pipeline when fitting for the disc's inc, PA, dRA, dDec"""
-    _run_pipeline('gaussian', True)
+    _run_pipeline('gaussian', fit_phase_offset=True)
 
 
 def test_pipeline_no_phase():
-    """Check the full fit pipeline when fitting for the disc's inc, PA"""
-    _run_pipeline('gaussian', False)
+    """Check the full fit pipeline when only fitting for the disc's inc, PA"""
+    _run_pipeline('gaussian', fit_phase_offset=False)
 
 def test_pipeline_no_inc_no_pa():
-    """Check the full fit pipeline when fitting for the disc's inc, PA"""
-    _run_pipeline('gaussian', True, False)
+    """Check the full fit pipeline when only fitting for the disc's phase center"""
+    _run_pipeline('gaussian', fit_phase_offset=True, fit_inc_pa=False)
 
 
 def test_pipeline_known_geom():
@@ -447,10 +488,10 @@ def test_pipeline_figure_generation():
 
 
 def test_pipeline_multifit():
-    """Check the full fit pipeline when producing all figures"""
+    """Check the full fit pipeline when producing all figures and running multiple fits"""
     _run_pipeline('known', multifit=True)
 
 
 def test_pipeline_bootstrap():
-    """Check the full fit pipeline when producing all figures"""
+    """Check the full fit pipeline when producing all figures and running bootstrap"""
     _run_pipeline('known', bootstrap=True)

@@ -148,6 +148,18 @@ def parse_parameters(*args):
                  ' {}'.format(model['input_output']['uvtable_filename']))
 
     # Sanity check some of the .json parameters
+    if model['hyperparameters']['method'] not in ["Normal", "LogNormal"]:
+        err = ValueError("method should be 'Normal' or 'LogNormal'")
+        raise err
+
+    if model['hyperparameters']['method'] == 'LogNormal' and \
+       model['hyperparameters']['p0'] is not None and \
+       model['hyperparameters']['p0'] > 1e-30:
+        err = ValueError("p0 = {}. If method is 'LogNormal', p0 should be "
+                         "<~ 1e-35 (we recommend 1e-35)"
+                         ".".format(model['hyperparameters']['p0']))
+        raise err
+
     if model['plotting']['diag_plot']:
         if model['plotting']['iter_plot_range'] is not None:
             err = ValueError("iter_plot_range should be 'null' (None)"
@@ -160,7 +172,7 @@ def parse_parameters(*args):
                 raise err
 
     if model['plotting']['stretch'] not in ["power", "asinh"]:
-        err = ValueError("stretch should be 'power'  or 'asinh'")
+        err = ValueError("stretch should be 'power' or 'asinh'")
         raise err
 
     if model['modify_data']['baseline_range'] is not None:
@@ -344,10 +356,9 @@ def determine_geometry(u, v, vis, weights, model):
                          " 'known', 'gaussian' or 'nonparametric'.")
 
     logging.info('    Using: inc  = {:.2f} deg,\n           PA   = {:.2f} deg,\n'
-                 '           dRA  = {:.2e} mas,\n'
-                 '           dDec = {:.2e} mas'.format(geom.inc, geom.PA,
-                                                       geom.dRA*1e3,
-                                                       geom.dDec*1e3))
+                 '           dRA  = {:.2e} arcsec,\n'
+                 '           dDec = {:.2e} arcsec'.format(geom.inc, geom.PA,
+                                                       geom.dRA, geom.dDec))
 
     # Store geometry
     geom = geom.clone()
@@ -391,17 +402,22 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     N=model['hyperparameters']['n'],
                                     geometry=geom,
                                     alpha=model['hyperparameters']['alpha'],
+                                    p_0=model['hyperparameters']['p0'],
                                     weights_smooth=model['hyperparameters']['wsmooth'],
                                     tol=model['hyperparameters']['iter_tol'],
+                                    method=model['hyperparameters']['method'],
                                     max_iter=model['hyperparameters']['max_iter'],
-                                    store_iteration_diagnostics=need_iterations
+                                    store_iteration_diagnostics=need_iterations,
+                                    assume_optically_thick=model['geometry']['rescale_flux']
                                     )
 
     sol = FF.fit(u, v, vis, weights)
 
-    if model['hyperparameters']['nonnegative']:
+    if model['hyperparameters']['nonnegative'] and \
+       model['hyperparameters']['method'] == 'Normal':
         # Add the best fit nonnegative solution to the fit's `sol` object
-        logging.info('  `nonnegative` is `true` in your parameter file --> Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
+        logging.info('  `nonnegative` is `true` in your parameter file --> '\
+                    'Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
         setattr(sol, '_nonneg', sol.solve_non_negative())
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
@@ -551,11 +567,11 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
         logging.info('  Plotting results')
 
-        priors = {'alpha': model['hyperparameters']['alpha'],\
-                  'wsmooth': model['hyperparameters']['wsmooth'],\
-                  'Rmax': model['hyperparameters']['rout'],\
-                  'N': model['hyperparameters']['n'],\
-                  'p0': model['hyperparameters']['p0']
+        priors = {'alpha': sol.info['alpha'],\
+                  'wsmooth': sol.info['wsmooth'],\
+                  'Rmax': sol.info['Rmax'],\
+                  'N': sol.info['N'],\
+                  'p0': sol.info['p0']
                   }
 
         if model['plotting']['deprojec_plot']:
@@ -638,9 +654,9 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
             clean_profile = {'r': r_clean, 'I': I_clean, 'lo_err': lo_err_clean,
                              'hi_err': hi_err_clean}
 
-            mean_convolved = None
+            MAP_convolved = None
             if model['analysis']['clean_beam']['bmaj'] is not None:
-                mean_convolved = utilities.convolve_profile(sol.r, sol.mean,
+                MAP_convolved = utilities.convolve_profile(sol.r, sol.I,
                                                             geom.inc, geom.PA,
                                                             model['analysis']['clean_beam'])
 
@@ -651,7 +667,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                                         stretch=model['plotting']['stretch'],
                                                                         gamma=model['plotting']['gamma'],
                                                                         asinh_a=model['plotting']['asinh_a'],
-                                                                        mean_convolved=mean_convolved,
+                                                                        MAP_convolved=MAP_convolved,
                                                                         dist=model['plotting']['distance'],
                                                                         force_style=model['plotting']['force_style'],
                                                                         save_prefix=model['input_output']['save_prefix']
@@ -698,7 +714,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
 
     if model['hyperparameters']['nonnegative']:
         logging.info('  `nonnegative` is `true` in your parameter file --> '
-                     'The best fit nonnegative profile (rather than the mean '
+                     'The best fit nonnegative profile (rather than the MAP '
                      'profile) will be saved and used to generate the bootstrap '
                      'figure')
 
@@ -714,7 +730,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         if model['hyperparameters']['nonnegative']:
             profiles_bootstrap.append(sol._nonneg)
         else:
-            profiles_bootstrap.append(sol.mean)
+            profiles_bootstrap.append(sol.I)
 
     bootstrap_path = model['input_output']['save_prefix'] + '_bootstrap.npz'
 
