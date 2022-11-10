@@ -433,6 +433,7 @@ class VisibilityMapping:
 
         if inverse:
             scale = np.atleast_1d(1/scale).reshape(1,-1)
+            qs = qs / rad_to_arcsec
             direction='backward'
         else:
             direction='forward'
