@@ -359,7 +359,6 @@ class UVDataBinner(object):
         return [self._uv_left, self._uv_right]
 
 
-
 def normalize_uv(u, v, wle):
     r"""
     Normalize data u and v coordinates by the observing wavelength
@@ -442,6 +441,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
     u_cut, v_cut, vis_cut, weights_cut = [x[in_range] for x in [u, v, vis, weights]]
 
     return u_cut, v_cut, vis_cut, weights_cut
+
 
 def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
                      verbose=True):
@@ -560,6 +560,7 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
         weights = 1/var[bin_id]
 
         return weights
+
 
 def draw_bootstrap_sample(u, v, vis, weights):
     r"""
@@ -757,7 +758,6 @@ def make_image(fit, Npix, xmax=None, ymax=None, project=True):
     y = 0.5*(ye[1:] + ye[:-1])
 
     return x, y, I
-    
 
 
 def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
@@ -851,3 +851,41 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     I_smooth /= counts
 
     return I_smooth
+
+
+def add_vis_noise(V, w, seed=None):
+    r"""
+    Add Gaussian noise to visibilities
+
+    Parameters
+    ----------
+    V : array, unit = [Jy]
+        Visibilities to add noise to.
+        V can be complex (real + imag * 1j) or purely real.
+    w : array, unit = [Jy^-2]
+        Weights on the visibilities, of the form :math:`1 / \sigma^2`.
+        Injected noise will be scaled proportional to `\sigma`.
+    seed : int, default = None
+        Number to initialize a pseudorandom number generator for the noise draws
+
+    Returns
+    -------
+    Vnoisy : array, shape = (2, len(V)) if V is complex; else (1, len(V))
+        Visibilities with additive noise
+
+    """
+    if seed is not None:
+        np.random.seed(seed)
+
+    dim0 = 1
+    if np.iscomplexobj(V):
+        dim0 = 2
+
+    noise = np.random.standard_normal(dim0, len(V))
+    noise *= w ** -0.5
+
+    Vnoisy = V + noise[0]
+    if np.iscomplexobj(V):
+        Vnoisy += 1j * noise[1]
+
+    return Vnoisy
