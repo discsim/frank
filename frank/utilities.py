@@ -853,16 +853,16 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     return I_smooth
 
 
-def add_vis_noise(V, w, seed=None):
+def add_vis_noise(vis, weights, seed=None):
     r"""
     Add Gaussian noise to visibilities
 
     Parameters
     ----------
-    V : array, unit = [Jy]
+    vis : array, unit = [Jy]
         Visibilities to add noise to.
-        V can be complex (real + imag * 1j) or purely real.
-    w : array, unit = [Jy^-2]
+        Can be complex (real + imag * 1j) or purely real.
+    weights : array, unit = [Jy^-2]
         Weights on the visibilities, of the form :math:`1 / \sigma^2`.
         Injected noise will be scaled proportional to `\sigma`.
     seed : int, default = None
