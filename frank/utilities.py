@@ -901,7 +901,7 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
     if direction == 'forward':
         # map the profile f(x) onto the DHT collocation points.
         # this is necessary for an accurate transform.
-        y = np.interp(DHT.r * rad_to_arcsec, x, f)
+        y = np.interp(VM.r, x, f)
 
         if grid is None:
             grid = DHT.q
