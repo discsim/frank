@@ -901,8 +901,6 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
     geom = FixedGeometry(inc, 0, 0, 0)
     VM = VisibilityMapping(DHT, geom)
 
-    unit_convert = False
-
     if direction == 'forward':
         # map the profile f(x) onto the DHT collocation points.
         # this is necessary for an accurate transform.
@@ -912,7 +910,7 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
             grid = VM.q
 
         # perform the DHT
-        f_transform = VM.predict_visibilities(y, grid, k=None, geometry=geom)
+        f_transform = VM.predict_visibilities(y, grid, k=None)
 
     elif direction == 'backward':
         y = np.interp(DHT.q, x, f)
