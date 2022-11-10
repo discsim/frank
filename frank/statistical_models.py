@@ -432,7 +432,7 @@ class VisibilityMapping:
             raise ValueError("model not supported. Should never occur.")
 
         if inverse:
-            scale = np.atleast_1d(1/scale).reshape(1,-1)
+            scale = np.atleast_1d(1/scale).reshape(-1,1)
             direction='backward'
         else:
             direction='forward'
