@@ -856,15 +856,15 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     return I_smooth
 
 
-def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
+def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
                 inc=0.0):
     """
     Compute the visibilities or brightness of a model by directly applying the
     Discrete Hankel Transform. 
     
     The correction for inclination will also be applied, assuming an optically
-    thick disc. Setting inc=0 will do a Hankel Transform without any scaling,
-    appropriate for an optically thin disc.
+    thick disc. For an optically thin disc, setting inc=0 (the default) will
+    achieve the correct scaling.
 
     Parameters
     ----------
@@ -874,7 +874,7 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         Amplitude values of f(x)
     Rmax : float, unit = [arcsec], default=2.0
         Maximum radius beyond which the real space function is zero
-    N : integer, default=1000
+    N : integer, default=500
         Number of terms to use in the Fourier-Bessel series
     direction : { 'forward', 'backward' }, default='forward'
         Direction of the transform. 'forward' is real space -> Fourier space.
@@ -894,8 +894,7 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
     """
 
     if direction not in ['forward', 'backward']:
-        raise AttributeError("direction must be one of {}"
-                            "".format(['forward', 'backward']))
+        raise AttributeError("direction must be one of ['forward', 'backward']")
 
     DHT = DiscreteHankelTransform(Rmax=Rmax / rad_to_arcsec, N=N, nu=0)
     geom = FixedGeometry(inc, 0, 0, 0)
@@ -910,21 +909,14 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
             grid = VM.q
 
         # perform the DHT
-        f_transform = VM.predict_visibilities(y, grid, k=None)
+        f_transform = VM.predict_visibilities(y, grid, k=None, geometry=geom)
 
-    elif direction == 'backward':
-        y = np.interp(DHT.q, x, f)
+    else:
+        y = np.interp(VM.q, x, f)
 
         if grid is None:
             grid = VM.r
 
-<<<<<<< HEAD
         f_transform = VM.invert_visibilities(y, grid, geometry=geom)
-=======
-        f_transform = VM.invert_visibilities(y, grid)
-
-    else:
-        raise ValueError("direction must be one of ['forward', 'backawrd']")
->>>>>>> 9f295fa9e574120f4b18d9a3368de366b38170d5
 
     return grid, f_transform
