@@ -330,6 +330,61 @@ class VisibilityMapping:
             V.append(np.dot(H, I))
         return np.concatenate(V)
 
+    def invert_visibilities(self, V, R, geometry=None):
+        r"""Compute the brightness, I, from the visibilities. 
+        
+        Note this method does not work for an arbitrary distribution of 
+        baselines and therefore cannot be used to determine the brightness
+        given a generic set of data. Instead it needs the visibilities at 
+        collocation points of the DiscrteHankelTransform, q.
+
+        For geometrically thick models the visibilities used must be those for
+        which kz = 0.
+
+        Given the above constraints, this method computes the inverse of
+        predict_visibilites.
+        
+        Parameters
+        ----------
+        V : array, unit = Jy
+            Visibility at the collocation points. This must be the deprojected
+            and phase-center corrected visibilities.
+        R : array, unit = arcsec
+            Radial distance to compute the brightness at
+        geometry : SourceGeometry object, optional
+            Geometry used to correct the visibilities for the source
+            inclination. Only needed for the optically thick model. If not 
+            provided, the geometry passed in during construction will be used. 
+        
+        Returns
+        -------
+        I(R) : array, unit = Jy / Sr
+            Brightness at the radial locations, R. 
+        
+        Notes
+        -----
+        The brightness is corrected under the optically thin
+        """
+        # Chunk the visibility calulation for speed
+        R = np.atleast_1d(R)
+        if self._chunking:
+            Ni = int(self._chunk_size / self.size + 1)
+        else:
+            Ni = len(R)
+
+        end = 0
+        start = 0
+        I = []
+        while end < len(R):
+            start = end
+            end = start + Ni
+            Ri = R[start:end]
+
+            H = self._get_mapping_coefficients(Ri, 0, geometry, inverse=True)
+
+            I.append(np.dot(H, V))
+        return np.concatenate(I)[R < self.Rmax]
+
     def transform(self, f, q=None, direction='forward'):
         """Apply a DHT directly to data provided
         
@@ -359,7 +414,7 @@ class VisibilityMapping:
         return self._DHT.transform(f, q, direction)
 
 
-    def _get_mapping_coefficients(self, qs, ks, geometry=None):
+    def _get_mapping_coefficients(self, qs, ks, geometry=None, inverse=False):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
         
         if self._vis_model == 'opt_thick':
@@ -376,7 +431,13 @@ class VisibilityMapping:
         else:
             raise ValueError("model not supported. Should never occur.")
 
-        H = self._DHT.coefficients(qs) * scale
+        if inverse:
+            scale = 1/scale
+            direction='backward'
+        else:
+            direction='forward'
+
+        H = self._DHT.coefficients(qs, direction=direction) * scale
 
         return H
 
