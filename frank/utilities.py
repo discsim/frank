@@ -946,7 +946,7 @@ def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
             grid = VM.q
 
         # perform the DHT
-        f_transform = VM.predict_visibilities(y, grid, k=None, geometry=geom)
+        f_transform = VM.predict_visibilities(y, grid, geometry=geom)
 
     else:
         y = np.interp(VM.q, x, f)
