@@ -893,6 +893,7 @@ def add_vis_noise(vis, weights, seed=None):
 
     return vis_noisy
 
+
 def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
                 inc=0.0):
     """
