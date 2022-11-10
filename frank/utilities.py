@@ -25,6 +25,9 @@ from scipy.fft import fftfreq
 from scipy.interpolate import interp1d
 
 from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec
+from frank.geometry import FixedGeometry
+from frank.hankel import DiscreteHankelTransform
+from frank.statistical_models import VisibilityMapping
 
 def arcsec_baseline(x):
     """
@@ -889,3 +892,68 @@ def add_vis_noise(vis, weights, seed=None):
         Vnoisy += 1j * noise[1]
 
     return Vnoisy
+
+def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
+                inc=0.0):
+    """
+    Compute the visibilities or brightness of a model by directly applying the
+    Discrete Hankel Transform. 
+    
+    The correction for inclination will also be applied, assuming an optically
+    thick disc. For an optically thin disc, setting inc=0 (the default) will
+    achieve the correct scaling.
+
+    Parameters
+    ----------
+    x : array, unit = [arcsec] or [lambda]
+        Radial or spatial frequency coordinates of f(x)
+    f : array, unit = [Jy / sr] or [Jy]
+        Amplitude values of f(x)
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which the real space function is zero
+    N : integer, default=500
+        Number of terms to use in the Fourier-Bessel series
+    direction : { 'forward', 'backward' }, default='forward'
+        Direction of the transform. 'forward' is real space -> Fourier space.
+    grid : array, unit = [arcsec] or [lambda], default=None
+        The radial or spatial frequency points at which to sample the DHT.
+        If None, the DHT collocation points will be used.
+    inc : float, unit = [deg], default = 0.0
+        Source inclination. The total flux of the transform of f(x)
+        will be scaled by cos(inc); this has no effect if inc=0.
+
+    Returns
+    -------
+    grid : array, size=N, unit = [arcsec] or [lambda]
+        Spatial frequency or radial coordinates of the Hankel transform of f(x)
+    f_transform : array, size=N, unit = [Jy / sr] or [Jy]
+        Hankel transform of f(x)
+    """
+
+    if direction not in ['forward', 'backward']:
+        raise AttributeError("direction must be one of ['forward', 'backward']")
+
+    DHT = DiscreteHankelTransform(Rmax=Rmax / rad_to_arcsec, N=N, nu=0)
+    geom = FixedGeometry(inc, 0, 0, 0)
+    VM = VisibilityMapping(DHT, geom)
+
+    if direction == 'forward':
+        # map the profile f(x) onto the DHT collocation points.
+        # this is necessary for an accurate transform.
+        y = np.interp(VM.r, x, f)
+
+        if grid is None:
+            grid = VM.q
+
+        # perform the DHT
+        f_transform = VM.predict_visibilities(y, grid, k=None, geometry=geom)
+
+    else:
+        y = np.interp(VM.q, x, f)
+
+        if grid is None:
+            grid = VM.r
+
+        f_transform = VM.invert_visibilities(y, grid, geometry=geom)
+
+    return grid, f_transform

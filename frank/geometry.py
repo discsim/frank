@@ -712,9 +712,9 @@ class FitGeometryFourierBessel(SourceGeometry):
             u-points of the visibilities
         v : array of real, size = N, unit = :math:`\lambda`
             v-points of the visibilities
-        V : array of complex, size = N, unit = Jy
+        vis : array of complex, size = N, unit = Jy
             Complex visibilites
-        weights : array of real, size = N, unit = Jy
+        w : array of real, size = N, unit = Jy
             Weights on the visibilities
         """
         if self._inc_pa and self._phase_centre:
