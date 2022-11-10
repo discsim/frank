@@ -913,7 +913,7 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         y = np.interp(DHT.q, x, f)
 
         if grid is None:
-            grid = DHT.r * rad_to_arcsec
+            grid = VM.r
 
         f_transform = VM.transform(y, grid, 'backward')
 
