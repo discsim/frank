@@ -893,6 +893,63 @@ def add_vis_noise(vis, weights, seed=None):
 
     return vis_noisy
 
+
+def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
+                   weights=None, seed=None):
+    r"""
+    Generate mock visibilities from a provided brightness profile and (u,v)
+    distribution.
+
+    Parameters
+    ----------
+    r : array, unit = [arcsec]
+        Radial coordinates of I(r)
+    I : array, unit = [Jy / sr]
+        Brightness values at r
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which I(r) is zero. This should be larger than the
+        disk size
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    geometry : SourceGeometry object, default=None
+        Source geometry (see frank.geometry.SourceGeometry). If supplied, the
+        visibilities will be deprojected, and their total flux scaled by the
+        inclination.
+    N : integer, default=500
+        Number of terms to use in the Fourier-Bessel series
+    add_noise : bool, default = False
+        Whether to add noise to the mock visibilities
+    weights : array, unit = Jy^-2
+        Visibility weights, of the form :math:`1 / \sigma^2`.
+        If provided, injected noise will be scaled proportional to `\sigma`.
+    seed : int, default = None
+        Number to initialize a pseudorandom number generator for the noise draws
+
+    Returns
+    -------
+    baselines : array, unit = :math:`\lambda`
+        Baseline coordinates of the mock visibilities. These will be equal to
+        np.hypot(u, v) if 'geometry' is None (or if its keys are all equal to 0)
+    vis : array, unit = Jy
+        Mock visibility amplitudes, including noise if 'add_noise' is True
+
+    """
+
+    if geometry is None:
+        geometry = FixedGeometry(0, 0, 0, 0)
+    else:
+        u, v = geometry.deproject(u, v)
+
+    baselines = np.hypot(u, v)
+
+    _, vis = generic_dht(r, I, Rmax, N, grid=baselines, inc=geometry.inc)
+
+    if add_noise:
+        vis = add_vis_noise(vis, weights, seed)
+
+    return baselines, vis
+
+
 def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
                 inc=0.0):
     """
