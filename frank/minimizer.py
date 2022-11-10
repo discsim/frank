@@ -49,9 +49,16 @@ class LineSearch(BaseLineSearch):
 
     Parameters
     ----------
-    armijo : float.
-    min_step_frac :
-    reduce_step :
+    armijo : float, default = 1e-4
+        Coefficient used when deciding whether to accept a new solution. 
+        Smaller is more tolerant.
+    min_step_frac : foat, default = 0.1
+        Minimum amount that the step length can be reduced by in a single
+        iteration when trying to find an improved guess.
+    reduce_step: function (dx, x) --> dx, optional
+        Can be provided to limit the maximum step allowed in newton iterations
+        given the current position (x) and suggested step (dx). No limiting is
+        done if this function is not provided. 
 
     Notes
     -----

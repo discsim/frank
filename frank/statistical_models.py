@@ -62,8 +62,8 @@ class VisibilityMapping:
         elements.
     block_size : int, default = 10**5
         Size of the matrices if blocking is used
-    check_qbounds : bool, default = True
-        Whether to check that the first (last) DHT collocation point is smaller
+    check_qbounds: bool, default = True
+        Whether to check if the first (last) collocation point is smaller
         (larger) than the shortest (longest) deprojected baseline in the dataset
     verbose : bool, default = False
         Whether to print notification messages
@@ -498,15 +498,18 @@ class GaussianModel:
     DHT : DiscreteHankelTransform
         A DHT object with N bins that defines H(p). The DHT is used to compute
         :math:`S(p)`
-    Ms : 2D array, size = (N, N)
-        The design matrix, see above
-    js : 1D array, size = N
+    M : 2/3D array, size = (N, N) or (Nf, N, N)
+        The design matrix, see above. Nf is the number of channels (frequencies).
+    j : 1/2D array, size = N or (Nf, N)
         Information source, see above
     p : 1D array, size = N, optional
         Power spectrum used to generate the covarience matrix :math:`S(p)`
-    scale :
-    guess :
-    Nfields :
+    guess: array, optional
+        Initial guess used in computing the brightness.
+    Nfields : int, optional
+        Number of fields used to fit the data. Typically 1, but could be more
+        for multi-wavelength data. If not provided it will be determined from
+        the shape of guess.
     noise_likelihood : float, optional
         An optional parameter needed to compute the full likelihood, which
         should be equal to
@@ -518,19 +521,19 @@ class GaussianModel:
         missing constant
     """
 
-    def __init__(self, DHT, Ms, js, p=None, scale=None, guess=None, Nfields=None,
-                 noise_likelihood=0):
+    def __init__(self, DHT, M, j, p=None, scale=None, guess=None,
+                 Nfields=None, noise_likelihood=0):
 
         self._DHT = DHT
 
         # Correct shape of design matrix etc.        
-        if len(Ms.shape) == 2:
-            Ms = Ms.reshape(1, *Ms.shape)
-        if len(js.shape) == 1:
-            js = js.reshape(1, *js.shape)
+        if len(M.shape) == 2:
+            M = M.reshape(1, *M.shape)
+        if len(j.shape) == 1:
+            j = j.reshape(1, *j.shape)
 
         # Number of frequencies / radial points
-        Nf, Nr = js.shape
+        Nf, Nr = j.shape
         
         # Get the number of fields
         if Nfields is None:
@@ -583,7 +586,7 @@ class GaussianModel:
         # Compute the design matrix
         self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='f8')
         self._j = np.zeros(Nr*Nfields, dtype='f8')
-        for si, Mi, ji in zip(self._scale, Ms, js):
+        for si, Mi, ji in zip(self._scale, M, j):
             
             for n in range(0, Nfields):
                 sn = n*Nr
@@ -780,7 +783,7 @@ class LogNormalMAPModel:
     Finds the maximum a posteriori field for log-normal regression problems,
 
     .. math::
-       P(s|q,V,p,s0) \propto G(H exp(s*s0) - V, M) P(s|p)
+       P(s|q,V,p,s0) \propto G(H exp(scale*(s+s0)) - V, M) P(s|p)
 
     where :math:`s` is the log-intensity to be predicted, :math:`q` are the
     baselines and :math:`V` the visibility data. :math:`\mu` and :math:`H` is
@@ -832,9 +835,9 @@ class LogNormalMAPModel:
     DHT : DiscreteHankelTransform
         A DHT object with N bins that defines H(p). The DHT is used to compute
         :math:`S(p)`
-    M : 2D array, size = (N, N), or list of
-        The design matrix, see above
-    j : 1D array, size = N, or list of
+    M : 2/3D array, size = (N, N) or (Nf, N, N)
+        The design matrix, see above. Nf is the number of channels (frequencies).
+    j : 1/2D array, size = N or (Nf, N)
         Information source, see above
     p : 1D array, size = N, optional
         Power spectrum used to generate the covarience matrix :math:`S(p)`
@@ -842,10 +845,19 @@ class LogNormalMAPModel:
         Scale factors s0 (see above). These factors can be a constant, one
         per brightness point or per band (optionally per collocation point)
         to enable multi-frequency fitting.
-    s0 :
-    guess :
-    Nfields :
-    full_hessian : 
+    s0 : float or 1D array, size Nfields. Optional
+        Zero point for the brightness function, see above.
+    guess: array, optional
+        Initial guess used in computing the brightness.
+    Nfields : int, optional
+        Number of fields used to fit the data. Typically 1, but could be more
+        for multi-wavelength data. If not provided it will be determined from
+        the shape of guess.
+    full_hessian: float, range [0, 1]
+        If 1 then use the full Hessian in evaluating the matrix :math:`D`. When
+        0 a term is omitted that can cause the Hessian not be a positive-
+        definite matrix when the solution is a poor fit to the data. A value
+        between 0 and 1 will scale this term by that factor.
     noise_likelihood : float, optional
         An optional parameter needed to compute the full likelihood, which
         should be equal to
@@ -1007,9 +1019,6 @@ class LogNormalMAPModel:
         s, _ = MinimizeNewton(H, jac, hess, x, search, tol=1e-7)
         self._s_MAP = s.reshape(Ns, Nr)
 
-        #print("\n", _, self._approx_hess)
-        #print(H(s), np.max(np.abs(s*jac(s))), np.max(np.abs((s*hess(s).T).T*s)))
-
         Dinv = hess(s)
         try:
             self._Dchol = scipy.linalg.cho_factor(Dinv)
@@ -1107,6 +1116,11 @@ class LogNormalMAPModel:
 
         return like + self._like_noise
 
+    def solve_non_negative(self):
+        """Compute the best fit solution with non-negative intensities"""
+        # The solution is alway non-negative. Provided for convenience.
+        return self.MAP
+        
     @property
     def MAP(self):
         """Posterior maximum, unit = Jy / sr"""
