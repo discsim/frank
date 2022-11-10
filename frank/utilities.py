@@ -26,6 +26,7 @@ from scipy.interpolate import interp1d
 
 from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec
 from frank.geometry import FixedGeometry
+from frank.hankel import DiscreteHankelTransform
 from frank.statistical_models import VisibilityMapping
 
 def arcsec_baseline(x):
@@ -858,7 +859,8 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
 def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
                 inc=0.0):
     """
-    Compute the forward or backward Hankel transform of a function f(x)
+    Compute the visibilities or brightness of a model by directly applying the
+    Discrete Hankel Transform and the correction for inclination.
 
     Parameters
     ----------
@@ -886,6 +888,10 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
     f_transform : array, size=N, unit = [Jy / sr] or [Jy]
         Hankel transform of f(x)
 
+    Notes
+    -----
+    The appropriate scaling for an optically thin model can be achieved by 
+    using inc=0.
     """
 
     if direction not in ['forward', 'backward']:
@@ -909,16 +915,15 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         # perform the DHT
         f_transform = VM.predict_visibilities(y, grid, k=None, geometry=geom)
 
-    else:
+    elif direction == 'backward':
         y = np.interp(DHT.q, x, f)
 
         if grid is None:
             grid = VM.r
 
-        f_transform = VM.transform(y, grid, 'backward')
+        f_transform = VM.invert_visibilities(y, grid)
 
-        # adjust the total flux for the source inclination
-        if direction == 'backward':
-            f_transform /= np.cos(inc * deg_to_rad)
+    else:
+        raise ValueError("direction must be one of ['forward', 'backawrd']")
 
     return grid, f_transform
