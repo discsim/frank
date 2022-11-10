@@ -873,7 +873,7 @@ def add_vis_noise(vis, weights, seed=None):
 
     Returns
     -------
-    Vnoisy : array, shape = (2, len(V)) if V is complex; else (1, len(V))
+    vis_noisy : array, shape = (2, len(V)) if V is complex; else (1, len(V))
         Visibilities with additive noise
 
     """
@@ -881,17 +881,17 @@ def add_vis_noise(vis, weights, seed=None):
         np.random.seed(seed)
 
     dim0 = 1
-    if np.iscomplexobj(V):
+    if np.iscomplexobj(vis):
         dim0 = 2
 
     noise = np.random.standard_normal(dim0, len(V))
     noise *= w ** -0.5
 
-    Vnoisy = V + noise[0]
-    if np.iscomplexobj(V):
-        Vnoisy += 1j * noise[1]
+    vis_noisy = vis + noise[0]
+    if np.iscomplexobj(vis):
+        vis_noisy += 1j * noise[1]
 
-    return Vnoisy
+    return vis_noisy
 
 def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
                 inc=0.0):
