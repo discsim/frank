@@ -403,7 +403,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     Parameters
     ----------
-    u, v : array, unit = [m]
+    u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations
     vis : array, unit = Jy
         Observed visibilities (complex: real + imag * 1j)
