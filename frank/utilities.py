@@ -859,7 +859,12 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
 def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
                 inc=0.0):
     """
-    Compute the forward or backward Hankel transform of a function f(x)
+    Compute the visibilities or brightness of a model by directly applying the
+    Discrete Hankel Transform. 
+    
+    The correction for inclination will also be applied, assuming an optically
+    thick disc. For an optically thin disc, setting inc=0 will achieve the 
+    correct scaling.
 
     Parameters
     ----------
@@ -886,7 +891,6 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         Spatial frequency or radial coordinates of the Hankel transform of f(x)
     f_transform : array, size=N, unit = [Jy / sr] or [Jy]
         Hankel transform of f(x)
-
     """
 
     if direction not in ['forward', 'backward']:
@@ -910,12 +914,19 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         # perform the DHT
         f_transform = VM.predict_visibilities(y, grid, k=None, geometry=geom)
 
-    else:
+    elif direction == 'backward':
         y = np.interp(DHT.q, x, f)
 
         if grid is None:
             grid = VM.r
 
+<<<<<<< HEAD
         f_transform = VM.invert_visibilities(y, grid, geometry=geom)
+=======
+        f_transform = VM.invert_visibilities(y, grid)
+
+    else:
+        raise ValueError("direction must be one of ['forward', 'backawrd']")
+>>>>>>> 9f295fa9e574120f4b18d9a3368de366b38170d5
 
     return grid, f_transform
