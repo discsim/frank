@@ -863,8 +863,8 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
     Discrete Hankel Transform. 
     
     The correction for inclination will also be applied, assuming an optically
-    thick disc. For an optically thin disc, setting inc=0 will achieve the 
-    correct scaling.
+    thick disc. Setting inc=0 will do a Hankel Transform without any scaling,
+    appropriate for an optically thin disc.
 
     Parameters
     ----------
