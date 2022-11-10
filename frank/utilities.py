@@ -860,7 +860,11 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
                 inc=0.0):
     """
     Compute the visibilities or brightness of a model by directly applying the
-    Discrete Hankel Transform and the correction for inclination.
+    Discrete Hankel Transform. 
+    
+    The correction for inclination will also be applied, assuming an optically
+    thick disc. For an optically thin disc, setting inc=0 will achieve the 
+    correct scaling.
 
     Parameters
     ----------
@@ -887,11 +891,6 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         Spatial frequency or radial coordinates of the Hankel transform of f(x)
     f_transform : array, size=N, unit = [Jy / sr] or [Jy]
         Hankel transform of f(x)
-
-    Notes
-    -----
-    The appropriate scaling for an optically thin model can be achieved by 
-    using inc=0.
     """
 
     if direction not in ['forward', 'backward']:
