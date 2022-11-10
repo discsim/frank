@@ -26,6 +26,7 @@ from scipy.interpolate import interp1d
 
 from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec
 from frank.geometry import FixedGeometry
+from frank.hankel import DiscreteHankelTransform
 from frank.statistical_models import VisibilityMapping
 
 def arcsec_baseline(x):
@@ -915,10 +916,6 @@ def generic_dht(x, f, Rmax=2.0, N=300, direction='forward', grid=None,
         if grid is None:
             grid = VM.r
 
-        f_transform = VM.transform(y, grid, 'backward')
-
-        # adjust the total flux for the source inclination
-        if direction == 'backward':
-            f_transform /= np.cos(inc * deg_to_rad)
+        f_transform = VM.invert_visibilities(y, grid, geometry=geom)
 
     return grid, f_transform
