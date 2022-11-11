@@ -955,6 +955,40 @@ def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
     return baselines, vis
 
 
+def get_collocation_points(Rmax=2.0, N=500, direction='forward'):
+    """
+    Obtain the collocation points of a discrete Hankel transform for a given
+    'Rmax' and 'N' (see frank.hankel.DiscreteHankelTransform)
+
+    Parameters
+    ----------
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which the real space function is zero
+    N : integer, default=500
+        Number of terms to use in the Fourier-Bessel series
+    direction : { 'forward', 'backward' }, default='forward'
+        Direction of the transform. 'forward' is real space -> Fourier space,
+        returning spatial frequency collocation points.
+
+    Returns
+    -------
+    coll_pts : array, unit = [lambda] or [arcsec]
+        The DHT collocation points in either Fourier or real space.
+
+    """
+    if direction not in ['forward', 'backward']:
+        raise AttributeError("direction must be one of ['forward', 'backward']")
+
+    DHT = DiscreteHankelTransform(Rmax=Rmax / rad_to_arcsec, N=N, nu=0)
+
+    if direction == 'forward':
+        coll_pts = DHT.q
+    else:
+        coll_pts = DHT.r * rad_to_arcsec
+
+    return coll_pts
+
+
 def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
                 inc=0.0):
     """
