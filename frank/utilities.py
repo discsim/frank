@@ -979,12 +979,14 @@ def get_collocation_points(Rmax=2.0, N=500, direction='forward'):
     if direction not in ['forward', 'backward']:
         raise AttributeError("direction must be one of ['forward', 'backward']")
 
-    DHT = DiscreteHankelTransform(Rmax=Rmax / rad_to_arcsec, N=N, nu=0)
+    r_pts, q_pts = DiscreteHankelTransform.get_collocation_points(
+        Rmax=Rmax / rad_to_arcsec, N=N, nu=0
+        )
 
     if direction == 'forward':
-        coll_pts = DHT.q
+        coll_pts = q_pts
     else:
-        coll_pts = DHT.r * rad_to_arcsec
+        coll_pts = r_pts * rad_to_arcsec
 
     return coll_pts
 
