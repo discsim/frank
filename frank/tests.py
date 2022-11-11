@@ -22,14 +22,16 @@ import numpy as np
 import os
 import json
 
+from frank.constants import rad_to_arcsec
 from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
 from frank.geometry import (
     FixedGeometry, FitGeometryGaussian, FitGeometryFourierBessel
 )
 from frank.constants import deg_to_rad
-from frank.utilities import UVDataBinner
+from frank.utilities import UVDataBinner, generic_dht
 from frank.io import load_uvtable, save_uvtable
+from frank.statistical_models import VisibilityMapping
 from frank import fit
 
 
@@ -92,6 +94,40 @@ def test_hankel_gauss():
                                err_msg="Cached inverse DHT Coeffs"
                                )
 
+def test_vis_mapping():
+    def gauss_real_space(r):
+        x = r 
+        return np.exp(-0.5 * x * x)
+
+    def gauss_vis_space(q):
+        qs = (2 * np.pi) * q / rad_to_arcsec
+        return np.exp(-0.5 * qs * qs) * (2 * np.pi / rad_to_arcsec**2)
+
+    DHT = DiscreteHankelTransform(5.0/rad_to_arcsec, 100)
+    geometry = FixedGeometry(60, 0, 0, 0)
+
+    VM = VisibilityMapping(DHT, geometry)
+
+    Ir = gauss_real_space(VM.r)
+    Iq = gauss_vis_space(VM.q)
+
+    # Test at the DHT points.
+    # Use a large error estimate because the DHT is approximate
+    np.testing.assert_allclose(Iq, 2*VM.predict_visibilities(Ir, VM.q),
+                               atol=1e-5, rtol=0, err_msg="Forward DHT with VisibilityMapping")
+
+    np.testing.assert_allclose(Ir, 0.5*VM.invert_visibilities(Iq, VM.r),
+                               atol=1e-5, rtol=0, err_msg="Inverse DHT with VisibilityMapping")
+
+    # Test generic_dht, which uses these functions
+    _, Iq_dht = generic_dht(VM.r, Ir, inc=60, Rmax=5, N=100)
+    _, Ir_dht = generic_dht(VM.q, Iq, inc=60, Rmax=5, N=100, direction='backward')
+
+    np.testing.assert_allclose(Iq, 2*Iq_dht,
+                               atol=1e-5, rtol=0, err_msg="Forward DHT with generic_dht")
+
+    np.testing.assert_allclose(Ir, 0.5*Ir_dht,
+                               atol=1e-5, rtol=0, err_msg="Inverse DHT with generic_dht")
 
 def test_import_data():
     """Check the UVTable import function works for a .txt"""

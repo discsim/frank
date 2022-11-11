@@ -88,6 +88,7 @@ class LineSearch(BaseLineSearch):
         f0 : array, optional.
             Evaluation of func at x0, i.e. func(x0). If not provided then this
             will be evaluated internally.
+        root : 
 
         Returns
         -------
@@ -208,8 +209,8 @@ def MinimizeNewton(fun, jac, hess, guess, line_search,
         Back-tracking line_search object
     max_step : int
         Maximum number of steps allowed
-    mac_jev : int 
-        Maximum number of jacobian evaluations allowed
+    max_hev : int
+        Maximum number of Hessian evaluations allowed
     tol : float,
         Tolerance parameter for convergence. Convergence occurs when:
             np.sqrt(np.mean(jac(x)**2)) < tol

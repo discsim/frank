@@ -96,6 +96,38 @@ class DiscreteHankelTransform(object):
         self._j_nk = j_nk
         self._j_nN = j_nN
 
+    @classmethod
+    def get_collocation_points(cls, Rmax, N, nu=0):
+        """
+        Compute the collocation points for a Hankel Transform.
+
+        Parameters
+        ----------
+        Rmax : float
+            Maximum radius beyond which f(r) is zero
+        N : integer
+            Number of terms to use in the series
+        nu : integer, default = 0
+            Order of the Bessel function, J_nu(r)
+
+        Returns
+        -------
+        Rnk : array, shape=(N,) unit=radians
+            Radial collocation points in
+        Qnk : array, shape=(N,) unit=1/radians
+            Frequency collocation points
+        """
+
+        j_nk = jn_zeros(nu, N + 1)
+        j_nk, j_nN = j_nk[:-1], j_nk[-1]
+
+        Qmax = j_nN / (2 * np.pi * Rmax)
+
+        Rnk = Rmax * (j_nk / j_nN)
+        Qnk = Qmax * (j_nk / j_nN)
+
+        return Rnk, Qnk
+
     def transform(self, f, q=None, direction='forward'):
         """
         Compute the Hankel transform of an array
