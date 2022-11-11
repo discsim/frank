@@ -968,12 +968,12 @@ def get_collocation_points(Rmax=2.0, N=500, direction='forward'):
         Number of terms to use in the Fourier-Bessel series
     direction : { 'forward', 'backward' }, default='forward'
         Direction of the transform. 'forward' is real space -> Fourier space,
-        returning spatial frequency collocation points.
+        returning real space radial collocation points needed for the transform.
 
     Returns
     -------
     coll_pts : array, unit = [lambda] or [arcsec]
-        The DHT collocation points in either Fourier or real space.
+        The DHT collocation points in either real or Fourier space.
 
     """
     if direction not in ['forward', 'backward']:
@@ -984,9 +984,9 @@ def get_collocation_points(Rmax=2.0, N=500, direction='forward'):
         )
 
     if direction == 'forward':
-        coll_pts = q_pts
-    else:
         coll_pts = r_pts * rad_to_arcsec
+    else:
+        coll_pts = q_pts
 
     return coll_pts
 
