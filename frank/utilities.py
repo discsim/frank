@@ -934,6 +934,10 @@ def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
     vis : array, unit = Jy
         Mock visibility amplitudes, including noise if 'add_noise' is True
 
+    Notes
+    -----
+    'r' and 'I' should be sufficiently sampled to ensure an interpolation will
+    be accurate, otherwise 'vis' may be a poor estimate of their transform.
     """
 
     if geometry is None:
@@ -986,6 +990,12 @@ def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
         Spatial frequency or radial coordinates of the Hankel transform of f(x)
     f_transform : array, size=N, unit = [Jy / sr] or [Jy]
         Hankel transform of f(x)
+
+    Notes
+    -----
+    'x' and 'f' should be sufficiently sampled to ensure an interpolation will
+    be accurate, otherwise 'f_transform' may be a poor estimate of their
+    transform.
     """
 
     if direction not in ['forward', 'backward']:
