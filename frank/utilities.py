@@ -884,7 +884,8 @@ def add_vis_noise(vis, weights, seed=None):
     if np.iscomplexobj(vis):
         dim0 = 2
 
-    noise = np.random.standard_normal([dim0, len(vis)])
+    vis = np.array(vis)
+    noise = np.random.standard_normal((dim0,) + vis.shape)
     noise *= weights ** -0.5
 
     vis_noisy = vis + noise[0]
