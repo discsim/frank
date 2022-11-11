@@ -16,9 +16,9 @@ NOTEBOOKS := \
 	model_limitations.rst \
 	mstable_to_uvtable.rst \
 	fit_convergence.rst \
+	mock_data.ipynb \
 	AS209_clean_profile.txt \
 	AS209_continuum.npz \
-
 
 # Put it first so that "make" without argument is like "make help".
 help:
