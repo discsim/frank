@@ -873,8 +873,8 @@ def add_vis_noise(vis, weights, seed=None):
 
     Returns
     -------
-    vis_noisy : array, shape = (2, len(V)) if V is complex; else (1, len(V))
-        Visibilities with additive noise
+    vis_noisy : array, shape = vis.shape
+        Visibilities with added noise
 
     """
     if seed is not None:
