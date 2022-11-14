@@ -13,4 +13,5 @@ use ``frank`` and interpret the results.
    tutorials/prior_sensitivity.rst
    tutorials/fit_convergence.rst
    tutorials/model_limitations.rst
+   tutorials/lognormal_fit.ipynb 
    tutorials/mock_data.ipynb

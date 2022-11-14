@@ -11,11 +11,12 @@ BUILDDIR      = _build
 TUT_DST_DIR := tutorials
 
 NOTEBOOKS := \
+	mstable_to_uvtable.rst \
 	fitting_procedure.ipynb \
 	prior_sensitivity.rst \
-	model_limitations.rst \
-	mstable_to_uvtable.rst \
 	fit_convergence.rst \
+	model_limitations.rst \
+	lognormal_fit.ipynb \
 	mock_data.ipynb \
 	AS209_clean_profile.txt \
 	AS209_continuum.npz \
