@@ -26,7 +26,8 @@
     "pa"               : "Position angle, defined east of north, unit=[deg]",
     "dra"              : "Delta (offset from 0) right ascension, defined positive for offsets toward east, unit=[arcsec]",
     "ddec"             : "Delta declination, unit=[arcsec]",
-    "rescale_flux"     : "Whether to rescale the total flux to account for the source's inclination (see frank.geometry.rescale_total_flux)"
+    "rescale_flux"     : "Whether to rescale the total flux to account for the source's inclination (see frank.geometry.rescale_total_flux)",
+    "scale_height"     : "Vertical thickness of the disk, in terms of its (asssumed Gaussian) scale-height. A function of the form H(R), unit=[arcsec] (for both H and R). Example syntax (replace single- with double-quotes): {'H':'0.05','formula':'H*R'}"
   },
 
   "hyperparameters" : {

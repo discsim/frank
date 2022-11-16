@@ -26,7 +26,8 @@
     "pa"               : 0.0,
     "dra"              : 0.0,
     "ddec"             : 0.0,
-    "rescale_flux"     : true
+    "rescale_flux"     : true,
+    "scale_height"     : null
   },
 
   "hyperparameters" : {
