@@ -192,6 +192,19 @@ def parse_parameters(*args):
             format = os.path.splitext(path)[1]
         model['input_output']['format'] = format[1:]
 
+    if model['geometry']['scale_height'] is not None:
+        if model['geometry']['rescale_flux']:
+            err = ValueError("scale_height should be 'null' (None) if"
+                             " rescale_flux is 'true'")
+            raise err
+
+        def scale_height(R):
+            """Parse the functional form for the scale-height in the .json"""
+            HR_dict = model['geometry']['scale_height']
+            H = eval(HR_dict['H'])
+            HR_func = lambda x:lambda:eval(x)
+            return HR_func(HR_dict['formula'])
+
     param_path = save_prefix + '_frank_used_pars.json'
 
     logging.info(
@@ -408,7 +421,8 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     method=model['hyperparameters']['method'],
                                     max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations,
-                                    assume_optically_thick=model['geometry']['rescale_flux']
+                                    assume_optically_thick=model['geometry']['optical_depth'],
+                                    scale_height=scale_height
                                     )
 
     sol = FF.fit(u, v, vis, weights)
