@@ -1,6 +1,6 @@
 {
   "input_output" : {
-    "uvtable_filename" : "UVTable with data to be fit (columns: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2])",
+    "uvtable_filename" : "UVTable with data to be fit. An ASCII file should have columns of: u [\\lambda], v [\\lambda], Re(V) [Jy], Im(V) [Jy], weights [Jy^-2]. An npz file should have columns of: u [\\lambda], v [\\lambda], V [Jy; complex: real + imag * 1j], weights [Jy^-2])",
     "save_dir"         : "Directory in which output datafiles and figures are saved",
     "save_solution"    : "Whether to save `sol` object (see frank.radial_fitters.FrankFitter)",
     "save_profile_fit" : "Whether to save fitted brightness profile",
