@@ -421,7 +421,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     method=model['hyperparameters']['method'],
                                     max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations,
-                                    assume_optically_thick=model['geometry']['optical_depth'],
+                                    assume_optically_thick=model['geometry']['rescale_flux'],
                                     scale_height=scale_height
                                     )
 
