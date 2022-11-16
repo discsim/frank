@@ -192,19 +192,6 @@ def parse_parameters(*args):
             format = os.path.splitext(path)[1]
         model['input_output']['format'] = format[1:]
 
-    if model['geometry']['scale_height'] is not None:
-        if model['geometry']['rescale_flux']:
-            err = ValueError("scale_height should be 'null' (None) if"
-                             " rescale_flux is 'true'")
-            raise err
-
-        def scale_height(R):
-            """Parse the functional form for the scale-height in the .json"""
-            HR_dict = model['geometry']['scale_height']
-            H = eval(HR_dict['H'])
-            HR_func = lambda x:lambda:eval(x)
-            return HR_func(HR_dict['formula'])
-
     param_path = save_prefix + '_frank_used_pars.json'
 
     logging.info(
@@ -379,6 +366,43 @@ def determine_geometry(u, v, vis, weights, model):
     return geom
 
 
+def get_scale_height(model):
+    """
+    Retrieve the scale-height functional form if provided in the parameter file
+
+    Parameters
+    ----------
+    model : dict
+        Dictionary containing model parameters the fit uses
+
+    Returns
+    -------
+    scale_height : None or function R --> H
+    None if scale_height is 'null' (None) or rescale_flux is True in the input
+    parameter file.
+    Else, a function for the vertical thickness of disc provided in the
+    parameter file.
+
+    """
+
+    if model['geometry']['scale_height'] is None:
+        scale_height=model['geometry']['scale_height']
+    else:
+        if model['geometry']['rescale_flux']:
+            err = ValueError("scale_height should be 'null' (None) if"
+                             " rescale_flux is 'true'")
+            raise err
+
+        def scale_height(R):
+            """Parse the functional form for the scale-height in the .json"""
+            HR_dict = model['geometry']['scale_height']
+            H = eval(HR_dict['H'])
+            HR_func = lambda x:lambda:eval(x)
+            return HR_func(HR_dict['formula'])
+
+    return scale_height
+
+
 def perform_fit(u, v, vis, weights, geom, model):
     r"""
     Deproject the observed visibilities and fit them for the brightness profile
@@ -409,6 +433,8 @@ def perform_fit(u, v, vis, weights, geom, model):
 
     need_iterations = model['input_output']['iteration_diag'] or \
         model['plotting']['diag_plot']
+
+    scale_height = get_scale_height(model)
 
     t1 = time.time()
     FF = radial_fitters.FrankFitter(Rmax=model['hyperparameters']['rout'],
