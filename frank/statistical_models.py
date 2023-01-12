@@ -18,6 +18,7 @@
 #
 
 
+import multiprocessing
 import numpy as np
 import scipy.linalg
 import scipy.sparse
@@ -200,21 +201,77 @@ class VisibilityMapping:
             Ndata = len(Vi)
             M = Ms[i]
             j = js[i]
-            while start < Ndata:
-                qs = qi[start:end]
-                ks = ki[start:end]
-                ws = wi[start:end]
-                Vs = Vi[start:end]
 
+
+            def get_Mj(qs, ks, ws, Vs):
+                """Wrapper for M, j computation"""
                 X = self._get_mapping_coefficients(qs, ks)
 
                 wXT = np.array(X.T * ws, order='C')
 
-                M += np.dot(wXT, X)
-                j += np.dot(wXT, Vs)
+                M = np.dot(wXT, X)
+                j = np.dot(wXT, Vs)
 
-                start = end
-                end += Nstep
+                return [M, j]
+
+            def parallelReduce_Mj(first, last, numCPUs, connection=None, Nstep=Nstep):
+                """Build M, j in parallel"""
+               
+                # When we get to small enough amounts of data, chunk up the
+                # calculation and return
+                if numCPUs == 1 or last - first < Nstep:
+
+                    M = np.zeros([self.size, self.size], dtype='f8')
+                    j = np.zeros(self.size, dtype='f8')
+                    
+                    start = first 
+                    end = min(last, first + Nstep)
+                    while start < last:
+                        M_, j_ = get_Mj(qi[start:end], ki[start:end], 
+                                        wi[start:end], Vi[start:end])
+
+                        M += M_
+                        j += j_
+
+                        start = end
+                        end = min(last, end + Nstep)
+
+                    if connection != None:
+                        connection.send([M,j])
+
+                    return [M,j]
+
+                # Divide the work accross 2 threads
+                mid = (first + last) // 2
+
+                parent1, child1 = multiprocessing.Pipe()
+                parent2, child2 = multiprocessing.Pipe()
+                p1 = multiprocessing.Process(target=parallelReduce_Mj, 
+                        args=(first, mid, numCPUs//2 + numCPUs%2, child1))
+                p2 = multiprocessing.Process(target=parallelReduce_Mj, 
+                       args=(mid, last, numCPUs//2, child2))
+                p1.start()
+                p2.start()
+
+                # Collect the result
+                Mj_1, Mj_2 = parent1.recv(), parent2.recv()
+                p1.join()
+                p2.join()
+
+                Mj_1[0] += Mj_2[0]
+                Mj_1[1] += Mj_2[1]
+
+
+                if connection != None:
+                    connection.send(Mj_1)
+
+                return Mj_1
+
+            # Build the matrices for this frequency point
+            Ms[i], js[i] = parallelReduce_Mj(0, len(qi), 
+                        multiprocessing.cpu_count() // 2)
+
+
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
@@ -232,6 +289,7 @@ class VisibilityMapping:
         else: 
             return {
                 'mult_freq' : False,
+                'channels' : None,
                 'M' : Ms[0],
                 'j' : js[0],
                 'null_likelihood' : H0,
@@ -358,6 +416,27 @@ class VisibilityMapping:
             
         return self._DHT.transform(f, q, direction)
 
+    def DHT_coefficients(self, direction='forward'):
+        """Get the coefficients of the Discrete Hankel Transform.
+
+        The coefficients are defined by
+        .. math:
+            H[h] = np.dot(H, f)
+        
+        Parameters
+        ----------
+        direction : { 'forward', 'backward' }, optional
+            Direction of the transform. If not supplied, the forward
+            transform is used
+
+        Returns
+        -------
+        H : array, size = N or len(q) if supplied
+            The Hankel transform of the array f
+
+        """
+        return self._DHT.coefficients(direction=direction)
+
 
     def _get_mapping_coefficients(self, qs, ks, geometry=None):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
@@ -438,6 +517,7 @@ class VisibilityMapping:
             return self._scale_height(self.r)
         else:
             return None
+
 
 class GaussianModel:
     r"""
