@@ -107,7 +107,7 @@ class VisibilityMapping:
             self._H2 = 0.5*(2*np.pi*self._scale_height / rad_to_arcsec)**2
             
             if self._verbose:
-                logging.info('  Assuming an optically thin model but geometrically: '
+                logging.info('  Assuming an optically thin model but geometrically '
                              'thick model: *Not* scaling the total flux to account for '
                              'the source inclination')
    
