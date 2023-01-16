@@ -211,10 +211,9 @@ class CriticalFilter:
         Dqq = np.dot(Ykm, np.dot(fit.covariance, Ykm.T))
 
         p = fit.power_spectrum
-        tau = np.log(p)
 
         hess = \
-            + np.diag(self._alpha - 1.0 + 0.5 * self._rho + self._Tij.dot(tau)) \
+            + np.diag(self._p_0/p + 0.5*(mq**2 + np.diag(Dqq))/p) \
             + self._Tij.todense() \
             - 0.5 * np.outer(1 / p, 1 / p) * (2 * mqq + Dqq) * Dqq
 
@@ -249,7 +248,7 @@ class CriticalFilter:
 
         # Add the power spectrum prior term
         xi = self._p_0 / p
-        like = np.sum(xi - self._alpha * np.log(xi))
+        like = - np.sum(xi + (self._alpha-1) * np.log(xi))
 
         # Extra term due to spectral smoothness
         tau = np.log(p)
