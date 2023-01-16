@@ -225,8 +225,11 @@ class CriticalFilter:
         Compute the log prior probability, log(P(p)),
 
         .. math:
-            `log[P(p)] ~ np.sum(p0/pi - alpha*np.log(p0/pi))
+            `log[P(p)] ~ - np.sum(p0/pi + (alpha-1)*np.log(p0/pi))
             - 0.5*np.log(p) (weights_smooth*T) np.log(p)`
+
+        Note that frank uses log(p) in the inference hence the probability
+        is normalized such that ..math:`\int P(p) d\log p = 1`.
 
         Parameters
         ----------
