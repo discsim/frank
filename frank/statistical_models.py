@@ -202,79 +202,21 @@ class VisibilityMapping:
             start = 0
             end = Nstep
             Ndata = len(Vi)
-            M = Ms[i]
-            j = js[i]
-
-
-            def get_Mj(qs, ks, ws, Vs):
-                """Wrapper for M, j computation"""
+            while start < Ndata:
+                qs = qi[start:end]
+                ks = ki[start:end]
+                ws = wi[start:end]
+                Vs = Vi[start:end]
+                
                 X = self._get_mapping_coefficients(qs, ks)
 
                 wXT = np.array(X.T * ws, order='C')
 
-                M = np.dot(wXT, X)
-                j = np.dot(wXT, Vs)
+                Ms[i] += np.dot(wXT, X)
+                js[i] += np.dot(wXT, Vs)
 
-                return [M, j]
-
-            def parallelReduce_Mj(first, last, numCPUs, connection=None, Nstep=Nstep):
-                """Build M, j in parallel"""
-               
-                # When we get to small enough amounts of data, chunk up the
-                # calculation and return
-                if numCPUs == 1 or last - first < Nstep:
-
-                    M = np.zeros([self.size, self.size], dtype='f8')
-                    j = np.zeros(self.size, dtype='f8')
-                    
-                    start = first 
-                    end = min(last, first + Nstep)
-                    while start < last:
-                        M_, j_ = get_Mj(qi[start:end], ki[start:end], 
-                                        wi[start:end], Vi[start:end])
-
-                        M += M_
-                        j += j_
-
-                        start = end
-                        end = min(last, end + Nstep)
-
-                    if connection != None:
-                        connection.send([M,j])
-
-                    return [M,j]
-
-                # Divide the work accross 2 threads
-                mid = (first + last) // 2
-
-                parent1, child1 = multiprocessing.Pipe()
-                parent2, child2 = multiprocessing.Pipe()
-                p1 = multiprocessing.Process(target=parallelReduce_Mj, 
-                        args=(first, mid, numCPUs//2 + numCPUs%2, child1))
-                p2 = multiprocessing.Process(target=parallelReduce_Mj, 
-                       args=(mid, last, numCPUs//2, child2))
-                p1.start()
-                p2.start()
-
-                # Collect the result
-                Mj_1, Mj_2 = parent1.recv(), parent2.recv()
-                p1.join()
-                p2.join()
-
-                Mj_1[0] += Mj_2[0]
-                Mj_1[1] += Mj_2[1]
-
-
-                if connection != None:
-                    connection.send(Mj_1)
-
-                return Mj_1
-
-            # Build the matrices for this frequency point
-            Ms[i], js[i] = parallelReduce_Mj(0, len(qi), 
-                        multiprocessing.cpu_count() // 2)
-
-
+                start = end
+                end = min(Ndata, end + Nstep)
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
