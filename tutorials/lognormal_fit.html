@@ -403,6 +403,10 @@ div.rendered_html tbody tr:hover {
 <h2>Fitting a known brightness profile with the standard and logarithmic models<a class="headerlink" href="#Fitting-a-known-brightness-profile-with-the-standard-and-logarithmic-models" title="Permalink to this heading"></a></h2>
 <p>To compare the standard and logarithmic approaches, let’s define a mock brightness profile for an azisymmetric disk with several gaps and rings at different spatial scales. Then synthetically observe the source without fully resolving the features, using the <em>(u,v)</em> coordinates and noise properties of the DSHARP observations of AS 209. Finally we’ll fit the resulting mock data with the standard, non-negative and logarithmic <code class="docutils literal notranslate"><span class="pre">frank</span></code> models for comparison.</p>
 <p>The <a class="reference internal" href="mock_data.html"><span class="doc">mock data tutorial</span></a> details how to generate and fit mock data with <code class="docutils literal notranslate"><span class="pre">frank</span></code>, so we’re going to use the same approach as there.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We’re going to use <code class="docutils literal notranslate"><span class="pre">frank</span></code> as a module here; if you want to run a logarithmic fit from the terminal, just change the <code class="docutils literal notranslate"><span class="pre">hyperparameters</span> <span class="pre">:</span> <span class="pre">method</span></code> parameter in your <em>.json</em> parameter file from <code class="docutils literal notranslate"><span class="pre">Normal</span></code> (for a standard fit) to <code class="docutils literal notranslate"><span class="pre">LogNormal</span></code> (for a logarithmic fit).</p>
+</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -451,7 +455,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_lognormal_fit_7_0.png" src="../_images/tutorials_lognormal_fit_7_0.png" />
+<img alt="../_images/tutorials_lognormal_fit_8_0.png" src="../_images/tutorials_lognormal_fit_8_0.png" />
 </div>
 </div>
 <p>Generate a synthetic, noisy visibility distribution using this profile and sampling the mock visibilitiess at the <span class="math notranslate nohighlight">\((u,v)\)</span> coordinates of the real DSHARP observations of AS 209.</p>
@@ -598,7 +602,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_lognormal_fit_15_0.png" src="../_images/tutorials_lognormal_fit_15_0.png" />
+<img alt="../_images/tutorials_lognormal_fit_16_0.png" src="../_images/tutorials_lognormal_fit_16_0.png" />
 </div>
 </div>
 <p>Comparing the standard, non-negative and logarithmic <code class="docutils literal notranslate"><span class="pre">frank</span></code> fits, in the brightness profiles of the upper-left panel (and lower-left, plotted in log brightness) we see they each have relative advantages and tradeoffs:</p>
@@ -625,7 +629,7 @@ div.rendered_html tbody tr:hover {
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2023, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2023 Feb 14 at 13:20:35 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2023 Feb 14 at 13:41:14 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
