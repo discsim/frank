@@ -3,6 +3,10 @@
 Changelog
 +++++++++
 
+v.1.2.1
++++++++
+*Fixed a bug that caused non-python files to not be installed through pip*
+
 v.1.2.0
 +++++++
 *Introduction of log-normal fits, large amount of code refactoring to support both 'Gaussian' and 'LogNormal' methods*

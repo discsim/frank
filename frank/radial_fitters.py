@@ -428,8 +428,6 @@ class FourierBesselFitter(object):
         Large temporary matrices are needed to set up the data. If block_data
         is True, we avoid this, limiting the memory requirement to block_size
         elements.
-    block_size : int, default = 10**5
-        Size of the matrices if blocking is used
     assume_optically_thick : bool, default = True
         Whether to correct the visibility amplitudes by a factor of
         1 / cos(inclination); see frank.geometry.rescale_total_flux
@@ -437,6 +435,8 @@ class FourierBesselFitter(object):
         Specifies the vertical thickness of disc as a function of radius. Both
         R and H should be in arcsec. Assumes a Gaussian vertical structure. 
         Only works with assume_optically_thick=False
+    block_size : int, default = 10**5
+        Size of the matrices if blocking is used
     verbose : bool, default = False
         Whether to print notification messages
     """
@@ -775,7 +775,7 @@ class FrankFitter(FourierBesselFitter):
 
             if self._store_iteration_diagnostics:
                 self._iteration_diagnostics['power_spectrum'].append(pI)
-                self._iteration_diagnostics['mean'].append(fit.MAP)
+                self._iteration_diagnostics['MAP'].append(fit.MAP)
 
             count += 1
 

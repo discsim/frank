@@ -25,6 +25,9 @@ from scipy.fft import fftfreq
 from scipy.interpolate import interp1d
 
 from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec
+from frank.geometry import FixedGeometry
+from frank.hankel import DiscreteHankelTransform
+from frank.statistical_models import VisibilityMapping
 
 def arcsec_baseline(x):
     """
@@ -44,6 +47,39 @@ def arcsec_baseline(x):
     """
 
     converted = 1 / (x / 60 / 60 * np.pi / 180)
+
+    return converted
+
+
+def radius_convert(x, dist, conversion='arcsec_au'):
+    """
+    Provide x as a radius/radii in [arcsec] to convert to [au] (or vice-versa),
+    assuming a distance in [pc]
+
+    Parameters
+    ----------
+    x : float or array
+        Radius or radii ([arcsec] or [au])
+    dist : float
+        Distance to source [pc]
+    conversion : {'arcsec_au', 'au_arcsec'}, default = 'arcsec_au'
+        The unit conversion to perform, e.g. 'arcsec_au' converts from [arcsec]
+        to [au]
+
+    Returns
+    -------
+    converted : float or array
+        Radius or radii ([au] or [arcsec])
+
+    """
+
+    if conversion == 'arcsec_au':
+        converted = x * dist
+    elif conversion == 'au_arcsec':
+        converted = x / dist
+    else:
+        raise AttributeError("conversion must be one of {}"
+                             "".format(['arcsec_au', 'au_arcsec']))
 
     return converted
 
@@ -326,7 +362,6 @@ class UVDataBinner(object):
         return [self._uv_left, self._uv_right]
 
 
-
 def normalize_uv(u, v, wle):
     r"""
     Normalize data u and v coordinates by the observing wavelength
@@ -335,8 +370,9 @@ def normalize_uv(u, v, wle):
     ----------
     u, v : array, unit = [m]
         u and v coordinates of observations
-    wle : float, unit = [m]
-        Observing wavelength of observations
+    wle : float or array, unit = [m]
+        Observing wavelength of observations. If an array, it should be the
+        pointwise wavelength for each (u,v) point
 
     Returns
     -------
@@ -348,6 +384,10 @@ def normalize_uv(u, v, wle):
     logging.info('  Normalizing u and v coordinates by provided'
                  ' observing wavelength of {} m'.format(wle))
 
+    wle = np.atleast_1d(wle, dtype='f8')
+    if  len(wle) != 1 and len(wle) != len(u):
+        raise ValueError("len(wle) = {}. It should be equal to "
+                         "len(u) = {} (or 1 if all wavelengths are the same)".format(len(wle), len(u)))
     u_normed = u / wle
     v_normed = v / wle
 
@@ -363,7 +403,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
 
     Parameters
     ----------
-    u, v : array, unit = [m]
+    u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations
     vis : array, unit = Jy
         Observed visibilities (complex: real + imag * 1j)
@@ -404,6 +444,7 @@ def cut_data_by_baseline(u, v, vis, weights, cut_range, geometry=None):
     u_cut, v_cut, vis_cut, weights_cut = [x[in_range] for x in [u, v, vis, weights]]
 
     return u_cut, v_cut, vis_cut, weights_cut
+
 
 def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
                      verbose=True):
@@ -522,6 +563,7 @@ def estimate_weights(u, v=None, V=None, nbins=300, log=True, use_median=False,
         weights = 1/var[bin_id]
 
         return weights
+
 
 def draw_bootstrap_sample(u, v, vis, weights):
     r"""
@@ -719,7 +761,6 @@ def make_image(fit, Npix, xmax=None, ymax=None, project=True):
     y = 0.5*(ye[1:] + ye[:-1])
 
     return x, y, I
-    
 
 
 def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
@@ -813,3 +854,210 @@ def convolve_profile(r, I, disc_i, disc_pa, clean_beam,
     I_smooth /= counts
 
     return I_smooth
+
+
+def add_vis_noise(vis, weights, seed=None):
+    r"""
+    Add Gaussian noise to visibilities
+
+    Parameters
+    ----------
+    vis : array, unit = [Jy]
+        Visibilities to add noise to.
+        Can be complex (real + imag * 1j) or purely real.
+    weights : array, unit = [Jy^-2]
+        Weights on the visibilities, of the form :math:`1 / \sigma^2`.
+        Injected noise will be scaled proportional to `\sigma`.
+    seed : int, default = None
+        Number to initialize a pseudorandom number generator for the noise draws
+
+    Returns
+    -------
+    vis_noisy : array, shape = vis.shape
+        Visibilities with added noise
+
+    """
+    if seed is not None:
+        np.random.seed(seed)
+
+    dim0 = 1
+    if np.iscomplexobj(vis):
+        dim0 = 2
+
+    vis = np.array(vis)
+    noise = np.random.standard_normal((dim0,) + vis.shape)
+    noise *= weights ** -0.5
+
+    vis_noisy = vis + noise[0]
+    if np.iscomplexobj(vis):
+        vis_noisy += 1j * noise[1]
+
+    return vis_noisy
+
+
+def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
+                   weights=None, seed=None):
+    r"""
+    Generate mock visibilities from a provided brightness profile and (u,v)
+    distribution.
+
+    Parameters
+    ----------
+    r : array, unit = [arcsec]
+        Radial coordinates of I(r)
+    I : array, unit = [Jy / sr]
+        Brightness values at r
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which I(r) is zero. This should be larger than the
+        disk size
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    geometry : SourceGeometry object, default=None
+        Source geometry (see frank.geometry.SourceGeometry). If supplied, the
+        visibilities will be deprojected, and their total flux scaled by the
+        inclination.
+    N : integer, default=500
+        Number of terms to use in the Fourier-Bessel series
+    add_noise : bool, default = False
+        Whether to add noise to the mock visibilities
+    weights : array, unit = Jy^-2
+        Visibility weights, of the form :math:`1 / \sigma^2`.
+        If provided, injected noise will be scaled proportional to `\sigma`.
+    seed : int, default = None
+        Number to initialize a pseudorandom number generator for the noise draws
+
+    Returns
+    -------
+    baselines : array, unit = :math:`\lambda`
+        Baseline coordinates of the mock visibilities. These will be equal to
+        np.hypot(u, v) if 'geometry' is None (or if its keys are all equal to 0)
+    vis : array, unit = Jy
+        Mock visibility amplitudes, including noise if 'add_noise' is True
+
+    Notes
+    -----
+    'r' and 'I' should be sufficiently sampled to ensure an interpolation will
+    be accurate, otherwise 'vis' may be a poor estimate of their transform.
+    """
+
+    if geometry is None:
+        geometry = FixedGeometry(0, 0, 0, 0)
+    else:
+        u, v = geometry.deproject(u, v)
+
+    baselines = np.hypot(u, v)
+
+    _, vis = generic_dht(r, I, Rmax, N, grid=baselines, inc=geometry.inc)
+
+    if add_noise:
+        vis = add_vis_noise(vis, weights, seed)
+
+    return baselines, vis
+
+
+def get_collocation_points(Rmax=2.0, N=500, direction='forward'):
+    """
+    Obtain the collocation points of a discrete Hankel transform for a given
+    'Rmax' and 'N' (see frank.hankel.DiscreteHankelTransform)
+
+    Parameters
+    ----------
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which the real space function is zero
+    N : integer, default=500
+        Number of terms to use in the Fourier-Bessel series
+    direction : { 'forward', 'backward' }, default='forward'
+        Direction of the transform. 'forward' is real space -> Fourier space,
+        returning real space radial collocation points needed for the transform.
+
+    Returns
+    -------
+    coll_pts : array, unit = [lambda] or [arcsec]
+        The DHT collocation points in either real or Fourier space.
+
+    """
+    if direction not in ['forward', 'backward']:
+        raise AttributeError("direction must be one of ['forward', 'backward']")
+
+    r_pts, q_pts = DiscreteHankelTransform.get_collocation_points(
+        Rmax=Rmax / rad_to_arcsec, N=N, nu=0
+        )
+
+    if direction == 'forward':
+        coll_pts = r_pts * rad_to_arcsec
+    else:
+        coll_pts = q_pts
+
+    return coll_pts
+
+
+def generic_dht(x, f, Rmax=2.0, N=500, direction='forward', grid=None,
+                inc=0.0):
+    """
+    Compute the visibilities or brightness of a model by directly applying the
+    Discrete Hankel Transform. 
+    
+    The correction for inclination will also be applied, assuming an optically
+    thick disc. For an optically thin disc, setting inc=0 (the default) will
+    achieve the correct scaling.
+
+    Parameters
+    ----------
+    x : array, unit = [arcsec] or [lambda]
+        Radial or spatial frequency coordinates of f(x)
+    f : array, unit = [Jy / sr] or [Jy]
+        Amplitude values of f(x)
+    Rmax : float, unit = [arcsec], default=2.0
+        Maximum radius beyond which the real space function is zero
+    N : integer, default=500
+        Number of terms to use in the Fourier-Bessel series
+    direction : { 'forward', 'backward' }, default='forward'
+        Direction of the transform. 'forward' is real space -> Fourier space.
+    grid : array, unit = [arcsec] or [lambda], default=None
+        The radial or spatial frequency points at which to sample the DHT.
+        If None, the DHT collocation points will be used.
+    inc : float, unit = [deg], default = 0.0
+        Source inclination. The total flux of the transform of f(x)
+        will be scaled by cos(inc); this has no effect if inc=0.
+
+    Returns
+    -------
+    grid : array, size=N, unit = [arcsec] or [lambda]
+        Spatial frequency or radial coordinates of the Hankel transform of f(x)
+    f_transform : array, size=N, unit = [Jy / sr] or [Jy]
+        Hankel transform of f(x)
+
+    Notes
+    -----
+    'x' and 'f' should be sufficiently sampled to ensure an interpolation will
+    be accurate, otherwise 'f_transform' may be a poor estimate of their
+    transform.
+    """
+
+    if direction not in ['forward', 'backward']:
+        raise AttributeError("direction must be one of ['forward', 'backward']")
+
+    DHT = DiscreteHankelTransform(Rmax=Rmax / rad_to_arcsec, N=N, nu=0)
+    geom = FixedGeometry(inc, 0, 0, 0)
+    VM = VisibilityMapping(DHT, geom)
+
+    if direction == 'forward':
+        # map the profile f(x) onto the DHT collocation points.
+        # this is necessary for an accurate transform.
+        y = np.interp(VM.r, x, f)
+
+        if grid is None:
+            grid = VM.q
+
+        # perform the DHT
+        f_transform = VM.predict_visibilities(y, grid, geometry=geom)
+
+    else:
+        y = np.interp(VM.q, x, f)
+
+        if grid is None:
+            grid = VM.r
+
+        f_transform = VM.invert_visibilities(y, grid, geometry=geom)
+
+    return grid, f_transform

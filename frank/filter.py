@@ -69,6 +69,9 @@ class CriticalFilter:
 
     Parameters
     ----------
+    DHT : DiscreteHankelTransform
+        A DHT object with N bins that defines H(p). The DHT is used to compute
+        :math:`S(p)`
     alpha : float >= 1
         Order parameter of the inverse gamma prior for the power spectrum
         coefficients.
