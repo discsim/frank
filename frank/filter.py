@@ -224,7 +224,7 @@ class CriticalFilter:
         return ps_cov
 
     def log_prior(self, p):
-        """
+        r"""
         Compute the log prior probability, log(P(p)),
 
         .. math:

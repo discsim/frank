@@ -956,7 +956,7 @@ class FrankFitter(FourierBesselFitter):
         return self.log_prior(sol.power_spectrum) + sol.log_likelihood()
 
     def log_evidence_laplace(self):
-        """Compute the evidence, p(V), for the best fit model.
+        r"""Compute the evidence, p(V), for the best fit model.
 
         Uses the Laplace approximation, I.e. we model the posterior p(p, V) as
         a Gaussian in \tau = log(p) centered on p_MAP with the covariance 
