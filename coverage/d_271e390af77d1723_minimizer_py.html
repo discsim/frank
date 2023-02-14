@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for frank/minimizer.py: 76%</title>
+    <title>Coverage for frank/minimizer.py: 84%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="coverage_html.js" defer></script>
@@ -13,7 +13,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>frank/minimizer.py</b>:
-            <span class="pc_cov">76%</span>
+            <span class="pc_cov">84%</span>
         </h1>
         <div id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -44,8 +44,8 @@
         </div>
         <h2>
             <span class="text">103 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">78<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">25<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">87<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">16<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <div style="display: none;">
@@ -314,20 +314,20 @@
     <p class="pln"><span class="n"><a id="t255" href="#t255">255</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t256" href="#t256">256</a></span><span class="t">            <span class="com"># Try again once more with a different back tracking algorithm                </span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t257" href="#t257">257</a></span><span class="t">            <span class="key">if</span> <span class="nam">failed_descent</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t258" href="#t258">258</a></span><span class="t">                <span class="nam">dx</span> <span class="op">=</span> <span class="nam">line_search</span><span class="op">.</span><span class="nam">reduce_step</span><span class="op">(</span><span class="op">-</span><span class="nam">jx</span><span class="op">,</span> <span class="nam">x</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t259" href="#t259">259</a></span><span class="t">                <span class="nam">alpha</span> <span class="op">=</span> <span class="num">2</span><span class="op">**</span><span class="op">-</span><span class="num">4</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t260" href="#t260">260</a></span><span class="t">                <span class="key">for</span> <span class="nam">_</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">10</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t261" href="#t261">261</a></span><span class="t">                    <span class="nam">xn</span> <span class="op">=</span> <span class="nam">x</span> <span class="op">+</span> <span class="nam">dx</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t">                    <span class="nam">fn</span> <span class="op">=</span> <span class="nam">fun</span><span class="op">(</span><span class="nam">xn</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">                    <span class="nam">nfev</span> <span class="op">+=</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">                    <span class="key">if</span> <span class="nam">fn</span> <span class="op">&lt;</span> <span class="nam">fx</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t258" href="#t258">258</a></span><span class="t">                <span class="nam">dx</span> <span class="op">=</span> <span class="nam">line_search</span><span class="op">.</span><span class="nam">reduce_step</span><span class="op">(</span><span class="op">-</span><span class="nam">jx</span><span class="op">,</span> <span class="nam">x</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t259" href="#t259">259</a></span><span class="t">                <span class="nam">alpha</span> <span class="op">=</span> <span class="num">2</span><span class="op">**</span><span class="op">-</span><span class="num">4</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t260" href="#t260">260</a></span><span class="t">                <span class="key">for</span> <span class="nam">_</span> <span class="key">in</span> <span class="nam">range</span><span class="op">(</span><span class="num">10</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t261" href="#t261">261</a></span><span class="t">                    <span class="nam">xn</span> <span class="op">=</span> <span class="nam">x</span> <span class="op">+</span> <span class="nam">dx</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t262" href="#t262">262</a></span><span class="t">                    <span class="nam">fn</span> <span class="op">=</span> <span class="nam">fun</span><span class="op">(</span><span class="nam">xn</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">                    <span class="nam">nfev</span> <span class="op">+=</span> <span class="num">1</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">                    <span class="key">if</span> <span class="nam">fn</span> <span class="op">&lt;</span> <span class="nam">fx</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">                        <span class="key">break</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t">                    <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">                        <span class="nam">dx</span> <span class="op">*=</span> <span class="nam">alpha</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">                        <span class="nam">dx</span> <span class="op">*=</span> <span class="nam">alpha</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t268" href="#t268">268</a></span><span class="t">                <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t269" href="#t269">269</a></span><span class="t">                    <span class="com"># Neither gradient descent nor Newton's method can improve</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t270" href="#t270">270</a></span><span class="t">                    <span class="com"># the solution</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">                    <span class="key">return</span> <span class="nam">x</span><span class="op">,</span> <span class="op">(</span><span class="num">1</span><span class="op">,</span> <span class="nam">nstep</span><span class="op">,</span> <span class="nam">nfev</span><span class="op">,</span> <span class="nam">nhess</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">                    <span class="key">return</span> <span class="nam">x</span><span class="op">,</span> <span class="op">(</span><span class="num">1</span><span class="op">,</span> <span class="nam">nstep</span><span class="op">,</span> <span class="nam">nfev</span><span class="op">,</span> <span class="nam">nhess</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">                <span class="nam">fx</span> <span class="op">=</span> <span class="nam">fn</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">                <span class="nam">x</span> <span class="op">=</span> <span class="nam">xn</span>&nbsp;</span><span class="r"></span></p>
@@ -346,7 +346,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v6.2</a>,
-            created at 2022-12-02 19:04 +0000
+            created at 2023-02-14 13:21 +0000
         </p>
     </div>
 </footer>

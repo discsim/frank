@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Frankenstein Python API &mdash; frank 1.2.1 documentation</title>
@@ -36,15 +36,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> frank
-            <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            frank
+              <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
                 1.2.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -190,7 +194,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">The Frankenstein Python API</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -236,7 +240,7 @@
 <dd><p>Disc Geometry class using pre-determined parameters.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc inclination</p></li>
 <li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Disc positition angle.</p></li>
@@ -256,7 +260,7 @@ from the phase centre.</p>
 <dd><p>Determine the disc geometry by fitting a Gaussian in Fourier space.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inc_pa</strong> (<em>tuple =</em><em> (</em><em>inclination</em><em>, </em><em>position angle</em><em>) or </em><em>None</em><em> (</em><em>default</em><em>)</em><em>, </em><em>unit = deg</em>) – Determine whether to fit for the source’s inclination and position
 angle. If inc_pa = None, the inclination and PA are fit for. Else
@@ -286,7 +290,7 @@ which is equivalent to a FrankFitter fit without the Gaussian
 Process prior. For this reason, a small number of bins is
 recommended for fit stability.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – <dl class="simple">
 <dt>Radius of support for the functions to transform, i.e.,</dt><dd><p>f(r) = 0 for R &gt;= Rmax</p>
@@ -314,7 +318,7 @@ right ascension offset [arcsec], and declination offset [arcsec]</p></li>
 <dd><p>Base class for geometry corrections.</p>
 <p>Centre and deproject the source to ensure axisymmetry</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>inc</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Inclination of the disc</p></li>
 <li><p><strong>PA</strong> (<em>float</em><em>, </em><em>unit = deg</em>) – Position angle of the disc</p></li>
@@ -331,7 +335,7 @@ from the phase centre.</p>
 <span class="sig-name descname"><span class="pre">apply_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use3D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.apply_correction" title="Permalink to this definition"></a></dt>
 <dd><p>Correct the phase centre and deproject the visibilities</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
@@ -340,7 +344,7 @@ from the phase centre.</p>
 de-projected visibilities, wp.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
 <li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
@@ -357,7 +361,7 @@ de-projected visibilities, wp.</p></li>
 <span class="sig-name descname"><span class="pre">deproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use3D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.deproject" title="Permalink to this definition"></a></dt>
 <dd><p>Convert uv-points from sky-plane to deprojected space (u,v)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
@@ -365,7 +369,7 @@ de-projected visibilities, wp.</p></li>
 de-projected visibilities, wp.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
 <li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
@@ -381,7 +385,7 @@ de-projected visibilities, wp.</p></li>
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Determine geometry using the provided uv-data</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
@@ -397,13 +401,13 @@ de-projected visibilities, wp.</p></li>
 <span class="sig-name descname"><span class="pre">reproject</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.reproject" title="Permalink to this definition"></a></dt>
 <dd><p>Convert uv-points from deprojected space to sky-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
 <li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
@@ -418,14 +422,14 @@ de-projected visibilities, wp.</p></li>
 <span class="sig-name descname"><span class="pre">undo_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.geometry.SourceGeometry.undo_correction" title="Permalink to this definition"></a></dt>
 <dd><p>Undo the phase centre correction and deprojection</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u-points of the visibilities</p></li>
 <li><p><strong>v</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – v-points of the visibilities</p></li>
 <li><p><strong>V</strong> (<em>array</em><em> of </em><em>real</em><em>, </em><em>size = N</em><em>, </em><em>unit = Jy</em>) – Complex visibilites</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>up</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected u-points of the visibilities</p></li>
 <li><p><strong>vp</strong> (array of real, size = N, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Corrected v-points of the visibilities</p></li>
@@ -452,7 +456,7 @@ Baddour &amp; Chouinard (2015).</p>
 a posteriori estimate for the power spectrum as the GP prior for the
 real-space coefficients</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Radius of support for the functions to transform, i.e., f(r) = 0 for
 R &gt;= Rmax.</p></li>
@@ -530,7 +534,7 @@ Only works with assume_optically_thick=False</p></li>
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankFitter.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fit the visibilties</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
 <li><p><strong>v</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
@@ -539,10 +543,10 @@ Only works with assume_optically_thick=False</p></li>
 the standard deviation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>sol</strong> – Least-squares Fourier-Bessel series fit</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit" title="frank.radial_fitters.FrankRadialFit">FrankRadialFit</a></p>
 </dd>
 </dl>
@@ -579,7 +583,7 @@ the standard deviation</p></li>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankRadialFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vis_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit" title="Permalink to this definition"></a></dt>
 <dd><p>Base class for results of frank fits.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vis_map</strong> (<em>VisibilityMapping object</em>) – Mapping between image and visibility plane.</p></li>
 <li><p><strong>info</strong> (<em>dict</em>) – Dictionary containing useful quantities for reproducing a fit
@@ -613,7 +617,7 @@ fit will be used.</p></li>
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.predict" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
 <li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
@@ -625,12 +629,12 @@ inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>V(u,v)</strong> – Predicted visibilties of a source with a radial flux distribution
 given by <span class="math notranslate nohighlight">\(I\)</span> and the position angle, inclination and phase
 centre determined by the geometry object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
@@ -641,7 +645,7 @@ centre determined by the geometry object</p>
 <span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankRadialFit.predict_deprojected" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the deprojected-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
 <li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
@@ -655,13 +659,13 @@ fit will be used</p></li>
 inclination</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>V(q)</strong> – Predicted visibilties of a source with a radial flux distribution
 given by <span class="math notranslate nohighlight">\(I\)</span>. The amplitude of the visibilities are reduced
 according to the inclination of the source, for consistency with
 <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
@@ -695,7 +699,7 @@ for consistency with <code class="code docutils literal notranslate"><span class
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankGaussianFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DHT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit" title="Permalink to this definition"></a></dt>
 <dd><p>Result of a frank fit with a Gaussian brightness model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>DHT</strong> (<a class="reference internal" href="#frank.hankel.DiscreteHankelTransform" title="frank.hankel.DiscreteHankelTransform"><em>DiscreteHankelTransform</em></a>) – A DHT object with N bins that defines H(p). The DHT is used to compute
 <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
@@ -745,13 +749,13 @@ fit will be used.</p></li>
 <p>If <span class="math notranslate nohighlight">\(I\)</span> is provided, this computes</p>
 <p>Otherwise the marginalized likelihood is computed,</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity <span class="math notranslate nohighlight">\(I(r)\)</span> to compute the likelihood of</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>log_P</strong> – Log likelihood, <span class="math notranslate nohighlight">\(\log[P(I,V|p)]\)</span> or <span class="math notranslate nohighlight">\(\log[P(V|p)]\)</span></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -790,7 +794,7 @@ fit will be used.</p></li>
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.predict" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
 <li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
@@ -802,12 +806,12 @@ inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>V(u,v)</strong> – Predicted visibilties of a source with a radial flux distribution
 given by <span class="math notranslate nohighlight">\(I\)</span> and the position angle, inclination and phase
 centre determined by the geometry object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
@@ -818,7 +822,7 @@ centre determined by the geometry object</p>
 <span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankGaussianFit.predict_deprojected" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the deprojected-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
 <li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
@@ -832,13 +836,13 @@ fit will be used</p></li>
 inclination</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>V(q)</strong> – Predicted visibilties of a source with a radial flux distribution
 given by <span class="math notranslate nohighlight">\(I\)</span>. The amplitude of the visibilities are reduced
 according to the inclination of the source, for consistency with
 <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
@@ -878,7 +882,7 @@ for consistency with <code class="code docutils literal notranslate"><span class
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">frank.radial_fitters.</span></span><span class="sig-name descname"><span class="pre">FrankLogNormalFit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DHT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit" title="Permalink to this definition"></a></dt>
 <dd><p>Result of a frank fit with a Gaussian brightness model.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>DHT</strong> (<a class="reference internal" href="#frank.hankel.DiscreteHankelTransform" title="frank.hankel.DiscreteHankelTransform"><em>DiscreteHankelTransform</em></a>) – A DHT object with N bins that defines H(p). The DHT is used to compute
 <span class="math notranslate nohighlight">\(S(p)\)</span></p></li>
@@ -926,13 +930,13 @@ fit will be used.</p></li>
 <span class="sig-name descname"><span class="pre">log_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.log_likelihood" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the likelihood,</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>I</strong> (<em>array</em><em>, </em><em>size = N</em><em>, </em><em>optional</em>) – Intensity <span class="math notranslate nohighlight">\(I(r)=exp(s0*s)\)</span> to compute the likelihood of</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>log_P</strong> – Log likelihood, <span class="math notranslate nohighlight">\(\log[P(I,V|p)]\)</span></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -961,7 +965,7 @@ fit will be used.</p></li>
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.predict" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the sky-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
 <li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points to predict the visibilities at</p></li>
@@ -973,12 +977,12 @@ inclination. If not provided, the geometry determined during the
 fit will be used</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>V(u,v)</strong> – Predicted visibilties of a source with a radial flux distribution
 given by <span class="math notranslate nohighlight">\(I\)</span> and the position angle, inclination and phase
 centre determined by the geometry object</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
@@ -989,7 +993,7 @@ centre determined by the geometry object</p>
 <span class="sig-name descname"><span class="pre">predict_deprojected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assume_optically_thick</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.radial_fitters.FrankLogNormalFit.predict_deprojected" title="Permalink to this definition"></a></dt>
 <dd><p>Predict the visibilities in the deprojected-plane</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (array, default = self.q, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – 1D uv-points to predict the visibilities at</p></li>
 <li><p><strong>I</strong> (<em>array</em><em>, </em><em>optional</em><em>, </em><em>unit = Jy / sr</em>) – Intensity points to predict the vibilities of. If not specified,
@@ -1003,13 +1007,13 @@ fit will be used</p></li>
 inclination</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>V(q)</strong> – Predicted visibilties of a source with a radial flux distribution
 given by <span class="math notranslate nohighlight">\(I\)</span>. The amplitude of the visibilities are reduced
 according to the inclination of the source, for consistency with
 <code class="code docutils literal notranslate"><span class="pre">uvplot</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = Jy</p>
 </dd>
 </dl>
@@ -1049,7 +1053,7 @@ Baddour &amp; Chouinard (2015).</p>
 a posteriori estimate for the power spectrum as the GP prior for the
 real-space coefficients.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Rmax</strong> (<em>float</em><em>, </em><em>unit = arcsec</em>) – Radius of support for the functions to transform, i.e., f(r) = 0 for
 R &gt;= Rmax.</p></li>
@@ -1124,7 +1128,7 @@ for each fit iteration</p></li>
 <span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.debris_fitters.FrankDebrisFitter.fit" title="Permalink to this definition"></a></dt>
 <dd><p>Fit the visibilties</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
 <li><p><strong>v</strong> (1D array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – uv-points of the visibilies</p></li>
@@ -1133,10 +1137,10 @@ for each fit iteration</p></li>
 the standard deviation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>sol</strong> – Least-squares Fourier-Bessel series fit</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#frank.radial_fitters.FrankRadialFit" title="frank.radial_fitters.FrankRadialFit">FrankRadialFit</a></p>
 </dd>
 </dl>
@@ -1185,7 +1189,7 @@ a discrete version of the Hankel transform (DHT):</p>
 <p>Additionally this class provides coefficients of the DHT [1] transform
 matrix</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Rmax</strong> (<em>float</em>) – Maximum radius beyond which f(r) is zero</p></li>
 <li><p><strong>N</strong> (<em>integer</em>) – Number of terms to use in the series</p></li>
@@ -1220,7 +1224,7 @@ of 2*pi.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>q</strong> (<em>array</em><em> or </em><em>None</em>) – Frequency points at which to evaluate the transform. If q = None,
 the points of the DHT are used. If direction=’backward’, these
@@ -1229,10 +1233,10 @@ points should instead be the radius points</p></li>
 is used</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>Y</strong> – The transformation matrix</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, size = (len(q), N)</p>
 </dd>
 </dl>
@@ -1267,7 +1271,7 @@ is used</p></li>
 <span class="sig-name descname"><span class="pre">transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'forward'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.hankel.DiscreteHankelTransform.transform" title="Permalink to this definition"></a></dt>
 <dd><p>Compute the Hankel transform of an array</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>f</strong> (<em>array</em><em>, </em><em>size = N</em>) – <dl class="simple">
 <dt>Function to Hankel transform, evaluated at the collocation points:</dt><dd><p>f[k] = f(r_k) or f[k] = f(q_k)</p>
@@ -1282,10 +1286,10 @@ the radius points</p></li>
 transform is used</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>H[f]</strong> – The Hankel transform of the array f</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, size = N or len(q) if supplied</p>
 </dd>
 </dl>
@@ -1299,13 +1303,13 @@ transform is used</p></li>
 <dd><p>Provide x as a radial scale [arcsec] to return the corresponding baseline
 [lambda], or vice-versa</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x</strong> (<em>float</em>) – Radial scale [arcsec] or baseline [lambda]</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>converted</strong> – Baseline [lambda] or radial scale [arcsec]</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
@@ -1317,7 +1321,7 @@ transform is used</p></li>
 <dd><p>Convolve a 1D radial brightness profile with a 2D Gaussian beam, degrading
 the profile’s resolution</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>array</em>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
 <li><p><strong>I</strong> (<em>array</em>) – Brightness values at r</p></li>
@@ -1331,10 +1335,10 @@ for gridding)</p></li>
 <li><p><strong>axis</strong> (<em>int</em><em>, </em><em>default = 0</em>) – Axis over which to interpolate the 1D profile</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>I_smooth</strong> – Convolved brightness profile I at coordinates r</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, shape = (len(r), len(r))</p>
 </dd>
 </dl>
@@ -1347,7 +1351,7 @@ for gridding)</p></li>
 <p>The cut will be done in deprojected baseline space if the geometry is
 provided.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations</p></li>
 <li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations</p></li>
@@ -1359,7 +1363,7 @@ truncated</p></li>
 <li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>optional</em>) – Fitted geometry (see frank.geometry.SourceGeometry).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>u_cut, v_cut</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates in the chosen baseline range</p></li>
 <li><p><strong>vis_cut</strong> (<em>array, unit = Jy</em>) – Visibilities in the chosen baseline range</p></li>
@@ -1376,7 +1380,7 @@ truncated</p></li>
 <dd><p>Obtain the sample for a bootstrap, drawing, with replacement, N samples from
 a length N dataset</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations</p></li>
 <li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations</p></li>
@@ -1385,7 +1389,7 @@ a length N dataset</p>
 <span class="math notranslate nohighlight">\(1 / \sigma^2\)</span></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>u_boot, v_boot</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Bootstrap sampled u and v coordinates</p></li>
 <li><p><strong>vis_boot</strong> (<em>array, unit = Jy</em>) – Bootstrap sampled visibilities</p></li>
@@ -1408,7 +1412,7 @@ by the noise. This will be true if:
 Otherwise the variance may be dominated by intrinsic variations in the
 visibilities.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations (deprojected). Data will be binned
 by baseline. If v is not None, np.hpot(u,v) will be used instead. Note
@@ -1429,10 +1433,10 @@ will be used.</p></li>
 whether the median estimate was used.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>weights</strong> – Estimate of the weight for each uv point.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array</p>
 </dd>
 </dl>
@@ -1459,7 +1463,7 @@ second and third calls are equivalent to the first with u=0.</p>
 <span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">make_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Npix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ymax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.make_image" title="Permalink to this definition"></a></dt>
 <dd><p>Make an image of a model fit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fit</strong> (<em>FrankFitter result object</em>) – Fitted profile to make an image of</p></li>
 <li><p><strong>Npix</strong> (<em>int</em><em> or </em><em>list</em>) – Number of pixels in the x-direction, or [x-,y-] direction</p></li>
@@ -1469,7 +1473,7 @@ fit.Rmax to avoid aliasing.</p></li>
 <li><p><strong>project</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Whether to produce a projected image.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>x</strong> (<em>array, 1D; unit=arcsec</em>) – Locations of the x-points in the image.</p></li>
 <li><p><strong>y</strong> (<em>array, 1D; unit=arcsec</em>) – Locations of the y-points in the image.</p></li>
@@ -1485,7 +1489,7 @@ fit.Rmax to avoid aliasing.</p></li>
 <span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">normalize_uv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.normalize_uv" title="Permalink to this definition"></a></dt>
 <dd><p>Normalize data u and v coordinates by the observing wavelength</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (<em>array</em><em>, </em><em>unit =</em><em> [</em><em>m</em><em>]</em>) – u and v coordinates of observations</p></li>
 <li><p><strong>v</strong> (<em>array</em><em>, </em><em>unit =</em><em> [</em><em>m</em><em>]</em>) – u and v coordinates of observations</p></li>
@@ -1493,10 +1497,10 @@ fit.Rmax to avoid aliasing.</p></li>
 pointwise wavelength for each (u,v) point</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>u_normed, v_normed</strong> – u and v coordinates normalized by observing wavelength</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span></p>
 </dd>
 </dl>
@@ -1509,7 +1513,7 @@ pointwise wavelength for each (u,v) point</p></li>
 brightness distribution. Optionally project this sweep by a supplied
 geometry.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>r</strong> (<em>array</em>) – Radial coordinates at which the 1D brightness profile is defined</p></li>
 <li><p><strong>I</strong> (<em>array</em>) – Brightness values at r</p></li>
@@ -1530,7 +1534,7 @@ If not provided, these will be set to r.max()</p></li>
 same spatial scale as r</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>I2D</strong> (<em>array, shape = (len(r), len(r))</em>) – 2D brightness distribution (projected if project=True)</p></li>
 <li><p><strong>xmax</strong> (<em>float</em>) – Maximum x-value of the 2D grid</p></li>
@@ -1550,7 +1554,7 @@ in the image</p>
 <dd><p>Average uv-data into bins of equal size.</p>
 <p>Compute the weighted mean of the visibilities in each bin</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uv</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – Baselines of the data to bin</p></li>
 <li><p><strong>V</strong> (<em>array</em><em>, </em><em>unit = Jy</em>) – Observed visibility. If complex, both the real and imaginary
@@ -1578,8 +1582,8 @@ components will be binned. Else only the real part will be binned.</p></li>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2019-2022, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2022 Dec 02 at 19:03:54 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+    <p>&#169; Copyright 2019-2023, R. Booth, J. Jennings, M. Tazzari..
+      <span class="lastupdated">Last updated on 2023 Feb 14 at 13:20:35 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
