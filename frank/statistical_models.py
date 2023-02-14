@@ -211,7 +211,7 @@ class VisibilityMapping:
                 return [M, j]
 
             def parallelReduce_Mj(first, last, numCPUs, connection=None, 
-                                  context=multiprocessing):
+                                  context=None):
                 """Build M, j in parallel"""
                
                 # When we get to small enough amounts of data, chunk up the
@@ -241,12 +241,15 @@ class VisibilityMapping:
                 # Divide the work accross 2 threads
                 mid = (first + last) // 2
 
+                if context is None:
+                    context = multiprocessing.get_context()
+
                 parent1, child1 = context.Pipe()
                 parent2, child2 = context.Pipe()
                 p1 = context.Process(target=parallelReduce_Mj, 
-                        args=(first, mid, numCPUs//2, child1, context))
+                        args=(first, mid, numCPUs//2, child1))
                 p2 = context.Process(target=parallelReduce_Mj, 
-                       args=(mid, last, numCPUs//2 + numCPUs%2, child2, context))
+                       args=(mid, last, numCPUs//2 + numCPUs%2, child2))
                 p1.start()
                 p2.start()
 
@@ -265,10 +268,9 @@ class VisibilityMapping:
                 return Mj_1
 
             # Build the matrices for this frequency point
-            context = multiprocessing.get_context('fork')
-
             Ms[i], js[i] = parallelReduce_Mj(0, len(qi), 
-                        multiprocessing.cpu_count() // 2, context=context)
+                        multiprocessing.cpu_count() // 2, 
+                        context=multiprocessing.get_context('fork'))
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
