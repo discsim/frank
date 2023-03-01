@@ -102,8 +102,8 @@ class VisibilityMapping:
             if scale_height is None:
                 raise ValueError('You requested a model with a non-zero scale height'
                                  ' but did not specify H(R) (scale_height=None)')
-            self._scale_height = scale_height
-            self._H2 = 0.5*(2*np.pi*scale_height(self.r) / rad_to_arcsec)**2
+            self._scale_height = scale_height(self.r)
+            self._H2 = 0.5*(2*np.pi*self._scale_height / rad_to_arcsec)**2
             
             if self._verbose:
                 logging.info('  Assuming an optically thin model but geometrically: '
@@ -278,7 +278,7 @@ class VisibilityMapping:
             if hash[4] is None:
                 return False
             else:
-                return np.alltrue(self._scale_height(self.r) == hash[4](self.r))
+                return np.alltrue(self._scale_height == hash[4])
 
 
     def predict_visibilities(self, I, q, k=None, geometry=None):
@@ -500,7 +500,7 @@ class VisibilityMapping:
     def scale_height(self):
         "Vertial thickness of the disc, unit = arcsec"
         if self._scale_height is not None:
-            return self._scale_height(self.r)
+            return self._scale_height
         else:
             return None
 
