@@ -48,7 +48,7 @@ You can get a description for each parameter with
 
     python -c 'import frank.fit; frank.fit.helper()'
 
-which returns
+which returns the contents of `parameter_descriptions.json`:
 
 .. literalinclude:: ../frank/parameter_descriptions.json
     :linenos:

@@ -1,5 +1,5 @@
 The Frankenstein Python API
-===============================
+===========================
 
 Geometry classes
 ----------------
@@ -43,23 +43,56 @@ Utility functions and classes
 
 These are some useful functions and classes for various aspects of fitting and analysis.
 
+Hankel transform
+````````````````
+
 .. autoclass:: frank.hankel.DiscreteHankelTransform
   :members: r, Rmax, q, Qmax, size, order, transform, coefficients
 
+.. autofunction:: frank.utilities.generic_dht
+
+.. autofunction:: frank.utilities.get_collocation_points
+
+Unit conversion
+```````````````
+
 .. autofunction:: frank.utilities.arcsec_baseline
 
-.. autofunction:: frank.utilities.convolve_profile
+.. autofunction:: frank.utilities.radius_convert
 
-.. autofunction:: frank.utilities.cut_data_by_baseline
+.. autofunction:: frank.utilities.jy_convert
 
-.. autofunction:: frank.utilities.draw_bootstrap_sample
-
-.. autofunction:: frank.utilities.estimate_weights
-
-.. autofunction:: frank.utilities.make_image
+Data alteration
+```````````````
 
 .. autofunction:: frank.utilities.normalize_uv
 
-.. autofunction:: frank.utilities.sweep_profile
+.. autofunction:: frank.utilities.cut_data_by_baseline
+
+Visibility binning and weights estimation
+`````````````````````````````````````````
 
 .. autoclass:: frank.utilities.UVDataBinner
+
+.. autofunction:: frank.utilities.estimate_weights
+
+Imaging
+```````
+
+.. autofunction:: frank.utilities.sweep_profile
+
+.. autofunction:: frank.utilities.make_image
+
+.. autofunction:: frank.utilities.convolve_profile
+
+Mock data routines
+``````````````````
+
+.. autofunction:: frank.utilities.add_vis_noise
+
+.. autofunction:: frank.utilities.make_mock_data
+
+Statistical analysis
+````````````````````
+
+.. autofunction:: frank.utilities.draw_bootstrap_sample
