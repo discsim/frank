@@ -966,10 +966,10 @@ class FrankFitter(FourierBesselFitter):
             \Sigma_i,j = - d^2 \log(P) / d\tau_i d\tau_j
         and p(V) is determined such that P_Lapace(\tau_MAP) = P(p_MAP, V).
         """
-        Sigma = self.MAP_spectrum_covariance
+        Sigma_inv = self._filter.covariance_MAP(self._sol, ret_inv=True)
 
-        sign, logdet = np.linalg.slogdet(2*np.pi*Sigma)
-        laplace = self.log_likelihood() + 0.5*logdet
+        sign, logdet = np.linalg.slogdet(Sigma_inv/(2*np.pi))
+        laplace = self.log_likelihood() - 0.5*logdet
 
         return laplace
 

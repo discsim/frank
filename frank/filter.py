@@ -184,7 +184,7 @@ class CriticalFilter:
         return np.all(np.abs(pi_new - pi_old) <= self._tol * pi_new)
 
 
-    def covariance_MAP(self, fit):
+    def covariance_MAP(self, fit, ret_inv=False):
         """
         Covariance of the power spectrum at maximum likelihood
 
@@ -192,6 +192,9 @@ class CriticalFilter:
         ----------
         fit : _HankelRegressor
             Solution at maximum likelihood
+        ret_inv : bool, default=False
+            If True return the inverse covariance matrix instead. This 
+            avoids inverting the inverse covariace matrix
 
         Returns
         -------
@@ -217,11 +220,14 @@ class CriticalFilter:
             + self._Tij.todense() \
             - 0.5 * np.outer(1 / p, 1 / p) * (2 * mqq + Dqq) * Dqq
 
-        # Invert the Hessian
-        hess_chol = scipy.linalg.cho_factor(hess)
-        ps_cov = scipy.linalg.cho_solve(hess_chol, np.eye(self._DHT.size))
+        if ret_inv:
+            return hess 
+        else:
+            # Invert the Hessian
+            hess_chol = scipy.linalg.cho_factor(hess)
+            ps_cov = scipy.linalg.cho_solve(hess_chol, np.eye(self._DHT.size))
 
-        return ps_cov
+            return ps_cov
 
     def log_prior(self, p):
         r"""
