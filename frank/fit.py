@@ -396,8 +396,7 @@ def get_scale_height(model):
             """Parse the functional form for the scale-height in the .json"""
             HR_dict = model['geometry']['scale_height']
             H = eval(HR_dict['H'])
-            HR_func = lambda x:lambda:eval(x)
-            return HR_func(HR_dict['formula'])
+            return eval(HR_dict['formula'])
 
         return scale_height
 
