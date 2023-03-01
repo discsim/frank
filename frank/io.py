@@ -22,7 +22,7 @@
 
 import os
 import numpy as np
-import pickle
+import dill
 import logging
 
 def load_uvtable(data_file):
@@ -131,7 +131,8 @@ def load_sol(sol_file):
         (see frank.radial_fitters.FrankFitter)
     """
 
-    sol = np.load(sol_file, allow_pickle=True)
+    with open(sol_file, 'rb') as f: 
+        sol = dill.load(f)
 
     return sol
 
@@ -185,11 +186,11 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
 
     if save_solution:
         with open(prefix + '_frank_sol.obj', 'wb') as f:
-            pickle.dump(sol, f)
+            dill.dump(sol, f)
 
     if save_iteration_diag:
         with open(prefix + '_frank_iteration_diagnostics.obj', 'wb') as f:
-            pickle.dump(iteration_diag, f)
+            dill.dump(iteration_diag, f)
 
     if save_profile_fit:
         np.savetxt(prefix + '_frank_profile_fit.txt',
