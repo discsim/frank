@@ -605,10 +605,10 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
 
         logging.info('  Plotting results')
 
-        priors = {'alpha': sol.info['alpha'],\
-                  'wsmooth': sol.info['wsmooth'],\
-                  'Rmax': sol.info['Rmax'],\
-                  'N': sol.info['N'],\
+        priors = {'alpha': sol.info['alpha'],
+                  'wsmooth': sol.info['wsmooth'],
+                  'Rmax': sol.info['Rmax'],
+                  'N': sol.info['N'],
                   'p0': sol.info['p0']
                   }
 
