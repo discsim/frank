@@ -368,7 +368,7 @@ def determine_geometry(u, v, vis, weights, model):
 
 def get_scale_height(model):
     """
-    Retrieve the scale-height functional form if provided in the parameter file
+    Parse the functional form for disc scale-height in the parameter file
 
     Parameters
     ----------
@@ -377,20 +377,19 @@ def get_scale_height(model):
 
     Returns
     -------
-    scale_height : None or function R --> H
-    None if scale_height is 'null' (None) or rescale_flux is True in the input
-    parameter file.
-    Else, a function for the vertical thickness of disc provided in the
-    parameter file.
+    scale_height : function R --> H
+        Returns None if scale_height is 'null' in the input parameter file.
+        Else, returns a function for the vertical thickness of disc provided in 
+        the parameter file.
 
     """
 
     if model['geometry']['scale_height'] is None:
-        scale_height=model['geometry']['scale_height']
+        return
+
     else:
         if model['geometry']['rescale_flux']:
-            err = ValueError("scale_height should be 'null' (None) if"
-                             " rescale_flux is 'true'")
+            err = ValueError("scale_height should be 'null' if rescale_flux is 'true'")
             raise err
 
         def scale_height(R):
@@ -400,7 +399,7 @@ def get_scale_height(model):
             HR_func = lambda x:lambda:eval(x)
             return HR_func(HR_dict['formula'])
 
-    return scale_height
+        return scale_height
 
 
 def perform_fit(u, v, vis, weights, geom, model):
