@@ -393,10 +393,11 @@ def get_scale_height(model):
             raise err
 
         def scale_height(R):
-            """Parse the functional form for the scale-height in the .json"""
-            HR_dict = model['geometry']['scale_height']
-            H = eval(HR_dict['H'])
-            return eval(HR_dict['formula'])
+            """Power-law with cutoff, unit=[arcsec]"""
+            vars = model['geometry']['scale_height']
+            h0, a, r0, b = vars['h0'], vars['a'], vars['r0'], vars['b']
+
+            return h0 * R ** a * np.exp(-(R / r0) ** b)
 
         return scale_height
 
