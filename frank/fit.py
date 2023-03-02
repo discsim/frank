@@ -152,6 +152,13 @@ def parse_parameters(*args):
         err = ValueError("method should be 'Normal' or 'LogNormal'")
         raise err
 
+    if model['hyperparameters']['nonnegative'] and \
+       model['hyperparameters']['method'] == 'LogNormal':
+        logging.warning("WARNING: 'nonnegative' is 'true' AND 'method' is "
+                        "'LogNormal' --> performing a LogNormal fit and setting "
+                        "'nonnegative' to 'false'")
+        model['hyperparameters']['nonnegative'] = False
+
     if model['hyperparameters']['method'] == 'LogNormal' and \
        model['hyperparameters']['p0'] is not None and \
        model['hyperparameters']['p0'] > 1e-30:
@@ -416,9 +423,10 @@ def perform_fit(u, v, vis, weights, geom, model):
     if model['hyperparameters']['nonnegative'] and \
        model['hyperparameters']['method'] == 'Normal':
         # Add the best fit nonnegative solution to the fit's `sol` object
-        logging.info('  `nonnegative` is `true` in your parameter file --> '\
-                    'Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
-        setattr(sol, '_nonneg', sol.solve_non_negative())
+        logging.info('  `nonnegative` is `true` in your parameter file --> '
+                    'Storing the best fit nonnegative profile as the attribute '
+                    '`nonneg` in the `sol` object')
+        setattr(sol, 'nonneg', sol.solve_non_negative())
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
                  ' {:d} collocation points) {:.1f} sec'.format(len(u),
@@ -719,7 +727,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
         sol, iteration_diagnostics = perform_fit(u_s, v_s, vis_s, w_s, geom, model)
 
         if model['hyperparameters']['nonnegative']:
-            profiles_bootstrap.append(sol._nonneg)
+            profiles_bootstrap.append(sol.nonneg)
         else:
             profiles_bootstrap.append(sol.I)
 

@@ -34,7 +34,6 @@ from frank.io import load_uvtable, save_uvtable, load_sol, save_fit
 from frank.statistical_models import VisibilityMapping
 from frank import fit
 
-
 def test_hankel_gauss():
     """Check the Hankel transform"""
 
@@ -94,6 +93,7 @@ def test_hankel_gauss():
                                err_msg="Cached inverse DHT Coeffs"
                                )
 
+
 def test_vis_mapping():
     def gauss_real_space(r):
         x = r 
@@ -128,6 +128,7 @@ def test_vis_mapping():
 
     np.testing.assert_allclose(Ir, 0.5*Ir_dht,
                                atol=1e-5, rtol=0, err_msg="Inverse DHT with generic_dht")
+
 
 def test_import_data():
     """Check the UVTable import function works for a .txt"""
@@ -236,6 +237,7 @@ def test_fit_geometry():
                                rtol=1e-5,
                               err_msg="FourierBessel geometry fit (provided phase_centre)")
 
+
 def test_fourier_bessel_fitter():
     """Check FourierBesselFitter fitting routine with AS 209 dataset"""
     AS209, geometry = load_AS209()
@@ -290,6 +292,7 @@ def test_frank_fitter():
     np.testing.assert_allclose(sol.I, expected,
                                err_msg="Testing Frank Fit to AS 209")
 
+
 def test_two_stage_fit():
     """Check FrankFitter fitting routine with AS 209 dataset"""
     AS209, geometry = load_AS209(uv_cut=1e6)
@@ -309,6 +312,31 @@ def test_two_stage_fit():
 
     np.testing.assert_equal(sol.I, sol2.I,
                             err_msg="Testing two-step fit")
+
+
+def test_solve_non_negative():
+    """Check FrankFitter fitting routine with non-negative fit using AS 209 dataset"""
+    AS209, geometry = load_AS209(uv_cut=1e6)
+
+    u, v, vis, weights = [AS209[k] for k in ['u', 'v', 'V', 'weights']]
+
+    Rmax = 1.6
+
+    FF = FrankFitter(Rmax, 20, geometry, alpha=1.05, weights_smooth=1e-2)
+
+    sol = FF.fit(u, v, vis, weights)
+    I_nn = sol.solve_non_negative()
+
+    expected = np.array([
+        2.42756717e+10, 1.28541672e+10, 1.90032938e+10, 8.31444339e+09,
+        1.30814112e+10, 1.59442160e+09, 2.93990783e+08, 5.29739902e+09,
+        1.24011568e+09, 5.40689479e+08, 1.97475180e+08, 2.12294162e+08,
+        4.45700329e+09, 1.67658919e+09, 8.61662448e+08, 3.81032165e+08,
+        2.41202443e+08, 7.68452028e+07, 0.00000000e+00, 2.86208170e+07
+    ])
+
+    np.testing.assert_allclose(I_nn, expected,
+                               err_msg="Testing Frank Fit to AS 209")
 
 
 def test_frank_fitter_log_normal():
@@ -332,7 +360,8 @@ def test_frank_fitter_log_normal():
 
     np.testing.assert_allclose(sol.MAP, expected, rtol=7e-5,
                                err_msg="Testing Frank Log-Normal Fit to AS 209")
-                               
+
+
 def test_geom_deproject():
     """Check predict works properly with a different geometry"""
     AS209, geometry = load_AS209(uv_cut=1e6)
@@ -361,6 +390,7 @@ def test_geom_deproject():
     np.testing.assert_allclose(V, Vexpected, rtol=2e-5, atol=1e-8,
                                err_msg="Testing predict with different geometry")
 
+
 def test_fit_geometry_inside():
     """Check the geometry fit embedded in a call to FrankFitter"""
     AS209, _ = load_AS209(uv_cut=1e6)
@@ -381,6 +411,7 @@ def test_fit_geometry_inside():
                                 0.21017246809441995, -2.109586872914908],
                                err_msg="Gaussian geometry fit inside Frank fit")
 
+
 def test_throw_error_on_bad_q_range():
     """Check that frank correctly raises an error when the
     q range is bad."""
@@ -398,6 +429,7 @@ def test_throw_error_on_bad_q_range():
         raise RuntimeError("Expected ValueError due to bad range")
     except ValueError:
         pass
+
 
 def test_uvbin():
     """Check the uv-data binning routine"""
