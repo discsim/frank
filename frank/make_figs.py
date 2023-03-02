@@ -262,6 +262,11 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
+        if hasattr(sol, '_nonneg'): 
+            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax0, ls='--', c='#0e0c77', label='non-neg.')
+            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax1, ls='--', c='#0e0c77', label='non-neg.')
+
+
         u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
         baselines = (u_deproj**2 + v_deproj**2)**.5
         grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
@@ -286,11 +291,17 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         # Make a guess of good y-bounds for zooming in on the visibility fit
         # in linear-y
-        zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
-        zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
+        # zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
+        zoom_ylim_guess = vis_fit_kl.mean()
+        zoom_bounds = [-1.5 * zoom_ylim_guess, 1.5 * zoom_ylim_guess]
         ax3.set_ylim(zoom_bounds)
 
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank', zorder=10)
+
+        if hasattr(sol, '_nonneg'):
+            vis_fit_nonneg = sol.predict_deprojected(grid, I=sol._nonneg).real * 1e3
+            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax2, ls='--', c='#0e0c77', label='non-neg.', zorder=10)
+            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax3, ls='--', c='#0e0c77', label='non-neg.', zorder=10)
 
         vmax = sol.I.max()
         if stretch == 'asinh':
@@ -314,7 +325,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_yscale('log')
-        ax1.set_ylim(bottom=1e-3)
+        ax1.set_ylim(sol.I[sol.I > 0].min() * 0.9 / 1e10, sol.I.max() * 1.1 / 1e10)
 
         ax3.set_xlabel(r'Baseline [M$\lambda$]')
         ax2.set_ylabel('Re(V) [mJy]')
