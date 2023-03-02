@@ -289,13 +289,6 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax2, c='r', label='frank', zorder=10)
 
-        # Make a guess of good y-bounds for zooming in on the visibility fit
-        # in linear-y
-        # zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
-        zoom_ylim_guess = vis_fit_kl.mean()
-        zoom_bounds = [-1.5 * zoom_ylim_guess, 1.5 * zoom_ylim_guess]
-        ax3.set_ylim(zoom_bounds)
-
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank', zorder=10)
 
         if hasattr(sol, '_nonneg'):
@@ -423,8 +416,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
         gs1 = GridSpec(4, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
         gs2 = GridSpec(3, 3, hspace=.35, wspace=0.25, left=0.06, right=0.98)
         fig = plt.figure(figsize=figsize)
-        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={}, '\
-                     'N={}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
+        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={:.2f}, '
+                     'N={:0d}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[3])
@@ -463,6 +456,10 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
 
         plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
+        if hasattr(sol, '_nonneg'): 
+            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax0, ls='--', c='#009933', label='non-neg.')
+            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax1, ls='--', c='#009933', label='non-neg.')
+
         # Apply deprojection to the provided (u, v) coordinates
         # and visibility amplitudes
         u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -471,15 +468,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
         grid = np.logspace(np.log10(min(baselines.min(), sol.q[0])),
                            np.log10(max(baselines.max(), sol.q[-1])), 10**4
                            )
-        # Map the frank visibility fit to `grid`, considering only the real component
-        # that frank fits
-        vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
-
-        # Make a guess of good y-bounds for zooming in on the visibility fit
-        # in linear-y
-        zoom_ylim_guess = abs(vis_fit_kl[int(.5 * len(vis_fit_kl)):]).max()
-        zoom_bounds = [-1.1 * zoom_ylim_guess, 1.1 * zoom_ylim_guess]
-        ax4.set_ylim(zoom_bounds)
 
         # Bin the observed (real and imaginary components of the) visibilities
         # for plotting
@@ -490,6 +478,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
             vis_err_re_kl = binned_vis.error.real * 1e3
             vis_err_im_kl = binned_vis.error.imag * 1e3
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
+            if hasattr(sol, '_nonneg'):
+                vis_fit_nn = sol.predict_deprojected(binned_vis.uv, I=sol._nonneg).real * 1e3
 
             # Determine the visiblity domain frank fit residuals (and RMS error)
             # for Real(V)
@@ -497,6 +487,11 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
             if norm_residuals:
                 resid /= vis_re_kl
             rmse = (np.mean(resid**2))**.5
+            if hasattr(sol, '_nonneg'):
+                resid_nn = vis_re_kl - vis_fit_nn
+                if norm_residuals:
+                    resid_nn /= vis_re_kl
+                rmse_nn = (np.mean(resid_nn**2))**.5
 
             # Plot the observed, binned visibilities (with errorbars) and the residuals
             plot_vis_quantity(binned_vis.uv / 1e6, vis_re_kl, ax3, c=cs[i],
@@ -511,8 +506,12 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
                      marker=ms[i], ls='None',
                      label=r'Obs., {:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-            plot_vis_quantity(binned_vis.uv / 1e6, resid, ax5, c=cs[i], marker=ms[i], ls='None',
+            plot_vis_quantity(binned_vis.uv / 1e6, resid, ax5, c='r', marker=ms[i], ls='None',
                            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
+
+            if hasattr(sol, '_nonneg'):
+                plot_vis_quantity(binned_vis.uv / 1e6, resid_nn, ax5, c='#009933', marker=ms[i], ls='None',
+                           label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse_nn))                
 
             # Plot a histogram of the observed visibilties to examine how the
             # visibility count varies with baseline
@@ -524,12 +523,26 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
                           ax9, color=hist_cs[i], marker=ms[i], ls='None',
                           label=r'{:.0f} k$\lambda$ bins'.format(bin_widths[i]/1e3))
 
-        # Plot the visibility domain frank fit in log-y
+        # Map the frank visibility fit to `grid`, considering only the real component
+        # that frank fits
+        vis_fit_kl = sol.predict_deprojected(grid).real * 1e3
+
+        # Plot the visibility domain frank fit
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax3, c='r', label='frank')
         plot_vis_quantity(grid / 1e6, vis_fit_kl, ax4, c='r', label='frank')
 
+        if hasattr(sol, '_nonneg'):
+            vis_fit_nonneg = sol.predict_deprojected(grid, I=sol._nonneg).real * 1e3
+            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax3, ls='--', c='#009933', label='non-neg.')
+            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax4, ls='--', c='#009933', label='non-neg.')
+
+        # Make a guess of good y-bounds for zooming in on the visibility fit
+        zoom_ylim_guess = vis_fit_kl.mean()
+        zoom_bounds = [-1.5 * zoom_ylim_guess, 1.5 * zoom_ylim_guess]
+        ax4.set_ylim(zoom_bounds)
+
         # Plot the frank inferred power spectrum
-        plot_vis_quantity(sol.q / 1e6, sol.power_spectrum, ax7)
+        plot_vis_quantity(sol.q / 1e6, sol.power_spectrum, ax7, c='k')
 
         # Plot a sweep over 2\pi of the frank 1D fit
         # (analogous to a model image of the source)
@@ -553,7 +566,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
         ax0.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_ylabel(r'Brightness [$10^{10}$ Jy sr$^{-1}$]')
         ax1.set_yscale('log')
-        ax1.set_ylim(bottom=1e-3)
+        ax1.set_ylim(sol.I[sol.I > 0].min() * 0.9 / 1e10, sol.I.max() * 1.1 / 1e10)
         ax2.set_xlabel('RA offset ["]')
         ax2.set_ylabel('Dec offset ["]')
 
