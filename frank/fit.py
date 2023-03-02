@@ -153,10 +153,11 @@ def parse_parameters(*args):
         raise err
 
     if model['hyperparameters']['nonnegative'] and \
-       model['hyperparameters']['method'] != 'Normal':
-        err = ValueError("'nonnegative' should only be 'true' if 'method' is "
-                        "'Normal'")
-        raise err
+       model['hyperparameters']['method'] == 'LogNormal':
+        logging.warning("WARNING: 'nonnegative' is 'true' AND 'method' is "
+                        "'LogNormal' --> performing a LogNormal fit and setting "
+                        "'nonnegative' to 'false'")
+        model['hyperparameters']['nonnegative'] = False
 
     if model['hyperparameters']['method'] == 'LogNormal' and \
        model['hyperparameters']['p0'] is not None and \
