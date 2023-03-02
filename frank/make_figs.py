@@ -230,8 +230,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         gs = GridSpec(3, 2, hspace=0, bottom=.12)
         gs2 = GridSpec(3, 2, hspace=.2)
         fig = plt.figure(figsize=figsize)
-        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={}, '\
-                     'N={}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
+        fig.suptitle(r'Fit hyperparameters: $\alpha$={:.2f}, $w_{{smooth}}$={:.1e}, R$_{{max}}$={:.2f}, '
+                     'N={:0d}, p$_0$={:.0e}'.format(alpha, wsmooth, Rmax, N, p0))
 
         ax0 = fig.add_subplot(gs[0])
         ax1 = fig.add_subplot(gs[2])
