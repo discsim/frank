@@ -45,7 +45,7 @@ warnings.filterwarnings('ignore', '.*handles with labels found.*')
 # Global settings for plots
 cs = ['#a4a4a4', 'k', '#f781bf', '#dede00']
 cs2 = ['#3498DB', '#984ea3', '#4daf4a', '#ff7f00']
-hist_cs = ['#e41a1c', '#999999', '#377eb8', '#ff7f00', '#4daf4a', '#f781bf',
+hist_cs = ['#377eb8', '#ff7f00', '#e41a1c', '#999999', '#4daf4a', '#f781bf',
            '#984ea3', '#dede00']
 multifit_cs = ['#e41a1c', '#999999', '#377eb8', '#ff7f00', '#4daf4a', '#f781bf',
                '#984ea3', '#dede00']
@@ -263,8 +263,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
         plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
         if hasattr(sol, '_nonneg'): 
-            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax0, ls='--', c='#0e0c77', label='non-neg.')
-            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax1, ls='--', c='#0e0c77', label='non-neg.')
+            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax0, ls='--', c='#009933', label='non-neg.')
+            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax1, ls='--', c='#009933', label='non-neg.')
 
 
         u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -300,8 +300,13 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         if hasattr(sol, '_nonneg'):
             vis_fit_nonneg = sol.predict_deprojected(grid, I=sol._nonneg).real * 1e3
-            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax2, ls='--', c='#0e0c77', label='non-neg.', zorder=10)
-            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax3, ls='--', c='#0e0c77', label='non-neg.', zorder=10)
+            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax2, ls='--', c='#009933', label='non-neg.', zorder=10)
+            plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax3, ls='--', c='#009933', label='non-neg.', zorder=10)
+
+        # Make a guess of good y-bounds for zooming in on the visibility fit
+        zoom_ylim_guess = vis_fit_kl.mean()
+        zoom_bounds = [-1.5 * zoom_ylim_guess, 1.5 * zoom_ylim_guess]
+        ax3.set_ylim(zoom_bounds)
 
         vmax = sol.I.max()
         if stretch == 'asinh':
