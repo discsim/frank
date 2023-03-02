@@ -262,9 +262,9 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
-        if hasattr(sol, '_nonneg'): 
-            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax0, ls='--', c='#009933', label='non-neg.')
-            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax1, ls='--', c='#009933', label='non-neg.')
+        if hasattr(sol, 'nonneg'): 
+            plot_brightness_profile(sol.r, sol.nonneg / 1e10, ax0, ls='--', c='#009933', label='non-neg.')
+            plot_brightness_profile(sol.r, sol.nonneg / 1e10, ax1, ls='--', c='#009933', label='non-neg.')
 
 
         u_deproj, v_deproj, vis_deproj = sol.geometry.apply_correction(u, v, vis)
@@ -291,8 +291,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
         plot_vis_quantity(grid / 1e6, vis_fit, ax3, c='r', label='frank', zorder=10)
 
-        if hasattr(sol, '_nonneg'):
-            vis_fit_nonneg = sol.predict_deprojected(grid, I=sol._nonneg).real * 1e3
+        if hasattr(sol, 'nonneg'):
+            vis_fit_nonneg = sol.predict_deprojected(grid, I=sol.nonneg).real * 1e3
             plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax2, ls='--', c='#009933', label='non-neg.', zorder=10)
             plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax3, ls='--', c='#009933', label='non-neg.', zorder=10)
 
@@ -456,9 +456,9 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
 
         plot_brightness_profile(sol.r, sol.I / 1e10, ax1, c='r', label='frank')
 
-        if hasattr(sol, '_nonneg'): 
-            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax0, ls='--', c='#009933', label='non-neg.')
-            plot_brightness_profile(sol.r, sol._nonneg / 1e10, ax1, ls='--', c='#009933', label='non-neg.')
+        if hasattr(sol, 'nonneg'): 
+            plot_brightness_profile(sol.r, sol.nonneg / 1e10, ax0, ls='--', c='#009933', label='non-neg.')
+            plot_brightness_profile(sol.r, sol.nonneg / 1e10, ax1, ls='--', c='#009933', label='non-neg.')
 
         # Apply deprojection to the provided (u, v) coordinates
         # and visibility amplitudes
@@ -478,8 +478,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
             vis_err_re = binned_vis.error.real * 1e3
             vis_err_im = binned_vis.error.imag * 1e3
             vis_fit = sol.predict_deprojected(binned_vis.uv).real * 1e3
-            if hasattr(sol, '_nonneg'):
-                vis_fit_nn = sol.predict_deprojected(binned_vis.uv, I=sol._nonneg).real * 1e3
+            if hasattr(sol, 'nonneg'):
+                vis_fit_nn = sol.predict_deprojected(binned_vis.uv, I=sol.nonneg).real * 1e3
 
             # Determine the visiblity domain frank fit residuals (and RMS error)
             # for Real(V)
@@ -487,7 +487,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
             if norm_residuals:
                 resid /= vis_re
             rmse = (np.mean(resid**2))**.5
-            if hasattr(sol, '_nonneg'):
+            if hasattr(sol, 'nonneg'):
                 resid_nn = vis_re - vis_fit_nn
                 if norm_residuals:
                     resid_nn /= vis_re
@@ -509,7 +509,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
             plot_vis_quantity(binned_vis.uv / 1e6, resid, ax5, c='r', marker=ms[i], ls='None',
                            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse))
 
-            if hasattr(sol, '_nonneg'):
+            if hasattr(sol, 'nonneg'):
                 plot_vis_quantity(binned_vis.uv / 1e6, resid_nn, ax5, c='#009933', marker=ms[i], ls='None',
                            label=r'{:.0f} k$\lambda$ bins, RMSE {:.3f} mJy'.format(bin_widths[i]/1e3, rmse_nn))                
 
@@ -531,8 +531,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
         plot_vis_quantity(grid / 1e6, vis_fit, ax3, c='r', label='frank')
         plot_vis_quantity(grid / 1e6, vis_fit, ax4, c='r', label='frank')
 
-        if hasattr(sol, '_nonneg'):
-            vis_fit_nonneg = sol.predict_deprojected(grid, I=sol._nonneg).real * 1e3
+        if hasattr(sol, 'nonneg'):
+            vis_fit_nonneg = sol.predict_deprojected(grid, I=sol.nonneg).real * 1e3
             plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax3, ls='--', c='#009933', label='non-neg.')
             plot_vis_quantity(grid / 1e6, vis_fit_nonneg, ax4, ls='--', c='#009933', label='non-neg.')
 
