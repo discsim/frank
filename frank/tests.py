@@ -25,13 +25,11 @@ import json
 from frank.constants import rad_to_arcsec
 from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
-from frank.debris_fitters import FrankDebrisFitter
 from frank.geometry import (
     FixedGeometry, FitGeometryGaussian, FitGeometryFourierBessel
 )
-from frank.constants import deg_to_rad
 from frank.utilities import UVDataBinner, generic_dht
-from frank.io import load_uvtable, save_uvtable, load_sol, save_fit
+from frank.io import load_uvtable, save_uvtable
 from frank.statistical_models import VisibilityMapping
 from frank import fit
 
