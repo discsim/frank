@@ -192,7 +192,7 @@ and it looks like this,</p>
 <span class="linenos">37</span><span class="w">    </span><span class="nt">&quot;wsmooth&quot;</span><span class="w">          </span><span class="p">:</span><span class="w"> </span><span class="mf">1e-4</span><span class="p">,</span>
 <span class="linenos">38</span><span class="w">    </span><span class="nt">&quot;iter_tol&quot;</span><span class="w">         </span><span class="p">:</span><span class="w"> </span><span class="mf">1e-3</span><span class="p">,</span>
 <span class="linenos">39</span><span class="w">    </span><span class="nt">&quot;max_iter&quot;</span><span class="w">         </span><span class="p">:</span><span class="w"> </span><span class="mi">2000</span><span class="p">,</span>
-<span class="linenos">40</span><span class="w">    </span><span class="nt">&quot;nonnegative&quot;</span><span class="w">      </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="linenos">40</span><span class="w">    </span><span class="nt">&quot;nonnegative&quot;</span><span class="w">      </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="linenos">41</span><span class="w">    </span><span class="nt">&quot;method&quot;</span><span class="w">           </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Normal&quot;</span>
 <span class="linenos">42</span><span class="w">  </span><span class="p">},</span>
 <span class="linenos">43</span>
@@ -268,7 +268,7 @@ and it looks like this,</p>
 <span class="linenos">37</span><span class="w">    </span><span class="nt">&quot;wsmooth&quot;</span><span class="w">          </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1). If a list, multiple fits will be performed and overplotted.&quot;</span><span class="p">,</span>
 <span class="linenos">38</span><span class="w">    </span><span class="nt">&quot;iter_tol&quot;</span><span class="w">         </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Tolerance for fit iteration stopping criterion (suggested &lt;&lt;1)&quot;</span><span class="p">,</span>
 <span class="linenos">39</span><span class="w">    </span><span class="nt">&quot;max_iter&quot;</span><span class="w">         </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Maximum number of fit iterations&quot;</span><span class="p">,</span>
-<span class="linenos">40</span><span class="w">    </span><span class="nt">&quot;nonnegative&quot;</span><span class="w">      </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Whether frank provides the mean (if false) or best fit nonnegative solution&quot;</span><span class="p">,</span>
+<span class="linenos">40</span><span class="w">    </span><span class="nt">&quot;nonnegative&quot;</span><span class="w">      </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Whether the best-fit nonnegative brightness profile is included in the frank fit solution object&quot;</span><span class="p">,</span>
 <span class="linenos">41</span><span class="w">    </span><span class="nt">&quot;method&quot;</span><span class="w">           </span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The fit method: &#39;Normal&#39; to fit in linear brighness, &#39;LogNormal&#39; to fit in logarithmic brightness&quot;</span>
 <span class="linenos">42</span><span class="w">  </span><span class="p">},</span>
 <span class="linenos">43</span>
@@ -427,7 +427,7 @@ When running from the terminal, frank produces this figure if <code class="code 
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2023, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2023 Mar 02 at 17:57:54 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2023 Mar 02 at 18:32:04 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
