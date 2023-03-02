@@ -174,7 +174,7 @@ def make_deprojection_fig(u, v, vis, weights, geom, bin_widths, logx=False,
     return fig, axes
 
 
-def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
+def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
                    logx=False, force_style=True, save_prefix=None,
                    stretch='power', gamma=1.0, asinh_a=0.02, figsize=(8,6)):
     r"""
@@ -194,9 +194,6 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    priors : dict
-        Dictionary with fit hyperparameters: 'alpha', 'wsmooth', 'Rmax', 'N', 'p0'.
-        Used for figure title
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = False
@@ -227,8 +224,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
 
     logging.info('    Making quick figure')
 
-    alpha, wsmooth, Rmax, N, p0 = priors['alpha'], priors['wsmooth'],\
-                                  priors['Rmax'], priors['N'], priors['p0']
+    Rmax, N, alpha, wsmooth, p0 = sol._info.values()
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0, bottom=.12)
@@ -350,7 +346,7 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, priors, dist=None,
     return fig, axes
 
 
-def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
+def make_full_fig(u, v, vis, weights, sol, bin_widths,
                   dist=None, logx=False, force_style=True,
                   save_prefix=None, norm_residuals=False, stretch='power',
                   gamma=1.0, asinh_a=0.02, figsize=(8, 6)):
@@ -371,9 +367,6 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
         (see frank.radial_fitters.FrankFitter)
     bin_widths : list, unit = \lambda
         Bin widths in which to bin the observed visibilities
-    priors : dict
-        Dictionary with fit hyperparameters: 'alpha', 'wsmooth', 'Rmax', 'N', 'p0'.
-        Used for figure title
     dist : float, optional, unit = AU, default = None
         Distance to source, used to show second x-axis in [AU]
     logx : bool, default = False
@@ -407,8 +400,7 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths, priors,
 
     logging.info('    Making full figure')
 
-    alpha, wsmooth, Rmax, N, p0 = priors['alpha'], priors['wsmooth'],\
-                                  priors['Rmax'], priors['N'], priors['p0']
+    Rmax, N, alpha, wsmooth, p0 = sol._info.values()
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
