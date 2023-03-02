@@ -131,7 +131,8 @@ def load_sol(sol_file):
         (see frank.radial_fitters.FrankFitter)
     """
 
-    sol = np.load(sol_file, allow_pickle=True)
+    with open(sol_file, 'rb') as f: 
+        sol = pickle.load(f)
 
     return sol
 
