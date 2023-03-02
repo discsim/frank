@@ -152,6 +152,12 @@ def parse_parameters(*args):
         err = ValueError("method should be 'Normal' or 'LogNormal'")
         raise err
 
+    if model['hyperparameters']['nonnegative'] and \
+       model['hyperparameters']['method'] != 'Normal':
+        err = ValueError("'nonnegative' should only be 'true' if 'method' is "
+                        "'Normal'")
+        raise err
+
     if model['hyperparameters']['method'] == 'LogNormal' and \
        model['hyperparameters']['p0'] is not None and \
        model['hyperparameters']['p0'] > 1e-30:
@@ -416,8 +422,9 @@ def perform_fit(u, v, vis, weights, geom, model):
     if model['hyperparameters']['nonnegative'] and \
        model['hyperparameters']['method'] == 'Normal':
         # Add the best fit nonnegative solution to the fit's `sol` object
-        logging.info('  `nonnegative` is `true` in your parameter file --> '\
-                    'Storing the best fit nonnegative profile as the attribute `nonneg` in the `sol` object')
+        logging.info('  `nonnegative` is `true` in your parameter file --> '
+                    'Storing the best fit nonnegative profile as the attribute '
+                    '`nonneg` in the `sol` object')
         setattr(sol, '_nonneg', sol.solve_non_negative())
 
     logging.info('    Time taken to fit profile (with {:.0e} visibilities and'
