@@ -25,11 +25,12 @@ import json
 from frank.constants import rad_to_arcsec
 from frank.hankel import DiscreteHankelTransform
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
+from frank.debris_fitters import FrankDebrisFitter
 from frank.geometry import (
     FixedGeometry, FitGeometryGaussian, FitGeometryFourierBessel
 )
 from frank.utilities import UVDataBinner, generic_dht
-from frank.io import load_uvtable, save_uvtable
+from frank.io import load_uvtable, save_uvtable, load_sol, save_fit
 from frank.statistical_models import VisibilityMapping
 from frank import fit
 
@@ -423,6 +424,35 @@ def test_uvbin():
     np.testing.assert_allclose(V, uvbin.V[i])
     np.testing.assert_allclose(w, uvbin.weights[i])
     np.testing.assert_allclose(len(widx), uvbin.bin_counts[i])
+
+def test_save_load_sol():
+    """Check saving/loading a frank 'sol' object"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    Rmax, N = 1.6, 20
+
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(Rmax, N, AS209_geometry, alpha=1.05, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)
+
+    # and from a frank debris fit (has additional keys over a standard fit sol)
+    FF_deb = FrankDebrisFitter(Rmax, N, AS209_geometry, lambda x : 0.05 * x, 
+                                alpha=1.05, weights_smooth=1e-2)
+    sol_deb = FF_deb.fit(u, v, vis, weights)
+
+    tmp_dir = '/tmp/frank/tests'
+    os.makedirs(tmp_dir, exist_ok=True)
+
+    save_prefix = [os.path.join(tmp_dir, 'standard'), os.path.join(tmp_dir, 'debris')]
+    sols = [sol, sol_deb]
+
+    for ii, jj in enumerate(save_prefix):
+        # save the 'sol' object 
+        save_fit(u, v, vis, weights, sols[ii], prefix=jj,
+            save_profile_fit=False, save_vis_fit=False, save_uvtables=False
+            )
+        # load it
+        load_sol(jj + '_frank_sol.obj')
 
 
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
