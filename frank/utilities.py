@@ -166,10 +166,10 @@ def get_fit_stat_uncer(fit):
 
     elif fit._info["method"] == "LogNormal":
         # convert stored variance from var(log(brightness)) to var(brightness).
-        # see https://en.wikipedia.org/wiki/Log-normal_distribution
+        # see Appendix A.2 in https://ui.adsabs.harvard.edu/abs/2016A%26A...586A..76J/abstract;
+        # https://en.wikipedia.org/wiki/Log-normal_distribution
         log_variance = np.diag(fit.covariance)
-        lin_variance = (np.exp(log_variance) - 1) * \
-            np.exp(2 * np.log(fit.I) + log_variance)
+        lin_variance = (np.exp(log_variance) - 1) * np.exp(2 * np.log(fit.I))
         sigma = np.sqrt(lin_variance)
 
     else: 
