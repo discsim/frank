@@ -169,7 +169,7 @@ def get_fit_stat_uncer(fit):
         # see https://en.wikipedia.org/wiki/Log-normal_distribution
         log_variance = np.diag(fit.covariance)
         lin_variance = (np.exp(log_variance) - 1) * \
-            np.exp(2 * np.mean(np.log(fit.I)) + log_variance)
+            np.exp(2 * np.log(fit.I) + log_variance)
         sigma = np.sqrt(lin_variance)
 
     else: 
