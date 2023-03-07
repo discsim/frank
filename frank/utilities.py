@@ -91,7 +91,7 @@ def jy_convert(x, conversion, bmaj=None, bmin=None):
 
     Parameters
     ----------
-    x : float
+    x : array
         Brightness in one of: [Jy / beam], [Jy / arcsec^2], [Jy / sterad]
     conversion : { 'beam_sterad', 'beam_arcsec2', 'arcsec2_beam',
                    'arcsec2_sterad', 'sterad_beam', 'sterad_arcsec2'}
@@ -137,6 +137,46 @@ def jy_convert(x, conversion, bmaj=None, bmin=None):
                              'sterad_beam', 'sterad_arcsec']))
 
     return converted
+
+
+def get_fit_stat_uncer(fit):
+    r"""
+    Retrieve a model brightness profile's statistical uncertainty (that due to 
+    the uncertainty on the observed baselines). This is only a lower bound on 
+    the total uncertainty (which also has a systematic contribution due to 
+    sparse sampling of the (u, v) plane).
+
+    Parameters
+    ----------
+    fit : FrankFitter result object
+        Fitted profile to obtain statistical uncertainty of 
+
+    Returns
+    -------
+    sigma: array
+        Statistical uncertainty on the fitted brightness, at the fitted radial
+        points.
+    """
+
+    if 'method' not in fit._info.keys():
+        raise AttributeError("'fit' object lacks '_info.method' key.")
+
+    if fit._info["method"] == "Normal":
+        sigma = np.sqrt(np.diag(fit.covariance))
+
+    elif fit._info["method"] == "LogNormal":
+        # convert stored variance from var(log(brightness)) to var(brightness).
+        # see Appendix A.2 in https://ui.adsabs.harvard.edu/abs/2016A%26A...586A..76J/abstract;
+        # https://en.wikipedia.org/wiki/Log-normal_distribution
+        log_variance = np.diag(fit.covariance)
+        lin_variance = (np.exp(log_variance) - 1) * np.exp(2 * np.log(fit.I))
+        sigma = np.sqrt(lin_variance)
+
+    else: 
+        raise ValueError("fit._info['method'] {} must be one of "
+            "['Normal', 'LogNormal']".format(fit._info['method']))
+
+    return sigma
 
 
 class UVDataBinner(object):

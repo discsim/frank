@@ -111,8 +111,7 @@ def plot_brightness_profile(fit_r, fit_i, ax, dist=None, low_uncer=None,
                 high_uncer = low_uncer * 1.
             ax.fill_between(fit_r, fit_i - low_uncer, fit_i + high_uncer, **kwargs)
 
-        else:
-            ax.plot(fit_r, fit_i, **kwargs)
+        ax.plot(fit_r, fit_i, **kwargs)
 
         ax.axhline(0, c='c', ls='--', zorder=10)
 

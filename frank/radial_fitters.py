@@ -723,7 +723,8 @@ class FrankFitter(FourierBesselFitter):
 
         self._store_iteration_diagnostics = store_iteration_diagnostics
 
-        self._info.update({'alpha' : alpha, 'wsmooth' : weights_smooth, 'p0' : p_0})
+        self._info.update({'alpha' : alpha, 'wsmooth' : weights_smooth, 
+            'p0' : p_0, 'method': method})
 
     def fit_method(self):
         """Name of the fit method"""

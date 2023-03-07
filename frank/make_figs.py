@@ -224,7 +224,8 @@ def make_quick_fig(u, v, vis, weights, sol, bin_widths, dist=None,
 
     logging.info('    Making quick figure')
 
-    Rmax, N, alpha, wsmooth, p0 = sol._info.values()
+    Rmax, N, alpha, wsmooth, p0 = sol._info["Rmax"], sol._info["N"], \
+        sol._info["alpha"], sol._info["wsmooth"], sol._info["p0"]
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 2, hspace=0, bottom=.12)
@@ -409,7 +410,8 @@ def make_full_fig(u, v, vis, weights, sol, bin_widths,
 
     logging.info('    Making full figure')
 
-    Rmax, N, alpha, wsmooth, p0 = sol._info.values()
+    Rmax, N, alpha, wsmooth, p0 = sol._info["Rmax"], sol._info["N"], \
+        sol._info["alpha"], sol._info["wsmooth"], sol._info["p0"]
 
     with frank_plotting_style_context_manager(force_style):
         gs = GridSpec(3, 3, hspace=0, wspace=0.25, left=0.06, right=0.98)
