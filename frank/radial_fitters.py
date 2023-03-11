@@ -172,16 +172,9 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         brightness was obtained from a frank fit with 100 points or more.
         """
         Rpts = np.array(Rpts)
-        if I is None:
-            I = self.I
         
-        V = self._vis_map.transform(I, direction='forward')
-        I = self._vis_map.transform(V, Rpts, direction='backward')
-        
-        if np.any(Rpts > self.Rmax):
-            I[Rpts > self.Rmax] = 0
-
-        return I 
+        return self._vis_map.interpolate(I, Rpts, space='Real')
+  
 
     @abc.abstractproperty
     def MAP(self):

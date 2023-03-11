@@ -436,6 +436,33 @@ class VisibilityMapping:
 
         """
         return self._DHT.coefficients(direction=direction)
+    
+    def interpolate(self, f, r, space='Real'):
+        """
+        Interpolate f (evaluated at the collocation points) to the new points,
+        pts, using interpolation that is consistent with the Fourier-Bessel
+        Series / Discrete Hankel Transform.
+
+        Parameters
+        ----------
+        f : array, size = N
+            Function to interpolate, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k)
+        r : array or None
+            The points at which to evaluate the interpolation.
+        space : { 'Real', 'Fourier' }, optional
+            Space in which the interpolation is done. If not supplied, 
+            'Real' is assumed.
+
+
+        Returns
+        -------
+        f_interp : array, size = len(r)
+            The interpolated results
+        """
+        if space == 'Real':
+            r = r / rad_to_arcsec
+        return self._DHT.interpolate(f, r, space)
 
 
     def _get_mapping_coefficients(self, qs, ks, geometry=None, inverse=False):
