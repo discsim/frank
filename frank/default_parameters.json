@@ -37,6 +37,7 @@
     "wsmooth"          : 1e-4,
     "iter_tol"         : 1e-3,
     "max_iter"         : 2000,
+    "converge_failure" : "warn",
     "nonnegative"      : true,
     "method"           : "Normal"
   },
