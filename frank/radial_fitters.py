@@ -810,7 +810,7 @@ class FrankFitter(FourierBesselFitter):
             msg += 'be very slow for alpha close to 1.'
             if self._convegence_failure == 'raise':
                 msg += '\nAlternatively set convergence_failure to'
-                msg += "'warn' or 'ignore' and to continue despite the"
+                msg += "'warn' or 'ignore' to continue despite the"
                 msg += 'failure.'
                 raise RuntimeError(msg)
             elif self._convegence_failure == 'warn':
