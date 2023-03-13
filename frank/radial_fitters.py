@@ -808,7 +808,7 @@ class FrankFitter(FourierBesselFitter):
             msg += f'iterations.\nTry increasing max_iter, or '
             msg += 'try increasing alpha since convergence can '
             msg += 'be very slow for alpha close to 1.'
-            if self._convegence_failure == 'raise':
+            if self._convergence_failure == 'raise':
                 msg += '\nAlternatively set convergence_failure to'
                 msg += "'warn' or 'ignore' to continue despite the"
                 msg += 'failure.'
