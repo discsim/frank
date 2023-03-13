@@ -818,7 +818,7 @@ class FrankFitter(FourierBesselFitter):
                     logging.info(msg)
                 else:    
                     print(msg)
-            elif self._convegence_failure == 'ignore':           
+            elif self._convergence_failure == 'ignore':           
                 pass
 
         if self._store_iteration_diagnostics:
