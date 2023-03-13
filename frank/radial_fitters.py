@@ -813,7 +813,7 @@ class FrankFitter(FourierBesselFitter):
                 msg += "'warn' or 'ignore' to continue despite the"
                 msg += 'failure.'
                 raise RuntimeError(msg)
-            elif self._convegence_failure == 'warn':
+            elif self._convergence_failure == 'warn':
                 if logging.getLogger().isEnabledFor(logging.INFO):
                     logging.info(msg)
                 else:    
