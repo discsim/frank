@@ -415,7 +415,8 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     method=model['hyperparameters']['method'],
                                     max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations,
-                                    assume_optically_thick=model['geometry']['rescale_flux']
+                                    assume_optically_thick=model['geometry']['rescale_flux'],
+                                    convergence_failure=model['hyperparameters']['converge_failure'],
                                     )
 
     sol = FF.fit(u, v, vis, weights)

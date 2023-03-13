@@ -678,8 +678,14 @@ class FrankFitter(FourierBesselFitter):
         Specifies the vertical thickness of disc as a function of radius. Both
         R and H should be in arcsec. Assumes a Gaussian vertical structure. 
         Only works with assume_optically_thick=False
-    verbose:
+    verbose: bool
         Whether to print notification messages
+    convergence_failure: string, default = 'raise'
+        Decide what to do when the frank model does not converge within max_iter.
+        Should be one of:
+        'raise'  : raise an error
+        'warn'   : print a warning message and continue
+        'ignore' : Ignore the error.
 
     References
     ----------
@@ -693,7 +699,7 @@ class FrankFitter(FourierBesselFitter):
                  block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
                  tol=1e-3, method='Normal', I_scale=1e5, max_iter=2000, check_qbounds=True,
                  store_iteration_diagnostics=False, assume_optically_thick=True,
-                 scale_height=None, verbose=True):
+                 scale_height=None, verbose=True, convergence_failure='raise'):
 
         if method not in {'Normal', 'LogNormal'}:
             raise ValueError('FrankFitter supports following mehods:\n\t'
@@ -725,6 +731,11 @@ class FrankFitter(FourierBesselFitter):
 
         self._info.update({'alpha' : alpha, 'wsmooth' : weights_smooth, 
             'p0' : p_0, 'method': method})
+        
+        if convergence_failure not in {'raise', 'warn', 'ignore'}:
+            raise ValueError("convergence_failure must be one of 'raise'," 
+                             f"'warn', or 'ignore', nor {convergence_failure}")
+        self._convergence_failure = convergence_failure
 
     def fit_method(self):
         """Name of the fit method"""
@@ -780,16 +791,35 @@ class FrankFitter(FourierBesselFitter):
 
             count += 1
 
-        if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
-            print()
-
-            if count < self._max_iter:
+        # Check / report convergence
+        if count < self._max_iter:
+            if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
+                print()
                 logging.info('    Convergence criterion met at iteration'
                              ' {}'.format(count-1))
-            else:
+        else:
+            if self._verbose and logging.getLogger().isEnabledFor(logging.INFO):
+                print()
                 logging.info('    Convergence criterion not met; fit stopped at'
                              ' max_iter specified in your parameter file,'
                              ' {}'.format(self._max_iter))
+
+            msg = f'Convergence not met within {self._max_iter} '
+            msg += f'iterations.\nTry increasing max_iter, or '
+            msg += 'try increasing alpha since convergence can '
+            msg += 'be very slow for alpha close to 1.'
+            if self._convergence_failure == 'raise':
+                msg += '\nAlternatively set convergence_failure to'
+                msg += "'warn' or 'ignore' to continue despite the"
+                msg += 'failure.'
+                raise RuntimeError(msg)
+            elif self._convergence_failure == 'warn':
+                if logging.getLogger().isEnabledFor(logging.INFO):
+                    logging.info(msg)
+                else:    
+                    print(msg)
+            elif self._convergence_failure == 'ignore':           
+                pass
 
         if self._store_iteration_diagnostics:
             self._iteration_diagnostics['num_iterations'] = count
