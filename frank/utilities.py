@@ -132,9 +132,9 @@ def jy_convert(x, conversion, bmaj=None, bmin=None):
         converted = x * beam_solid_angle / sterad_to_arcsec
     else:
         raise AttributeError("conversion must be one of {}"
-                             "".format(['beam_sterad', 'beam_arcsec',
-                             'arcsec_beam', 'arcsec_sterad',
-                             'sterad_beam', 'sterad_arcsec']))
+                             "".format(['beam_sterad', 'beam_arcsec2',
+                             'arcsec2_beam', 'arcsec2_sterad',
+                             'sterad_beam', 'sterad_arcsec2']))
 
     return converted
 
