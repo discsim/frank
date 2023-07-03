@@ -413,6 +413,7 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     weights_smooth=model['hyperparameters']['wsmooth'],
                                     tol=model['hyperparameters']['iter_tol'],
                                     method=model['hyperparameters']['method'],
+                                    I_scale=model['hyperparameters']['I_scale'],
                                     max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations,
                                     assume_optically_thick=model['geometry']['rescale_flux'],

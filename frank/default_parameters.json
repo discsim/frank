@@ -39,7 +39,8 @@
     "max_iter"         : 2000,
     "converge_failure" : "warn",
     "nonnegative"      : true,
-    "method"           : "Normal"
+    "method"           : "Normal",
+    "I_scale"          : 1e5
   },
 
   "plotting" : {
