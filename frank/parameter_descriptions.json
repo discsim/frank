@@ -38,8 +38,10 @@
     "wsmooth"          : "Strength of smoothing applied to the power spectrum (suggested range 10^-4 - 10^-1). If a list, multiple fits will be performed and overplotted.",
     "iter_tol"         : "Tolerance for fit iteration stopping criterion (suggested <<1)",
     "max_iter"         : "Maximum number of fit iterations",
-    "nonnegative"      : "Whether frank provides the mean (if false) or best fit nonnegative solution",
-    "method"           : "The fit method: 'Normal' to fit in linear brighness, 'LogNormal' to fit in logarithmic brightness"
+    "converge_failure" : "How to treat the case when the fit does not reach convergence by 'max_iter': one of ['raise', 'warn', 'ignore'] to respectively raise an error, raise a warning, or ignore.",    
+    "nonnegative"      : "Whether the best-fit nonnegative brightness profile is included in the frank fit solution object",
+    "method"           : "The fit method: 'Normal' to fit in linear brighness, 'LogNormal' to fit in logarithmic brightness",
+    "I_scale"          :  "Brightness scale, unit=[Jy/sr]. Only used if 'method' is 'LogNormal' -- the 'LogNormal' model produces I('rout') = 'I_scale'"
   },
 
   "plotting" : {

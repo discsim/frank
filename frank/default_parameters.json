@@ -38,8 +38,10 @@
     "wsmooth"          : 1e-4,
     "iter_tol"         : 1e-3,
     "max_iter"         : 2000,
-    "nonnegative"      : false,
-    "method"           : "Normal"
+    "converge_failure" : "warn",
+    "nonnegative"      : true,
+    "method"           : "Normal",
+    "I_scale"          : 1e5
   },
 
   "plotting" : {
