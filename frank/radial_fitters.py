@@ -172,16 +172,9 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         brightness was obtained from a frank fit with 100 points or more.
         """
         Rpts = np.array(Rpts)
-        if I is None:
-            I = self.I
         
-        V = self._vis_map.transform(I, direction='forward')
-        I = self._vis_map.transform(V, Rpts, direction='backward')
-        
-        if np.any(Rpts > self.Rmax):
-            I[Rpts > self.Rmax] = 0
-
-        return I 
+        return self._vis_map.interpolate(I, Rpts, space='Real')
+  
 
     @abc.abstractproperty
     def MAP(self):
@@ -954,6 +947,24 @@ class FrankFitter(FourierBesselFitter):
             sol = self.MAP_solution
 
         return self.log_prior(sol.power_spectrum) + sol.log_likelihood()
+
+    def log_evidence_laplace(self):
+        r"""Compute the evidence, p(V), for the best fit model.
+
+        Uses the Laplace approximation, I.e. we model the posterior p(p, V) as
+        a Gaussian in \tau = log(p) centered on p_MAP with the covariance 
+        determined by the curvate of log P(p,V) at p_MAP:
+            P_Laplace(\tau) ~ N(\tau-\tau_MAP, \Sigma) * p(V)
+        where p(V) is the approximated evidence. Here 
+            \Sigma_i,j = - d^2 \log(P) / d\tau_i d\tau_j
+        and p(V) is determined such that P_Lapace(\tau_MAP) = P(p_MAP, V).
+        """
+        Sigma_inv = self._filter.covariance_MAP(self._sol, ret_inv=True)
+
+        sign, logdet = np.linalg.slogdet(Sigma_inv/(2*np.pi))
+        laplace = self.log_likelihood() - 0.5*logdet
+
+        return laplace
 
     @property
     def MAP_solution(self):

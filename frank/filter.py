@@ -23,6 +23,47 @@ import scipy.sparse
 from frank.constants import rad_to_arcsec
 
 
+def spectral_smoothing_matrix(DHT, weights):
+    r"""Compute the spectral smoothing prior matrix, Tij.
+    
+    .. math::
+        log P(p|q, w) = -1/2 q.T . Tij . q
+    
+    Parameters
+    ----------
+    DHT : DiscreteHankelTransform object
+        DHT to build the smoothing matrix for.
+    weights : float > 0
+        Weighting parameter used for the spectral smoothing matrix
+
+    Returns
+    -------
+    Tij : Sparse Matrix
+        Spectral smoothing p
+    """
+    log_q = np.log(DHT.q)
+    dc = (log_q[2:] - log_q[:-2]) / 2
+    de = np.diff(log_q)
+
+    N = DHT.size
+
+    Delta = np.zeros([3, N])
+    Delta[0, :-2] = 1 / (dc * de[:-1])
+    Delta[1, 1:-1] = - (1 / de[1:] + 1 / de[:-1]) / dc
+    Delta[2, 2:] = 1 / (dc * de[1:])
+
+    Delta = scipy.sparse.dia_matrix((Delta, [-1, 0, 1]),
+                                    shape=(N, N))
+
+    dce = np.zeros_like(log_q)
+    dce[1:-1] = dc
+    dce = scipy.sparse.dia_matrix((dce.reshape(1, -1), 0),
+                                    shape=(N, N))
+
+    Tij = Delta.T.dot(dce.dot(Delta))
+
+    return weights * Tij 
+
 class CriticalFilter:
     """Optimizer for power-spectrum priors.
 
@@ -54,31 +95,7 @@ class CriticalFilter:
 
         self._tol = tol
 
-        self._Tij = weights_smooth * self._build_smoothing_matrix()
-
-    def _build_smoothing_matrix(self):
-        log_q = np.log(self._DHT.q)
-        dc = (log_q[2:] - log_q[:-2]) / 2
-        de = np.diff(log_q)
-
-        N = self._DHT.size
-
-        Delta = np.zeros([3, N])
-        Delta[0, :-2] = 1 / (dc * de[:-1])
-        Delta[1, 1:-1] = - (1 / de[1:] + 1 / de[:-1]) / dc
-        Delta[2, 2:] = 1 / (dc * de[1:])
-
-        Delta = scipy.sparse.dia_matrix((Delta, [-1, 0, 1]),
-                                        shape=(N, N))
-
-        dce = np.zeros_like(log_q)
-        dce[1:-1] = dc
-        dce = scipy.sparse.dia_matrix((dce.reshape(1, -1), 0),
-                                      shape=(N, N))
-
-        Tij = Delta.T.dot(dce.dot(Delta))
-
-        return Tij 
+        self._Tij = spectral_smoothing_matrix(DHT, weights_smooth)
 
     def update_power_spectrum_multiple(self, fit, binning=None):
         """Estimate the best fit power spectrum given the current model fit.
@@ -167,7 +184,7 @@ class CriticalFilter:
         return np.all(np.abs(pi_new - pi_old) <= self._tol * pi_new)
 
 
-    def covariance_MAP(self, fit):
+    def covariance_MAP(self, fit, ret_inv=False):
         """
         Covariance of the power spectrum at maximum likelihood
 
@@ -175,6 +192,9 @@ class CriticalFilter:
         ----------
         fit : _HankelRegressor
             Solution at maximum likelihood
+        ret_inv : bool, default=False
+            If True return the inverse covariance matrix instead. This 
+            avoids inverting the inverse covariace matrix
 
         Returns
         -------
@@ -191,29 +211,34 @@ class CriticalFilter:
         mq = np.dot(Ykm, fit.MAP)
 
         mqq = np.outer(mq, mq)
-        Dqq = np.dot(Ykm, fit.Dsolve(Ykm.T))
+        Dqq = np.dot(Ykm, np.dot(fit.covariance, Ykm.T))
 
         p = fit.power_spectrum
-        tau = np.log(p)
 
         hess = \
-            + np.diag(self._alpha - 1.0 + 0.5 * self._rho + self._Tij.dot(tau)) \
+            + np.diag(self._p_0/p + 0.5*(mq**2 + np.diag(Dqq))/p) \
             + self._Tij.todense() \
             - 0.5 * np.outer(1 / p, 1 / p) * (2 * mqq + Dqq) * Dqq
 
-        # Invert the Hessian
-        hess_chol = scipy.linalg.cho_factor(hess)
-        ps_cov = scipy.linalg.cho_solve(hess_chol, np.eye(self._DHT.size))
+        if ret_inv:
+            return hess 
+        else:
+            # Invert the Hessian
+            hess_chol = scipy.linalg.cho_factor(hess)
+            ps_cov = scipy.linalg.cho_solve(hess_chol, np.eye(self._DHT.size))
 
-        return ps_cov
+            return ps_cov
 
     def log_prior(self, p):
-        """
+        r"""
         Compute the log prior probability, log(P(p)),
 
         .. math:
-            `log[P(p)] ~ np.sum(p0/pi - alpha*np.log(p0/pi))
+            `log[P(p)] ~ - np.sum(p0/pi + (alpha-1)*np.log(p0/pi))
             - 0.5*np.log(p) (weights_smooth*T) np.log(p)`
+
+        Note that frank uses log(p) in the inference hence the probability
+        is normalized such that ..math:`\int P(p) d\log p = 1`.
 
         Parameters
         ----------
@@ -232,7 +257,7 @@ class CriticalFilter:
 
         # Add the power spectrum prior term
         xi = self._p_0 / p
-        like = np.sum(xi - self._alpha * np.log(xi))
+        like = - np.sum(xi + (self._alpha-1) * np.log(xi))
 
         # Extra term due to spectral smoothness
         tau = np.log(p)
