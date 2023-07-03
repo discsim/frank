@@ -25,6 +25,8 @@ import numpy as np
 import pickle
 import logging
 
+from frank.utilities import get_fit_stat_uncer
+
 def load_uvtable(data_file):
     r"""
     Read in a UVTable with data to be fit
@@ -193,8 +195,9 @@ def save_fit(u, v, vis, weights, sol, prefix, save_solution=True,
             pickle.dump(iteration_diag, f)
 
     if save_profile_fit:
+        unc = get_fit_stat_uncer(sol)
         np.savetxt(prefix + '_frank_profile_fit.txt',
-                   np.array([sol.r, sol.I, np.diag(sol.covariance)**.5]).T,
+                   np.array([sol.r, sol.I, unc]).T,
                    header='r [arcsec]\tI [Jy/sr]\tI_uncer [Jy/sr]')
 
     if save_vis_fit:
