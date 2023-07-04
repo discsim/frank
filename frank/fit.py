@@ -152,6 +152,12 @@ def parse_parameters(*args):
         err = ValueError("method should be 'Normal' or 'LogNormal'")
         raise err
 
+    if model['geometry']['scale_height'] is not None and \
+       model['hyperparameters']['method'] == 'LogNormal':
+        logging.warning("WARNING: 'scale_height' is not 'None' AND 'method' is "
+                        "'LogNormal'. It is suggested to use the 'Normal' method " 
+                        "for vertical inference.")
+
     if model['hyperparameters']['nonnegative'] and \
        model['hyperparameters']['method'] == 'LogNormal':
         logging.warning("WARNING: 'nonnegative' is 'true' AND 'method' is "
@@ -373,6 +379,42 @@ def determine_geometry(u, v, vis, weights, model):
     return geom
 
 
+def get_scale_height(model):
+    """
+    Parse the functional form for disc scale-height in the parameter file
+
+    Parameters
+    ----------
+    model : dict
+        Dictionary containing model parameters the fit uses
+
+    Returns
+    -------
+    scale_height : function R --> H
+        Returns None if scale_height is 'null' in the input parameter file.
+        Else, returns a function for the vertical thickness of disc provided in 
+        the parameter file.
+
+    """
+
+    if model['geometry']['scale_height'] is None:
+        return
+
+    else:
+        if model['geometry']['rescale_flux']:
+            err = ValueError("scale_height should be 'null' if rescale_flux is 'true'")
+            raise err
+
+        def scale_height(R):
+            """Power-law with cutoff, unit=[arcsec]"""
+            vars = model['geometry']['scale_height']
+            h0, a, r0, b = vars['h0'], vars['a'], vars['r0'], vars['b']
+
+            return h0 * R ** a * np.exp(-(R / r0) ** b)
+
+        return scale_height
+
+
 def perform_fit(u, v, vis, weights, geom, model):
     r"""
     Deproject the observed visibilities and fit them for the brightness profile
@@ -404,6 +446,8 @@ def perform_fit(u, v, vis, weights, geom, model):
     need_iterations = model['input_output']['iteration_diag'] or \
         model['plotting']['diag_plot']
 
+    scale_height = get_scale_height(model)
+
     t1 = time.time()
     FF = radial_fitters.FrankFitter(Rmax=model['hyperparameters']['rout'],
                                     N=model['hyperparameters']['n'],
@@ -416,8 +460,9 @@ def perform_fit(u, v, vis, weights, geom, model):
                                     I_scale=model['hyperparameters']['I_scale'],
                                     max_iter=model['hyperparameters']['max_iter'],
                                     store_iteration_diagnostics=need_iterations,
-                                    assume_optically_thick=model['geometry']['rescale_flux'],
                                     convergence_failure=model['hyperparameters']['converge_failure'],
+                                    scale_height=scale_height,
+                                    assume_optically_thick=model['geometry']['rescale_flux']
                                     )
 
     sol = FF.fit(u, v, vis, weights)
