@@ -152,7 +152,7 @@ def parse_parameters(*args):
         err = ValueError("method should be 'Normal' or 'LogNormal'")
         raise err
 
-    if model['hyperparameters']['scale_height'] is not None and \
+    if model['geometry']['scale_height'] is not None and \
        model['hyperparameters']['method'] == 'LogNormal':
         logging.warning("WARNING: 'scale_height' is not 'None' AND 'method' is "
                         "'LogNormal'. Only the 'Normal' model is compatible " 
