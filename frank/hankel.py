@@ -230,7 +230,7 @@ class DiscreteHankelTransform(object):
         elif space == 'Fourier':
             x = np.atleast_1d(2*np.pi * q * self._Rmax)
         else:
-            raise ValueError("Space must be one of 'Real' or 'Fourier, not "
+            raise ValueError("Space must be one of 'Real' or 'Fourier', not "
                              f"{space}.")
 
         coeff = np.outer(np.where(x < self._j_nN, self._jnu0(x), 0),
