@@ -27,7 +27,7 @@
     "dra"              : "Delta (offset from 0) right ascension, defined positive for offsets toward east, unit=[arcsec]",
     "ddec"             : "Delta declination, unit=[arcsec]",
     "rescale_flux"     : "Whether to rescale the total flux to account for the source's inclination (see frank.geometry.rescale_total_flux)",
-    "scale_height"     : "Parameter values for calcuating the vertical thickness of the disk in terms of its (assumed Gaussian) scale-height: 'h0', 'a', 'r0', 'b' in H(r) = h0 * r**a * np.exp(-(r/r0)**b). 'r0' should be in [arcsec]. Example (replace single- with double-quotes): {'h0': 1.0, 'a': 1.0, 'r0': 1.0, 'b': 1.0}",
+    "scale_height"     : "Parameter values for calcuating the vertical thickness of the disk in terms of its (assumed Gaussian) scale-height: 'h0', 'a', 'r0', 'b' in H(r) = h0 * r**a * np.exp(-(r/r0)**b). 'r0' should be in [arcsec]. Example (replace single- with double-quotes): {'h0': -1.0, 'a': 1.0, 'r0': 1.0, 'b': 1.0}",
   },
 
   "hyperparameters" : {
