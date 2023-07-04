@@ -129,6 +129,12 @@ class FrankDebrisFitter(FrankFitter):
         for each fit iteration
     verbose:
         Whether to print notification messages
+    convergence_failure: string, default = 'raise'
+        Decide what to do when the frank model does not converge within max_iter.
+        Should be one of:
+        'raise'  : raise an error
+        'warn'   : print a warning message and continue
+        'ignore' : Ignore the error.
 
     References
     ----------
@@ -141,7 +147,8 @@ class FrankDebrisFitter(FrankFitter):
     def __init__(self, Rmax, N, geometry, scale_height, nu=0, block_data=True,
                  block_size=10 ** 5, alpha=1.05, p_0=None, weights_smooth=1e-4,
                  tol=1e-3, method='Normal', I_scale=1e5, max_iter=2000, check_qbounds=True,
-                 store_iteration_diagnostics=False, verbose=True):
+                 store_iteration_diagnostics=False, verbose=True, 
+                 convergence_failure='raise'):
 
         # All functionality is provided by the base class. FrankDebrisFitter is just a 
         # sub-set of FrankFitter
@@ -150,4 +157,5 @@ class FrankDebrisFitter(FrankFitter):
             block_size=block_size, alpha=alpha, p_0=p_0, weights_smooth=weights_smooth,
             tol=tol, method=method, I_scale=I_scale, max_iter=max_iter, 
             check_qbounds=check_qbounds, store_iteration_diagnostics=store_iteration_diagnostics, 
-            assume_optically_thick=False, scale_height=scale_height, verbose=verbose)
+            assume_optically_thick=False, scale_height=scale_height, verbose=verbose,
+            convergence_failure=convergence_failure)

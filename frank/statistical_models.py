@@ -18,6 +18,7 @@
 #
 
 
+import multiprocessing
 import numpy as np
 import scipy.linalg
 import scipy.sparse
@@ -106,7 +107,7 @@ class VisibilityMapping:
             self._H2 = 0.5*(2*np.pi*self._scale_height / rad_to_arcsec)**2
             
             if self._verbose:
-                logging.info('  Assuming an optically thin model but geometrically: '
+                logging.info('  Assuming an optically thin model but geometrically '
                              'thick model: *Not* scaling the total flux to account for '
                              'the source inclination')
    
@@ -201,23 +202,21 @@ class VisibilityMapping:
             start = 0
             end = Nstep
             Ndata = len(Vi)
-            M = Ms[i]
-            j = js[i]
             while start < Ndata:
                 qs = qi[start:end]
                 ks = ki[start:end]
                 ws = wi[start:end]
                 Vs = Vi[start:end]
-
+                
                 X = self._get_mapping_coefficients(qs, ks)
 
                 wXT = np.array(X.T * ws, order='C')
 
-                M += np.dot(wXT, X)
-                j += np.dot(wXT, Vs)
+                Ms[i] += np.dot(wXT, X)
+                js[i] += np.dot(wXT, Vs)
 
                 start = end
-                end += Nstep
+                end = min(Ndata, end + Nstep)
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
@@ -235,6 +234,7 @@ class VisibilityMapping:
         else: 
             return {
                 'mult_freq' : False,
+                'channels' : None,
                 'M' : Ms[0],
                 'j' : js[0],
                 'null_likelihood' : H0,
@@ -416,6 +416,54 @@ class VisibilityMapping:
             
         return self._DHT.transform(f, q, direction)
 
+    def DHT_coefficients(self, direction='forward'):
+        """Get the coefficients of the Discrete Hankel Transform.
+
+        The coefficients are defined by
+        .. math:
+            H[h] = np.dot(H, f)
+        
+        Parameters
+        ----------
+        direction : { 'forward', 'backward' }, optional
+            Direction of the transform. If not supplied, the forward
+            transform is used
+
+        Returns
+        -------
+        H : array, size = N or len(q) if supplied
+            The Hankel transform of the array f
+
+        """
+        return self._DHT.coefficients(direction=direction)
+    
+    def interpolate(self, f, r, space='Real'):
+        """
+        Interpolate f (evaluated at the collocation points) to the new points,
+        pts, using interpolation that is consistent with the Fourier-Bessel
+        Series / Discrete Hankel Transform.
+
+        Parameters
+        ----------
+        f : array, size = N
+            Function to interpolate, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k)
+        r : array or None
+            The points at which to evaluate the interpolation.
+        space : { 'Real', 'Fourier' }, optional
+            Space in which the interpolation is done. If not supplied, 
+            'Real' is assumed.
+
+
+        Returns
+        -------
+        f_interp : array, size = len(r)
+            The interpolated results
+        """
+        if space == 'Real':
+            r = r / rad_to_arcsec
+        return self._DHT.interpolate(f, r, space)
+
 
     def _get_mapping_coefficients(self, qs, ks, geometry=None, inverse=False):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
@@ -503,6 +551,7 @@ class VisibilityMapping:
             return self._scale_height
         else:
             return None
+
 
 class GaussianModel:
     r"""

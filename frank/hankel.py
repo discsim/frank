@@ -206,6 +206,66 @@ class DiscreteHankelTransform(object):
             self._jnu0(np.outer(k * q, self._j_nk))
 
         return H
+    
+    def interpolation_coefficients(self, q, space='Real'):
+        """
+        Coefficients of the interpolation matrix, defined by
+            f(q) = np.dot(Y, f)
+
+        Parameters
+        ----------
+        q : array or None
+            The points at which to evaluate the interpolation.
+        space : { 'Real', 'Fourier' }, optional
+            Space in which the interpolation is done. If not supplied, 
+            'Real' is assumed.
+
+        Returns
+        -------
+        Y : array, size = (len(q), N)
+            The interpolation matrix
+        """
+        if space == 'Real':
+            x = np.atleast_1d(2*np.pi * q * self._Qmax)
+        elif space == 'Fourier':
+            x = np.atleast_1d(2*np.pi * q * self._Rmax)
+        else:
+            raise ValueError("Space must be one of 'Real' or 'Fourier', not "
+                             f"{space}.")
+
+        coeff = np.outer(np.where(x < self._j_nN, self._jnu0(x), 0),
+                         2*self._j_nk / self._jnup(self._j_nk))
+        Y = coeff / (self._j_nk.reshape(1,-1)**2 - x.reshape(-1, 1)**2)
+        
+        return Y
+
+    def interpolate(self, f, q, space='Real'):
+        """
+        Interpolate f (evaluated at the collocation points) to the new points,
+        pts, using interpolation that is consistent with the Fourier-Bessel
+        Series / Discrete Hankel Transform.
+
+        Parameters
+        ----------
+        f : array, size = N
+            Function to interpolate, evaluated at the collocation points:
+                f[k] = f(r_k) or f[k] = f(q_k)
+        q : array or None
+            The points at which to evaluate the interpolation.
+        space : { 'Real', 'Fourier' }, optional
+            Space in which the interpolation is done. If not supplied, 
+            'Real' is assumed.
+
+
+        Returns
+        -------
+        f_interp : array, size = len(q)
+            The interpolated results
+        """
+        Y = self.interpolation_coefficients(q, space)
+
+        return np.dot(Y, f)
+    
 
     @property
     def r(self):
