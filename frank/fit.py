@@ -155,9 +155,8 @@ def parse_parameters(*args):
     if model['geometry']['scale_height'] is not None and \
        model['hyperparameters']['method'] == 'LogNormal':
         logging.warning("WARNING: 'scale_height' is not 'None' AND 'method' is "
-                        "'LogNormal'. Only the 'Normal' model is compatible " 
-                        "with vertical inference --> setting 'method' to 'Normal'")
-        model['hyperparameters']['method'] = 'Normal'
+                        "'LogNormal'. It is suggested to use the 'Normal' method " 
+                        "for vertical inference.")
 
     if model['hyperparameters']['nonnegative'] and \
        model['hyperparameters']['method'] == 'LogNormal':
