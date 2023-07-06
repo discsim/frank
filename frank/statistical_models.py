@@ -278,7 +278,7 @@ class VisibilityMapping:
             if hash[4] is None:
                 return False
             else:
-                return np.alltrue(self._scale_height == hash[4])
+                return np.all(self._scale_height == hash[4])
 
 
     def predict_visibilities(self, I, q, k=None, geometry=None):
