@@ -8,7 +8,7 @@ v.1.2.2
 *One bug fix, some code refactoring, a couple new functionalities, integrates scale-height fits into command-line UI*
 
 - default_parameters.json, parameter_descriptions.json:
-    - Adds parameters: 'convergence_failure', 'I_scale', 'scale_height'
+    - Adds parameters: 'convergence_failure', 'I_scale', 'save_figures', 'scale_height'
 - filter.py
     - Breaks 'spectral_smoothing_matrix' out of 'CriticalFilter'; some restructuring of 'covariance_MAP' and 'log_prior'
 - fit.py
