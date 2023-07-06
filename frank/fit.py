@@ -22,7 +22,6 @@
 """
 
 import os
-import sys
 import time
 import json
 
@@ -38,7 +37,6 @@ def _check_and_warn_if_parallel():
                         "'export OMP_NUM_THREADS=1' to disable this warning.")
 
 import numpy as np
-
 import logging
 
 import frank
