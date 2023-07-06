@@ -3,6 +3,32 @@
 Changelog
 +++++++++
 
+v.1.2.2
++++++++
+*One bug fix, some code refactoring, a couple new functionalities, integrates scale-height fits into command-line UI*
+
+- default_parameters.json, parameter_descriptions.json:
+    - Adds parameters: 'convergence_failure', 'I_scale', 'scale_height'
+- filter.py
+    - Breaks 'spectral_smoothing_matrix' out of 'CriticalFilter'; some restructuring of 'covariance_MAP' and 'log_prior'
+- fit.py
+    - Adds 'get_scale_height' function
+- hankel.py
+    - Adds 'interpolation_coefficients' and 'interpolate' functions
+- io.py
+    - Fixed a bug that was saving incorrect uncertainty for LogNormal brightness profile
+- make_figs.py
+    - Adds non-negative fit to figures
+- radial_fitters.py
+    - Adds 'convergence_failure' arg to FrankFitter
+    - Adds 'log_evidence_laplace' function to FrankFitter
+- statistical_models.py
+    - Adds 'DHT_coefficients' and 'interpolate' functions to 'VisibilityMapping'
+- test.py
+    - Adds tests for non-negative solver ('test_solve_non_negative') and solution object IO ('test_save_load_sol')
+- utilities.py
+    - Adds 'get_fit_stat_uncer' function
+
 v.1.2.1
 +++++++
 *Fixed a bug that caused non-python files to not be installed through pip*
