@@ -6,6 +6,7 @@
     "save_profile_fit" : true,
     "save_vis_fit"     : true,
     "save_uvtables"    : true,
+    "save_figures"     : true,
     "iteration_diag"   : false,
     "format"           : null
   },
