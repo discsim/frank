@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for frank/make_figs.py: 88%</title>
+    <title>Coverage for frank/make_figs.py: 87%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="coverage_html.js" defer></script>
@@ -13,7 +13,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>frank/make_figs.py</b>:
-            <span class="pc_cov">88%</span>
+            <span class="pc_cov">87%</span>
         </h1>
         <div id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -44,8 +44,8 @@
         </div>
         <h2>
             <span class="text">555 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">491<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">64<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">481<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">74<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <div style="display: none;">
@@ -226,9 +226,9 @@
     <p class="run"><span class="n"><a id="t167" href="#t167">167</a></span><span class="t">    <span class="nam">ax1</span><span class="op">.</span><span class="nam">legend</span><span class="op">(</span><span class="nam">loc</span><span class="op">=</span><span class="num">0</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t168" href="#t168">168</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t169" href="#t169">169</a></span><span class="t">    <span class="key">if</span> <span class="nam">save_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">        <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_deprojection.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t170" href="#t170">170</a></span><span class="t">        <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_deprojection.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t171" href="#t171">171</a></span><span class="t">                    <span class="nam">bbox_inches</span><span class="op">=</span><span class="str">'tight'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">        <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t172" href="#t172">172</a></span><span class="t">        <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t173" href="#t173">173</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t174" href="#t174">174</a></span><span class="t">    <span class="key">return</span> <span class="nam">fig</span><span class="op">,</span> <span class="nam">axes</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t175" href="#t175">175</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -408,9 +408,9 @@
     <p class="run"><span class="n"><a id="t349" href="#t349">349</a></span><span class="t">        <span class="nam">plt</span><span class="op">.</span><span class="nam">setp</span><span class="op">(</span><span class="nam">ax2</span><span class="op">.</span><span class="nam">get_xticklabels</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">visible</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t350" href="#t350">350</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t351" href="#t351">351</a></span><span class="t">        <span class="key">if</span> <span class="nam">save_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t352" href="#t352">352</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_fit_quick.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t352" href="#t352">352</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_fit_quick.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t353" href="#t353">353</a></span><span class="t">                        <span class="nam">bbox_inches</span><span class="op">=</span><span class="str">'tight'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t354" href="#t354">354</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t354" href="#t354">354</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t355" href="#t355">355</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t356" href="#t356">356</a></span><span class="t">    <span class="key">return</span> <span class="nam">fig</span><span class="op">,</span> <span class="nam">axes</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t357" href="#t357">357</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -671,8 +671,8 @@
     <p class="run"><span class="n"><a id="t612" href="#t612">612</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">setp</span><span class="op">(</span><span class="nam">aa</span><span class="op">.</span><span class="nam">get_xticklabels</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">visible</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t613" href="#t613">613</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t614" href="#t614">614</a></span><span class="t">        <span class="key">if</span> <span class="nam">save_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t615" href="#t615">615</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_fit_full.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t616" href="#t616">616</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t615" href="#t615">615</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_fit_full.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t616" href="#t616">616</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t617" href="#t617">617</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t618" href="#t618">618</a></span><span class="t">    <span class="key">return</span> <span class="nam">fig</span><span class="op">,</span> <span class="nam">axes</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t619" href="#t619">619</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -800,9 +800,9 @@
     <p class="run"><span class="n"><a id="t741" href="#t741">741</a></span><span class="t">        <span class="nam">plt</span><span class="op">.</span><span class="nam">setp</span><span class="op">(</span><span class="nam">ax2</span><span class="op">.</span><span class="nam">get_xticklabels</span><span class="op">(</span><span class="op">)</span><span class="op">,</span> <span class="nam">visible</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t742" href="#t742">742</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t743" href="#t743">743</a></span><span class="t">        <span class="key">if</span> <span class="nam">save_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t744" href="#t744">744</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_fit_diag.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t744" href="#t744">744</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_fit_diag.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t745" href="#t745">745</a></span><span class="t">                        <span class="nam">bbox_inches</span><span class="op">=</span><span class="str">'tight'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t746" href="#t746">746</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t746" href="#t746">746</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t747" href="#t747">747</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t748" href="#t748">748</a></span><span class="t">    <span class="key">return</span> <span class="nam">fig</span><span class="op">,</span> <span class="nam">axes</span><span class="op">,</span> <span class="nam">iter_plot_range</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t749" href="#t749">749</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -1030,8 +1030,8 @@
     <p class="run"><span class="n"><a id="t971" href="#t971">971</a></span><span class="t">        <span class="nam">ax4</span><span class="op">.</span><span class="nam">text</span><span class="op">(</span><span class="num">.1</span><span class="op">,</span> <span class="num">.9</span><span class="op">,</span> <span class="str">'e)'</span><span class="op">,</span> <span class="nam">c</span><span class="op">=</span><span class="str">'w'</span><span class="op">,</span> <span class="nam">transform</span><span class="op">=</span><span class="nam">ax4</span><span class="op">.</span><span class="nam">transAxes</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t972" href="#t972">972</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t973" href="#t973">973</a></span><span class="t">        <span class="key">if</span> <span class="nam">save_prefix</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t974" href="#t974">974</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_clean_comparison.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t975" href="#t975">975</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t974" href="#t974">974</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">savefig</span><span class="op">(</span><span class="nam">save_prefix</span> <span class="op">+</span> <span class="str">'_frank_clean_comparison.png'</span><span class="op">,</span> <span class="nam">dpi</span><span class="op">=</span><span class="num">300</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t975" href="#t975">975</a></span><span class="t">            <span class="nam">plt</span><span class="op">.</span><span class="nam">close</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t976" href="#t976">976</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t977" href="#t977">977</a></span><span class="t">    <span class="key">return</span> <span class="nam">fig</span><span class="op">,</span> <span class="nam">axes</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t978" href="#t978">978</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -1262,7 +1262,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v6.2</a>,
-            created at 2023-07-04 15:12 +0000
+            created at 2023-07-10 12:35 +0000
         </p>
     </div>
 </footer>
