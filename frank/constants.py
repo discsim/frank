@@ -19,7 +19,6 @@
 """This module contains useful conversion constants."""
 
 import numpy as np
-from scipy.constants import c
 
 rad_to_arcsec = 3600 * 180 / np.pi
 sterad_to_arcsec = rad_to_arcsec ** 2

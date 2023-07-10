@@ -528,7 +528,7 @@ def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
         params['plotting']['full_plot'] = True
         params['plotting']['diag_plot'] = True
         params['plotting']['deprojec_plot'] = True
-        params['plotting']['save_figs'] = True
+        params['input_output']['save_figures'] = False
         params['plotting']['distance'] = 121.
         params['plotting']['bin_widths'] = [1e5]
         params['plotting']['iter_plot_range'] = [0, 5]

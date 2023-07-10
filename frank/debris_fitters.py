@@ -21,11 +21,6 @@
   of deprojected visibities. Routines in this file assume that the emission is
   optically thin with a Gaussian vertical structure.
 """
-import abc
-from collections import defaultdict
-import logging
-import numpy as np
-
 from frank.radial_fitters import FourierBesselFitter, FrankFitter
 
 class FourierBesselDebrisFitter(FourierBesselFitter):

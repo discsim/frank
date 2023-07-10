@@ -20,9 +20,6 @@
 import numpy as np
 import scipy.sparse
 
-from frank.constants import rad_to_arcsec
-
-
 def spectral_smoothing_matrix(DHT, weights):
     r"""Compute the spectral smoothing prior matrix, Tij.
     

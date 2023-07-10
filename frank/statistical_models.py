@@ -17,18 +17,13 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
 
-
-import multiprocessing
 import numpy as np
 import scipy.linalg
 import scipy.sparse
 import scipy.optimize
-from collections import defaultdict
 import logging
 
-from frank.hankel import DiscreteHankelTransform
 from frank.constants import rad_to_arcsec, deg_to_rad
-
 from frank.minimizer import LineSearch, MinimizeNewton
 
 class VisibilityMapping:
@@ -278,7 +273,7 @@ class VisibilityMapping:
             if hash[4] is None:
                 return False
             else:
-                return np.alltrue(self._scale_height == hash[4])
+                return np.all(self._scale_height == hash[4])
 
 
     def predict_visibilities(self, I, q, k=None, geometry=None):

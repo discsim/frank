@@ -21,7 +21,6 @@ results.
 """
 import logging
 import numpy as np
-from scipy.fft import fftfreq
 from scipy.interpolate import interp1d
 
 from frank.constants import deg_to_rad, sterad_to_arcsec, rad_to_arcsec

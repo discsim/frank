@@ -25,7 +25,7 @@ from collections import defaultdict
 import logging
 import numpy as np
 
-from frank.constants import deg_to_rad, rad_to_arcsec
+from frank.constants import rad_to_arcsec
 from frank.filter import CriticalFilter
 from frank.hankel import DiscreteHankelTransform
 from frank.statistical_models import (

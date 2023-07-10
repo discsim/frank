@@ -22,7 +22,6 @@
 """
 
 import os
-import sys
 import time
 import json
 
@@ -38,7 +37,6 @@ def _check_and_warn_if_parallel():
                         "'export OMP_NUM_THREADS=1' to disable this warning.")
 
 import numpy as np
-
 import logging
 
 import frank
@@ -135,6 +133,11 @@ def parse_parameters(*args):
     model['input_output']['save_prefix'] = save_prefix =  \
         os.path.join(model['input_output']['save_dir'],
                      os.path.splitext(os.path.basename(uv_path))[0])
+
+    if model['input_output']['save_figures'] is True:
+        model['input_output']['fig_save_prefix'] = save_prefix
+    else:
+        model['input_output']['fig_save_prefix'] = None
 
     log_path = save_prefix + '_frank_fit.log'
     frank.enable_logging(log_path)
@@ -550,7 +553,7 @@ def run_multiple_fits(u, v, vis, weights, geom, model):
                                                                bin_widths=model['plotting']['bin_widths'],
                                                                dist=model['plotting']['distance'],
                                                                force_style=model['plotting']['force_style'],
-                                                               save_prefix=model['input_output']['save_prefix'],
+                                                               save_prefix=model['input_output']['fig_save_prefix'],
                                                                )
     else:
         logging.info('The multifit figure requires alpha and wsmooth to be lists of length <= 2.'
@@ -628,7 +631,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                              geom=geom,
                                                              bin_widths=model['plotting']['bin_widths'],
                                                              force_style=model['plotting']['force_style'],
-                                                             save_prefix=model['input_output']['save_prefix']
+                                                             save_prefix=model['input_output']['fig_save_prefix']
                                                              )
 
             figs.append(deproj_fig)
@@ -641,7 +644,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                              dist=model['plotting']['distance'],
                                                              logx=model['plotting']['plot_in_logx'],
                                                              force_style=model['plotting']['force_style'],
-                                                             save_prefix=model['input_output']['save_prefix'],
+                                                             save_prefix=model['input_output']['fig_save_prefix'],
                                                              stretch=model['plotting']['stretch'],
                                                              gamma=model['plotting']['gamma'],
                                                              asinh_a=model['plotting']['asinh_a']
@@ -657,7 +660,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                           dist=model['plotting']['distance'],
                                                           logx=model['plotting']['plot_in_logx'],
                                                           force_style=model['plotting']['force_style'],
-                                                          save_prefix=model['input_output']['save_prefix'],
+                                                          save_prefix=model['input_output']['fig_save_prefix'],
                                                           norm_residuals=model['plotting']['norm_residuals'],
                                                           stretch=model['plotting']['stretch'],
                                                           gamma=model['plotting']['gamma'],
@@ -672,7 +675,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                              iteration_diagnostics=iteration_diagnostics,
                                                              iter_plot_range=model['plotting']['iter_plot_range'],
                                                              force_style=model['plotting']['force_style'],
-                                                             save_prefix=model['input_output']['save_prefix']
+                                                             save_prefix=model['input_output']['fig_save_prefix']
                                                              )
 
             figs.append(diag_fig)
@@ -716,7 +719,7 @@ def output_results(u, v, vis, weights, sol, geom, model, iteration_diagnostics=N
                                                                         MAP_convolved=MAP_convolved,
                                                                         dist=model['plotting']['distance'],
                                                                         force_style=model['plotting']['force_style'],
-                                                                        save_prefix=model['input_output']['save_prefix']
+                                                                        save_prefix=model['input_output']['fig_save_prefix']
                                                                         )
 
             figs.append(clean_fig)
@@ -788,7 +791,7 @@ def perform_bootstrap(u, v, vis, weights, geom, model):
     boot_fig, boot_axes = make_figs.make_bootstrap_fig(r=sol.r,
                                                        profiles=profiles_bootstrap,
                                                        force_style=model['plotting']['force_style'],
-                                                       save_prefix=model['input_output']['save_prefix']
+                                                       save_prefix=model['input_output']['fig_save_prefix']
                                                        )
 
     return boot_fig, boot_axes
