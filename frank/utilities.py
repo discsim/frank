@@ -423,7 +423,7 @@ def normalize_uv(u, v, wle):
     logging.info('  Normalizing u and v coordinates by provided'
                  ' observing wavelength of {} m'.format(wle))
 
-    wle = np.atleast_1d(wle, dtype='f8')
+    wle = np.atleast_1d(wle).astype('f8')
     if  len(wle) != 1 and len(wle) != len(u):
         raise ValueError("len(wle) = {}. It should be equal to "
                          "len(u) = {} (or 1 if all wavelengths are the same)".format(len(wle), len(u)))
