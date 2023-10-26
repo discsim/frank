@@ -687,11 +687,9 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
 
     """
     if project:
-        inc, pa, dra, ddec = geom.inc, geom.PA, geom.dRA, geom.dDec
+        inc, pa = geom.inc, geom.PA
         inc *= deg_to_rad
         pa *= deg_to_rad
-        if not phase_shift:
-            dra, ddec = 0., 0.
 
         cos_i = np.cos(inc)
         cos_pa, sin_pa = np.cos(pa), np.sin(pa)
@@ -708,7 +706,7 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
 
     if phase_shift:
-        xi, yi = np.meshgrid(x + dra, y - ddec)
+        xi, yi = np.meshgrid(x + geom.dra, y - geom.ddec)
     else:
         xi, yi = np.meshgrid(x, y)
 
