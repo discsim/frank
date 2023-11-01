@@ -949,10 +949,15 @@ def make_mock_data(r, I, Rmax, u, v, projection=None, geometry=None, N=500,
         disk size
     u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations
+    projection : str, default = None
+        One of [None, 'deproject', 'reproject']
+        If None, the visibilities will be neither deprojected nor reprojected.
+        If 'deproject' or 'reproject', the visibilites will be accordingly 
+        deprojected or reprojected by the supplied `geometry` and their total 
+        flux scaled by the inclination.
     geometry : SourceGeometry object, default=None
-        Source geometry (see frank.geometry.SourceGeometry). If supplied, the
-        visibilities will be deprojected, and their total flux scaled by the
-        inclination.
+        Source geometry (see frank.geometry.SourceGeometry). Must be supplied
+        if `projection` is 'deproject' or 'reproject'.
     N : integer, default=500
         Number of terms to use in the Fourier-Bessel series
     add_noise : bool, default = False
