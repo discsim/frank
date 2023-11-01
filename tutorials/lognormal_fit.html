@@ -203,9 +203,10 @@
 <span class="c1"># we&#39;ll generate the noiseless visibilities first, then add noise,</span>
 <span class="c1"># because we want the true visibility profile for later comparison</span>
 <span class="c1"># to the frank fits. Alternatively we could add noise straight away with</span>
-<span class="c1"># make_mock_data(r, I, Rmax=2.0, u=u, v=v, geometry=geom,</span>
+<span class="c1"># make_mock_data(r, I, Rmax=2.0, u=u, v=v, projection=&#39;deproject&#39;, geometry=geom,</span>
 <span class="c1">#                add_noise=True, weights=weights)</span>
-<span class="n">baselines</span><span class="p">,</span> <span class="n">V_noiseless</span> <span class="o">=</span> <span class="n">make_mock_data</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Rmax</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
+<span class="n">baselines</span><span class="p">,</span> <span class="n">V_noiseless</span> <span class="o">=</span> <span class="n">make_mock_data</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Rmax</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">u</span><span class="o">=</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v</span><span class="p">,</span>
+                                        <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;deproject&#39;</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">geom</span><span class="p">)</span>
 
 <span class="c1"># add Gaussian noise according to the data weights</span>
 <span class="n">V_noisy</span> <span class="o">=</span> <span class="n">add_vis_noise</span><span class="p">(</span><span class="n">V_noiseless</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -351,7 +352,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2023, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2023 Oct 26 at 19:12:10 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2023 Nov 01 at 15:39:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 

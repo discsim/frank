@@ -1694,7 +1694,7 @@ Injected noise will be scaled proportional to <code class="code docutils literal
 
 <dl class="py function">
 <dt class="sig sig-object py" id="frank.utilities.make_mock_data">
-<span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">make_mock_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.make_mock_data" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">frank.utilities.</span></span><span class="sig-name descname"><span class="pre">make_mock_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Rmax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">u</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">projection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_noise</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#frank.utilities.make_mock_data" title="Permalink to this definition"></a></dt>
 <dd><p>Generate mock visibilities from a provided brightness profile and (u,v)
 distribution.</p>
 <dl class="field-list simple">
@@ -1706,9 +1706,13 @@ distribution.</p>
 disk size</p></li>
 <li><p><strong>u</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations</p></li>
 <li><p><strong>v</strong> (array, unit = <span class="math notranslate nohighlight">\(\lambda\)</span>) – u and v coordinates of observations</p></li>
-<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>default=None</em>) – Source geometry (see frank.geometry.SourceGeometry). If supplied, the
-visibilities will be deprojected, and their total flux scaled by the
-inclination.</p></li>
+<li><p><strong>projection</strong> (<em>str</em><em>, </em><em>default = None</em>) – One of [None, ‘deproject’, ‘reproject’]
+If None, the visibilities will be neither deprojected nor reprojected.
+If ‘deproject’ or ‘reproject’, the visibilites will be accordingly
+deprojected or reprojected by the supplied <code class="code docutils literal notranslate"><span class="pre">geometry</span></code> and their total
+flux scaled by the inclination.</p></li>
+<li><p><strong>geometry</strong> (<em>SourceGeometry object</em><em>, </em><em>default=None</em>) – Source geometry (see frank.geometry.SourceGeometry). Must be supplied
+if <code class="code docutils literal notranslate"><span class="pre">projection</span></code> is ‘deproject’ or ‘reproject’.</p></li>
 <li><p><strong>N</strong> (<em>integer</em><em>, </em><em>default=500</em>) – Number of terms to use in the Fourier-Bessel series</p></li>
 <li><p><strong>add_noise</strong> (<em>bool</em><em>, </em><em>default = False</em>) – Whether to add noise to the mock visibilities</p></li>
 <li><p><strong>weights</strong> (<em>array</em><em>, </em><em>unit = Jy^-2</em>) – Visibility weights, of the form <span class="math notranslate nohighlight">\(1 / \sigma^2\)</span>.
@@ -1775,7 +1779,7 @@ a length N dataset</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2023, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2023 Oct 26 at 19:12:10 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2023 Nov 01 at 15:39:09 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
