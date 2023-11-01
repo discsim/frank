@@ -976,6 +976,14 @@ def make_mock_data(r, I, Rmax, u, v, projection=None, geometry=None, N=500,
     'r' and 'I' should be sufficiently sampled to ensure an interpolation will
     be accurate, otherwise 'vis' may be a poor estimate of their transform.
     """
+    proj_valid = [None, 'deproject', 'reproject']
+    if projection not in proj_valid:
+        raise AttributeError(f"projection is '{projection}'; must be one of {proj_valid}.")
+    
+    if projection in ['deproject', 'reproject']:
+        if geometry is None:
+            raise AttributeError(f"geometry must be supplied to perform {projection}.")
+        
         if projection == 'deproject':
             u, v = geometry.deproject(u, v)
         else:
