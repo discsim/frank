@@ -989,6 +989,12 @@ def make_mock_data(r, I, Rmax, u, v, projection=None, geometry=None, N=500,
         else:
             u, v = geometry.reproject(u, v)
 
+    else:
+        if geometry is not None:
+            raise AttributeError("projection is None; must be one of "
+                                 "['deproject', 'reproject'] "
+                                 "to perform projection.")
+        geometry = FixedGeometry(0, 0, 0, 0)
 
     baselines = np.hypot(u, v)
 
