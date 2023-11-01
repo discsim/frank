@@ -932,8 +932,8 @@ def add_vis_noise(vis, weights, seed=None):
     return vis_noisy
 
 
-def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
-                   weights=None, seed=None):
+def make_mock_data(r, I, Rmax, u, v, projection=None, geometry=None, N=500, 
+                   add_noise=False, weights=None, seed=None):
     r"""
     Generate mock visibilities from a provided brightness profile and (u,v)
     distribution.
@@ -976,11 +976,11 @@ def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
     'r' and 'I' should be sufficiently sampled to ensure an interpolation will
     be accurate, otherwise 'vis' may be a poor estimate of their transform.
     """
+        if projection == 'deproject':
+            u, v = geometry.deproject(u, v)
+        else:
+            u, v = geometry.reproject(u, v)
 
-    if geometry is None:
-        geometry = FixedGeometry(0, 0, 0, 0)
-    else:
-        u, v = geometry.deproject(u, v)
 
     baselines = np.hypot(u, v)
 
