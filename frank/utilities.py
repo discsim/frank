@@ -932,8 +932,8 @@ def add_vis_noise(vis, weights, seed=None):
     return vis_noisy
 
 
-def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
-                   weights=None, seed=None):
+def make_mock_data(r, I, Rmax, u, v, projection=None, geometry=None, N=500, 
+                   add_noise=False, weights=None, seed=None):
     r"""
     Generate mock visibilities from a provided brightness profile and (u,v)
     distribution.
@@ -949,10 +949,15 @@ def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
         disk size
     u, v : array, unit = :math:`\lambda`
         u and v coordinates of observations
+    projection : str, default = None
+        One of [None, 'deproject', 'reproject']
+        If None, the visibilities will be neither deprojected nor reprojected.
+        If 'deproject' or 'reproject', the visibilites will be accordingly 
+        deprojected or reprojected by the supplied `geometry` and their total 
+        flux scaled by the inclination.
     geometry : SourceGeometry object, default=None
-        Source geometry (see frank.geometry.SourceGeometry). If supplied, the
-        visibilities will be deprojected, and their total flux scaled by the
-        inclination.
+        Source geometry (see frank.geometry.SourceGeometry). Must be supplied
+        if `projection` is 'deproject' or 'reproject'.
     N : integer, default=500
         Number of terms to use in the Fourier-Bessel series
     add_noise : bool, default = False
@@ -976,11 +981,25 @@ def make_mock_data(r, I, Rmax, u, v, geometry=None, N=500, add_noise=False,
     'r' and 'I' should be sufficiently sampled to ensure an interpolation will
     be accurate, otherwise 'vis' may be a poor estimate of their transform.
     """
+    proj_valid = [None, 'deproject', 'reproject']
+    if projection not in proj_valid:
+        raise AttributeError(f"projection is '{projection}'; must be one of {proj_valid}.")
+    
+    if projection in ['deproject', 'reproject']:
+        if geometry is None:
+            raise AttributeError(f"geometry must be supplied to perform {projection}.")
+        
+        if projection == 'deproject':
+            u, v = geometry.deproject(u, v)
+        else:
+            u, v = geometry.reproject(u, v)
 
-    if geometry is None:
-        geometry = FixedGeometry(0, 0, 0, 0)
     else:
-        u, v = geometry.deproject(u, v)
+        if geometry is not None:
+            raise AttributeError("projection is None; must be one of "
+                                 "['deproject', 'reproject'] "
+                                 "to perform projection.")
+        geometry = FixedGeometry(0, 0, 0, 0)
 
     baselines = np.hypot(u, v)
 
