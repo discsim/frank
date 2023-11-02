@@ -649,6 +649,14 @@ def test_make_mock_data():
         0.05194375, -0.00054036,  0.23372006,  0.04987515,  0.04541111]
     np.testing.assert_allclose(result_rep[1][:10], expected_rep, rtol=2e-5, atol=1e-8)
 
+    # call with added noise
+    result_noi = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v, 
+                                          add_noise=True, weights=weights, seed=47)
+    expected_noi = [-0.06817425,  0.3195001 ,  0.36992457,  0.11576222, -0.18251663,
+        0.38046765, -0.13962233,  0.42048773,  0.01093563, -0.08652271]
+    np.testing.assert_allclose(result_noi[1][:10], expected_noi, rtol=2e-5, atol=1e-8)
+
+
 def test_get_collocation_points():
     """Check utilities.get_collocation_points"""
     # call with forward DHT
