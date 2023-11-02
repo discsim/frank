@@ -487,6 +487,12 @@ def test_save_load_sol():
         load_sol(jj + '_frank_sol.obj')
 
 
+def test_arcsec_baseline():
+    """Check utilities.arcsec_baseline"""
+    result = utilities.arcsec_baseline(1e6)
+    np.testing.assert_almost_equal(result, 0.2062648)
+
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
