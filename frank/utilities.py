@@ -706,7 +706,7 @@ def sweep_profile(r, I, project=False, phase_shift=False, geom=None, axis=0,
     y = np.linspace(-ymax, ymax, int(ymax/dr) + 1)
 
     if phase_shift:
-        xi, yi = np.meshgrid(x + geom.dra, y - geom.ddec)
+        xi, yi = np.meshgrid(x + geom.dRA, y - geom.dDec)
     else:
         xi, yi = np.meshgrid(x, y)
 
