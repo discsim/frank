@@ -520,6 +520,25 @@ def test_jy_convert():
         np.testing.assert_almost_equal(result, expected[key], decimal=7)
 
 
+def test_get_fit_stat_uncer():
+    """Check utilities.get_fit_stat_uncer"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)    
+
+    # call with normal model
+    result = utilities.get_fit_stat_uncer(sol)
+    expected = [4.29701157e+08, 4.38007127e+08, 3.81819050e+08, 2.80884179e+08,
+       2.01486438e+08, 1.99436182e+08, 2.15565926e+08, 1.99285093e+08,
+       1.65080363e+08, 1.49458838e+08, 1.55552558e+08, 1.55906224e+08,
+       1.39929834e+08, 1.23399577e+08, 1.18687679e+08, 1.20329729e+08,
+       1.19973246e+08, 1.15672282e+08, 1.05924406e+08, 7.19982652e+07]
+    
+    np.testing.assert_allclose(result, expected, rtol=2e-5, atol=1e-8)
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
