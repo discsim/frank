@@ -493,6 +493,15 @@ def test_arcsec_baseline():
     np.testing.assert_almost_equal(result, 0.2062648)
 
 
+def test_radius_convert():
+    """Check utilities.radius_convert"""
+    result = utilities.radius_convert(2.0, 100)
+    assert result == 200
+
+    result_bwd = utilities.radius_convert(200.0, 100, conversion='au_arcsec')
+    assert result_bwd == 2
+
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
