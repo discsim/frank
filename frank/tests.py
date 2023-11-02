@@ -617,6 +617,15 @@ def test_add_vis_noise():
     result = utilities.add_vis_noise(vis, weights, seed=47)
     np.testing.assert_almost_equal(result, [-0.0992665+2.74683048j])
 
+
+def test_get_collocation_points():
+    """Check utilities.get_collocation_points"""
+    # call with forward DHT
+    result = utilities.get_collocation_points(N=10)
+    expected = [0.14239924, 0.32686567, 0.51242148, 0.69822343, 0.88411873,
+       1.07005922, 1.25602496, 1.44200623, 1.62799772, 1.8139963 ]
+    np.testing.assert_allclose(result, expected, rtol=2e-5, atol=1e-8)
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
