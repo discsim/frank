@@ -609,6 +609,33 @@ def test_estimate_weights():
     np.testing.assert_almost_equal(result_med[0], 1040.3881547614856)
 
 
+def test_make_image():
+    """Check utilities.make_image"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)   
+
+    # call without projection
+    result = utilities.make_image(sol, Npix=4, project=False)
+    expected = (([-2.4, -0.8,  0.8,  2.4]),
+                ([-2.4, -0.8,  0.8,  2.4]),
+                ([[ 6.47513532e+06, -1.51846712e+07, -1.28084898e+08, -1.51846712e+07],
+                  [-1.51846712e+07,  3.53545721e+07,  3.13428201e+08, 3.53545721e+07],
+                  [-1.28084898e+08,  3.13428201e+08,  3.30602278e+09, 3.13428201e+08],
+                  [-1.51846712e+07,  3.53545721e+07,  3.13428201e+08, 3.53545721e+07]])
+                  )
+    
+    # check pixel coordinates
+    np.testing.assert_allclose(result[:2], expected[:2], rtol=2e-5, atol=1e-8)
+    # check pixel brightness
+    Iresult = np.asarray(result[2])
+    Iexpected = np.asarray(expected[2])
+    np.testing.assert_allclose(Iresult, Iexpected, rtol=2e-5, atol=1e-8)
+
+
 def test_add_vis_noise():
     """Check utilities.add_vis_noise"""
     # dummy vis and weight
