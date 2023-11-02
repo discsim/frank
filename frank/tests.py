@@ -539,6 +539,13 @@ def test_get_fit_stat_uncer():
     
     np.testing.assert_allclose(result, expected, rtol=2e-5, atol=1e-8)
 
+    # call with lognormal model
+    FF_logn = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2,
+                    method='LogNormal')
+    sol_logn = FF.fit(u, v, vis, weights)    
+    result_logn = utilities.get_fit_stat_uncer(sol_logn)    
+    np.testing.assert_allclose(result_logn, expected, rtol=2e-5, atol=1e-8)
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
