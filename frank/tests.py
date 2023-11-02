@@ -502,6 +502,24 @@ def test_radius_convert():
     assert result_bwd == 2
 
 
+def test_jy_convert():
+    """Check utilities.jy_convert"""
+    x = 10 
+
+    bmaj, bmin = 0.1, 0.1
+
+    expected = {'beam_sterad': 37547916727553.23, 
+                'beam_arcsec2': 882.5424006, 
+                'arcsec2_beam': 0.113309, 
+                'arcsec2_sterad': 425451702961.5221, 
+                'sterad_beam': 2.6632636e-12, 
+                'sterad_arcsec2': 2.3504431e-10}
+    
+    for key in expected:
+        result = utilities.jy_convert(x, conversion=key, bmaj=bmaj, bmin=bmin)
+        np.testing.assert_almost_equal(result, expected[key], decimal=7)
+
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
