@@ -594,6 +594,15 @@ def test_estimate_weights():
                 916.0141170546902, 2478.5780126781183, 220.49922955106743,
                 343.4011447938792]
     np.testing.assert_allclose(result[:10], expected, rtol=2e-5, atol=1e-8)
+
+    # call with only u, vis
+    result_no_v = utilities.estimate_weights(u, vis)
+    expected_no_v = [140.15619775524289, 140.15619775524289,
+                   136.20331899175486, 144.80828130035127,
+                   751.9714145412686, 14.69762047498323,
+                   775.4926337220135, 106.4511685363733,
+                   188.5850930080213, 299.3538060369927]
+    np.testing.assert_allclose(result_no_v[:10], expected_no_v, rtol=2e-5, atol=1e-8)
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
