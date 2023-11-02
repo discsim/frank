@@ -618,6 +618,22 @@ def test_add_vis_noise():
     np.testing.assert_almost_equal(result, [-0.0992665+2.74683048j])
 
 
+def test_make_mock_data():
+    """Check utilities.add_vis_noise"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)   
+
+    # call with minimal inputs
+    result = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v)
+    expected = [ 0.06699455,  0.18302498,  0.27758414,  0.04789997, -0.00240399,
+        0.06339718,  0.00358722,  0.28862088,  0.07058801,  0.06617371]
+    np.testing.assert_allclose(result[1][:10], expected, rtol=2e-5, atol=1e-8)
+
+
 def test_get_collocation_points():
     """Check utilities.get_collocation_points"""
     # call with forward DHT
