@@ -546,6 +546,12 @@ def test_get_fit_stat_uncer():
     result_logn = utilities.get_fit_stat_uncer(sol_logn)    
     np.testing.assert_allclose(result_logn, expected, rtol=2e-5, atol=1e-8)
 
+
+def test_normalize_uv():
+    """Check utilities.normalize_uv"""
+    result = utilities.normalize_uv(1e5, 1e5, 1e-3)
+    np.testing.assert_almost_equal(result, (([1e8]), ([1e8])))
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
