@@ -608,6 +608,15 @@ def test_estimate_weights():
     result_med = utilities.estimate_weights(u, v, vis, use_median=True)
     np.testing.assert_almost_equal(result_med[0], 1040.3881547614856)
 
+
+def test_add_vis_noise():
+    """Check utilities.add_vis_noise"""
+    # dummy vis and weight
+    vis, weights = [1.1 + 0.9j], 0.5
+
+    result = utilities.add_vis_noise(vis, weights, seed=47)
+    np.testing.assert_almost_equal(result, [-0.0992665+2.74683048j])
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
