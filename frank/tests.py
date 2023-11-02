@@ -581,6 +581,19 @@ def test_cut_data_by_baseline():
                                             ([47.91090538])
                                             ))    
     
+
+def test_estimate_weights():
+    """Check utilities.estimate_weights"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]  
+    
+    # call with u, v, vis
+    result = utilities.estimate_weights(u, v, vis)
+    expected = [343.4011447938792, 1040.388154761485, 323.33779140104497, 
+                670.5799827294733, 746.6778204045879, 262.537321708902, 
+                916.0141170546902, 2478.5780126781183, 220.49922955106743,
+                343.4011447938792]
+    np.testing.assert_allclose(result[:10], expected, rtol=2e-5, atol=1e-8)
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
