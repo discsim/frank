@@ -29,7 +29,7 @@ from frank.debris_fitters import FrankDebrisFitter
 from frank.geometry import (
     FixedGeometry, FitGeometryGaussian, FitGeometryFourierBessel
 )
-from frank.utilities import UVDataBinner, generic_dht
+from frank import utilities
 from frank.io import load_uvtable, save_uvtable, load_sol, save_fit
 from frank.statistical_models import VisibilityMapping
 from frank import fit
@@ -120,8 +120,8 @@ def test_vis_mapping():
                                atol=1e-5, rtol=0, err_msg="Inverse DHT with VisibilityMapping")
 
     # Test generic_dht, which uses these functions
-    _, Iq_dht = generic_dht(VM.r, Ir, inc=60, Rmax=5, N=100)
-    _, Ir_dht = generic_dht(VM.q, Iq, inc=60, Rmax=5, N=100, direction='backward')
+    _, Iq_dht = utilities.generic_dht(VM.r, Ir, inc=60, Rmax=5, N=100)
+    _, Ir_dht = utilities.generic_dht(VM.q, Iq, inc=60, Rmax=5, N=100, direction='backward')
 
     np.testing.assert_allclose(Iq, 2*Iq_dht,
                                atol=1e-5, rtol=0, err_msg="Forward DHT with generic_dht")
@@ -437,7 +437,7 @@ def test_uvbin():
 
     uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
 
-    uvbin = UVDataBinner(uv, AS209['V'], AS209['weights'], 50e3)
+    uvbin = utilities.UVDataBinner(uv, AS209['V'], AS209['weights'], 50e3)
 
     uvmin = 1e6
     uvmax = 1e6 + 50e3
