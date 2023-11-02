@@ -641,6 +641,13 @@ def test_make_mock_data():
        0.06277, 0.00361453, 0.23649558, 0.06326574, 0.0632122 ]
     np.testing.assert_allclose(result_dep[1][:10], expected_dep, rtol=2e-5, atol=1e-8)
 
+    # call with reprojection
+    result_rep = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v, 
+                                      projection='reproject', 
+                                      geometry=AS209_geometry)
+    expected_rep = [ 0.05219592,  0.11866411,  0.22040989,  0.03889961, -0.00133919,
+        0.05194375, -0.00054036,  0.23372006,  0.04987515,  0.04541111]
+    np.testing.assert_allclose(result_rep[1][:10], expected_rep, rtol=2e-5, atol=1e-8)
 
 def test_get_collocation_points():
     """Check utilities.get_collocation_points"""
