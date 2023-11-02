@@ -635,6 +635,23 @@ def test_make_image():
     Iexpected = np.asarray(expected[2])
     np.testing.assert_allclose(Iresult, Iexpected, rtol=2e-5, atol=1e-8)
 
+    # call with projection
+    result_proj = utilities.make_image(sol, Npix=4, project=True)
+    expected_proj = (([-2.4, -0.8,  0.8,  2.4]), 
+                ([-2.4, -0.8,  0.8,  2.4]),
+                ([[ 2.40226316e+06, -8.52280178e+06, -1.37522143e+08, -8.18630605e+06],
+                  [-8.84143838e+06,  2.75149090e+07,  3.28577699e+08, 1.74953407e+07],
+                  [-1.02387759e+08,  2.33877598e+08,  3.44906494e+09, 2.25119693e+08],
+                  [-9.02378853e+06,  1.87158156e+07,  3.35326195e+08, 2.71103094e+07]])
+                  )
+    
+    # check pixel coordinates
+    np.testing.assert_allclose(result_proj[:2], expected_proj[:2], rtol=2e-5, atol=1e-8)
+    # check pixel brightness
+    Iresult_proj = np.asarray(result_proj[2])
+    Iexpected_proj = np.asarray(expected_proj[2])
+    np.testing.assert_allclose(Iresult_proj, Iexpected_proj, rtol=2e-5, atol=1e-8)
+
 
 def test_add_vis_noise():
     """Check utilities.add_vis_noise"""
