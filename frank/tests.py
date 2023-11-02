@@ -552,6 +552,23 @@ def test_normalize_uv():
     result = utilities.normalize_uv(1e5, 1e5, 1e-3)
     np.testing.assert_almost_equal(result, (([1e8]), ([1e8])))
 
+
+def test_cut_data_by_baseline():
+    """Check utilities.cut_data_by_baseline"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]    
+
+    # restrictive cut range to keep only a single baseline
+    cut_range = [0, 11570]
+    # call with no supplied geometry
+    result = utilities.cut_data_by_baseline(u, v, vis, weights, cut_range)
+
+    np.testing.assert_almost_equal(result, (([9105.87121309]),
+                                            ([-7126.8802574]),
+                                            ([0.25705367-0.00452954j]),
+                                            ([14390.94693293])
+                                            ))    
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
