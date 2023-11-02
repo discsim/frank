@@ -603,6 +603,11 @@ def test_estimate_weights():
                    775.4926337220135, 106.4511685363733,
                    188.5850930080213, 299.3538060369927]
     np.testing.assert_allclose(result_no_v[:10], expected_no_v, rtol=2e-5, atol=1e-8)
+
+    # call with u, v, vis, use_median
+    result_med = utilities.estimate_weights(u, v, vis, use_median=True)
+    np.testing.assert_almost_equal(result_med[0], 1040.3881547614856)
+
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
