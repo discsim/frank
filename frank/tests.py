@@ -569,6 +569,18 @@ def test_cut_data_by_baseline():
                                             ([14390.94693293])
                                             ))    
 
+    # restrictive cut range to keep only a single baseline
+    cut_range_geom = [0, 10370]
+    # call with supplied geometry
+    result_geom = utilities.cut_data_by_baseline(u, v, vis, weights, cut_range_geom, 
+                                                 geometry=AS209_geometry)
+
+    np.testing.assert_almost_equal(result_geom, (([3080.37968279]),
+                                            ([-12126.45120077]),
+                                            ([0.01581838-0.22529848j]),
+                                            ([47.91090538])
+                                            ))    
+    
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
                    multifit=False, bootstrap=False):
