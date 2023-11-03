@@ -29,7 +29,7 @@ from frank.debris_fitters import FrankDebrisFitter
 from frank.geometry import (
     FixedGeometry, FitGeometryGaussian, FitGeometryFourierBessel
 )
-from frank.utilities import UVDataBinner, generic_dht
+from frank import utilities
 from frank.io import load_uvtable, save_uvtable, load_sol, save_fit
 from frank.statistical_models import VisibilityMapping
 from frank import fit
@@ -120,8 +120,8 @@ def test_vis_mapping():
                                atol=1e-5, rtol=0, err_msg="Inverse DHT with VisibilityMapping")
 
     # Test generic_dht, which uses these functions
-    _, Iq_dht = generic_dht(VM.r, Ir, inc=60, Rmax=5, N=100)
-    _, Ir_dht = generic_dht(VM.q, Iq, inc=60, Rmax=5, N=100, direction='backward')
+    _, Iq_dht = utilities.generic_dht(VM.r, Ir, inc=60, Rmax=5, N=100)
+    _, Ir_dht = utilities.generic_dht(VM.q, Iq, inc=60, Rmax=5, N=100, direction='backward')
 
     np.testing.assert_allclose(Iq, 2*Iq_dht,
                                atol=1e-5, rtol=0, err_msg="Forward DHT with generic_dht")
@@ -437,7 +437,7 @@ def test_uvbin():
 
     uv = np.hypot(*geometry.deproject(AS209['u'], AS209['v']))
 
-    uvbin = UVDataBinner(uv, AS209['V'], AS209['weights'], 50e3)
+    uvbin = utilities.UVDataBinner(uv, AS209['V'], AS209['weights'], 50e3)
 
     uvmin = 1e6
     uvmax = 1e6 + 50e3
@@ -485,6 +485,248 @@ def test_save_load_sol():
             )
         # load it
         load_sol(jj + '_frank_sol.obj')
+
+
+def test_arcsec_baseline():
+    """Check utilities.arcsec_baseline"""
+    result = utilities.arcsec_baseline(1e6)
+    np.testing.assert_almost_equal(result, 0.2062648)
+
+
+def test_radius_convert():
+    """Check utilities.radius_convert"""
+    result = utilities.radius_convert(2.0, 100)
+    assert result == 200
+
+    result_bwd = utilities.radius_convert(200.0, 100, conversion='au_arcsec')
+    assert result_bwd == 2
+
+
+def test_jy_convert():
+    """Check utilities.jy_convert"""
+    x = 10 
+
+    bmaj, bmin = 0.1, 0.1
+
+    expected = {'beam_sterad': 37547916727553.23, 
+                'beam_arcsec2': 882.5424006, 
+                'arcsec2_beam': 0.113309, 
+                'arcsec2_sterad': 425451702961.5221, 
+                'sterad_beam': 2.6632636e-12, 
+                'sterad_arcsec2': 2.3504431e-10}
+    
+    for key in expected:
+        result = utilities.jy_convert(x, conversion=key, bmaj=bmaj, bmin=bmin)
+        np.testing.assert_almost_equal(result, expected[key], decimal=7)
+
+
+def test_get_fit_stat_uncer():
+    """Check utilities.get_fit_stat_uncer"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)    
+
+    # call with normal model
+    result = utilities.get_fit_stat_uncer(sol)
+    expected = [4.29701157e+08, 4.38007127e+08, 3.81819050e+08, 2.80884179e+08,
+       2.01486438e+08, 1.99436182e+08, 2.15565926e+08, 1.99285093e+08,
+       1.65080363e+08, 1.49458838e+08, 1.55552558e+08, 1.55906224e+08,
+       1.39929834e+08, 1.23399577e+08, 1.18687679e+08, 1.20329729e+08,
+       1.19973246e+08, 1.15672282e+08, 1.05924406e+08, 7.19982652e+07]
+    
+    np.testing.assert_allclose(result, expected, rtol=2e-5, atol=1e-8)
+
+    # call with lognormal model
+    FF_logn = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2,
+                    method='LogNormal')
+    sol_logn = FF.fit(u, v, vis, weights)    
+    result_logn = utilities.get_fit_stat_uncer(sol_logn)    
+    np.testing.assert_allclose(result_logn, expected, rtol=2e-5, atol=1e-8)
+
+
+def test_normalize_uv():
+    """Check utilities.normalize_uv"""
+    result = utilities.normalize_uv(1e5, 1e5, 1e-3)
+    np.testing.assert_almost_equal(result, (([1e8]), ([1e8])))
+
+
+def test_cut_data_by_baseline():
+    """Check utilities.cut_data_by_baseline"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]    
+
+    # restrictive cut range to keep only a single baseline
+    cut_range = [0, 11570]
+    # call with no supplied geometry
+    result = utilities.cut_data_by_baseline(u, v, vis, weights, cut_range)
+
+    np.testing.assert_almost_equal(result, (([9105.87121309]),
+                                            ([-7126.8802574]),
+                                            ([0.25705367-0.00452954j]),
+                                            ([14390.94693293])
+                                            ))    
+
+    # restrictive cut range to keep only a single baseline
+    cut_range_geom = [0, 10370]
+    # call with supplied geometry
+    result_geom = utilities.cut_data_by_baseline(u, v, vis, weights, cut_range_geom, 
+                                                 geometry=AS209_geometry)
+
+    np.testing.assert_almost_equal(result_geom, (([3080.37968279]),
+                                            ([-12126.45120077]),
+                                            ([0.01581838-0.22529848j]),
+                                            ([47.91090538])
+                                            ))    
+    
+
+def test_estimate_weights():
+    """Check utilities.estimate_weights"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]  
+    
+    # call with u, v, vis
+    result = utilities.estimate_weights(u, v, vis)
+    expected = [343.4011447938792, 1040.388154761485, 323.33779140104497, 
+                670.5799827294733, 746.6778204045879, 262.537321708902, 
+                916.0141170546902, 2478.5780126781183, 220.49922955106743,
+                343.4011447938792]
+    np.testing.assert_allclose(result[:10], expected, rtol=2e-5, atol=1e-8)
+
+    # call with only u, vis
+    result_no_v = utilities.estimate_weights(u, vis)
+    expected_no_v = [140.15619775524289, 140.15619775524289,
+                   136.20331899175486, 144.80828130035127,
+                   751.9714145412686, 14.69762047498323,
+                   775.4926337220135, 106.4511685363733,
+                   188.5850930080213, 299.3538060369927]
+    np.testing.assert_allclose(result_no_v[:10], expected_no_v, rtol=2e-5, atol=1e-8)
+
+    # call with u, v, vis, use_median
+    result_med = utilities.estimate_weights(u, v, vis, use_median=True)
+    np.testing.assert_almost_equal(result_med[0], 1040.3881547614856)
+
+
+def test_make_image():
+    """Check utilities.make_image"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)   
+
+    # call without projection
+    result = utilities.make_image(sol, Npix=4, project=False)
+    expected = (([-2.4, -0.8,  0.8,  2.4]),
+                ([-2.4, -0.8,  0.8,  2.4]),
+                ([[ 6.47513532e+06, -1.51846712e+07, -1.28084898e+08, -1.51846712e+07],
+                  [-1.51846712e+07,  3.53545721e+07,  3.13428201e+08, 3.53545721e+07],
+                  [-1.28084898e+08,  3.13428201e+08,  3.30602278e+09, 3.13428201e+08],
+                  [-1.51846712e+07,  3.53545721e+07,  3.13428201e+08, 3.53545721e+07]])
+                  )
+    
+    # check pixel coordinates
+    np.testing.assert_allclose(result[:2], expected[:2], rtol=2e-5, atol=1e-8)
+    # check pixel brightness
+    Iresult = np.asarray(result[2])
+    Iexpected = np.asarray(expected[2])
+    np.testing.assert_allclose(Iresult, Iexpected, rtol=2e-5, atol=1e-8)
+
+    # call with projection
+    result_proj = utilities.make_image(sol, Npix=4, project=True)
+    expected_proj = (([-2.4, -0.8,  0.8,  2.4]), 
+                ([-2.4, -0.8,  0.8,  2.4]),
+                ([[ 2.40226316e+06, -8.52280178e+06, -1.37522143e+08, -8.18630605e+06],
+                  [-8.84143838e+06,  2.75149090e+07,  3.28577699e+08, 1.74953407e+07],
+                  [-1.02387759e+08,  2.33877598e+08,  3.44906494e+09, 2.25119693e+08],
+                  [-9.02378853e+06,  1.87158156e+07,  3.35326195e+08, 2.71103094e+07]])
+                  )
+    
+    # check pixel coordinates
+    np.testing.assert_allclose(result_proj[:2], expected_proj[:2], rtol=2e-5, atol=1e-8)
+    # check pixel brightness
+    Iresult_proj = np.asarray(result_proj[2])
+    Iexpected_proj = np.asarray(expected_proj[2])
+    np.testing.assert_allclose(Iresult_proj, Iexpected_proj, rtol=2e-5, atol=1e-8)
+
+
+def test_add_vis_noise():
+    """Check utilities.add_vis_noise"""
+    # dummy vis and weight
+    vis, weights = [1.1 + 0.9j], 0.5
+
+    result = utilities.add_vis_noise(vis, weights, seed=47)
+    np.testing.assert_almost_equal(result, [-0.0992665+2.74683048j])
+
+
+def test_make_mock_data():
+    """Check utilities.add_vis_noise"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)   
+
+    # call with minimal inputs
+    result = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v)
+    expected = [ 0.06699455,  0.18302498,  0.27758414,  0.04789997, -0.00240399,
+        0.06339718,  0.00358722,  0.28862088,  0.07058801,  0.06617371]
+    np.testing.assert_allclose(result[1][:10], expected, rtol=2e-5, atol=1e-8)
+
+    # call with deprojection
+    result_dep = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v, 
+                                      projection='deproject', 
+                                      geometry=AS209_geometry)
+    expected_dep = [0.06244746, 0.15925137, 0.2345302 , 0.0623711 , 0.00404342,
+       0.06277, 0.00361453, 0.23649558, 0.06326574, 0.0632122 ]
+    np.testing.assert_allclose(result_dep[1][:10], expected_dep, rtol=2e-5, atol=1e-8)
+
+    # call with reprojection
+    result_rep = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v, 
+                                      projection='reproject', 
+                                      geometry=AS209_geometry)
+    expected_rep = [ 0.05219592,  0.11866411,  0.22040989,  0.03889961, -0.00133919,
+        0.05194375, -0.00054036,  0.23372006,  0.04987515,  0.04541111]
+    np.testing.assert_allclose(result_rep[1][:10], expected_rep, rtol=2e-5, atol=1e-8)
+
+    # call with added noise
+    result_noi = utilities.make_mock_data(sol.r, sol.I, 3.0, u, v, 
+                                          add_noise=True, weights=weights, seed=47)
+    expected_noi = [-0.06817425,  0.3195001 ,  0.36992457,  0.11576222, -0.18251663,
+        0.38046765, -0.13962233,  0.42048773,  0.01093563, -0.08652271]
+    np.testing.assert_allclose(result_noi[1][:10], expected_noi, rtol=2e-5, atol=1e-8)
+
+
+def test_get_collocation_points():
+    """Check utilities.get_collocation_points"""
+    # call with forward DHT
+    result = utilities.get_collocation_points(N=10)
+    expected = [0.14239924, 0.32686567, 0.51242148, 0.69822343, 0.88411873,
+       1.07005922, 1.25602496, 1.44200623, 1.62799772, 1.8139963 ]
+    np.testing.assert_allclose(result, expected, rtol=2e-5, atol=1e-8)
+
+    # call with backward DHT
+    result_bwd = utilities.get_collocation_points(N=10, direction='backward')
+    expected_bwd = [ 39472.88305737,  90606.73736504, 142042.56471889, 193546.62066389,
+       245076.55732463, 296619.01772663, 348168.47711355, 399722.24089812,
+       451278.83939289, 502837.4032234 ]
+    np.testing.assert_allclose(result_bwd, expected_bwd, rtol=2e-5, atol=1e-8)    
+    
+def test_prob_model():
+    """Check the probabilities for the frank model"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)  
+
+    result = FF.log_evidence_laplace()
+    np.testing.assert_allclose([result], [18590.205198687152], rtol=1e-7)
 
 
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
