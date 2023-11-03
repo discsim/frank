@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for frank/statistical_models.py: 76%</title>
+    <title>Coverage for frank/statistical_models.py: 78%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="coverage_html.js" defer></script>
@@ -13,7 +13,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>frank/statistical_models.py</b>:
-            <span class="pc_cov">76%</span>
+            <span class="pc_cov">78%</span>
         </h1>
         <div id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -44,8 +44,8 @@
         </div>
         <h2>
             <span class="text">437 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">333<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">104<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">339<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">98<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <div style="display: none;">
@@ -874,12 +874,12 @@
     <p class="pln"><span class="n"><a id="t815" href="#t815">815</a></span><span class="t"><span class="str">        is the noise likelihood.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t816" href="#t816">816</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t817" href="#t817">817</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t818" href="#t818">818</a></span><span class="t">        <span class="key">if</span> <span class="nam">I</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">            <span class="nam">like</span> <span class="op">=</span> <span class="num">0.5</span> <span class="op">*</span> <span class="nam">np</span><span class="op">.</span><span class="nam">sum</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_j</span> <span class="op">*</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_mu</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t818" href="#t818">818</a></span><span class="t">        <span class="key">if</span> <span class="nam">I</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t819" href="#t819">819</a></span><span class="t">            <span class="nam">like</span> <span class="op">=</span> <span class="num">0.5</span> <span class="op">*</span> <span class="nam">np</span><span class="op">.</span><span class="nam">sum</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_j</span> <span class="op">*</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_mu</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t820" href="#t820">820</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_Sinv</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t822" href="#t822">822</a></span><span class="t">                <span class="nam">Q</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">Dsolve</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_Sinv</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t823" href="#t823">823</a></span><span class="t">                <span class="nam">like</span> <span class="op">+=</span> <span class="num">0.5</span> <span class="op">*</span> <span class="nam">np</span><span class="op">.</span><span class="nam">linalg</span><span class="op">.</span><span class="nam">slogdet</span><span class="op">(</span><span class="nam">Q</span><span class="op">)</span><span class="op">[</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t821" href="#t821">821</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_Sinv</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t822" href="#t822">822</a></span><span class="t">                <span class="nam">Q</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">Dsolve</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_Sinv</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t823" href="#t823">823</a></span><span class="t">                <span class="nam">like</span> <span class="op">+=</span> <span class="num">0.5</span> <span class="op">*</span> <span class="nam">np</span><span class="op">.</span><span class="nam">linalg</span><span class="op">.</span><span class="nam">slogdet</span><span class="op">(</span><span class="nam">Q</span><span class="op">)</span><span class="op">[</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t824" href="#t824">824</a></span><span class="t">        <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t825" href="#t825">825</a></span><span class="t">            <span class="nam">Sinv</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_Sinv</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t826" href="#t826">826</a></span><span class="t">            <span class="key">if</span> <span class="nam">Sinv</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -892,7 +892,7 @@
     <p class="mis show_mis"><span class="n"><a id="t833" href="#t833">833</a></span><span class="t">            <span class="key">if</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_Sinv</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t834" href="#t834">834</a></span><span class="t">                <span class="nam">like</span> <span class="op">+=</span> <span class="num">0.5</span> <span class="op">*</span> <span class="nam">np</span><span class="op">.</span><span class="nam">linalg</span><span class="op">.</span><span class="nam">slogdet</span><span class="op">(</span><span class="num">2</span> <span class="op">*</span> <span class="nam">np</span><span class="op">.</span><span class="nam">pi</span> <span class="op">*</span> <span class="nam">Sinv</span><span class="op">)</span><span class="op">[</span><span class="num">1</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t835" href="#t835">835</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t836" href="#t836">836</a></span><span class="t">        <span class="key">return</span> <span class="nam">like</span> <span class="op">+</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_like_noise</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t836" href="#t836">836</a></span><span class="t">        <span class="key">return</span> <span class="nam">like</span> <span class="op">+</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_like_noise</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t837" href="#t837">837</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t838" href="#t838">838</a></span><span class="t">    <span class="key">def</span> <span class="nam">solve_non_negative</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t839" href="#t839">839</a></span><span class="t">        <span class="str">"""Compute the best fit solution with non-negative intensities"""</span>&nbsp;</span><span class="r"></span></p>
@@ -1337,7 +1337,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v6.2</a>,
-            created at 2023-11-01 15:40 +0000
+            created at 2023-11-03 12:52 +0000
         </p>
     </div>
 </footer>

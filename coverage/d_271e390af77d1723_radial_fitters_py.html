@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=emulateIE7" />
-    <title>Coverage for frank/radial_fitters.py: 76%</title>
+    <title>Coverage for frank/radial_fitters.py: 80%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="coverage_html.js" defer></script>
@@ -13,7 +13,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>frank/radial_fitters.py</b>:
-            <span class="pc_cov">76%</span>
+            <span class="pc_cov">80%</span>
         </h1>
         <div id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -44,8 +44,8 @@
         </div>
         <h2>
             <span class="text">249 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">189<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">60<span class="text"> missing</span></button>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">200<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">49<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <div style="display: none;">
@@ -353,7 +353,7 @@
     <p class="pln"><span class="n"><a id="t294" href="#t294">294</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t295" href="#t295">295</a></span><span class="t"><span class="str">        is the noise likelihood.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t296" href="#t296">296</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t297" href="#t297">297</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_fit</span><span class="op">.</span><span class="nam">log_likelihood</span><span class="op">(</span><span class="nam">I</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t297" href="#t297">297</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_fit</span><span class="op">.</span><span class="nam">log_likelihood</span><span class="op">(</span><span class="nam">I</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t298" href="#t298">298</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t299" href="#t299">299</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t300" href="#t300">300</a></span><span class="t">    <span class="key">def</span> <span class="nam">solve_non_negative</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -972,10 +972,10 @@
     <p class="pln"><span class="n"><a id="t913" href="#t913">913</a></span><span class="t"><span class="str">        Computed up to a normalizing constant that depends on alpha and p0</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t914" href="#t914">914</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t915" href="#t915">915</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t916" href="#t916">916</a></span><span class="t">        <span class="key">if</span> <span class="nam">p</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t916" href="#t916">916</a></span><span class="t">        <span class="key">if</span> <span class="nam">p</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t917" href="#t917">917</a></span><span class="t">            <span class="nam">p</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_ps</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t918" href="#t918">918</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t919" href="#t919">919</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_filter</span><span class="op">.</span><span class="nam">log_prior</span><span class="op">(</span><span class="nam">p</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t919" href="#t919">919</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_filter</span><span class="op">.</span><span class="nam">log_prior</span><span class="op">(</span><span class="nam">p</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t920" href="#t920">920</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t921" href="#t921">921</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t922" href="#t922">922</a></span><span class="t">    <span class="key">def</span> <span class="nam">log_likelihood</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">sol</span><span class="op">=</span><span class="key">None</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1002,10 +1002,10 @@
     <p class="pln"><span class="n"><a id="t943" href="#t943">943</a></span><span class="t"><span class="str">        Computed up to a normalizing constant that depends on alpha and p0</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t944" href="#t944">944</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t945" href="#t945">945</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t946" href="#t946">946</a></span><span class="t">        <span class="key">if</span> <span class="nam">sol</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t947" href="#t947">947</a></span><span class="t">            <span class="nam">sol</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">MAP_solution</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t946" href="#t946">946</a></span><span class="t">        <span class="key">if</span> <span class="nam">sol</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t947" href="#t947">947</a></span><span class="t">            <span class="nam">sol</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">MAP_solution</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t948" href="#t948">948</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t949" href="#t949">949</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">log_prior</span><span class="op">(</span><span class="nam">sol</span><span class="op">.</span><span class="nam">power_spectrum</span><span class="op">)</span> <span class="op">+</span> <span class="nam">sol</span><span class="op">.</span><span class="nam">log_likelihood</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t949" href="#t949">949</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">log_prior</span><span class="op">(</span><span class="nam">sol</span><span class="op">.</span><span class="nam">power_spectrum</span><span class="op">)</span> <span class="op">+</span> <span class="nam">sol</span><span class="op">.</span><span class="nam">log_likelihood</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t950" href="#t950">950</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t951" href="#t951">951</a></span><span class="t">    <span class="key">def</span> <span class="nam">log_evidence_laplace</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t952" href="#t952">952</a></span><span class="t">        <span class="str">r"""Compute the evidence, p(V), for the best fit model.</span>&nbsp;</span><span class="r"></span></p>
@@ -1018,17 +1018,17 @@
     <p class="pln"><span class="n"><a id="t959" href="#t959">959</a></span><span class="t"><span class="str">            \Sigma_i,j = - d^2 \log(P) / d\tau_i d\tau_j</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t960" href="#t960">960</a></span><span class="t"><span class="str">        and p(V) is determined such that P_Lapace(\tau_MAP) = P(p_MAP, V).</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t961" href="#t961">961</a></span><span class="t"><span class="str">        """</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t962" href="#t962">962</a></span><span class="t">        <span class="nam">Sigma_inv</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_filter</span><span class="op">.</span><span class="nam">covariance_MAP</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_sol</span><span class="op">,</span> <span class="nam">ret_inv</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t962" href="#t962">962</a></span><span class="t">        <span class="nam">Sigma_inv</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_filter</span><span class="op">.</span><span class="nam">covariance_MAP</span><span class="op">(</span><span class="nam">self</span><span class="op">.</span><span class="nam">_sol</span><span class="op">,</span> <span class="nam">ret_inv</span><span class="op">=</span><span class="key">True</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t963" href="#t963">963</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t964" href="#t964">964</a></span><span class="t">        <span class="nam">sign</span><span class="op">,</span> <span class="nam">logdet</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">linalg</span><span class="op">.</span><span class="nam">slogdet</span><span class="op">(</span><span class="nam">Sigma_inv</span><span class="op">/</span><span class="op">(</span><span class="num">2</span><span class="op">*</span><span class="nam">np</span><span class="op">.</span><span class="nam">pi</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t965" href="#t965">965</a></span><span class="t">        <span class="nam">laplace</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">log_likelihood</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="num">0.5</span><span class="op">*</span><span class="nam">logdet</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t964" href="#t964">964</a></span><span class="t">        <span class="nam">sign</span><span class="op">,</span> <span class="nam">logdet</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">linalg</span><span class="op">.</span><span class="nam">slogdet</span><span class="op">(</span><span class="nam">Sigma_inv</span><span class="op">/</span><span class="op">(</span><span class="num">2</span><span class="op">*</span><span class="nam">np</span><span class="op">.</span><span class="nam">pi</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t965" href="#t965">965</a></span><span class="t">        <span class="nam">laplace</span> <span class="op">=</span> <span class="nam">self</span><span class="op">.</span><span class="nam">log_likelihood</span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="num">0.5</span><span class="op">*</span><span class="nam">logdet</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t966" href="#t966">966</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t967" href="#t967">967</a></span><span class="t">        <span class="key">return</span> <span class="nam">laplace</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t967" href="#t967">967</a></span><span class="t">        <span class="key">return</span> <span class="nam">laplace</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t968" href="#t968">968</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t969" href="#t969">969</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t970" href="#t970">970</a></span><span class="t">    <span class="key">def</span> <span class="nam">MAP_solution</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t971" href="#t971">971</a></span><span class="t">        <span class="str">"""Reconstruction for the maximum a posteriori power spectrum"""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t972" href="#t972">972</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_sol</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t972" href="#t972">972</a></span><span class="t">        <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_sol</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t973" href="#t973">973</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t974" href="#t974">974</a></span><span class="t">    <span class="op">@</span><span class="nam">property</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t975" href="#t975">975</a></span><span class="t">    <span class="key">def</span> <span class="nam">MAP_spectrum</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -1053,7 +1053,7 @@
     <div class="content">
         <p>
             <a class="nav" href="index.html">&#xab; index</a> &nbsp; &nbsp; <a class="nav" href="https://coverage.readthedocs.io">coverage.py v6.2</a>,
-            created at 2023-11-01 15:40 +0000
+            created at 2023-11-03 12:52 +0000
         </p>
     </div>
 </footer>
