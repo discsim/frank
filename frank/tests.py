@@ -716,6 +716,18 @@ def test_get_collocation_points():
        451278.83939289, 502837.4032234 ]
     np.testing.assert_allclose(result_bwd, expected_bwd, rtol=2e-5, atol=1e-8)    
     
+def test_prob_model():
+    """Check the probabilities for the frank model"""
+    AS209, AS209_geometry = load_AS209(uv_cut=1e6)
+    u, v, vis, weights = [AS209[k][::100] for k in ['u', 'v', 'V', 'weights']]
+    
+    # generate a sol from a standard frank fit
+    FF = FrankFitter(1.6, 20, AS209_geometry, alpha=1.3, weights_smooth=1e-2)
+    sol = FF.fit(u, v, vis, weights)  
+
+    result = FF.log_evidence_laplace()
+    np.testing.assert_allclose([result], [18590.205198687152], rtol=1e-7)
+
 
 def _run_pipeline(geometry='gaussian', fit_phase_offset=True,
                    fit_inc_pa=True, make_figs=False,
