@@ -234,6 +234,8 @@ class VisibilityMapping:
                 'j' : js[0],
                 'null_likelihood' : H0,
                 'hash' : [False, self._DHT, geometry, self._vis_model, self._scale_height],
+                'V' : Vs,
+                'W' : ws,
             }
 
     def check_hash(self, hash, multi_freq=False, geometry=None):
@@ -628,9 +630,12 @@ class GaussianModel:
     """
 
     def __init__(self, DHT, M, j, p=None, scale=None, guess=None,
-                 Nfields=None, noise_likelihood=0):
+                 Nfields=None, noise_likelihood=0,
+                 Wvalues = None, V = None):
 
         self._DHT = DHT
+        self._Wvalues = Wvalues
+        self._V = V
 
         # Correct shape of design matrix etc.        
         if len(M.shape) == 2:
@@ -687,7 +692,19 @@ class GaussianModel:
 
                 self._Sinv[sn:en, sn:en] += Sj[n]
         else:
-            self._Sinv =  None
+            #self._Sinv =  None
+            q_array = self._DHT.q
+            
+            def true_squared_exponential_kernel(q, p, l):
+
+                q1, q2 = np.meshgrid(q, q)
+                p1, p2 = np.meshgrid(p, p)
+                SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*(q1-q2)**2 / l**2)
+                return SE_Kernel
+            
+            Ykm = self._DHT.coefficients(direction="backward")
+            # We continue after set M matrix because is needed to calculate
+            # best parameters for S matrix.
 
         # Compute the design matrix
         self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='f8')
@@ -707,7 +724,89 @@ class GaussianModel:
 
         self._like_noise = noise_likelihood
 
+        # M is already defined, so we find best parameters for S matrix and use it.
+        m, c , l = self.minimizeS()
+        pI =  np.exp(m*np.log(q_array) + c)
+        S_fspace = true_squared_exponential_kernel(q_array, pI, l)
+        S_real = np.dot(np.transpose(Ykm), np.dot(S_fspace, Ykm))
+        S_real_inv = np.linalg.inv(S_real)
+        self._Sinv =  S_real_inv
+
         self._fit()
+    
+    def minimizeS(self):
+        from scipy.optimize import minimize
+        from scipy.special import gamma
+        V = self._V
+
+        def calculate_S(m, c, l):
+            q_array = self._DHT.q
+            p_array = c*(q_array**m)
+            def true_squared_exponential_kernel(q, p, l):
+                q1, q2 = np.meshgrid(q, q)
+                p1, p2 = np.meshgrid(p, p)
+                SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*(q1-q2)**2 / l**2)
+                return SE_Kernel
+            
+            Ykm = self._DHT.coefficients(direction="backward")
+            S_fspace = true_squared_exponential_kernel(q_array, p_array, l)
+            S_real = np.dot(np.transpose(Ykm), np.dot(S_fspace, Ykm))
+            return S_real
+
+        def calculate_D(S):
+            S_real_inv = np.linalg.inv(S)
+            Dinv = self._M + S_real_inv
+            D = np.linalg.inv(Dinv)
+            return [Dinv, D]
+
+        def calculate_mu(Dinv):
+            try: 
+                Dchol = scipy.linalg.cho_factor(Dinv)
+                mu =  scipy.linalg.cho_solve(Dchol, self._j)
+
+            except np.linalg.LinAlgError:
+                U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
+                s1 = np.where(s > 0, 1. / s, 0)
+                mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
+            return mu
+
+        def likelihood(param, data):
+            m, c, l = param
+            Wvalues = self._Wvalues
+            N = np.diag(1/Wvalues)
+
+            alpha = 1.3
+            l0 = 1e7
+
+            # Create an Inverse Gamma distribution function
+            def inv_gamma_function(l, alpha, beta):
+                return ((gamma(alpha)*beta)**(-1))*((beta/l)**(alpha + 1))*np.exp(-beta/l) 
+
+            S  = calculate_S(m,c, l)
+            [Dinv, D] = calculate_D(S)
+            mu = calculate_mu(Dinv)
+            logdetS = np.linalg.slogdet(S)[1]
+            logdetD = np.linalg.slogdet(D)[1]
+            logdetN = np.linalg.slogdet(N)[1]
+            factor = np.log(2*np.pi)
+
+            log_likelihood =  2*np.log(np.abs((1/m)*(1/c))) \
+            + 2*np.log(inv_gamma_function(l, alpha, l0)) \
+            - 0.5*(factor + logdetN) \
+            - 0.5*(factor + logdetS) \
+            + 0.5*(factor + logdetD) \
+            + 0.5*np.dot(np.transpose(self._j), mu) \
+            - 0.5*np.dot(np.transpose(data), np.dot(np.diag(Wvalues), data)) 
+            return -log_likelihood
+        
+        result = minimize(likelihood, x0=np.array([-5, 60, 1e5]), args=(V,),
+                           bounds=[(-6, 6), (1, 70), (1e4, 1e6)],
+                           method="Nelder-Mead", tol=1e-7,
+                           )
+        m, c, l = result.x
+        print("Result: ", "m: ", m, "c: ", c, "l: ", "{:e}".format(l))
+        return [m, c, l]
+
 
     def _fit(self):
         """Compute the mean and variance"""

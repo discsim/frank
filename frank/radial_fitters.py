@@ -510,6 +510,8 @@ class FourierBesselFitter(object):
   
         self._M = mapping['M']
         self._j = mapping['j']
+        self._V = mapping['V']
+        self._Wvalues = mapping['W']
 
         self._H0 = mapping['null_likelihood']
 
@@ -574,7 +576,8 @@ class FourierBesselFitter(object):
     def _fit(self):
         """Fit step. Computes the best fit given the pre-processed data"""
         fit = GaussianModel(self._DHT, self._M, self._j,
-                            noise_likelihood=self._H0)
+                            noise_likelihood=self._H0,
+                            Wvalues= self._Wvalues, V = self._V)
 
         self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
                                      geometry=self._geometry.clone())
