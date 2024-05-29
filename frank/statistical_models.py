@@ -66,7 +66,8 @@ class VisibilityMapping:
     """
     def __init__(self, DHT, geometry,  
                  vis_model='opt_thick', scale_height=None, block_data=True,
-                 block_size=10 ** 5, check_qbounds=True, verbose=True):
+                 block_size=10 ** 5, check_qbounds=True, verbose=True,
+                 DFT = None):
         
         _vis_models = ['opt_thick', 'opt_thin', 'debris']
         if vis_model not in _vis_models:
@@ -81,6 +82,7 @@ class VisibilityMapping:
         self._chunk_size = block_size
 
         self._DHT = DHT
+        self._DFT = DFT
         self._geometry = geometry
 
         # Check for consistency and report the model choice.
@@ -178,8 +180,8 @@ class VisibilityMapping:
             frequencies = np.ones_like(V)
 
         channels = np.unique(frequencies)
-        Ms = np.zeros([len(channels), self.size, self.size], dtype='f8')
-        js = np.zeros([len(channels), self.size], dtype='f8')
+        Ms = np.zeros([len(channels), self.size, self.size], dtype='c8')
+        js = np.zeros([len(channels), self.size], dtype='c8')
         for i, f in enumerate(channels):
             idx = frequencies == f
 
@@ -199,11 +201,13 @@ class VisibilityMapping:
             Ndata = len(Vi)
             while start < Ndata:
                 qs = qi[start:end]
+                us = u[start:end]
+                vs = v[start:end]
                 ks = ki[start:end]
                 ws = wi[start:end]
                 Vs = Vi[start:end]
                 
-                X = self._get_mapping_coefficients(qs, ks)
+                X = self._get_mapping_coefficients(qs, ks, us, vs)
 
                 wXT = np.array(X.T * ws, order='C')
 
@@ -462,7 +466,7 @@ class VisibilityMapping:
         return self._DHT.interpolate(f, r, space)
 
 
-    def _get_mapping_coefficients(self, qs, ks, geometry=None, inverse=False):
+    def _get_mapping_coefficients(self, qs, ks, u, v, geometry=None, inverse=False):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
         
         if self._vis_model == 'opt_thick':
@@ -486,7 +490,8 @@ class VisibilityMapping:
         else:
             direction='forward'
 
-        H = self._DHT.coefficients(qs, direction=direction) * scale
+        #H = self._DHT.coefficients(qs, direction=direction) * scale
+        H = self._DFT.coefficients(u, v, direction=direction) * scale
 
         return H
 
@@ -529,7 +534,8 @@ class VisibilityMapping:
     @property
     def q(self):
         r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
+        #return self._DHT.q
+        return self._DFT.q
 
     @property
     def Qmax(self):
@@ -539,7 +545,8 @@ class VisibilityMapping:
     @property
     def size(self):
         """Number of points in reconstruction"""
-        return self._DHT.size
+        #return self._DHT.size
+        return self._DFT.size
 
     @property
     def scale_height(self):
@@ -631,9 +638,10 @@ class GaussianModel:
 
     def __init__(self, DHT, M, j, p=None, scale=None, guess=None,
                  Nfields=None, noise_likelihood=0,
-                 Wvalues = None, V = None):
+                 Wvalues = None, V = None, DFT = None):
 
         self._DHT = DHT
+        self._DFT = DFT
         self._Wvalues = Wvalues
         self._V = V
 
@@ -691,24 +699,13 @@ class GaussianModel:
                 en = (n+1)*Nr 
 
                 self._Sinv[sn:en, sn:en] += Sj[n]
-        else:
+        else: # p is None, so we are interested in this case.
+            " New GP Kernel below"
             #self._Sinv =  None
-            q_array = self._DHT.q
-            
-            def true_squared_exponential_kernel(q, p, l):
-
-                q1, q2 = np.meshgrid(q, q)
-                p1, p2 = np.meshgrid(p, p)
-                SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*(q1-q2)**2 / l**2)
-                return SE_Kernel
-            
-            Ykm = self._DHT.coefficients(direction="backward")
-            # We continue after set M matrix because is needed to calculate
-            # best parameters for S matrix.
 
         # Compute the design matrix
-        self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='f8')
-        self._j = np.zeros(Nr*Nfields, dtype='f8')
+        self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='c8')
+        self._j = np.zeros(Nr*Nfields, dtype='c8')
         for si, Mi, ji in zip(self._scale, M, j):
             
             for n in range(0, Nfields):
@@ -724,34 +721,41 @@ class GaussianModel:
 
         self._like_noise = noise_likelihood
 
-        # M is already defined, so we find best parameters for S matrix and use it.
-        m, c , l = self.minimizeS()
-        pI =  np.exp(m*np.log(q_array) + c)
-        S_fspace = true_squared_exponential_kernel(q_array, pI, l)
-        S_real = np.dot(np.transpose(Ykm), np.dot(S_fspace, Ykm))
+        " New GP "
+        self.u, self.v = self._DFT.uv_points
+        self.Ykm = self._DFT.coefficients(direction="backward")
+        self.Ykm_f = self._DFT.coefficients(direction="forward")
+        m, c , l = -4.8, 59.21, 1.21e5 
+        #m, c, l = self.minimizeS() # Finding best parameters to S matrix.
+        S_real = self.calculate_S(self.u, self.v, l, m, c)
         S_real_inv = np.linalg.inv(S_real)
         self._Sinv =  S_real_inv
 
         self._fit()
     
+    def true_squared_exponential_kernel(self, u, v, l, m, c):      
+        u1, u2 = np.meshgrid(u, u)
+        v1, v2 = np.meshgrid(v, v)
+        q1 = np.hypot(u1, v1)
+        q2 = np.hypot(u2, v2)
+
+        def power_spectrum(q, m, c):
+            return np.exp(m*np.log(q) + c)
+        p1 = power_spectrum(q1, m, c)
+        p2 = power_spectrum(q2, m, c)
+
+        SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*((u1-u2)**2 + (v1-v2)**2)/ l**2)
+        return SE_Kernel
+
+    def calculate_S(self, u, v, l, m, c):
+        S_fspace = self.true_squared_exponential_kernel(u, v, l, m, c)
+        S_real = np.matmul(self.Ykm, np.matmul(S_fspace, self.Ykm_f))
+        return S_real
+        
     def minimizeS(self):
         from scipy.optimize import minimize
         from scipy.special import gamma
         V = self._V
-
-        def calculate_S(m, c, l):
-            q_array = self._DHT.q
-            p_array = c*(q_array**m)
-            def true_squared_exponential_kernel(q, p, l):
-                q1, q2 = np.meshgrid(q, q)
-                p1, p2 = np.meshgrid(p, p)
-                SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*(q1-q2)**2 / l**2)
-                return SE_Kernel
-            
-            Ykm = self._DHT.coefficients(direction="backward")
-            S_fspace = true_squared_exponential_kernel(q_array, p_array, l)
-            S_real = np.dot(np.transpose(Ykm), np.dot(S_fspace, Ykm))
-            return S_real
 
         def calculate_D(S):
             S_real_inv = np.linalg.inv(S)
@@ -782,7 +786,7 @@ class GaussianModel:
             def inv_gamma_function(l, alpha, beta):
                 return ((gamma(alpha)*beta)**(-1))*((beta/l)**(alpha + 1))*np.exp(-beta/l) 
 
-            S  = calculate_S(m,c, l)
+            S  = self.calculate_S(self.u, self.v, l, m, c)
             [Dinv, D] = calculate_D(S)
             mu = calculate_mu(Dinv)
             logdetS = np.linalg.slogdet(S)[1]
@@ -796,7 +800,7 @@ class GaussianModel:
             - 0.5*(factor + logdetS) \
             + 0.5*(factor + logdetD) \
             + 0.5*np.dot(np.transpose(self._j), mu) \
-            - 0.5*np.dot(np.transpose(data), np.dot(np.diag(Wvalues), data)) 
+            - 0.5*np.dot(np.transpose(np.conjugate(data)), np.dot(np.diag(Wvalues), data)) 
             return -log_likelihood
         
         result = minimize(likelihood, x0=np.array([-5, 60, 1e5]), args=(V,),
@@ -804,9 +808,8 @@ class GaussianModel:
                            method="Nelder-Mead", tol=1e-7,
                            )
         m, c, l = result.x
-        print("Result: ", "m: ", m, "c: ", c, "l: ", "{:e}".format(l))
+        print("Best parameters: ", "m: ", m, "c: ", c, "l: ", "{:e}".format(l))
         return [m, c, l]
-
 
     def _fit(self):
         """Compute the mean and variance"""
@@ -980,7 +983,8 @@ class GaussianModel:
     @property
     def size(self):
         """Number of points in reconstruction"""
-        return self._DHT.size
+        #return self._DHT.size
+        return self._DFT.size
 
 
 class LogNormalMAPModel:

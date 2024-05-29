@@ -28,6 +28,7 @@ import numpy as np
 from frank.constants import rad_to_arcsec
 from frank.filter import CriticalFilter
 from frank.hankel import DiscreteHankelTransform
+from frank.fourier2d import DiscreteFourierTransform2D
 from frank.statistical_models import (
     GaussianModel, LogNormalMAPModel, VisibilityMapping
 )
@@ -443,6 +444,7 @@ class FourierBesselFitter(object):
         self._geometry = geometry
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
+        self._DFT = DiscreteFourierTransform2D(Rmax, N)
 
         if assume_optically_thick:
             if scale_height is not None:
@@ -457,7 +459,8 @@ class FourierBesselFitter(object):
         self._vis_map = VisibilityMapping(self._DHT, geometry, 
                                           model, scale_height=scale_height,
                                           block_data=block_data, block_size=block_size,
-                                          check_qbounds=False, verbose=verbose)
+                                          check_qbounds=False, verbose=verbose,
+                                          DFT = self._DFT)
 
         self._info  = {'Rmax' : self._DHT.Rmax * rad_to_arcsec,
                        'N' : self._DHT.size
@@ -577,7 +580,7 @@ class FourierBesselFitter(object):
         """Fit step. Computes the best fit given the pre-processed data"""
         fit = GaussianModel(self._DHT, self._M, self._j,
                             noise_likelihood=self._H0,
-                            Wvalues= self._Wvalues, V = self._V)
+                            Wvalues= self._Wvalues, V = self._V, DFT = self._DFT)
 
         self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
                                      geometry=self._geometry.clone())
