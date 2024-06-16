@@ -4,25 +4,25 @@ import numpy as np
 class DiscreteFourierTransform2D(object):
     def __init__(self, Rmax, N, nu=0):
         # Remember that now N is to create N**2 points in image plane.
-        self.Xmax  = 2*Rmax # [Rmax] = rad.
-        self.Ymax = 2*Rmax
+        self.Xmax = Rmax #Rad
+        self.Ymax = Rmax
         self.Nx = N 
         self.Ny = N
-        self.N = N**2 # Number of points we want to use in the 2D-DFT.
+        self.N = self.Nx*self.Ny # Number of points we want to use in the 2D-DFT.
 
         # Real space collocation points
-        x1n = np.linspace(0, self.Xmax, self.Nx) # rad
-        x2n = np.linspace(0, self.Ymax, self.Ny) # rad
-        x1n, x2n = np.meshgrid(x1n, x1n, indexing='ij')
+        x1n = np.linspace(-self.Xmax, self.Xmax, self.Nx, endpoint=False) # rad
+        x2n = np.linspace(-self.Ymax, self.Ymax, self.Ny, endpoint=False) # rad
+        x1n, x2n = np.meshgrid(x1n, x2n, indexing='ij')
         # x1n.shape = N**2 X 1, so now, we have N**2 collocation points in the image plane.
         x1n, x2n = x1n.reshape(-1), x2n.reshape(-1) # x1n = x_array and x2n = y_array
-        dx = 2*self.Xmax/self.N
-        dy = 2*self.Ymax/self.N
+        self.dx = 2*self.Xmax/self.Nx
+        self.dy = 2*self.Ymax/self.Ny
 
         # Frequency space collocation points.
         # The [1:] is because to not consider the 0 baseline. But we're missing points. 
-        q1n = np.fft.fftfreq(self.Nx+1, d = dx)[1:]
-        q2n = np.fft.fftfreq(self.Ny+1, d = dy)[1:]
+        q1n = np.fft.fftfreq(self.Nx, d = self.dx)
+        q2n = np.fft.fftfreq(self.Ny, d = self.dy)
         q1n, q2n = np.meshgrid(q1n, q2n, indexing='ij') 
         # q1n.shape = N**2 X 1, so now, we have N**2 collocation points.
         q1n, q2n = q1n.reshape(-1), q2n.reshape(-1) # q1n = u_array and q2n = v_array
@@ -37,26 +37,34 @@ class DiscreteFourierTransform2D(object):
 
     def coefficients(self, u = None, v = None, direction="forward"):
         if direction == 'forward':
-            norm = 1
-            factor = -2j*np.pi/self.Nx
+            ## Normalization is dx*dy since we the DFT to be an approximation
+            ## of the integral (which depends on the area)
+            norm = 4*self.Xmax*self.Ymax/self.N
+            factor = -2j*np.pi
+            
+            X, Y = self.Xn, self.Yn
+            if u is None:
+                u = self.Un
+                v = self.Vn
         elif direction == 'backward':
-            norm = 1 / self.N
-            factor = 2j*np.pi/self.Nx
+            ## Correcting for the normalization above 1/N is replaced by this:
+            norm = 1 / (4*self.Xmax*self.Ymax)
+            factor = 2j*np.pi
+
+            X, Y = self.Un, self.Vn
+            if u is None:
+                u = self.Xn
+                v = self.Yn
         else:
             raise AttributeError("direction must be one of {}"
                                  "".format(['forward', 'backward']))
-        if u is None:
-            u = self.Un
-            v = self.Vn
         
-        if direction == "forward":
-            H = norm * np.exp(factor*(np.outer(u, self.Xn) + np.outer(v, self.Yn)))
-        else:
-            H = norm * np.exp(factor*(np.outer(u, self.Xn) + np.outer(v, self.Yn)))
+        H = norm * np.exp(factor*(np.outer(u, X) + np.outer(v, Y)))
+
         return H
 
 
-    def transform(self, f, u, v, direction="forward"):
+    def transform(self, f, u=None, v=None, direction="forward"):
         Y = self.coefficients(u, v, direction=direction)
         return np.dot(Y, f)
           
@@ -75,3 +83,13 @@ class DiscreteFourierTransform2D(object):
     def q(self):
         """Frequency points"""
         return np.hypot(self.Un, self.Vn)
+    
+    @property
+    def Rmax(self):
+        """ Maximum value of the x coordinate in rad"""
+        return self.Xmax
+    
+    @property
+    def resolution(self):
+        """ Resolution of the grid in the x coordinate in rad"""
+        return self.dx

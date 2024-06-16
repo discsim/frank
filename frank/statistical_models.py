@@ -164,7 +164,7 @@ class VisibilityMapping:
             logging.info('    Building visibility matrices M and j')
         
         # Deproject the visibilities
-        u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
+        #u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
         q = np.hypot(u, v)
 
         # Check consistency of the uv points with the model
@@ -186,7 +186,7 @@ class VisibilityMapping:
             idx = frequencies == f
 
             qi = q[idx]
-            ki = k[idx]
+            ki = np.ones(len(q[idx]))#k[idx]
             wi = w[idx]
             Vi = V[idx]
         
@@ -260,13 +260,13 @@ class VisibilityMapping:
         
         passed = (
             multi_freq == hash[0] and
-            self._DHT.Rmax  == hash[1].Rmax and
-            self._DHT.size  == hash[1].size and
-            self._DHT.order == hash[1].order and
-            geometry.inc  == hash[2].inc and
-            geometry.PA   == hash[2].PA and
-            geometry.dRA  == hash[2].dRA and
-            geometry.dDec == hash[2].dDec and
+            self._DFT.Rmax  == hash[1].Rmax and
+            self._DFT.size  == hash[1].size and
+            self._DFT.order == hash[1].order and
+            #geometry.inc  == hash[2].inc and
+            #geometry.PA   == hash[2].PA and
+            #geometry.dRA  == hash[2].dRA and
+            #geometry.dDec == hash[2].dDec and
             self._vis_model == hash[3]
         )
 
@@ -468,7 +468,7 @@ class VisibilityMapping:
 
     def _get_mapping_coefficients(self, qs, ks, u, v, geometry=None, inverse=False):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
-        
+        """
         if self._vis_model == 'opt_thick':
             # Optically thick & geometrically thin
             if geometry is None:
@@ -482,7 +482,7 @@ class VisibilityMapping:
             scale = np.exp(-np.outer(ks*ks, self._H2))
         else:
             raise ValueError("model not supported. Should never occur.")
-
+        """
         if inverse:
             scale = np.atleast_1d(1/scale).reshape(1,-1)
             qs = qs / rad_to_arcsec
@@ -491,7 +491,7 @@ class VisibilityMapping:
             direction='forward'
 
         #H = self._DHT.coefficients(qs, direction=direction) * scale
-        H = self._DFT.coefficients(u, v, direction=direction) * scale
+        H = self._DFT.coefficients(u, v, direction=direction) #* scale
 
         return H
 
@@ -725,7 +725,7 @@ class GaussianModel:
         self.u, self.v = self._DFT.uv_points
         self.Ykm = self._DFT.coefficients(direction="backward")
         self.Ykm_f = self._DFT.coefficients(direction="forward")
-        m, c , l = -4.8, 59.21, 1.21e5 
+        m, c , l = -5, 60, 1e4 
         #m, c, l = self.minimizeS() # Finding best parameters to S matrix.
         S_real = self.calculate_S(self.u, self.v, l, m, c)
         S_real_inv = np.linalg.inv(S_real)
@@ -739,8 +739,16 @@ class GaussianModel:
         q1 = np.hypot(u1, v1)
         q2 = np.hypot(u2, v2)
 
-        def power_spectrum(q, m, c):
+        def power_spectrum(q, m, c):       
+            indexes = np.where(q == 0)[0]
+            q_max = np.max(q)
+            for i in indexes:
+                q[i] = q_max
+            q_min = np.min(q)
+            for i in indexes:
+                q[i] = q_min
             return np.exp(m*np.log(q) + c)
+        
         p1 = power_spectrum(q1, m, c)
         p2 = power_spectrum(q2, m, c)
 

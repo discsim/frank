@@ -430,12 +430,12 @@ class FourierBesselFitter(object):
         R and H should be in arcsec. Assumes a Gaussian vertical structure. 
         Only works with assume_optically_thick=False
     block_size : int, default = 10**5
-        Size of the matrices if blocking is used
+        Size of the matrices if blo cking is used
     verbose : bool, default = False
         Whether to print notification messages
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
+    def __init__(self, Rmax, N, geometry=None, nu=0, block_data=True,
                  assume_optically_thick=True, scale_height=None,
                  block_size=10 ** 5, verbose=True):
 
@@ -569,7 +569,7 @@ class FourierBesselFitter(object):
             logging.info('  Fitting for brightness profile using'
                          ' {}'.format(self.fit_method()))
 
-        self._geometry.fit(u, v, V, weights)
+        #self._geometry.fit(u, v, V, weights)
 
         mapping = self.preprocess_visibilities(u, v, V, weights)
         self._build_matrices(mapping)
@@ -583,7 +583,7 @@ class FourierBesselFitter(object):
                             Wvalues= self._Wvalues, V = self._V, DFT = self._DFT)
 
         self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
-                                     geometry=self._geometry.clone())
+                                     geometry=None)
 
         return self._sol
 
