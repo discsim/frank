@@ -1,5 +1,6 @@
 
 import numpy as np
+import time
 
 class DiscreteFourierTransform2D(object):
     def __init__(self, Rmax, N, nu=0):
@@ -35,7 +36,8 @@ class DiscreteFourierTransform2D(object):
     def get_collocation_points(self):        
         return np.array([self.Xn, self.Yn]), np.array([self.Un, self.Vn])
 
-    def coefficients(self, u = None, v = None, direction="forward"):
+    def coefficients(self, u = None, v = None, x = None, y = None, direction="forward"):
+        #start_time = time.time()
         if direction == 'forward':
             ## Normalization is dx*dy since we the DFT to be an approximation
             ## of the integral (which depends on the area)
@@ -51,16 +53,16 @@ class DiscreteFourierTransform2D(object):
             norm = 1 / (4*self.Xmax*self.Ymax)
             factor = 2j*np.pi
 
-            X, Y = self.Un, self.Vn
+            X, Y = u, v
             if u is None:
-                u = self.Xn
-                v = self.Yn
+                X, Y = self.Un, self.Vn
+            u = self.Xn
+            v = self.Yn
         else:
             raise AttributeError("direction must be one of {}"
                                  "".format(['forward', 'backward']))
-        
         H = norm * np.exp(factor*(np.outer(u, X) + np.outer(v, Y)))
-
+        #print("--- %s minutes to calculate 2D-DFT coefficients---" % (time.time()/60 - start_time/60))
         return H
 
 

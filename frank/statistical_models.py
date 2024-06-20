@@ -25,6 +25,7 @@ import logging
 
 from frank.constants import rad_to_arcsec, deg_to_rad
 from frank.minimizer import LineSearch, MinimizeNewton
+import time
 
 class VisibilityMapping:
     r"""Builds the mapping between the visibility and image planes.
@@ -206,16 +207,40 @@ class VisibilityMapping:
                 ks = ki[start:end]
                 ws = wi[start:end]
                 Vs = Vi[start:end]
-                
+               
                 X = self._get_mapping_coefficients(qs, ks, us, vs)
-
-                wXT = np.array(X.T * ws, order='C')
-
-                Ms[i] += np.dot(wXT, X)
-                js[i] += np.dot(wXT, Vs)
+                X_CT = self._get_mapping_coefficients(qs, ks, us, vs, inverse=True)
+                wXT = np.matmul(X_CT, np.diag(ws)) # this line is the same as below.
+                #wXT = np.matmul(np.transpose(np.conjugate(X)), np.diag(ws), dtype = "complex64")
+                Ms[i] += np.matmul(wXT, X, dtype="complex128")
+                js[i] += np.matmul(wXT, Vs, dtype="complex128")
 
                 start = end
                 end = min(Ndata, end + Nstep)
+         
+        print("M type", Ms[0].dtype)
+        print("j type", js[0].dtype)
+        print("M imag-> ", " max: ", np.max(Ms[0].imag), ", min: ", np.min(Ms[0].imag) , ", mean: ", np.mean(Ms[0].imag) ,", median: ", np.median(Ms[0].imag),  ", std: ", np.std(Ms[0].imag))
+        print("M real-> ", " max: ", np.max(Ms[0].real), ", min: ", np.min(Ms[0].real) , ", mean: ", np.mean(Ms[0].real) ,", median: ", np.median(Ms[0].real),  ", std: ", np.std(Ms[0].real))
+        tol = 1e-10
+        print("with tol: ", tol, ", M is symmetric?",  np.allclose(Ms[0].real, Ms[0].T.real, atol=tol))
+        # Ms[0] = np.abs(Ms[0])
+        # from scipy.linalg import issymmetric
+        # print(issymmetric(Ms[0]), "that M is a Symmetric Matrix")
+
+
+
+        import matplotlib.pyplot as plt
+        plt.matshow(Ms[0].real, cmap="magma", vmax = np.max(Ms[0].real), vmin = np.mean(Ms[0].real))
+        plt.colorbar()
+        plt.title("M matrix, real part")
+        plt.show()
+        #import sys
+        #sys.exit()
+
+
+        #Ms[0] = np.loadtxt(r'.\..\Notebooks\M_N75.txt', dtype = 'c8')
+        #js[0] = np.loadtxt(r'.\..\Notebooks\j_N75.txt', dtype = 'c8')
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
@@ -263,10 +288,10 @@ class VisibilityMapping:
             self._DFT.Rmax  == hash[1].Rmax and
             self._DFT.size  == hash[1].size and
             self._DFT.order == hash[1].order and
-            #geometry.inc  == hash[2].inc and
-            #geometry.PA   == hash[2].PA and
-            #geometry.dRA  == hash[2].dRA and
-            #geometry.dDec == hash[2].dDec and
+            geometry.inc  == hash[2].inc and
+            geometry.PA   == hash[2].PA and
+            geometry.dRA  == hash[2].dRA and
+            geometry.dDec == hash[2].dDec and
             self._vis_model == hash[3]
         )
 
@@ -468,7 +493,6 @@ class VisibilityMapping:
 
     def _get_mapping_coefficients(self, qs, ks, u, v, geometry=None, inverse=False):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
-        """
         if self._vis_model == 'opt_thick':
             # Optically thick & geometrically thin
             if geometry is None:
@@ -482,7 +506,6 @@ class VisibilityMapping:
             scale = np.exp(-np.outer(ks*ks, self._H2))
         else:
             raise ValueError("model not supported. Should never occur.")
-        """
         if inverse:
             scale = np.atleast_1d(1/scale).reshape(1,-1)
             qs = qs / rad_to_arcsec
@@ -490,8 +513,7 @@ class VisibilityMapping:
         else:
             direction='forward'
 
-        #H = self._DHT.coefficients(qs, direction=direction) * scale
-        H = self._DFT.coefficients(u, v, direction=direction) #* scale
+        H = self._DFT.coefficients(u, v, direction=direction)*scale
 
         return H
 
@@ -725,15 +747,23 @@ class GaussianModel:
         self.u, self.v = self._DFT.uv_points
         self.Ykm = self._DFT.coefficients(direction="backward")
         self.Ykm_f = self._DFT.coefficients(direction="forward")
-        m, c , l = -5, 60, 1e4 
-        #m, c, l = self.minimizeS() # Finding best parameters to S matrix.
-        S_real = self.calculate_S(self.u, self.v, l, m, c)
-        S_real_inv = np.linalg.inv(S_real)
-        self._Sinv =  S_real_inv
 
+        m, c , l = -5, 60, 1e4
+        #m, c, l = 0.23651345032212925, 60.28747193555951, 1.000389e+05
+        #start_time =  time.time()
+        #m, c, l = self.minimizeS() # Finding best parameters to S matrix.
+        #print("--- %s minutes to minimize S---" % (time.time()/60 - start_time/60))
+        S_real = self.calculate_S_real(self.u, self.v, l, m, c)
+        start_time = time.time()
+        S_real_inv = np.linalg.inv(S_real)
+        print("--- %s minutes to calculate S_real_inv---" % (time.time()/60 - start_time/60))
+        self._Sinv =  S_real_inv
+        print(self._Sinv.dtype, " Sinv dtype")
+        start_time = time.time()
         self._fit()
+        print("--- %s minutes to fit---" % (time.time()/60 - start_time/60))
     
-    def true_squared_exponential_kernel(self, u, v, l, m, c):      
+    def true_squared_exponential_kernel(self, u, v, l, m, c): 
         u1, u2 = np.meshgrid(u, u)
         v1, v2 = np.meshgrid(v, v)
         q1 = np.hypot(u1, v1)
@@ -748,75 +778,106 @@ class GaussianModel:
             for i in indexes:
                 q[i] = q_min
             return np.exp(m*np.log(q) + c)
-        
+            
         p1 = power_spectrum(q1, m, c)
         p2 = power_spectrum(q2, m, c)
-
         SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*((u1-u2)**2 + (v1-v2)**2)/ l**2)
         return SE_Kernel
-
-    def calculate_S(self, u, v, l, m, c):
+    
+    def calculate_S_real(self, u, v, l, m, c):
+        start_time = time.time()
         S_fspace = self.true_squared_exponential_kernel(u, v, l, m, c)
-        S_real = np.matmul(self.Ykm, np.matmul(S_fspace, self.Ykm_f))
+        print("--- %s minutes to calculate S---" % (time.time()/60 - start_time/60))
+        start_time = time.time()
+        S_real = np.matmul(self.Ykm, np.matmul(S_fspace, self.Ykm_f), dtype = "complex64")
+        print("--- %s minutes to calculate S_real---" % (time.time()/60 - start_time/60))
+
+        print(S_real.dtype, " S_real dtype")
+        import matplotlib.pyplot as plt
+        plt.matshow(S_fspace, cmap="magma", vmin = 0, vmax = 1e-3)
+        plt.colorbar()
+        plt.title("S real matrix, real part ")
+        plt.show()
+
         return S_real
-        
+    
+    def calculate_mu_cholesky(self, Dinv):
+        print("calculate mu with cholesky")
+        try: 
+            Dchol = scipy.linalg.cho_factor(Dinv)
+            mu =  scipy.linalg.cho_solve(Dchol, self._j)
+
+        except np.linalg.LinAlgError:
+            U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
+            s1 = np.where(s > 0, 1. / s, 0)
+            mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
+        return mu
+    
+    def calculate_mu_gc(self, Dinv):
+        from scipy.sparse.linalg import cg, bicg, bicgstab, gmres
+        method = "BiConjugate Gradient Method"
+        #from scipy.sparse import csr_matrix, issparse
+        #is_sparse = issparse(Dinv)
+        #print("Is Dinv sparse?: ", is_sparse)
+        start_time = time.time()
+        mu, exitCode = bicgstab(Dinv, self._j, atol = 0)
+        print("--- %s minutes to calculate mu---" % (time.time()/60 - start_time/60))
+        print("Succesful ", method, "?: ", exitCode == 0)
+        print("Is the result correct?: ", np.allclose(np.dot(Dinv, mu), self._j))
+        return mu
+    
+    def likelihood(self, param, data):
+        from scipy.special import gamma
+        m, c, l = param
+        Wvalues = self._Wvalues
+        N = np.diag(1/Wvalues)
+
+        alpha = 1.3
+        l0 = 1e7
+
+        # Create an Inverse Gamma distribution function
+        def inv_gamma_function(l, alpha, beta):
+            return ((gamma(alpha)*beta)**(-1))*((beta/l)**(alpha + 1))*np.exp(-beta/l)
+         
+        S_real  = self.calculate_S_real(self.u, self.v, l, m, c)
+        start_time = time.time()
+        S_real_inv = np.linalg.inv(S_real)
+        print("--- %s minutes to calculate S_real_inv ---" % (time.time()/60 - start_time/60))
+        Dinv = self._M + S_real_inv
+        start_time = time.time()
+        D = np.linalg.inv(Dinv)
+        print("--- %s minutes to calculate D ---" % (time.time()/60 - start_time/60))
+        mu = self.calculate_mu_gc(Dinv)
+
+        start_time = time.time()
+        logdetS = np.linalg.slogdet(S_real)[1]
+        logdetD = np.linalg.slogdet(D)[1]
+        logdetN = np.linalg.slogdet(N)[1]
+        print("--- %s minutes to calculate determinants ---" % (time.time()/60 - start_time/60))
+        factor = np.log(2*np.pi)
+
+        start_time = time.time()
+        log_likelihood =  2*np.log(np.abs((1/m)*(1/c))) \
+        + 2*np.log(inv_gamma_function(l, alpha, l0)) \
+        - 0.5*(factor + logdetN) \
+        - 0.5*(factor + logdetS) \
+        + 0.5*(factor + logdetD) \
+        + 0.5*np.dot(np.transpose(self._j), mu) \
+        - 0.5*np.dot(np.transpose(np.conjugate(data)), np.dot(np.diag(Wvalues), data)) 
+        print("--- %s minutes to calculate log_likelihood ---" % (time.time()/60 - start_time/60))
+        return -log_likelihood
+    
     def minimizeS(self):
         from scipy.optimize import minimize
-        from scipy.special import gamma
         V = self._V
-
-        def calculate_D(S):
-            S_real_inv = np.linalg.inv(S)
-            Dinv = self._M + S_real_inv
-            D = np.linalg.inv(Dinv)
-            return [Dinv, D]
-
-        def calculate_mu(Dinv):
-            try: 
-                Dchol = scipy.linalg.cho_factor(Dinv)
-                mu =  scipy.linalg.cho_solve(Dchol, self._j)
-
-            except np.linalg.LinAlgError:
-                U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
-                s1 = np.where(s > 0, 1. / s, 0)
-                mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
-            return mu
-
-        def likelihood(param, data):
-            m, c, l = param
-            Wvalues = self._Wvalues
-            N = np.diag(1/Wvalues)
-
-            alpha = 1.3
-            l0 = 1e7
-
-            # Create an Inverse Gamma distribution function
-            def inv_gamma_function(l, alpha, beta):
-                return ((gamma(alpha)*beta)**(-1))*((beta/l)**(alpha + 1))*np.exp(-beta/l) 
-
-            S  = self.calculate_S(self.u, self.v, l, m, c)
-            [Dinv, D] = calculate_D(S)
-            mu = calculate_mu(Dinv)
-            logdetS = np.linalg.slogdet(S)[1]
-            logdetD = np.linalg.slogdet(D)[1]
-            logdetN = np.linalg.slogdet(N)[1]
-            factor = np.log(2*np.pi)
-
-            log_likelihood =  2*np.log(np.abs((1/m)*(1/c))) \
-            + 2*np.log(inv_gamma_function(l, alpha, l0)) \
-            - 0.5*(factor + logdetN) \
-            - 0.5*(factor + logdetS) \
-            + 0.5*(factor + logdetD) \
-            + 0.5*np.dot(np.transpose(self._j), mu) \
-            - 0.5*np.dot(np.transpose(np.conjugate(data)), np.dot(np.diag(Wvalues), data)) 
-            return -log_likelihood
-        
-        result = minimize(likelihood, x0=np.array([-5, 60, 1e5]), args=(V,),
-                           bounds=[(-6, 6), (1, 70), (1e4, 1e6)],
-                           method="Nelder-Mead", tol=1e-7,
-                           )
+        print("minimizing")
+        start_time = time.time()
+        result = minimize(self.likelihood, x0=np.array([-5, 60, 1e5]), args=(V,),
+                          method="Nelder-Mead", tol=1e-7,
+                          bounds=[(-7, 7), (1, 80), (1e4, 1e5)])
         m, c, l = result.x
-        print("Best parameters: ", "m: ", m, "c: ", c, "l: ", "{:e}".format(l))
+        print("--- %s minutes to minimizing ---" % (time.time()/60 - start_time/60))
+        print("Result: ", "m: ", m, "c: ", c, "l: ", "{:e}".format(l))
         return [m, c, l]
 
     def _fit(self):
@@ -828,21 +889,19 @@ class GaussianModel:
 
         Dinv = self._M + Sinv
 
-        try:
-            self._Dchol = scipy.linalg.cho_factor(Dinv)
-            self._Dsvd = None
+        """
+        #import scipy.linalg as sc
+        def is_pos_def(x):
+            return np.all(np.linalg.eigvals(x) > 0)
+        a = sc.issymmetric(Dinv) # necessary condition to be SPD
+        b = is_pos_def(Dinv) # necessary condition to be SPD
+        # there is left one condition necessary to be SPD, which is that xT * A * x > 0 for all x != 0.
+        print("Is symmetric: ", a)
+        print("Is positive definite: ", b)
+        """
 
-            self._mu = scipy.linalg.cho_solve(self._Dchol, self._j)
-
-        except np.linalg.LinAlgError:
-            U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
-
-            s1 = np.where(s > 0, 1. / s, 0)
-
-            self._Dchol = None
-            self._Dsvd = U, s1, V
-
-            self._mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
+        #self._mu = self.calculate_mu_cholesky(Dinv)
+        self._mu = self.calculate_mu_gc(Dinv)
 
         # Reset the covariance matrix - we will compute it when needed
         if self._Nfields > 1:
