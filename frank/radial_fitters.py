@@ -168,7 +168,7 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         -----
         The resulting brightness will be consistent with higher-resolution fits
         as long as the original fit has sufficient resolution. By sufficient
-        resolution we simply mean that the missing terms in the Fourier-Bessel
+         we simply mean that the missing terms in the Fourier-Bessel
         series are negligible, which will typically be the case if the
         brightness was obtained from a frank fit with 100 points or more.
         """
@@ -437,7 +437,7 @@ class FourierBesselFitter(object):
 
     def __init__(self, Rmax, N, geometry=None, nu=0, block_data=True,
                  assume_optically_thick=True, scale_height=None,
-                 block_size=10 ** 5, verbose=True):
+                 block_size=10 ** 5, verbose=True, geometry_on = True):
 
         Rmax /= rad_to_arcsec
 
@@ -457,7 +457,7 @@ class FourierBesselFitter(object):
             model = 'opt_thin'
 
         self._vis_map = VisibilityMapping(self._DHT, geometry, 
-                                          model, scale_height=scale_height,
+                                          model, geometry_on = geometry_on ,scale_height=scale_height,
                                           block_data=block_data, block_size=block_size,
                                           check_qbounds=False, verbose=verbose,
                                           DFT = self._DFT)

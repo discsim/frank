@@ -21,7 +21,6 @@ class DiscreteFourierTransform2D(object):
         self.dy = 2*self.Ymax/self.Ny
 
         # Frequency space collocation points.
-        # The [1:] is because to not consider the 0 baseline. But we're missing points. 
         q1n = np.fft.fftfreq(self.Nx, d = self.dx)
         q2n = np.fft.fftfreq(self.Ny, d = self.dy)
         q1n, q2n = np.meshgrid(q1n, q2n, indexing='ij') 
@@ -53,11 +52,10 @@ class DiscreteFourierTransform2D(object):
             norm = 1 / (4*self.Xmax*self.Ymax)
             factor = 2j*np.pi
 
-            X, Y = u, v
+            X, Y = self.Un, self.Vn
             if u is None:
-                X, Y = self.Un, self.Vn
-            u = self.Xn
-            v = self.Yn
+                u = self.Xn
+                v = self.Yn
         else:
             raise AttributeError("direction must be one of {}"
                                  "".format(['forward', 'backward']))
@@ -95,3 +93,8 @@ class DiscreteFourierTransform2D(object):
     def resolution(self):
         """ Resolution of the grid in the x coordinate in rad"""
         return self.dx
+    
+    @property
+    def xy_points(self):
+        """ Collocation points in the image plane"""
+        return self.Xn, self.Yn

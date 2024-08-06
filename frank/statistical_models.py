@@ -66,7 +66,7 @@ class VisibilityMapping:
         Whether to print notification messages
     """
     def __init__(self, DHT, geometry,  
-                 vis_model='opt_thick', scale_height=None, block_data=True,
+                 vis_model='opt_thick', geometry_on = True, scale_height=None, block_data=True,
                  block_size=10 ** 5, check_qbounds=True, verbose=True,
                  DFT = None):
         
@@ -78,6 +78,7 @@ class VisibilityMapping:
         self._vis_model = vis_model
         self.check_qbounds = check_qbounds
         self._verbose = verbose 
+        self.geometry_on = geometry_on
 
         self._chunking = block_data
         self._chunk_size = block_size
@@ -165,7 +166,8 @@ class VisibilityMapping:
             logging.info('    Building visibility matrices M and j')
         
         # Deproject the visibilities
-        #u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
+        if self.geometry_on:
+            u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
         q = np.hypot(u, v)
 
         # Check consistency of the uv points with the model
@@ -179,7 +181,7 @@ class VisibilityMapping:
         if frequencies is None:
             multi_freq = False
             frequencies = np.ones_like(V)
-
+        start_time = time.time()
         channels = np.unique(frequencies)
         Ms = np.zeros([len(channels), self.size, self.size], dtype='c8')
         js = np.zeros([len(channels), self.size], dtype='c8')
@@ -209,15 +211,34 @@ class VisibilityMapping:
                 Vs = Vi[start:end]
                
                 X = self._get_mapping_coefficients(qs, ks, us, vs)
-                X_CT = self._get_mapping_coefficients(qs, ks, us, vs, inverse=True)
-                wXT = np.matmul(X_CT, np.diag(ws)) # this line is the same as below.
-                #wXT = np.matmul(np.transpose(np.conjugate(X)), np.diag(ws), dtype = "complex64")
-                Ms[i] += np.matmul(wXT, X, dtype="complex128")
-                js[i] += np.matmul(wXT, Vs, dtype="complex128")
+                wXT = np.matmul(np.transpose(np.conjugate(X)), np.diag(ws), dtype = "complex128")
+                Ms[i] += np.matmul(wXT, X, dtype="complex128").real
+                js[i] += np.matmul(wXT, Vs, dtype="complex128").real
 
                 start = end
                 end = min(Ndata, end + Nstep)
-         
+
+        import matplotlib.pyplot as plt
+        
+
+        N = int(np.sqrt(self._DFT.size))
+        r"""FRANK 2D: TESTING M 
+        sparcity = ((np.sum(np.abs(Ms[0]) < 0.5e-17))/N**4)*100
+        print("M is sparse?  ", sparcity)
+        print(Ms[0])
+
+        plt.imshow(Ms[0].real, cmap="magma", vmax = np.max(Ms[0].real), vmin = np.mean(Ms[0].real))
+        plt.colorbar()
+        plt.show()
+
+        M = np.diag(np.diag(Ms[0].real))
+        num_zeros = ((np.sum(np.abs(M) == 0.0))/N**4)*100
+        print("M is sparse?  ", num_zeros)
+ 
+        IFT2 = np.linalg.solve(M, js[0]).real
+        plt.imshow(IFT2.reshape(N,N).T, cmap="magma")
+        plt.colorbar()
+
         print("M type", Ms[0].dtype)
         print("j type", js[0].dtype)
         print("M imag-> ", " max: ", np.max(Ms[0].imag), ", min: ", np.min(Ms[0].imag) , ", mean: ", np.mean(Ms[0].imag) ,", median: ", np.median(Ms[0].imag),  ", std: ", np.std(Ms[0].imag))
@@ -228,8 +249,6 @@ class VisibilityMapping:
         # from scipy.linalg import issymmetric
         # print(issymmetric(Ms[0]), "that M is a Symmetric Matrix")
 
-
-
         import matplotlib.pyplot as plt
         plt.matshow(Ms[0].real, cmap="magma", vmax = np.max(Ms[0].real), vmin = np.mean(Ms[0].real))
         plt.colorbar()
@@ -237,10 +256,15 @@ class VisibilityMapping:
         plt.show()
         #import sys
         #sys.exit()
-
+        """
 
         #Ms[0] = np.loadtxt(r'.\..\Notebooks\M_N75.txt', dtype = 'c8')
         #js[0] = np.loadtxt(r'.\..\Notebooks\j_N75.txt', dtype = 'c8')
+        print("--- %s minutes to calculate M and j ---" % (time.time()/60 - start_time/60))
+        path = r'/Users/mariajmelladot/Desktop/Frank2D/1_Frank2D_DEV/data/TestingComplexity/'
+        np.save(path + 'M_N' + str(N) , Ms[0].real)
+        np.save(path + 'j_N' + str(N) , js[0].real)
+
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
@@ -288,10 +312,10 @@ class VisibilityMapping:
             self._DFT.Rmax  == hash[1].Rmax and
             self._DFT.size  == hash[1].size and
             self._DFT.order == hash[1].order and
-            geometry.inc  == hash[2].inc and
-            geometry.PA   == hash[2].PA and
-            geometry.dRA  == hash[2].dRA and
-            geometry.dDec == hash[2].dDec and
+            #geometry.inc  == hash[2].inc and
+            #geometry.PA   == hash[2].PA and
+            #geometry.dRA  == hash[2].dRA and
+            #geometry.dDec == hash[2].dDec and
             self._vis_model == hash[3]
         )
 
@@ -496,8 +520,11 @@ class VisibilityMapping:
         if self._vis_model == 'opt_thick':
             # Optically thick & geometrically thin
             if geometry is None:
-                geometry = self._geometry
-            scale = np.cos(geometry.inc * deg_to_rad)
+                if not self.geometry_on:
+                    scale = 1
+                else:   
+                    geometry = self._geometry
+                    scale = np.cos(geometry.inc * deg_to_rad)
         elif self._vis_model == 'opt_thin':
             # Optically thin & geometrically thin
             scale = 1
@@ -746,7 +773,6 @@ class GaussianModel:
         " New GP "
         self.u, self.v = self._DFT.uv_points
         self.Ykm = self._DFT.coefficients(direction="backward")
-        self.Ykm_f = self._DFT.coefficients(direction="forward")
 
         m, c , l = -5, 60, 1e4
         #m, c, l = 0.23651345032212925, 60.28747193555951, 1.000389e+05
@@ -758,10 +784,29 @@ class GaussianModel:
         S_real_inv = np.linalg.inv(S_real)
         print("--- %s minutes to calculate S_real_inv---" % (time.time()/60 - start_time/60))
         self._Sinv =  S_real_inv
-        print(self._Sinv.dtype, " Sinv dtype")
         start_time = time.time()
         self._fit()
         print("--- %s minutes to fit---" % (time.time()/60 - start_time/60))
+
+    def calculate_S_real(self, u, v, l, m, c):
+        start_time = time.time()
+        S_fspace = self.true_squared_exponential_kernel(u, v, l, m, c)
+        print("--- %s minutes to calculate S---" % (time.time()/60 - start_time/60))
+        start_time = time.time()
+        S_real = np.matmul(self.Ykm, np.matmul(S_fspace, self.Ykm.conj()), dtype = "complex128").real
+        print("--- %s minutes to calculate S_real---" % (time.time()/60 - start_time/60))
+
+        """
+        #FRANK 2D: TESTING S_real
+        print(" S_real")
+        import matplotlib.pyplot as plt
+        plt.matshow(S_real, cmap="magma")
+        plt.colorbar()
+        plt.title("S matrix, real part ")
+        plt.show()
+        """
+
+        return S_real
     
     def true_squared_exponential_kernel(self, u, v, l, m, c): 
         u1, u2 = np.meshgrid(u, u)
@@ -783,23 +828,6 @@ class GaussianModel:
         p2 = power_spectrum(q2, m, c)
         SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*((u1-u2)**2 + (v1-v2)**2)/ l**2)
         return SE_Kernel
-    
-    def calculate_S_real(self, u, v, l, m, c):
-        start_time = time.time()
-        S_fspace = self.true_squared_exponential_kernel(u, v, l, m, c)
-        print("--- %s minutes to calculate S---" % (time.time()/60 - start_time/60))
-        start_time = time.time()
-        S_real = np.matmul(self.Ykm, np.matmul(S_fspace, self.Ykm_f), dtype = "complex64")
-        print("--- %s minutes to calculate S_real---" % (time.time()/60 - start_time/60))
-
-        print(S_real.dtype, " S_real dtype")
-        import matplotlib.pyplot as plt
-        plt.matshow(S_fspace, cmap="magma", vmin = 0, vmax = 1e-3)
-        plt.colorbar()
-        plt.title("S real matrix, real part ")
-        plt.show()
-
-        return S_real
     
     def calculate_mu_cholesky(self, Dinv):
         print("calculate mu with cholesky")
@@ -889,7 +917,7 @@ class GaussianModel:
 
         Dinv = self._M + Sinv
 
-        """
+        r""" FRANK 2D: TESTING Dinv
         #import scipy.linalg as sc
         def is_pos_def(x):
             return np.all(np.linalg.eigvals(x) > 0)
