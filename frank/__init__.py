@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>
 #
-__version__ = "1.2.2"
+__version__ = "1.2.3"
 
 from frank import constants
 from frank import geometry
@@ -25,6 +25,7 @@ from frank import io
 from frank import radial_fitters
 from frank import debris_fitters
 from frank import utilities
+
 
 def enable_logging(log_file=None):
     """Turn on internal logging for Frankenstein
@@ -38,13 +39,8 @@ def enable_logging(log_file=None):
     import logging
 
     if log_file is not None:
-        handlers = [ logging.FileHandler(log_file, mode='w'),
-                     logging.StreamHandler()
-                     ]
+        handlers = [logging.FileHandler(log_file, mode="w"), logging.StreamHandler()]
     else:
-        handlers = [ logging.StreamHandler() ]
+        handlers = [logging.StreamHandler()]
 
-    logging.basicConfig(level=logging.INFO,
-                        format='%(message)s',
-                        handlers=handlers
-                        )
+    logging.basicConfig(level=logging.INFO, format="%(message)s", handlers=handlers)
