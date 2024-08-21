@@ -3,6 +3,18 @@
 Changelog
 +++++++++
 
+v.1.2.3
++++++++
+*Two bug fixes, additional tests*
+- test.py
+    - Adds tests for `utilities` objects and for `radial_fitters.FrankFitter.log_evidence_laplace`
+- utilities.py 
+    - Adds option in `make_mock_data` to reproject
+    - Fixes bug in `normalize_uv`
+    - Fixes two bugs in `sweep_profile`
+- Docs:
+    - Minor updates to tutorials using `utilities.make_mock_data`
+
 v.1.2.2
 +++++++
 *One bug fix, some code refactoring, a couple new functionalities, integrates scale-height fits into command-line UI*
