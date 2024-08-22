@@ -106,6 +106,6 @@ License
 -------
 **frank** is free software licensed under the LGPLv3 License. For more details see the [LICENSE](https://github.com/discsim/frank/blob/master/LICENSE.txt).
 
-© Copyright 2019-2022 Richard Booth, Jeff Jennings, Marco Tazzari.
+© Copyright 2019-2024 Richard Booth, Jeff Jennings, Marco Tazzari.
 
 Image: Universal Studios, NBCUniversal [Public domain]
