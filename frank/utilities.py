@@ -138,7 +138,7 @@ def jy_convert(x, conversion, bmaj=None, bmin=None):
     return converted
 
 
-def get_fit_stat_uncer(fit):
+def get_fit_stat_uncer(fit, logNormalUnc="linear"):
     r"""
     Retrieve a model brightness profile's statistical uncertainty (that due to 
     the uncertainty on the observed baselines). This is only a lower bound on 
@@ -155,26 +155,23 @@ def get_fit_stat_uncer(fit):
     sigma: array
         Statistical uncertainty on the fitted brightness, at the fitted radial
         points.
+    logNormalUnc : str, one of ["linear", "log"] 
+        Whether to return linear or logarithmic uncertainty for a LogNormal fit
     """
 
     if 'method' not in fit._info.keys():
-        raise AttributeError("'fit' object lacks '_info.method' key.")
+        raise AttributeError("'fit' object lacks '_info.method' key. Should be one "
+                             "of ['linear', 'log']")
 
-    if fit._info["method"] == "Normal":
-        sigma = np.sqrt(np.diag(fit.covariance))
-
-    elif fit._info["method"] == "LogNormal":
+    variance = np.diag(fit.covariance)
+        
+    if fit._info["method"] == "LogNormal" and logNormalUnc == "linear":
         # convert stored variance from var(log(brightness)) to var(brightness).
         # see Appendix A.2 in https://ui.adsabs.harvard.edu/abs/2016A%26A...586A..76J/abstract;
         # https://en.wikipedia.org/wiki/Log-normal_distribution
-        log_variance = np.diag(fit.covariance)
-        lin_variance = (np.exp(log_variance) - 1) * np.exp(2 * np.log(fit.I))
-        sigma = np.sqrt(lin_variance)
+        variance = (np.exp(variance) - 1) * np.exp(2 * np.log(fit.I))
 
-    else: 
-        raise ValueError("fit._info['method'] {} must be one of "
-            "['Normal', 'LogNormal']".format(fit._info['method']))
-
+    sigma = np.sqrt(variance)
     return sigma
 
 
