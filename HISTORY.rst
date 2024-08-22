@@ -5,13 +5,20 @@ Changelog
 
 v.1.2.3
 +++++++
-*Two bug fixes, additional tests*
+*Two bug fixes; new functions; minor, backward-compatible API changes; additional tests*
+- fit.py
+    - Adds call to 'utilities.check_uv' in fit runner
 - test.py
     - Adds tests for `utilities` objects and for `radial_fitters.FrankFitter.log_evidence_laplace`
 - utilities.py 
+    - Adds function `check_uv`
+    - Adds option in `get_fit_stat_uncer` to return log uncertainty for LogNormal model
     - Adds option in `make_mock_data` to reproject
     - Fixes bug in `normalize_uv`
     - Fixes two bugs in `sweep_profile`
+- setup.cfg
+    - Excludes scipy versions with known bug for scipy.optimize.nnls
+    - Updates supported Python versions
 - Docs:
     - Minor updates to tutorials using `utilities.make_mock_data`
 
