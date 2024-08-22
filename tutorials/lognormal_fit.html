@@ -1,16 +1,16 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fitting a frank model in logarithmic brightness &mdash; frank 1.2.3 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>Fitting a frank model in logarithmic brightness &mdash; frank 1.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
       <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
   
@@ -18,11 +18,12 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=590429e0"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -46,7 +47,7 @@
               <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.3
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -114,16 +115,16 @@
 <p>This tutorial is produced by the Jupyter notebook <a class="reference external" href="https://github.com/discsim/frank/blob/master/docs/tutorials/lognormal_fit.ipynb">here</a>.</p>
 </div>
 <section id="Fitting-a-frank-model-in-logarithmic-brightness">
-<h1>Fitting a <code class="docutils literal notranslate"><span class="pre">frank</span></code> model in logarithmic brightness<a class="headerlink" href="#Fitting-a-frank-model-in-logarithmic-brightness" title="Link to this heading"></a></h1>
+<h1>Fitting a <code class="docutils literal notranslate"><span class="pre">frank</span></code> model in logarithmic brightness<a class="headerlink" href="#Fitting-a-frank-model-in-logarithmic-brightness" title="Permalink to this heading"></a></h1>
 <p><em>This tutorial will demonstrate how to fit a frank model in logarithmic brightness space, and compare the result to the standard and non-negative frank models.</em></p>
 <section id="Motivation-for-a-logarithmic-brightness-model">
-<h2>Motivation for a logarithmic brightness model<a class="headerlink" href="#Motivation-for-a-logarithmic-brightness-model" title="Link to this heading"></a></h2>
+<h2>Motivation for a logarithmic brightness model<a class="headerlink" href="#Motivation-for-a-logarithmic-brightness-model" title="Permalink to this heading"></a></h2>
 <p>The standard version of <code class="docutils literal notranslate"><span class="pre">frank</span></code> fits for the radial brightness in linear space, and the model does not have a prior to enforce that the brightness be non-negative. Consequently in some cases (such as when a disk feature is partially resolved but is intrinsically super-resolution by a large factor), the recovered brightness profile can exhibit non-physical regions of negative flux. A non-negative variant of a standard <code class="docutils literal notranslate"><span class="pre">frank</span></code> fit can be obtained (if running a fit from the terminal, set the
 ‘nonnegative’ hyperprior in the <em>.json</em> parameter file to ‘true’). However this is only a least squares point estimate of a non-negative solution, obtained using the result of a standard fit, and can result in a brightness profile that is a poor fit to data at long baselines.</p>
 <p>Alternatively, the entire fitting procedure in <code class="docutils literal notranslate"><span class="pre">frank</span></code> can be performed in logarithmic brightness space, precluding the possibility of any negative flux. This model formalism differs in some ways from the standard approach in <code class="docutils literal notranslate"><span class="pre">frank</span></code>; here we illustrate the logarithmic model’s use and briefly motivate its benefits and limitations by comparing standard, non-negative and logarithmic fits for a mock observation.</p>
 </section>
 <section id="Fitting-a-known-brightness-profile-with-the-standard-and-logarithmic-models">
-<h2>Fitting a known brightness profile with the standard and logarithmic models<a class="headerlink" href="#Fitting-a-known-brightness-profile-with-the-standard-and-logarithmic-models" title="Link to this heading"></a></h2>
+<h2>Fitting a known brightness profile with the standard and logarithmic models<a class="headerlink" href="#Fitting-a-known-brightness-profile-with-the-standard-and-logarithmic-models" title="Permalink to this heading"></a></h2>
 <p>To compare the standard and logarithmic approaches, let’s define a mock brightness profile for an azisymmetric disk with several gaps and rings at different spatial scales. Then synthetically observe the source without fully resolving the features, using the <em>(u,v)</em> coordinates and noise properties of the DSHARP observations of AS 209. Finally we’ll fit the resulting mock data with the standard, non-negative and logarithmic <code class="docutils literal notranslate"><span class="pre">frank</span></code> models for comparison.</p>
 <p>The <a class="reference internal" href="mock_data.html"><span class="doc">mock data tutorial</span></a> details how to generate and fit mock data with <code class="docutils literal notranslate"><span class="pre">frank</span></code>, so we’re going to use the same approach as there.</p>
 <div class="admonition note">
@@ -353,7 +354,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2024, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:24:27 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:32:13 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 

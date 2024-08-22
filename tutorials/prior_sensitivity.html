@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Testing a fit’s sensitivity to the hyperparameters \(\alpha\) and \(w_{\rm smooth}\) &mdash; frank 1.2.3 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>Testing a fit’s sensitivity to the hyperparameters \(\alpha\) and \(w_{\rm smooth}\) &mdash; frank 1.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
       <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
@@ -17,11 +17,12 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=590429e0"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -45,7 +46,7 @@
               <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.3
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -110,9 +111,9 @@
            <div itemprop="articleBody">
              
   <section id="testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth">
-<h1>Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth" title="Link to this heading"></a></h1>
+<h1>Testing a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#testing-a-fit-s-sensitivity-to-the-hyperparameters-alpha-and-w-rm-smooth" title="Permalink to this heading"></a></h1>
 <section id="context-interpreting-the-model-s-hyperparameters">
-<h2>Context: Interpreting the model’s hyperparameters<a class="headerlink" href="#context-interpreting-the-model-s-hyperparameters" title="Link to this heading"></a></h2>
+<h2>Context: Interpreting the model’s hyperparameters<a class="headerlink" href="#context-interpreting-the-model-s-hyperparameters" title="Permalink to this heading"></a></h2>
 <p>The hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> affect the fit’s power spectrum estimate
 (which is itself a prior on the fitted brightness profile).
 In short, <span class="math notranslate nohighlight">\(\alpha\)</span> acts as a signal-to-noise (SNR) threshold for the maximum baseline out to which frank attempts to fit the visibilities,
@@ -128,7 +129,7 @@ Typical values are <span class="math notranslate nohighlight">\(N = 100 - 300\)<
 <p>See the frank <a class="reference external" href="https://academic.oup.com/mnras/advance-article/doi/10.1093/mnras/staa1365/5838058?guestAccessKey=7f163a1f-c12f-4771-8e54-928636794a5b">methods paper</a> for an extended discussion of the model’s hyperparameters.</p>
 </section>
 <section id="performing-multiple-fits-to-vary-alpha-and-w-rm-smooth">
-<h2>Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth" title="Link to this heading"></a></h2>
+<h2>Performing multiple fits to vary <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#performing-multiple-fits-to-vary-alpha-and-w-rm-smooth" title="Permalink to this heading"></a></h2>
 <p>The default value of <span class="math notranslate nohighlight">\(\alpha\)</span> is <span class="math notranslate nohighlight">\(1.05\)</span>, and  we suggest varying it between <span class="math notranslate nohighlight">\(1.00 - 1.30\)</span>.
 (Though note that choosing <span class="math notranslate nohighlight">\(\alpha = 1.00\)</span> will cause frank to fit a dataset’s entire visibility distribution.
 For many real datasets, the binned visibilities become noise-dominated at the longest baselines,
@@ -164,7 +165,7 @@ the visibility domain fits in (d) and brightness profiles in (a) are quite simil
 demonstrating the effect of the power spectrum as a prior is weak in this case.</p>
 </section>
 <section id="always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth">
-<h2>Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth" title="Link to this heading"></a></h2>
+<h2>Always check a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span><a class="headerlink" href="#always-check-a-fit-s-sensitivity-to-alpha-and-w-rm-smooth" title="Permalink to this heading"></a></h2>
 <p>While these sensitivities can be weak as shown above,
 a fit’s sensitivity to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span> can be nontrivial
 for lower resolution or particularly noisy datasets.
@@ -186,7 +187,7 @@ so it’s <strong>always</strong> worth checking how the fit changes over the ra
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2024, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:24:27 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:32:13 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 

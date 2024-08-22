@@ -1,16 +1,16 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="../">
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Taking a Hankel transform, and generating mock data with frank &mdash; frank 1.2.3 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+  <title>Taking a Hankel transform, and generating mock data with frank &mdash; frank 1.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
       <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
   
@@ -18,11 +18,12 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../_static/documentation_options.js?v=590429e0"></script>
-        <script src="../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -46,7 +47,7 @@
               <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.3
+                1.2.2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -116,14 +117,14 @@
 <p>This tutorial is produced by the Jupyter notebook <a class="reference external" href="https://github.com/discsim/frank/blob/master/docs/tutorials/mock_data.ipynb">here</a>.</p>
 </div>
 <section id="Taking-a-Hankel-transform,-and-generating-mock-data-with-frank">
-<h1>Taking a Hankel transform, and generating mock data with <code class="docutils literal notranslate"><span class="pre">frank</span></code><a class="headerlink" href="#Taking-a-Hankel-transform,-and-generating-mock-data-with-frank" title="Link to this heading"></a></h1>
+<h1>Taking a Hankel transform, and generating mock data with <code class="docutils literal notranslate"><span class="pre">frank</span></code><a class="headerlink" href="#Taking-a-Hankel-transform,-and-generating-mock-data-with-frank" title="Permalink to this heading"></a></h1>
 <p><em>This tutorial will show how to take a 1D Fourier transform (a discrete Hankel transform) with frank, and how to take this a step further to generate a noisy, mock dataset (visibility distribution) using frank.</em></p>
 <section id="Motivation">
-<h2>Motivation<a class="headerlink" href="#Motivation" title="Link to this heading"></a></h2>
+<h2>Motivation<a class="headerlink" href="#Motivation" title="Permalink to this heading"></a></h2>
 <p>Taking a 1D Fourier transform (from real to visibility space or vice-versa) is a useful way to visualize the correspondence between a Fourier space visibilitity distribution and a real space brightness profile. Generating a mock dataset and fitting it with <code class="docutils literal notranslate"><span class="pre">frank</span></code> is also helpful to assess the model’s intrinsic performance by comparing a <code class="docutils literal notranslate"><span class="pre">frank</span></code> fit to a known result.</p>
 </section>
 <section id="Taking-a-Hankel-transform">
-<h2>Taking a Hankel transform<a class="headerlink" href="#Taking-a-Hankel-transform" title="Link to this heading"></a></h2>
+<h2>Taking a Hankel transform<a class="headerlink" href="#Taking-a-Hankel-transform" title="Permalink to this heading"></a></h2>
 <p>Let’s demonstrate how to easily take a Hankel transform (a 1D Fourier transform that assumes azimuthal symmetry) using a wrapper function, <code class="docutils literal notranslate"><span class="pre">frank.utilities.generic_dht</span></code>, that interfaces with deeper routines <code class="docutils literal notranslate"><span class="pre">frank</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -235,7 +236,7 @@
 <p>On the right we have the Fourier transform of our mock brightness profile, and on the left we see that an inverse transform recovers the true brightness profile to high acccuracy. That’s it!</p>
 </section>
 <section id="Generating-mock-data">
-<h2>Generating mock data<a class="headerlink" href="#Generating-mock-data" title="Link to this heading"></a></h2>
+<h2>Generating mock data<a class="headerlink" href="#Generating-mock-data" title="Permalink to this heading"></a></h2>
 <p>Now let’s use our mock brightness profile to generate a synthetic, noisy visibility distribution, with <code class="docutils literal notranslate"><span class="pre">frank.utilities.make_mock_data</span></code>. We’ll sample the mock visibilitiess at the <span class="math notranslate nohighlight">\((u,v)\)</span> coordinates of a real (combined) dataset - the DSHARP observations of AS 209.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -311,7 +312,7 @@
 </div>
 </section>
 <section id="Fitting-mock-data">
-<h2>Fitting mock data<a class="headerlink" href="#Fitting-mock-data" title="Link to this heading"></a></h2>
+<h2>Fitting mock data<a class="headerlink" href="#Fitting-mock-data" title="Permalink to this heading"></a></h2>
 <p>Finally we can fit the noisy mock data with <code class="docutils literal notranslate"><span class="pre">frank</span></code> to see how well we recover the true profile, giving a sense of how accurately we could expect the model to be for a real dataset of similar <span class="math notranslate nohighlight">\((u,v)\)</span> coverage, noise and visibility distribution (or equivalently, underlying brightness profile).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -370,7 +371,7 @@
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2024, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:24:27 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:32:13 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
