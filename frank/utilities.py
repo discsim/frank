@@ -401,6 +401,34 @@ class UVDataBinner(object):
         return [self._uv_left, self._uv_right]
 
 
+def check_uv(u, v, min_q=1e3, max_q=1e8):
+    """
+    Check if u,v distances are sensible for expected code unit of
+    [lambda], or if instead they're being supplied in [m].
+
+    Parameters
+    ----------
+    u, v : array, unit = :math:`\lambda`
+        u and v coordinates of observations
+    min_q : float, unit = :math:`\lambda`, default=1e3
+        Minimum baseline in code units expected for a dataset. The default
+        value of 1e3 is a conservative value for ALMA, assuming a minimum
+        antenna separation of ~12 m and maximum observing wavelength of 3.6 mm.
+    max_q : float, unit = :math:`\lambda`, default=1e5
+        Maximum baseline in code units expected for a dataset. The default
+        value of 1e8 is a conservative value for ALMA, assuming a maximum
+        antenna separation of ~16 km and minimum observing wavelength of 0.3 mm.
+    """
+    q = np.hypot(u, v)
+
+    if min(q) < min_q:
+        logging.warning("WARNING: "
+            f"Minimum baseline {min(q):.1e} < expected minimum {min_q:.1e} [lambda]. "
+            "'u' and 'v' distances must be in units of [lambda], " 
+            "but it looks like they're in [m]."
+        )
+
+
 def normalize_uv(u, v, wle):
     r"""
     Normalize data u and v coordinates by the observing wavelength
