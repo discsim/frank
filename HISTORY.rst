@@ -6,6 +6,7 @@ Changelog
 v.1.2.3
 +++++++
 *Two bug fixes; new functions; minor, backward-compatible API changes; additional tests*
+
 - fit.py
     - Adds call to 'utilities.check_uv' in fit runner
 - test.py
