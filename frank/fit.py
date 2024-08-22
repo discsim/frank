@@ -818,6 +818,10 @@ def main(*args):
         u, v, vis, weights = alter_data(
             u, v, vis, weights, geom, model)
 
+    # check units of (u,v)
+    # (after conversion if model['modify_data']['norm_wle'] is True)
+    utilities.check_uv(u, v)
+
     if model['analysis']['bootstrap_ntrials']:
         boot_fig, boot_axes = perform_bootstrap(
             u, v, vis, weights, geom, model)

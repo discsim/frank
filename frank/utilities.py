@@ -402,7 +402,7 @@ class UVDataBinner(object):
 
 
 def check_uv(u, v, min_q=1e3, max_q=1e8):
-    """
+    r"""
     Check if u,v distances are sensible for expected code unit of
     [lambda], or if instead they're being supplied in [m].
 
