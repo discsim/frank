@@ -674,8 +674,8 @@ class GaussianModel:
                                  " your UVtable (incorrect units or weights), "
                                  " or the deprojection being applied (incorrect"
                                  " geometry and/or phase center). Else you may"
-                                 " want to increase `rout` by 10-20% or `n` so"
-                                 " that it is large, >~300.")
+                                 " want to adjust `rout` (ensure it is larger than"
+                                 " the source) or `n` (up to ~300).")
 
             Ykm = self._DHT.coefficients()
             Sj = np.einsum('ji,lj,jk->lik', Ykm, 1/p, Ykm)
