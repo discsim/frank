@@ -1,16 +1,16 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>What’s fit.py doing? The fitting procedure in detail &mdash; frank 1.2.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+  <title>What’s fit.py doing? The fitting procedure in detail &mdash; frank 1.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
       <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
 
   
@@ -18,12 +18,11 @@
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=590429e0"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -47,7 +46,7 @@
               <img src="../_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.2
+                1.2.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -120,7 +119,7 @@
 <p>This tutorial is produced by the Jupyter notebook <a class="reference external" href="https://github.com/discsim/frank/blob/master/docs/tutorials/fitting_procedure.ipynb">here</a>.</p>
 </div>
 <section id="What's-fit.py-doing?-The-fitting-procedure-in-detail">
-<h1>What’s fit.py doing? The fitting procedure in detail<a class="headerlink" href="#What's-fit.py-doing?-The-fitting-procedure-in-detail" title="Permalink to this heading"></a></h1>
+<h1>What’s fit.py doing? The fitting procedure in detail<a class="headerlink" href="#What's-fit.py-doing?-The-fitting-procedure-in-detail" title="Link to this heading"></a></h1>
 <p>To give further insight into the fitting process in Frankenstein (<code class="docutils literal notranslate"><span class="pre">frank</span></code>) and how you can modify it, here we’ll use the code as a module and perform the same fit that’s in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>, just in more detail.</p>
 <p>So we’ll keep using the DSHARP continuum observations of AS 209 (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..41A/abstract">Andrews et al. 2018</a>) as the input dataset, and frank will reconstruct the disc’s 1D radial brightness profile by nonparametrically fitting the real component of the visibility distribution.</p>
 <p>Specifically frank will perform 4 steps in the fit, which we’ll break into distinct calls here (these are the steps taken in <code class="docutils literal notranslate"><span class="pre">fit.py</span></code>):</p>
@@ -137,7 +136,7 @@
 </ol>
 <p>Let’s walk through these.</p>
 <section id="1.-Read-in-the-parameter-values-and-data">
-<h2>1. Read in the parameter values and data<a class="headerlink" href="#1.-Read-in-the-parameter-values-and-data" title="Permalink to this heading"></a></h2>
+<h2>1. Read in the parameter values and data<a class="headerlink" href="#1.-Read-in-the-parameter-values-and-data" title="Link to this heading"></a></h2>
 <p>As in the second example in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a> - where we use frank as a module - we’ll import the internal classes <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> and <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryGaussian"><span class="std std-ref">FitGeometryGaussian</span></a> directly, in order to demonstrate their usage. Just note that <code class="docutils literal notranslate"><span class="pre">fit.py</span></code> uses the wrapper functions <code class="docutils literal notranslate"><span class="pre">deproject_disc</span></code> and <code class="docutils literal notranslate"><span class="pre">perform_fit</span></code> to call these, and more generally uses wrapper functions to do everything that
 we’ll walk through more verbosely here.</p>
 <div class="nbinput nblast docutils container">
@@ -173,7 +172,7 @@ we’ll walk through more verbosely here.</p>
 </div>
 </section>
 <section id="2.-Determinine-the-disc-geometry-and-deproject-the-visibilities">
-<h2>2. Determinine the disc geometry and deproject the visibilities<a class="headerlink" href="#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities" title="Permalink to this heading"></a></h2>
+<h2>2. Determinine the disc geometry and deproject the visibilities<a class="headerlink" href="#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities" title="Link to this heading"></a></h2>
 <p>Before fitting the radial brightness profile, we need to determine the disc’s geometry (inclination, position angle and phase center) in order to deproject the visibilities (recall that frank, fitting in 1D, assumes an axisymmetric source). To do this we pass an object specifying how the geometry is determined to the <a class="reference internal" href="../py_API.html#frank.radial_fitters.FrankFitter"><span class="std std-ref">FrankFitter</span></a> class. <strong>The position angle (PA) is defined positive east of north, and the right ascension offset (dRA) is defined
 positive for offsets toward east.</strong></p>
 <p>frank has three classes for this: <a class="reference internal" href="../py_API.html#frank.geometry.FixedGeometry"><span class="std std-ref">FixedGeometry</span></a> just takes a geometry you provide, <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryGaussian"><span class="std std-ref">FitGeometryGaussian</span></a> determines the geometry by fitting a 2D Gaussian directly to the visibilities, and <a class="reference internal" href="../py_API.html#frank.geometry.FitGeometryFourierBessel"><span class="std std-ref">FitGeometryFourierBessel</span></a> determines the geometry by fitting a nonparametric form.</p>
@@ -260,14 +259,14 @@ Fitted geometry: inc  = 33.93 deg,
 </div>
 </div>
 <section id="2.1-Adding-your-own-geometry-fit-routine">
-<h3>2.1 Adding your own geometry fit routine<a class="headerlink" href="#2.1-Adding-your-own-geometry-fit-routine" title="Permalink to this heading"></a></h3>
+<h3>2.1 Adding your own geometry fit routine<a class="headerlink" href="#2.1-Adding-your-own-geometry-fit-routine" title="Link to this heading"></a></h3>
 <p>You can extend frank’s geometry fitting capabilities with your own routines by writing a class that inherits from the <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry"><span class="std std-ref">SourceGeometry</span></a> base class. This base class provides the interface used by frank to deproject the visibilities, but you do need to implement your own <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.fit"><span class="std std-ref">fit()</span></a> method. This method will be called internally by <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> to determine the geometry.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">fit()</span></code> method should set the attributes <code class="docutils literal notranslate"><span class="pre">_inc</span></code>, <code class="docutils literal notranslate"><span class="pre">_PA</span></code>, <code class="docutils literal notranslate"><span class="pre">_dRA</span></code>, and <code class="docutils literal notranslate"><span class="pre">_dDec</span></code> – in respective units of [deg], [deg], [arcsec], [arcsec] – that are used by the <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.apply_correction"><span class="std std-ref">apply_correction()</span></a>, <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.undo_correction"><span class="std std-ref">undo_correction()</span></a>, <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.deproject"><span class="std std-ref">deproject()</span></a>, and <a class="reference internal" href="../py_API.html#frank.geometry.SourceGeometry.reproject"><span class="std std-ref">reproject()</span></a>
 methods.</p>
 </section>
 </section>
 <section id="3.-Fit-the-deprojected-visibilities-for-the-brightness-profile">
-<h2>3. Fit the deprojected visibilities for the brightness profile<a class="headerlink" href="#3.-Fit-the-deprojected-visibilities-for-the-brightness-profile" title="Permalink to this heading"></a></h2>
+<h2>3. Fit the deprojected visibilities for the brightness profile<a class="headerlink" href="#3.-Fit-the-deprojected-visibilities-for-the-brightness-profile" title="Link to this heading"></a></h2>
 <p>Now that we have the deprojected visibilities, let’s fit them.</p>
 <p>Objects used to perform a fit are in the <code class="docutils literal notranslate"><span class="pre">FrankFitter</span></code> class. In addition to the the <code class="docutils literal notranslate"><span class="pre">geom</span></code> object detailed in Sec.2, five hyperparameters affect the fit: <code class="docutils literal notranslate"><span class="pre">Rmax</span></code> and <code class="docutils literal notranslate"><span class="pre">N</span></code>, which set the disc radius out to which the fit is performed and the number of collocation points used in the fit; and <code class="docutils literal notranslate"><span class="pre">alpha</span></code>, <code class="docutils literal notranslate"><span class="pre">p_0</span></code> and <code class="docutils literal notranslate"><span class="pre">weights_smooth</span></code>, the hyperprior parameters on the power spectrum prior. See the frank methods paper for an explanation and interpretation of these five hyperparameters, and
 <a class="reference internal" href="prior_sensitivity.html"><span class="doc">this tutorial</span></a> for a demonstration of how to test their effect on a given fit.</p>
@@ -333,7 +332,7 @@ visibilities, as frank is assuming an axisymmetric source that has zero imaginar
 </ul>
 </section>
 <section id="4.-Save-the-results-and-generate-plots">
-<h2>4. Save the results and generate plots<a class="headerlink" href="#4.-Save-the-results-and-generate-plots" title="Permalink to this heading"></a></h2>
+<h2>4. Save the results and generate plots<a class="headerlink" href="#4.-Save-the-results-and-generate-plots" title="Link to this heading"></a></h2>
 <p>We could now save the fit results, including the <code class="docutils literal notranslate"><span class="pre">sol</span></code> object, with <code class="docutils literal notranslate"><span class="pre">save_fit(u,</span> <span class="pre">v,</span> <span class="pre">vis,</span> <span class="pre">weights,</span> <span class="pre">sol,</span> <span class="pre">prefix='AS209_continuum')</span></code>. We could also produce a full diagnostic figure and/or simplified figure of the fit. But since we’ve already done all this in the <a class="reference internal" href="../quickstart.html"><span class="doc">Quickstart</span></a>, let’s instead use the <code class="docutils literal notranslate"><span class="pre">sol</span></code> object to make a figure comparing the frank fitted brightness profile to the published CLEAN image-extracted profile (<a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2018ApJ...869L..42H/abstract">Huang et al.
 2018</a>).</p>
 <p>If running frank from the terminal, you can produce this figure by setting, in your parameter file, <code class="docutils literal notranslate"><span class="pre">compare_profile</span></code> to the path to a file with a CLEAN profile (or any comparison profile) and <code class="docutils literal notranslate"><span class="pre">clean_beam</span></code> to the beam parameters (FWHM along both axes, position angle).</p>
@@ -407,7 +406,7 @@ visibilities, as frank is assuming an axisymmetric source that has zero imaginar
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2024, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:32:13 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:37:41 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
