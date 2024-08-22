@@ -138,7 +138,7 @@ def jy_convert(x, conversion, bmaj=None, bmin=None):
     return converted
 
 
-def get_fit_stat_uncer(fit, logNormalUnc="linear"):
+def get_fit_stat_uncer(fit, return_linear=True):
     r"""
     Retrieve a model brightness profile's statistical uncertainty (that due to 
     the uncertainty on the observed baselines). This is only a lower bound on 
@@ -155,8 +155,10 @@ def get_fit_stat_uncer(fit, logNormalUnc="linear"):
     sigma: array
         Statistical uncertainty on the fitted brightness, at the fitted radial
         points.
-    logNormalUnc : str, one of ["linear", "log"] 
-        Whether to return linear or logarithmic uncertainty for a LogNormal fit
+    return_linear : bool, default=True
+        Whether to return linear uncertainty for a LogNormal fit 
+        (if False, the logarithmic uncertainty is instead returned). 
+        Has no effect for a Normal fit.
     """
 
     if 'method' not in fit._info.keys():
@@ -165,7 +167,7 @@ def get_fit_stat_uncer(fit, logNormalUnc="linear"):
 
     variance = np.diag(fit.covariance)
         
-    if fit._info["method"] == "LogNormal" and logNormalUnc == "linear":
+    if fit._info["method"] == "LogNormal" and return_linear == True:
         # convert stored variance from var(log(brightness)) to var(brightness).
         # see Appendix A.2 in https://ui.adsabs.harvard.edu/abs/2016A%26A...586A..76J/abstract;
         # https://en.wikipedia.org/wiki/Log-normal_distribution
