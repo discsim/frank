@@ -1,7 +1,13 @@
 name: tests
 
-# Run this workflow for every commit
-on: push
+on: 
+  push:
+    # match all branch names
+    branches:
+      - "**"
+  schedule:
+    # once a week
+    - cron: "20 07 * * 0"
 
 jobs:
   test:
@@ -10,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
 
     steps:
       - name: Checkout code
