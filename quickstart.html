@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Performing a fit &mdash; frank 1.2.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+  <title>Performing a fit &mdash; frank 1.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
       <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
@@ -17,12 +17,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=590429e0"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
         <script defer="defer" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
@@ -46,7 +45,7 @@
               <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.2
+                1.2.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -107,11 +106,11 @@
            <div itemprop="articleBody">
              
   <section id="performing-a-fit">
-<h1>Performing a fit<a class="headerlink" href="#performing-a-fit" title="Permalink to this heading"></a></h1>
+<h1>Performing a fit<a class="headerlink" href="#performing-a-fit" title="Link to this heading"></a></h1>
 <p>You can interface with Frankenstein (<code class="docutils literal notranslate"><span class="pre">frank</span></code>) to perform a fit in 2 ways:
 <strong>(1)</strong> run the code directly from the terminal or <strong>(2)</strong> use the code as a Python module.</p>
 <section id="perform-a-fit-from-the-terminal">
-<h2>Perform a fit from the terminal<a class="headerlink" href="#perform-a-fit-from-the-terminal" title="Permalink to this heading"></a></h2>
+<h2>Perform a fit from the terminal<a class="headerlink" href="#perform-a-fit-from-the-terminal" title="Link to this heading"></a></h2>
 <p>To perform a quick fit from the terminal, only a UVTable with the data to
 be fit and a <em>.json</em> parameter file (see below) are needed. A UVTable can be extracted
 with CASA as demonstrated in <a class="reference internal" href="tutorials/mstable_to_uvtable.html"><span class="doc">this tutorial</span></a>.
@@ -312,12 +311,12 @@ Note how the bin counts drop sharply beyond <span class="math notranslate nohigh
 a consequence of sparser sampling at the longest baselines. <br>
 <strong>j)</strong> The data’s binned signal-to-noise (SNR). This begins to dither about SNR=1 beyond <span class="math notranslate nohighlight">\(\approx 4.5\ {\rm M}\lambda\)</span>.</p>
 <section id="fit-for-the-source-geometry">
-<h3>Fit for the source geometry<a class="headerlink" href="#fit-for-the-source-geometry" title="Permalink to this heading"></a></h3>
+<h3>Fit for the source geometry<a class="headerlink" href="#fit-for-the-source-geometry" title="Link to this heading"></a></h3>
 <p>frank fits for the source geometry to deproject the visibilities before fitting for the brightness profile.
 See <a class="reference internal" href="tutorials/fitting_procedure.html#2.-Determinine-the-disc-geometry-and-deproject-the-visibilities"><span class="std std-ref">here</span></a> for approaches to the deprojection.</p>
 </section>
 <section id="test-the-fit-s-sensitivity-to-the-hyperparameters">
-<h3>Test the fit’s sensitivity to the hyperparameters<a class="headerlink" href="#test-the-fit-s-sensitivity-to-the-hyperparameters" title="Permalink to this heading"></a></h3>
+<h3>Test the fit’s sensitivity to the hyperparameters<a class="headerlink" href="#test-the-fit-s-sensitivity-to-the-hyperparameters" title="Link to this heading"></a></h3>
 <p>It’s <strong>always</strong> important to check a fit’s sensitivity to the hyperparameters <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
 Often the sensitivity is quite weak, but for lower resolution or particularly noisy datasets,
 the location and amplitude of substructure in the brightness profile can be sensitive to <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(w_{\rm smooth}\)</span>.
@@ -326,7 +325,7 @@ Just set <code class="code docutils literal notranslate"><span class="pre">alpha
 See <a class="reference internal" href="tutorials/prior_sensitivity.html"><span class="doc">this tutorial</span></a> for an example.</p>
 </section>
 <section id="understand-the-model-s-limitations">
-<h3>Understand the model’s limitations<a class="headerlink" href="#understand-the-model-s-limitations" title="Permalink to this heading"></a></h3>
+<h3>Understand the model’s limitations<a class="headerlink" href="#understand-the-model-s-limitations" title="Link to this heading"></a></h3>
 <p>See <a class="reference internal" href="tutorials/model_limitations.html"><span class="doc">this tutorial</span></a> for an explanation and discussion of the model’s limitations,
 briefly summarized here: <br>
 - Noise in the visibilities can imprint noise on the reconstructed brightness profile
@@ -338,7 +337,7 @@ For this reason we do not show the uncertainty by default (note its absence in t
 See <a class="reference internal" href="tutorials/model_limitations.html#an-underestimated-brightness-profile-uncertainty"><span class="std std-ref">here</span></a> for a fuller discussion and mitigation approaches.</p>
 </section>
 <section id="examine-the-fit-s-convergence">
-<h3>Examine the fit’s convergence<a class="headerlink" href="#examine-the-fit-s-convergence" title="Permalink to this heading"></a></h3>
+<h3>Examine the fit’s convergence<a class="headerlink" href="#examine-the-fit-s-convergence" title="Link to this heading"></a></h3>
 <p>Once a fit has been performed, it can be useful to check its convergence.
 A convergence test on the inferred power spectrum is performed as the fit iterates,
 but you can additionally examine convergence of the inferred brightness profile by setting
@@ -347,14 +346,14 @@ frank will then produce a diagnostic figure to assess the fit’s convergence.
 See <a class="reference internal" href="tutorials/fit_convergence.html"><span class="doc">this tutorial</span></a> for an example.</p>
 </section>
 <section id="modify-the-fit-py-script">
-<h3>Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script<a class="headerlink" href="#modify-the-fit-py-script" title="Permalink to this heading"></a></h3>
+<h3>Modify the <code class="code docutils literal notranslate"><span class="pre">fit.py</span></code> script<a class="headerlink" href="#modify-the-fit-py-script" title="Link to this heading"></a></h3>
 <p>We’ve run this example using <code class="code docutils literal notranslate"><span class="pre">frank/fit.py</span></code>; if you’d like to modify this file, you can get it <a class="reference external" href="https://raw.githubusercontent.com/discsim/frank/master/frank/fit.py">here</a>.
 For an ‘under the hood’ look at what this script does, see <a class="reference internal" href="tutorials/fitting_procedure.html"><span class="doc">this tutorial</span></a>.
 If you’d like a video demonstration of the same tutorial (with sound), see <a class="reference external" href="https://www.youtube.com/watch?v=xMxsLKQidY4&amp;t=5">here</a>.</p>
 </section>
 </section>
 <section id="perform-a-fit-using-frank-as-a-python-module">
-<h2>Perform a fit using <code class="code docutils literal notranslate"><span class="pre">frank</span></code> as a Python module<a class="headerlink" href="#perform-a-fit-using-frank-as-a-python-module" title="Permalink to this heading"></a></h2>
+<h2>Perform a fit using <code class="code docutils literal notranslate"><span class="pre">frank</span></code> as a Python module<a class="headerlink" href="#perform-a-fit-using-frank-as-a-python-module" title="Link to this heading"></a></h2>
 <p>To interface with the code more directly, you can use it as a module.
 The wrapper functions in <code class="docutils literal notranslate"><span class="pre">fit.py</span></code> do everything we’ll show below,
 but we’re going to mostly avoid those here,
@@ -413,7 +412,7 @@ When running from the terminal, frank produces this figure if <code class="code 
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2024, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:22:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:24:27 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 

@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; frank 1.2.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+  <title>Installation &mdash; frank 1.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
       <link rel="stylesheet" href="_static/custom.css" type="text/css" />
 
@@ -17,12 +17,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=590429e0"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -44,7 +43,7 @@
               <img src="_static/prom_photo.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.2.2
+                1.2.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -101,10 +100,10 @@
            <div itemprop="articleBody">
              
   <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">frank</span></code> requires Python 3 and is tested for Python 3.7. Usage under Python 2.x is not supported.</p>
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">frank</span></code> requires Python 3 and is tested for versions listed in <code class="code docutils literal notranslate"><span class="pre">setup.cfg</span></code>. Usage under Python 2.x is not supported.</p>
 <section id="with-pip">
-<h2>With pip<a class="headerlink" href="#with-pip" title="Permalink to this heading"></a></h2>
+<h2>With pip<a class="headerlink" href="#with-pip" title="Link to this heading"></a></h2>
 <p>Install the latest stable version of Frankenstein (<code class="docutils literal notranslate"><span class="pre">frank</span></code>) with <a class="reference external" href="https://pypi.org/project/frank/">pip</a>,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>frank
 </pre></div>
@@ -112,7 +111,7 @@
 <p>Then play <a class="reference external" href="https://drive.google.com/file/d/1SEz8YqB2rRS1uMguXxI1RI7Jk27yQfLO/view?usp=sharing">this</a> loud.</p>
 </section>
 <section id="from-source">
-<h2>From source<a class="headerlink" href="#from-source" title="Permalink to this heading"></a></h2>
+<h2>From source<a class="headerlink" href="#from-source" title="Link to this heading"></a></h2>
 <p>Join us in our efforts to <span class="strike">revive the dead</span> do very moral science.
 Clone the source repository from <a class="reference external" href="https://github.com/discsim/frank">GitHub</a>,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/discsim/frank.git
@@ -120,7 +119,7 @@ Clone the source repository from <a class="reference external" href="https://git
 </div>
 <p>(this is the same as <code class="code docutils literal notranslate"><span class="pre">git</span> <span class="pre">clone</span> <span class="pre">https://github.com/discsim/frank.git</span> <span class="pre">&amp;&amp;</span> <span class="pre">cd</span> <span class="pre">frank</span> <span class="pre">&amp;&amp;</span> <span class="pre">pip</span> <span class="pre">install</span></code>).</p>
 <section id="test-the-install">
-<h3>Test the install<a class="headerlink" href="#test-the-install" title="Permalink to this heading"></a></h3>
+<h3>Test the install<a class="headerlink" href="#test-the-install" title="Link to this heading"></a></h3>
 <p>If you cloned the source repo and you have <a class="reference external" href="https://docs.pytest.org/en/latest/">py.test</a>,
 run it from the code’s root directory (it takes &lt;1 min),</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>py.test<span class="w"> </span>frank/tests.py
@@ -142,7 +141,7 @@ run it from the code’s root directory (it takes &lt;1 min),</p>
 
   <div role="contentinfo">
     <p>&#169; Copyright 2019-2024, R. Booth, J. Jennings, M. Tazzari..
-      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:22:01 UTC // Images: Universal Studios, NBCUniversal [Public domain].
+      <span class="lastupdated">Last updated on 2024 Aug 22 at 16:24:27 UTC // Images: Universal Studios, NBCUniversal [Public domain].
       </span></p>
   </div>
 
