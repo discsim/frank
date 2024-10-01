@@ -25,6 +25,7 @@ import logging
 
 from frank.constants import rad_to_arcsec, deg_to_rad
 from frank.minimizer import LineSearch, MinimizeNewton
+import time
 
 class VisibilityMapping:
     r"""Builds the mapping between the visibility and image planes.
@@ -65,8 +66,9 @@ class VisibilityMapping:
         Whether to print notification messages
     """
     def __init__(self, DHT, geometry,  
-                 vis_model='opt_thick', scale_height=None, block_data=True,
-                 block_size=10 ** 5, check_qbounds=True, verbose=True):
+                 vis_model='opt_thick', geometry_on = True, scale_height=None, block_data=True,
+                 block_size=10 ** 5, check_qbounds=True, verbose=True,
+                 DFT = None):
         
         _vis_models = ['opt_thick', 'opt_thin', 'debris']
         if vis_model not in _vis_models:
@@ -76,11 +78,13 @@ class VisibilityMapping:
         self._vis_model = vis_model
         self.check_qbounds = check_qbounds
         self._verbose = verbose 
+        self.geometry_on = geometry_on
 
         self._chunking = block_data
         self._chunk_size = block_size
 
         self._DHT = DHT
+        self._DFT = DFT
         self._geometry = geometry
 
         # Check for consistency and report the model choice.
@@ -162,7 +166,8 @@ class VisibilityMapping:
             logging.info('    Building visibility matrices M and j')
         
         # Deproject the visibilities
-        u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
+        if self.geometry_on:
+            u, v, k, V = self._geometry.apply_correction(u, v, V, use3D=True)
         q = np.hypot(u, v)
 
         # Check consistency of the uv points with the model
@@ -176,15 +181,15 @@ class VisibilityMapping:
         if frequencies is None:
             multi_freq = False
             frequencies = np.ones_like(V)
-
+        start_time = time.time()
         channels = np.unique(frequencies)
-        Ms = np.zeros([len(channels), self.size, self.size], dtype='f8')
-        js = np.zeros([len(channels), self.size], dtype='f8')
+        Ms = np.zeros([len(channels), self.size, self.size], dtype='c8')
+        js = np.zeros([len(channels), self.size], dtype='c8')
         for i, f in enumerate(channels):
             idx = frequencies == f
 
             qi = q[idx]
-            ki = k[idx]
+            ki = np.ones(len(q[idx]))#k[idx]
             wi = w[idx]
             Vi = V[idx]
         
@@ -199,19 +204,67 @@ class VisibilityMapping:
             Ndata = len(Vi)
             while start < Ndata:
                 qs = qi[start:end]
+                us = u[start:end]
+                vs = v[start:end]
                 ks = ki[start:end]
                 ws = wi[start:end]
                 Vs = Vi[start:end]
-                
-                X = self._get_mapping_coefficients(qs, ks)
-
-                wXT = np.array(X.T * ws, order='C')
-
-                Ms[i] += np.dot(wXT, X)
-                js[i] += np.dot(wXT, Vs)
+               
+                X = self._get_mapping_coefficients(qs, ks, us, vs)
+                wXT = np.matmul(np.transpose(np.conjugate(X)), np.diag(ws), dtype = "complex128")
+                Ms[i] += np.matmul(wXT, X, dtype="complex128").real
+                js[i] += np.matmul(wXT, Vs, dtype="complex128").real
 
                 start = end
                 end = min(Ndata, end + Nstep)
+
+        import matplotlib.pyplot as plt
+        
+
+        N = int(np.sqrt(self._DFT.size))
+        r"""FRANK 2D: TESTING M 
+        sparcity = ((np.sum(np.abs(Ms[0]) < 0.5e-17))/N**4)*100
+        print("M is sparse?  ", sparcity)
+        print(Ms[0])
+
+        plt.imshow(Ms[0].real, cmap="magma", vmax = np.max(Ms[0].real), vmin = np.mean(Ms[0].real))
+        plt.colorbar()
+        plt.show()
+
+        M = np.diag(np.diag(Ms[0].real))
+        num_zeros = ((np.sum(np.abs(M) == 0.0))/N**4)*100
+        print("M is sparse?  ", num_zeros)
+ 
+        IFT2 = np.linalg.solve(M, js[0]).real
+        plt.imshow(IFT2.reshape(N,N).T, cmap="magma")
+        plt.colorbar()
+
+        print("M type", Ms[0].dtype)
+        print("j type", js[0].dtype)
+        print("M imag-> ", " max: ", np.max(Ms[0].imag), ", min: ", np.min(Ms[0].imag) , ", mean: ", np.mean(Ms[0].imag) ,", median: ", np.median(Ms[0].imag),  ", std: ", np.std(Ms[0].imag))
+        print("M real-> ", " max: ", np.max(Ms[0].real), ", min: ", np.min(Ms[0].real) , ", mean: ", np.mean(Ms[0].real) ,", median: ", np.median(Ms[0].real),  ", std: ", np.std(Ms[0].real))
+        tol = 1e-10
+        print("with tol: ", tol, ", M is symmetric?",  np.allclose(Ms[0].real, Ms[0].T.real, atol=tol))
+        # Ms[0] = np.abs(Ms[0])
+        # from scipy.linalg import issymmetric
+        # print(issymmetric(Ms[0]), "that M is a Symmetric Matrix")
+
+        import matplotlib.pyplot as plt
+        plt.matshow(Ms[0].real, cmap="magma", vmax = np.max(Ms[0].real), vmin = np.mean(Ms[0].real))
+        plt.colorbar()
+        plt.title("M matrix, real part")
+        plt.show()
+        #import sys
+        #sys.exit()
+        """
+
+        #Ms[0] = np.loadtxt(r'.\..\Notebooks\M_N75.txt', dtype = 'c8')
+        #js[0] = np.loadtxt(r'.\..\Notebooks\j_N75.txt', dtype = 'c8')
+        print("--- %s minutes to calculate M and j ---" % (time.time()/60 - start_time/60))
+        path = r'/Users/mariajmelladot/Desktop/Frank2D/1_Frank2D_DEV/data/TestingComplexity/'
+        np.save(path + 'M_N' + str(N) , Ms[0].real)
+        np.save(path + 'j_N' + str(N) , js[0].real)
+
 
         # Compute likelihood normalization H_0, i.e., the
         # log-likelihood of a source with I=0.
@@ -234,6 +287,8 @@ class VisibilityMapping:
                 'j' : js[0],
                 'null_likelihood' : H0,
                 'hash' : [False, self._DHT, geometry, self._vis_model, self._scale_height],
+                'V' : Vs,
+                'W' : ws,
             }
 
     def check_hash(self, hash, multi_freq=False, geometry=None):
@@ -254,13 +309,13 @@ class VisibilityMapping:
         
         passed = (
             multi_freq == hash[0] and
-            self._DHT.Rmax  == hash[1].Rmax and
-            self._DHT.size  == hash[1].size and
-            self._DHT.order == hash[1].order and
-            geometry.inc  == hash[2].inc and
-            geometry.PA   == hash[2].PA and
-            geometry.dRA  == hash[2].dRA and
-            geometry.dDec == hash[2].dDec and
+            self._DFT.Rmax  == hash[1].Rmax and
+            self._DFT.size  == hash[1].size and
+            self._DFT.order == hash[1].order and
+            #geometry.inc  == hash[2].inc and
+            #geometry.PA   == hash[2].PA and
+            #geometry.dRA  == hash[2].dRA and
+            #geometry.dDec == hash[2].dDec and
             self._vis_model == hash[3]
         )
 
@@ -460,14 +515,16 @@ class VisibilityMapping:
         return self._DHT.interpolate(f, r, space)
 
 
-    def _get_mapping_coefficients(self, qs, ks, geometry=None, inverse=False):
+    def _get_mapping_coefficients(self, qs, ks, u, v, geometry=None, inverse=False):
         """Get :math:`H(q)`, such that :math:`V(q) = H(q) I_\nu`"""
-        
         if self._vis_model == 'opt_thick':
             # Optically thick & geometrically thin
             if geometry is None:
-                geometry = self._geometry
-            scale = np.cos(geometry.inc * deg_to_rad)
+                if not self.geometry_on:
+                    scale = 1
+                else:   
+                    geometry = self._geometry
+                    scale = np.cos(geometry.inc * deg_to_rad)
         elif self._vis_model == 'opt_thin':
             # Optically thin & geometrically thin
             scale = 1
@@ -476,7 +533,6 @@ class VisibilityMapping:
             scale = np.exp(-np.outer(ks*ks, self._H2))
         else:
             raise ValueError("model not supported. Should never occur.")
-
         if inverse:
             scale = np.atleast_1d(1/scale).reshape(1,-1)
             qs = qs / rad_to_arcsec
@@ -484,7 +540,7 @@ class VisibilityMapping:
         else:
             direction='forward'
 
-        H = self._DHT.coefficients(qs, direction=direction) * scale
+        H = self._DFT.coefficients(u, v, direction=direction)*scale
 
         return H
 
@@ -527,7 +583,8 @@ class VisibilityMapping:
     @property
     def q(self):
         r"""Frequency points, unit = :math:`\lambda`"""
-        return self._DHT.q
+        #return self._DHT.q
+        return self._DFT.q
 
     @property
     def Qmax(self):
@@ -537,7 +594,8 @@ class VisibilityMapping:
     @property
     def size(self):
         """Number of points in reconstruction"""
-        return self._DHT.size
+        #return self._DHT.size
+        return self._DFT.size
 
     @property
     def scale_height(self):
@@ -628,9 +686,13 @@ class GaussianModel:
     """
 
     def __init__(self, DHT, M, j, p=None, scale=None, guess=None,
-                 Nfields=None, noise_likelihood=0):
+                 Nfields=None, noise_likelihood=0,
+                 Wvalues = None, V = None, DFT = None):
 
         self._DHT = DHT
+        self._DFT = DFT
+        self._Wvalues = Wvalues
+        self._V = V
 
         # Correct shape of design matrix etc.        
         if len(M.shape) == 2:
@@ -686,12 +748,13 @@ class GaussianModel:
                 en = (n+1)*Nr 
 
                 self._Sinv[sn:en, sn:en] += Sj[n]
-        else:
-            self._Sinv =  None
+        else: # p is None, so we are interested in this case.
+            " New GP Kernel below"
+            #self._Sinv =  None
 
         # Compute the design matrix
-        self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='f8')
-        self._j = np.zeros(Nr*Nfields, dtype='f8')
+        self._M = np.zeros([Nr*Nfields, Nr*Nfields], dtype='c8')
+        self._j = np.zeros(Nr*Nfields, dtype='c8')
         for si, Mi, ji in zip(self._scale, M, j):
             
             for n in range(0, Nfields):
@@ -707,7 +770,143 @@ class GaussianModel:
 
         self._like_noise = noise_likelihood
 
+        " New GP "
+        self.u, self.v = self._DFT.uv_points
+        self.Ykm = self._DFT.coefficients(direction="backward")
+
+        m, c , l = -5, 60, 1e4
+        #m, c, l = 0.23651345032212925, 60.28747193555951, 1.000389e+05
+        #start_time =  time.time()
+        #m, c, l = self.minimizeS() # Finding best parameters to S matrix.
+        #print("--- %s minutes to minimize S---" % (time.time()/60 - start_time/60))
+        S_real = self.calculate_S_real(self.u, self.v, l, m, c)
+        start_time = time.time()
+        S_real_inv = np.linalg.inv(S_real)
+        print("--- %s minutes to calculate S_real_inv---" % (time.time()/60 - start_time/60))
+        self._Sinv =  S_real_inv
+        start_time = time.time()
         self._fit()
+        print("--- %s minutes to fit---" % (time.time()/60 - start_time/60))
+
+    def calculate_S_real(self, u, v, l, m, c):
+        start_time = time.time()
+        S_fspace = self.true_squared_exponential_kernel(u, v, l, m, c)
+        print("--- %s minutes to calculate S---" % (time.time()/60 - start_time/60))
+        start_time = time.time()
+        S_real = np.matmul(self.Ykm, np.matmul(S_fspace, self.Ykm.conj()), dtype = "complex128").real
+        print("--- %s minutes to calculate S_real---" % (time.time()/60 - start_time/60))
+
+        """
+        #FRANK 2D: TESTING S_real
+        print(" S_real")
+        import matplotlib.pyplot as plt
+        plt.matshow(S_real, cmap="magma")
+        plt.colorbar()
+        plt.title("S matrix, real part ")
+        plt.show()
+        """
+
+        return S_real
+    
+    def true_squared_exponential_kernel(self, u, v, l, m, c): 
+        u1, u2 = np.meshgrid(u, u)
+        v1, v2 = np.meshgrid(v, v)
+        q1 = np.hypot(u1, v1)
+        q2 = np.hypot(u2, v2)
+
+        def power_spectrum(q, m, c):       
+            indexes = np.where(q == 0)[0]
+            q_max = np.max(q)
+            for i in indexes:
+                q[i] = q_max
+            q_min = np.min(q)
+            for i in indexes:
+                q[i] = q_min
+            return np.exp(m*np.log(q) + c)
+            
+        p1 = power_spectrum(q1, m, c)
+        p2 = power_spectrum(q2, m, c)
+        SE_Kernel = np.sqrt(p1 * p2) * np.exp(-0.5*((u1-u2)**2 + (v1-v2)**2)/ l**2)
+        return SE_Kernel
+    
+    def calculate_mu_cholesky(self, Dinv):
+        print("calculate mu with cholesky")
+        try: 
+            Dchol = scipy.linalg.cho_factor(Dinv)
+            mu =  scipy.linalg.cho_solve(Dchol, self._j)
+
+        except np.linalg.LinAlgError:
+            U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
+            s1 = np.where(s > 0, 1. / s, 0)
+            mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
+        return mu
+    
+    def calculate_mu_gc(self, Dinv):
+        from scipy.sparse.linalg import cg, bicg, bicgstab, gmres
+        method = "BiConjugate Gradient Method"
+        #from scipy.sparse import csr_matrix, issparse
+        #is_sparse = issparse(Dinv)
+        #print("Is Dinv sparse?: ", is_sparse)
+        start_time = time.time()
+        mu, exitCode = bicgstab(Dinv, self._j, atol = 0)
+        print("--- %s minutes to calculate mu---" % (time.time()/60 - start_time/60))
+        print("Succesful ", method, "?: ", exitCode == 0)
+        print("Is the result correct?: ", np.allclose(np.dot(Dinv, mu), self._j))
+        return mu
+    
+    def likelihood(self, param, data):
+        from scipy.special import gamma
+        m, c, l = param
+        Wvalues = self._Wvalues
+        N = np.diag(1/Wvalues)
+
+        alpha = 1.3
+        l0 = 1e7
+
+        # Create an Inverse Gamma distribution function
+        def inv_gamma_function(l, alpha, beta):
+            return ((gamma(alpha)*beta)**(-1))*((beta/l)**(alpha + 1))*np.exp(-beta/l)
+         
+        S_real  = self.calculate_S_real(self.u, self.v, l, m, c)
+        start_time = time.time()
+        S_real_inv = np.linalg.inv(S_real)
+        print("--- %s minutes to calculate S_real_inv ---" % (time.time()/60 - start_time/60))
+        Dinv = self._M + S_real_inv
+        start_time = time.time()
+        D = np.linalg.inv(Dinv)
+        print("--- %s minutes to calculate D ---" % (time.time()/60 - start_time/60))
+        mu = self.calculate_mu_gc(Dinv)
+
+        start_time = time.time()
+        logdetS = np.linalg.slogdet(S_real)[1]
+        logdetD = np.linalg.slogdet(D)[1]
+        logdetN = np.linalg.slogdet(N)[1]
+        print("--- %s minutes to calculate determinants ---" % (time.time()/60 - start_time/60))
+        factor = np.log(2*np.pi)
+
+        start_time = time.time()
+        log_likelihood =  2*np.log(np.abs((1/m)*(1/c))) \
+        + 2*np.log(inv_gamma_function(l, alpha, l0)) \
+        - 0.5*(factor + logdetN) \
+        - 0.5*(factor + logdetS) \
+        + 0.5*(factor + logdetD) \
+        + 0.5*np.dot(np.transpose(self._j), mu) \
+        - 0.5*np.dot(np.transpose(np.conjugate(data)), np.dot(np.diag(Wvalues), data)) 
+        print("--- %s minutes to calculate log_likelihood ---" % (time.time()/60 - start_time/60))
+        return -log_likelihood
+    
+    def minimizeS(self):
+        from scipy.optimize import minimize
+        V = self._V
+        print("minimizing")
+        start_time = time.time()
+        result = minimize(self.likelihood, x0=np.array([-5, 60, 1e5]), args=(V,),
+                          method="Nelder-Mead", tol=1e-7,
+                          bounds=[(-7, 7), (1, 80), (1e4, 1e5)])
+        m, c, l = result.x
+        print("--- %s minutes to minimizing ---" % (time.time()/60 - start_time/60))
+        print("Result: ", "m: ", m, "c: ", c, "l: ", "{:e}".format(l))
+        return [m, c, l]
 
     def _fit(self):
         """Compute the mean and variance"""
@@ -718,21 +917,19 @@ class GaussianModel:
 
         Dinv = self._M + Sinv
 
-        try:
-            self._Dchol = scipy.linalg.cho_factor(Dinv)
-            self._Dsvd = None
+        r""" FRANK 2D: TESTING Dinv
+        #import scipy.linalg as sc
+        def is_pos_def(x):
+            return np.all(np.linalg.eigvals(x) > 0)
+        a = sc.issymmetric(Dinv) # necessary condition to be SPD
+        b = is_pos_def(Dinv) # necessary condition to be SPD
+        # there is left one condition necessary to be SPD, which is that xT * A * x > 0 for all x != 0.
+        print("Is symmetric: ", a)
+        print("Is positive definite: ", b)
+        """
 
-            self._mu = scipy.linalg.cho_solve(self._Dchol, self._j)
-
-        except np.linalg.LinAlgError:
-            U, s, V = scipy.linalg.svd(Dinv, full_matrices=False)
-
-            s1 = np.where(s > 0, 1. / s, 0)
-
-            self._Dchol = None
-            self._Dsvd = U, s1, V
-
-            self._mu = np.dot(V.T, np.multiply(np.dot(U.T, self._j), s1))
+        #self._mu = self.calculate_mu_cholesky(Dinv)
+        self._mu = self.calculate_mu_gc(Dinv)
 
         # Reset the covariance matrix - we will compute it when needed
         if self._Nfields > 1:
@@ -881,7 +1078,8 @@ class GaussianModel:
     @property
     def size(self):
         """Number of points in reconstruction"""
-        return self._DHT.size
+        #return self._DHT.size
+        return self._DFT.size
 
 
 class LogNormalMAPModel:

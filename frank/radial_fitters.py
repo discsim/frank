@@ -28,6 +28,7 @@ import numpy as np
 from frank.constants import rad_to_arcsec
 from frank.filter import CriticalFilter
 from frank.hankel import DiscreteHankelTransform
+from frank.fourier2d import DiscreteFourierTransform2D
 from frank.statistical_models import (
     GaussianModel, LogNormalMAPModel, VisibilityMapping
 )
@@ -167,7 +168,7 @@ class FrankRadialFit(metaclass=abc.ABCMeta):
         -----
         The resulting brightness will be consistent with higher-resolution fits
         as long as the original fit has sufficient resolution. By sufficient
-        resolution we simply mean that the missing terms in the Fourier-Bessel
+         we simply mean that the missing terms in the Fourier-Bessel
         series are negligible, which will typically be the case if the
         brightness was obtained from a frank fit with 100 points or more.
         """
@@ -429,20 +430,21 @@ class FourierBesselFitter(object):
         R and H should be in arcsec. Assumes a Gaussian vertical structure. 
         Only works with assume_optically_thick=False
     block_size : int, default = 10**5
-        Size of the matrices if blocking is used
+        Size of the matrices if blo cking is used
     verbose : bool, default = False
         Whether to print notification messages
     """
 
-    def __init__(self, Rmax, N, geometry, nu=0, block_data=True,
+    def __init__(self, Rmax, N, geometry=None, nu=0, block_data=True,
                  assume_optically_thick=True, scale_height=None,
-                 block_size=10 ** 5, verbose=True):
+                 block_size=10 ** 5, verbose=True, geometry_on = True):
 
         Rmax /= rad_to_arcsec
 
         self._geometry = geometry
 
         self._DHT = DiscreteHankelTransform(Rmax, N, nu)
+        self._DFT = DiscreteFourierTransform2D(Rmax, N)
 
         if assume_optically_thick:
             if scale_height is not None:
@@ -455,9 +457,10 @@ class FourierBesselFitter(object):
             model = 'opt_thin'
 
         self._vis_map = VisibilityMapping(self._DHT, geometry, 
-                                          model, scale_height=scale_height,
+                                          model, geometry_on = geometry_on ,scale_height=scale_height,
                                           block_data=block_data, block_size=block_size,
-                                          check_qbounds=False, verbose=verbose)
+                                          check_qbounds=False, verbose=verbose,
+                                          DFT = self._DFT)
 
         self._info  = {'Rmax' : self._DHT.Rmax * rad_to_arcsec,
                        'N' : self._DHT.size
@@ -510,6 +513,8 @@ class FourierBesselFitter(object):
   
         self._M = mapping['M']
         self._j = mapping['j']
+        self._V = mapping['V']
+        self._Wvalues = mapping['W']
 
         self._H0 = mapping['null_likelihood']
 
@@ -564,7 +569,7 @@ class FourierBesselFitter(object):
             logging.info('  Fitting for brightness profile using'
                          ' {}'.format(self.fit_method()))
 
-        self._geometry.fit(u, v, V, weights)
+        #self._geometry.fit(u, v, V, weights)
 
         mapping = self.preprocess_visibilities(u, v, V, weights)
         self._build_matrices(mapping)
@@ -574,10 +579,11 @@ class FourierBesselFitter(object):
     def _fit(self):
         """Fit step. Computes the best fit given the pre-processed data"""
         fit = GaussianModel(self._DHT, self._M, self._j,
-                            noise_likelihood=self._H0)
+                            noise_likelihood=self._H0,
+                            Wvalues= self._Wvalues, V = self._V, DFT = self._DFT)
 
         self._sol = FrankGaussianFit(self._vis_map, fit, self._info,
-                                     geometry=self._geometry.clone())
+                                     geometry=None)
 
         return self._sol
 
