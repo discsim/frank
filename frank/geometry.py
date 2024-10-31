@@ -364,7 +364,7 @@ class SourceGeometry(object):
         return 1.0 / np.cos(self._inc * deg_to_rad)
         
     def __repr__(self):
-        return "SourceGeometry(inc={}, PA={}, dRA={}, dDEC={})".format(
+        return "SourceGeometry(inc={}, PA={}, dRA={}, dDec={})".format(
             self.inc, self.PA, self.dRA, self.dDec
         )
 
