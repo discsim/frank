@@ -457,7 +457,27 @@ class VisibilityMapping:
         """
         if space == 'Real':
             r = r / rad_to_arcsec
-        return self._DHT.interpolate(f, r, space)
+
+        r = np.array(r)
+        shape = r.shape 
+        r = r.reshape(-1)
+
+        if self._chunking:
+            Ni = int(self._chunk_size / len(r) + 1)
+        else:
+            Ni = len(r)
+
+        end = 0
+        start = 0
+        I = []
+        while end < len(r):
+            start = end
+            end = start + Ni
+            ri = r[start:end]
+
+            I.append(self._DHT.interpolate(f, ri, space))
+
+        return np.concatenate(I).reshape(*shape)
 
 
     def _get_mapping_coefficients(self, qs, ks, geometry=None, inverse=False):
